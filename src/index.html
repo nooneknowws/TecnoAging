@@ -1,39 +1,61 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>TelasTCC</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
+  <button class="navbar-toggler" onclick="toggleMenu()">
+    <span class="navbar-toggler-icon"></span>
+    <span class="navbar-toggler-icon"></span>
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <nav class="navbar" id="sidebarMenu">
+    <div>
       <img class="navbar-brand" src="image.png" alt="logo-technoAging">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/cadastro-tecnicos">Cadastro de Técnicos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/perfil">Perfil</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/editar-perfil">Editar Perfil</a>
-          </li>
-        </ul>
-      </div>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/cadastro-tecnico">Cadastro de Técnicos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/perfil">Perfil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="#">Testes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="#">Pacientes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="#">Resultados</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="#">Sair</a>
+        </li>
+      </ul>
     </div>
   </nav>
-  <router-outlet></router-outlet>
-  <app-root></app-root>
+  <div class="main-content" id="mainContent">
+    <router-outlet></router-outlet>
+    <app-root></app-root>
+  </div>
+  <script>
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const mainContent = document.getElementById('mainContent');
+      sidebar.classList.toggle('open');
+      mainContent.classList.toggle('shifted');
+    }
+  </script>
 </body>
 </html>
-
