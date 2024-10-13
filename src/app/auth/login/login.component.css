@@ -2,37 +2,36 @@
     background: linear-gradient(135deg, #a4dada, #bca9df);
     height: 100vh;
   }
-  
+
   .login-card {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
+    max-width: 600px;
     width: 100%;
   }
-  
+
   h1 {
     font-family: 'Arial', sans-serif;
-    font-size: 32px;
+    font-size: 52px;
     color: #666;
   }
-  
+
   form input {
-    border-radius: 30px;
-    padding: 10px;
+    border-radius: 10px;
+    padding: 5px;
     font-size: 16px;
   }
-  
+
   form button {
-    background-color: #6b4683;
+    background-color: #9e6dbe;
     border: none;
-    border-radius: 30px;
-    padding: 10px;
-    font-size: 16px;
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 20px;
     width: 100%;
   }
-  
+
   form button:hover {
-    background-color: #563d72;
+    background-color: #37244d;
   }
-  

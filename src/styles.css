@@ -1,1 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
+.navbar {
+  background-color: #1d0f2b;
+}
+
+.navbar-brand {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #000000;
+}
+
+.navbar-nav .nav-link {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin-right: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #fcfcfc;
+  transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: #ffffff;
+  left: 0;
+  bottom: -4px;
+  transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-toggler {
+  border-color: #ffffff;
+}
+
+.navbar-collapse {
+  justify-content: flex-end;
+}
+
+@media (max-width: 992px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar-nav .nav-link {
+    margin-right: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+  }
+}
+
+img {
+  width: 50px;
+  margin-left: 10px;
+}
