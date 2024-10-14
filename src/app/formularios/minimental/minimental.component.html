@@ -1,0 +1,146 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Mini Exame do Estado Mental (MEEM)</h2>
+  
+    <form>
+      <!-- Orientação Temporal -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Orientação Temporal</h5>
+        <p>Pergunte ao indivíduo (dê 1 ponto para cada resposta correta):</p>
+        <div class="mb-3">
+          <label class="form-label">Que dia é hoje?</label>
+          <input type="text" class="form-control" name="diaHoje">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que mês estamos?</label>
+          <input type="text" class="form-control" name="mesAtual">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que ano estamos?</label>
+          <input type="text" class="form-control" name="anoAtual">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que dia da semana estamos?</label>
+          <input type="text" class="form-control" name="diaSemana">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Qual a hora aproximada?</label>
+          <input type="text" class="form-control" name="horaAproximada">
+        </div>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoOrientacaoTemporal">
+      </div>
+  
+      <!-- Orientação Espacial -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Orientação Espacial</h5>
+        <p>Pergunte ao indivíduo (dê 1 ponto para cada resposta correta):</p>
+        <div class="mb-3">
+          <label class="form-label">Em que local nós estamos?</label>
+          <input type="text" class="form-control" name="localAtual">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Que local é este aqui?</label>
+          <input type="text" class="form-control" name="localMaisAmplo">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que bairro nós estamos ou qual o nome de uma rua próxima?</label>
+          <input type="text" class="form-control" name="bairroOuRuaProxima">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que cidade nós estamos?</label>
+          <input type="text" class="form-control" name="cidadeAtual">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Em que estado nós estamos?</label>
+          <input type="text" class="form-control" name="estadoAtual">
+        </div>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoOrientacaoEspacial">
+      </div>
+  
+      <!-- Memória Imediata -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Memória Imediata</h5>
+        <p>Eu vou dizer 3 palavras e você irá repeti-las: CARRO – VASO – TIJOLO</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoMemoriaImediata">
+      </div>
+  
+      <!-- Cálculo -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Cálculo</h5>
+        <p>Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Considere 1 ponto para cada resultado correto.</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoCalculo">
+      </div>
+  
+      <!-- Evocação das palavras -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Evocação das Palavras</h5>
+        <p>Quais as palavras que o indivíduo acabara de repetir (CARRO-VASO-TIJOLO).</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoEvocacaoPalavras">
+      </div>
+  
+      <!-- Nomeação -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Nomeação</h5>
+        <p>Peça para o indivíduo nomear os objetos mostrados (relógio, caneta).</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoNomeacao">
+      </div>
+  
+      <!-- Repetição -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Repetição</h5>
+        <p>Peça ao indivíduo para repetir a frase: “NEM AQUI, NEM ALI, NEM LÁ”.</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoRepeticao">
+      </div>
+  
+      <!-- Comando -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Comando</h5>
+        <p>Pegue este papel com a mão direita, dobre-o ao meio e coloque-o no chão.</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoComando">
+      </div>
+  
+      <!-- Leitura -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Leitura</h5>
+        <p>Mostre a frase escrita: “FECHE OS OLHOS”.</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoLeitura">
+      </div>
+  
+      <!-- Frase -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Frase</h5>
+        <p>Peça ao indivíduo para escrever uma frase.</p>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoFrase">
+      </div>
+  
+      <!-- Cópia do desenho -->
+      <div class="mb-4 p-3 border border-2 rounded">
+        <h5>Cópia do Desenho</h5>
+        <p>Mostre o modelo e peça para fazer o melhor possível. Tire uma foto do desenho.</p>
+        <div class="mb-3">
+          <label for="desenho" class="form-label">Upload do desenho:</label>
+          <input class="form-control" type="file" id="desenho" name="desenho">
+        </div>
+        <label class="form-label">Pontuação:</label>
+        <input type="text" class="form-control w-25" name="pontuacaoCopiaDesenho">
+      </div>
+  
+      <!-- Pontuação Total -->
+      <div class="mb-4">
+        <h5>Pontuação Total</h5>
+        <input type="text" class="form-control w-25" name="pontuacaoTotal">
+      </div>
+  
+      <!-- Botão Enviar -->
+      <button type="submit" class="btn btn-primary w-100 py-2" style="background-color: #d2e9f7; border: none; color: #333;">Enviar</button>
+    </form>
+  </div>
