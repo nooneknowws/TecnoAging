@@ -14,4 +14,4 @@ import { VisualizarPerfilComponent } from './visualizar-perfil/visualizar-perfil
     CommonModule
   ]
 })
-export class IdosoModule { }
+export class PacienteModule { }

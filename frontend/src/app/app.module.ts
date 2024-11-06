@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TecnicoModule } from './tecnico/tecnico.module';
-import { IdosoModule } from './idoso/idoso.module';
+import { PacienteModule } from './paciente/paciente.module';
 import { LoginComponent } from './_auth/login/login.component';
 import { FormFactfComponent } from './formularios/form-factf/form-factf.component';
 import { FormIvcf20Component } from './formularios/form-ivcf20/form-ivcf20.component';
@@ -27,7 +27,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     BrowserModule,
     AppRoutingModule,
     TecnicoModule,
-    IdosoModule,
+    PacienteModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
