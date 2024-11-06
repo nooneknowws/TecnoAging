@@ -1,0 +1,179 @@
+<div class="header">
+    <div class="container">
+       <h1 class="text-center">Editar Perfil do Paciente</h1>
+    </div>
+ </div>
+
+ <div class="container my-4">
+    <div class="row">
+       <div class="col-md-6">
+           <div class="card mb-4">
+               <div class="card-header">
+                  <h4><i class="fas fa-pencil"></i><i class="fas fa-user"></i> Editar dados do Paciente</h4>
+               </div>
+               <div class="card-body" id="detalhes-paciente">
+                  <table class="table table-bordered">
+                     <tbody>
+                        <tr>
+                           <th scope="row">Nome</th>
+                           <td><input type="text" class="form-control form-control-sm" value="JOAO GOMES DA SILVA"></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Data de Nascimento</th>
+                           <td><input type="date" class="form-control form-control-sm" value="1958-07-29"></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Sexo</th>
+                           <td><select name="sexo" id="sexo" class="form-control form-control-sm">
+                               <option value="M">Masculino</option>
+                               <option value="F">Feminino</option>
+                           </select></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Estado Civil</th>
+                           <td><select name="estadocivil" id="estadocivil" class="form-control form-control-sm">
+                               <option value="Divorciado">Divorciado</option>
+                               <option value="Casado">Casado</option>
+                               <option value="Solteiro">Solteiro</option>
+                           </select></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Nacionalidade</th>
+                           <td><select name="nacionalidade" id="nacionalidade" class="form-control form-control-sm">
+                               <option value="Brasileiro">Brasileiro</option>
+                           </select></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Município/UF de Nascimento</th>
+                           <td scope="row">
+                               <select name="municipio" id="municipio" class="form-control form-control-sm">
+                                   <option value="Curitiba">CURITIBA</option>
+                               </select>
+                               <select name="uf" id="uf" class="form-control form-control-sm">
+                                   <option value="PR">PR</option>
+                               </select>
+                           </td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Cor/Raça</th>
+                           <td>
+                               <select name="cor" id="cor" class="form-control form-control-sm">
+                                   <option value="Branca">Branca</option>
+                               </select>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>    
+       </div>
+       <div class="col-md-6">
+           <div class="card mb-4" id="documentos-paciente">
+               <div class="card-header">
+                  <h4><i class="fas fa-id-card"></i> Documentação</h4>
+               </div>
+               <div class="card-body row">
+                   <div class="col-md-4">
+                       <img src="https://place-hold.it/192x256" class="img-fluid w-100">
+                   </div>
+                   <div class="col-md-8">
+                       <table class="table table-bordered">
+                           <tbody>
+                              <tr>
+                                 <th scope="row">RG</th>
+                                 <td>15.277.659-4</td>
+                              </tr>
+                              <tr>
+                                 <th scope="row">CPF</th>
+                                 <td>093.552.119-45</td>
+                              </tr>
+                              <tr>
+                                 <th scope="row">Data de Expedição</th>
+                                 <td>09/04/2018</td>
+                              </tr>
+                              <tr>
+                                 <th scope="row">Órgão Emissor/UF</th>
+                                 <td>SSP/PR</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                   </div>
+               </div>
+            </div>    
+       </div>
+       <div class="col-md-6">
+           <div class="card mb-4" id="endereco">
+               <div class="card-header">
+                  <h4><i class="fas fa-pencil"></i> <i class="fas fa-map-marker-alt"></i> Editar endereço</h4>
+               </div>
+               <div class="card-body">
+                  <table class="table table-bordered">
+                     <tbody>
+                        <tr>
+                           <th scope="row">CEP</th>
+                           <td>
+                               <div class="input-group">
+                                   <input class="form-control form-control-sm" type="text" value="82590-300">
+                                   <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                               </div>
+                           </td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Endereço</th>
+                           <td><input class="form-control form-control-sm" type="text" value="Rua da Glória, 120"></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Bairro</th>
+                           <td><input class="form-control form-control-sm" type="text" value="Centro Cívico"></td>
+                        </tr>
+                        <tr>
+                           <th scope="row">Município/UF</th>
+                           <td scope="row">
+                               <select name="municipio" id="municipio" class="form-control form-control-sm">
+                                   <option value="Curitiba">CURITIBA</option>
+                               </select>
+                               <select name="uf" id="uf" class="form-control form-control-sm">
+                                   <option value="PR">PR</option>
+                               </select>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>    
+       </div>
+       
+       <div class="col-md-6">
+           <div class="card mb-4" id="contato">
+               <div class="card-header d-flex justify-content-between">
+                   <h4><i class="fas fa-pencil"></i> <i class="fas fa-phone"></i> Editar contatos</h4>
+                   <button class="btn btn-sm btn-success"><i class="fas fa-add"></i> Adicionar</button>
+               </div>
+               <div class="card-body">
+                   <table class="table table-bordered">
+                       <tbody>
+                           <tr>
+                               <th scope="row">Nome</th>
+                               <td><input type="text" class="form-control form-control-sm" value="MARIA GOMES DA SILVA"></td>
+                           </tr>
+                           <tr>
+                               <th scope="row">Telefone</th>
+                               <td><input type="text" class="form-control form-control-sm" value="(11) 99999-9999"></td>
+                           </tr>
+                           <tr>
+                               <th scope="row">Parentesco</th>
+                               <td><select class="form-control form-control-sm" name="Parentesco" id="Parentesco">
+                                   <option value="Filha">Filha</option>
+                               </select></td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
+        </div>    
+   </div>
+    </div>
+    <div class="text-center">
+       <button class="btn btn-success">Salvar</button>
+       <button class="btn btn-secondary">Voltar</button>
+    </div>
+ </div>
