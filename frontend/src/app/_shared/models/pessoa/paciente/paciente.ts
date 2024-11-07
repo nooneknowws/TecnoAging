@@ -15,7 +15,7 @@ export class Paciente extends Pessoa {
         idade?: number,
         endereco?: Endereco,
         dataNasc?: Date,
-        cpf?: number,
+        cpf?: string,
         telefone?: string
     ) {
         super(nome, sexo, idade, endereco, dataNasc, cpf, telefone);

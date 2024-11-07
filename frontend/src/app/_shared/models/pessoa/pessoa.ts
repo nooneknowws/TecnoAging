@@ -7,7 +7,7 @@ export class Pessoa {
         public idade?: number,
         public endereco?: Endereco,
         public dataNasc?: Date,
-        public cpf?: number,
+        public cpf?: string,
         public telefone?: string
     ) {}
 }

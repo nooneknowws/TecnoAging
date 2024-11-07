@@ -1,0 +1,68 @@
+{
+    "auth": [
+        {
+            "cpf": "12345678901",
+            "senha": "senha123",
+            "tipo": "tecnico",
+            "userId": 1
+        },
+        {
+            "cpf": "98765432101",
+            "senha": "senha456",
+            "tipo": "paciente",
+            "userId": 1
+        }
+    ],
+    "tecnicos": [
+        {
+            "id": 1,
+            "matricula": 12345,
+            "ativo": true,
+            "nome": "João Silva",
+            "sexo": "M",
+            "idade": 35,
+            "endereco": {
+                "rua": "Rua Principal",
+                "numero": 123,
+                "bairro": "Centro",
+                "cidade": "São Paulo",
+                "estado": "SP",
+                "cep": "01001-000"
+            },
+            "dataNasc": "1988-05-15",
+            "cpf": "12345678901",
+            "telefone": "11999999999"
+        }
+    ],
+    "pacientes": [
+        {
+            "id": 1,
+            "peso": 70.5,
+            "altura": 1.75,
+            "imc": 23.0,
+            "socioeconomico": "B2",
+            "escolaridade": "Superior Completo",
+            "nome": "Maria Santos",
+            "sexo": "F",
+            "idade": 45,
+            "endereco": {
+                "rua": "Avenida Secundária",
+                "numero": 456,
+                "bairro": "Jardim",
+                "cidade": "São Paulo",
+                "estado": "SP",
+                "cep": "02002-000"
+            },
+            "dataNasc": "1978-08-20",
+            "cpf": "98765432101",
+            "telefone": "11988888888",
+            "contatos": [
+                {
+                    "nome": "José Santos",
+                    "telefone": "11977777777",
+                    "parentesco": "FILHO"
+                }
+            ]
+        }
+    ]
+}

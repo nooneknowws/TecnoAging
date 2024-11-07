@@ -11,6 +11,10 @@ import { FormMinimentalComponent } from './formularios/form-minimental/form-mini
 import { FormPfsComponent } from './formularios/form-pfs/form-pfs.component';
 import { FormSedentarismoComponent } from './formularios/form-sedentarismo/form-sedentarismo.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from './_shared/services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -28,8 +32,15 @@ import { NavbarComponent } from './navbar/navbar.component';
     AppRoutingModule,
     TecnicoModule,
     PacienteModule,
+    HttpClientModule,
+    FormsModule,
+    NgxMaskDirective, 
+    NgxMaskPipe
   ],
-  providers: [],
+  providers: [
+    AuthService,
+    provideNgxMask()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

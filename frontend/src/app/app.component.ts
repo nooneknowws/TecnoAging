@@ -9,6 +9,7 @@ import { Router, NavigationEnd } from '@angular/router';
 export class AppComponent implements OnInit {
   isAuthRoute = false;
   isOpen = false;
+  static API_URL: string = "http://localhost:3000";
 
   constructor(private router: Router) {}
 
