@@ -6,6 +6,7 @@ import { EditarPerfilPacienteComponent } from './paciente/editar-perfil/editar-p
 import { HistoricoPacienteComponent } from './paciente/historico-paciente/historico-paciente.component';
 import { VerPerfilComponent } from './paciente/ver-perfil/ver-perfil.component';
 import { RouterModule } from '@angular/router';
+import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard.component';
 
 
 
@@ -15,7 +16,8 @@ import { RouterModule } from '@angular/router';
     EditarPerfilComponent,
     EditarPerfilPacienteComponent,
     HistoricoPacienteComponent,
-    VerPerfilComponent
+    VerPerfilComponent,
+    TecnicoDashboardComponent
   ],
   imports: [
     CommonModule,

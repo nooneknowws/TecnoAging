@@ -32,7 +32,7 @@ export class LoginComponent {
         this.authService.login(this.loginRequest).subscribe({
             next: (response) => {
                 if (response.success) {
-                    const route = response.tipo === 'tecnico' ? '/tecnico/dashboard' : '/paciente/dashboard';
+                    const route = response.tipo === 'tecnico' ? '/tecnico' : '/paciente';
                     this.router.navigate([route]);
                 } else {
                     this.errorMessage = response.message || 'Erro ao realizar login';

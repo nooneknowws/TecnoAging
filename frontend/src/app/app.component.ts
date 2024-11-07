@@ -7,7 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  isAuthRoute = false;
+  isAuthRoute =  true;
   isOpen = false;
   static API_URL: string = "http://localhost:3000";
 

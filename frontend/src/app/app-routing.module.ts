@@ -14,23 +14,39 @@ import { FormMinimentalComponent } from './formularios/form-minimental/form-mini
 import { FormPfsComponent } from './formularios/form-pfs/form-pfs.component';
 import { FormSedentarismoComponent } from './formularios/form-sedentarismo/form-sedentarismo.component';
 import { EditarPerfilPacienteComponent } from './tecnico/paciente/editar-perfil/editar-perfil.component';
+import { AuthGuard } from './auth.guard';
+import { PacienteDashboardComponent } from './paciente/paciente-dashboard/paciente-dashboard.component';
+import { TecnicoDashboardComponent } from './tecnico/tecnico-dashboard/tecnico-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'cadastro', component: CadastroComponent },
-  { path: 'formularios/fact-f', component: FormFactfComponent },
-  { path: 'formularios/ivcf-20', component: FormIvcf20Component },
-  { path: 'formularios/mini-mental', component: FormMinimentalComponent },
-  { path: 'formularios/pfs', component: FormPfsComponent },
-  { path: 'formularios/sedentarismo', component: FormSedentarismoComponent },
-  { path: 'idoso/historico-testes', component: HistoricoTestesComponent },
-  { path: 'idoso/visualizar-perfil', component: VisualizarPerfilComponent },
-  { path: 'tecnico/comparar-resultados', component: CompararResultadosComponent },
-  { path: 'tecnico/editar-perfil', component: EditarPerfilComponent },
-  { path: 'tecnico/paciente/editar-perfil', component: EditarPerfilPacienteComponent },
-  { path: 'tecnico/paciente/historico-paciente', component: HistoricoPacienteComponent },
-  { path: 'tecnico/paciente/ver-perfil', component: VerPerfilComponent },
+
+  {
+    path: 'paciente',
+    component: PacienteDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { tipo: 'paciente' },
+    children: [
+      { path: 'historico-testes', component: HistoricoTestesComponent },
+      { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
+    ]
+  },
+  {
+    path: 'tecnico',
+    component: TecnicoDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { tipo: 'tecnico' },
+    children: [
+      { path: 'comparar-resultados', component: CompararResultadosComponent },
+      { path: 'editar-perfil', component: EditarPerfilComponent },
+      { path: 'paciente/editar-perfil', component: EditarPerfilPacienteComponent },
+      { path: 'paciente/historico-paciente', component: HistoricoPacienteComponent },
+      { path: 'paciente/ver-perfil', component: VerPerfilComponent },
+    ]
+  },
+
   { path: '**', redirectTo: 'login' }
 ];
 
