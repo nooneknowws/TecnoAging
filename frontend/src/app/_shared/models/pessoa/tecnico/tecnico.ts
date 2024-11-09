@@ -5,6 +5,7 @@ export class Tecnico extends Pessoa {
     constructor(
         public matricula?: number,
         public ativo?: boolean,
+        id?: number,
         nome?: string,
         sexo?: string,
         idade?: number,
@@ -13,6 +14,6 @@ export class Tecnico extends Pessoa {
         cpf?: string,
         telefone?: string
     ) {
-        super(nome, sexo, idade, endereco, dataNasc, cpf, telefone);
+        super(id, nome, sexo, idade, endereco, dataNasc, cpf, telefone);
     }
 }

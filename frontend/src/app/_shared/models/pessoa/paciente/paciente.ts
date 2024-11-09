@@ -10,6 +10,7 @@ export class Paciente extends Pessoa {
         public socioeconomico?: string,
         public escolaridade?: string,
         public contatos?: Contato[],
+        id?: number,
         nome?: string,
         sexo?: string,
         idade?: number,
@@ -18,6 +19,6 @@ export class Paciente extends Pessoa {
         cpf?: string,
         telefone?: string
     ) {
-        super(nome, sexo, idade, endereco, dataNasc, cpf, telefone);
+        super(id, nome, sexo, idade, endereco, dataNasc, cpf, telefone);
     }
 }

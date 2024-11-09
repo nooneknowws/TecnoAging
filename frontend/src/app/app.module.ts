@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TecnicoModule } from './tecnico/tecnico.module';
@@ -15,11 +17,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './_shared/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    CadastroComponent,
     FormFactfComponent,
     FormIvcf20Component,
     FormMinimentalComponent,
@@ -35,7 +39,9 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     HttpClientModule,
     FormsModule,
     NgxMaskDirective, 
-    NgxMaskPipe
+    NgxMaskPipe,
+    CommonModule,
+    RouterModule
   ],
   providers: [
     AuthService,

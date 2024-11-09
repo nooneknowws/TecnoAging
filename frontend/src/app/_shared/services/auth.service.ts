@@ -118,6 +118,10 @@ export class AuthService {
     return this.currentUser;
   }
 
+  updateCurrentUser(user: any): void {
+    sessionStorage.setItem('userData', JSON.stringify(user));
+  }
+
   isLoggedIn(): boolean {
     return this.currentUser !== null;
   }

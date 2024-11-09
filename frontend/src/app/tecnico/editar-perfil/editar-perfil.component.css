@@ -1,0 +1,46 @@
+.form-container {
+    padding: 20px;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-photo-container {
+    margin-bottom: 20px;
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+}
+
+.form-floating {
+    position: relative;
+}
+
+.form-control:read-only {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.btn-primary {
+    margin-top: 1rem;
+}

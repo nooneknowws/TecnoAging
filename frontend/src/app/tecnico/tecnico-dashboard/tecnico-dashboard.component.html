@@ -1,1 +1,90 @@
-<p>tecnico-dashboard works!</p>
+<div class="dashboard-container">
+    <header class="header">
+      <h1>Dashboard</h1>
+      <div class="user-info" *ngIf="currentTecnico">
+        <span>Bem-vindo(a), <a [routerLink]="['/tecnico/editar-perfil']">{{currentTecnico.nome}}</a></span>
+        <button class="btn-logout" (click)="logout()">Sair</button>
+      </div>
+    </header>
+  
+    <div class="content">
+      <nav class="tabs">
+        <button 
+          [class.active]="activeTab === 'pacientes'"
+          (click)="switchTab('pacientes')">
+          Pacientes
+        </button>
+        <button 
+          [class.active]="activeTab === 'formularios'"
+          (click)="switchTab('formularios')">
+          Formulários
+        </button>
+        <button 
+          [class.active]="activeTab === 'resultados'"
+          (click)="switchTab('resultados')">
+          Resultados
+        </button>
+      </nav>
+  
+      <div *ngIf="activeTab === 'pacientes'" class="tab-content">
+        <div class="patients-list">
+          <h2>Lista de Pacientes</h2>
+          <div class="patient-cards">
+            <div *ngFor="let paciente of pacientes" 
+                 class="patient-card"
+                 [class.selected]="selectedPaciente?.cpf === paciente.cpf"
+                 (click)="selectPaciente(paciente)">
+              <h3>{{paciente.nome}}</h3>
+              <p>CPF: {{paciente.cpf}}</p>
+              <p>Idade: {{paciente.idade}} anos</p>
+              <div class="card-actions">
+                <button (click)="viewPatientHistory(paciente)">Ver Histórico</button>
+                <button (click)="compareResults()">Comparar Resultados</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="activeTab === 'formularios'" class="tab-content">
+        <h2>Formulários Disponíveis</h2>
+        <div class="forms-grid">
+          <div class="form-card">
+            <h3>Nível de Atividade Física</h3>
+            <button (click)="navigateToFormulario('atividade-fisica')">Preencher</button>
+          </div>
+          <div class="form-card">
+            <h3>Vulnerabilidade Clínico Funcional</h3>
+            <button (click)="navigateToFormulario('vulnerabilidade')">Preencher</button>
+          </div>
+          <div class="form-card">
+            <h3>Fatigabilidade de Pittsburgh</h3>
+            <button (click)="navigateToFormulario('pittsburgh')">Preencher</button>
+          </div>
+          <div class="form-card">
+            <h3>Mini Exame do Estado Mental</h3>
+            <button (click)="navigateToFormulario('meem')">Preencher</button>
+          </div>
+          <div class="form-card">
+            <h3>FACT-F</h3>
+            <button (click)="navigateToFormulario('fact-f')">Preencher</button>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="activeTab === 'resultados'" class="tab-content">
+        <h2>Resultados e Comparações</h2>
+        <div class="results-options" *ngIf="selectedPaciente">
+          <button (click)="viewPatientHistory(selectedPaciente)">
+            Histórico do Paciente
+          </button>
+          <button (click)="compareResults()">
+            Comparar com Média
+          </button>
+        </div>
+        <div *ngIf="!selectedPaciente" class="no-selection">
+          Selecione um paciente para ver os resultados
+        </div>
+      </div>
+    </div>
+  </div>

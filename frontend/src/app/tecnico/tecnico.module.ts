@@ -7,8 +7,9 @@ import { HistoricoPacienteComponent } from './paciente/historico-paciente/histor
 import { VerPerfilComponent } from './paciente/ver-perfil/ver-perfil.component';
 import { RouterModule } from '@angular/router';
 import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard.component';
-
-
+import { FormularioService } from '../_shared/services/formulario.service';
+import { TecnicoLayoutComponent } from './tecnico-layout/tecnico-layout.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -17,11 +18,16 @@ import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard
     EditarPerfilPacienteComponent,
     HistoricoPacienteComponent,
     VerPerfilComponent,
-    TecnicoDashboardComponent
-  ],
+    TecnicoDashboardComponent,
+    TecnicoLayoutComponent
+  ],  
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    FormsModule
+  ],
+  providers: [
+    FormularioService
   ]
 })
 export class TecnicoModule { }

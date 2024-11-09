@@ -1,0 +1,72 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #E0F7F6, #E6E0FF);
+    padding: 1rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: #575757;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.form-wrapper { 
+    width: 100%;
+    max-width: 40%;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #6c63ff;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: #e74c3c;
+}
+
+.login-button {
+    width: 100%;
+    padding: 0.875rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #6c63ff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #594fbf;
+}
+
+.text-decoration-none {
+    color: #6c63ff;
+}
+
+.text-decoration-none:hover {
+    text-decoration: underline;
+}

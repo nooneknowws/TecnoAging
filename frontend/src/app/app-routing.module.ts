@@ -17,6 +17,7 @@ import { EditarPerfilPacienteComponent } from './tecnico/paciente/editar-perfil/
 import { AuthGuard } from './auth.guard';
 import { PacienteDashboardComponent } from './paciente/paciente-dashboard/paciente-dashboard.component';
 import { TecnicoDashboardComponent } from './tecnico/tecnico-dashboard/tecnico-dashboard.component';
+import { TecnicoLayoutComponent } from './tecnico/tecnico-layout/tecnico-layout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,10 +36,11 @@ const routes: Routes = [
   },
   {
     path: 'tecnico',
-    component: TecnicoDashboardComponent,
+    component: TecnicoLayoutComponent,
     canActivate: [AuthGuard],
     data: { tipo: 'tecnico' },
     children: [
+      { path: '', component: TecnicoDashboardComponent },
       { path: 'comparar-resultados', component: CompararResultadosComponent },
       { path: 'editar-perfil', component: EditarPerfilComponent },
       { path: 'paciente/editar-perfil', component: EditarPerfilPacienteComponent },
