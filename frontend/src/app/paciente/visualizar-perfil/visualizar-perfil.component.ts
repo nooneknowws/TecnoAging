@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './visualizar-perfil.component.css'
 })
 export class VisualizarPerfilComponent {
-
+    //TODO: Importar as telas estáticas aqui
 }

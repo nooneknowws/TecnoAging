@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './paciente-layout.component.css'
 })
 export class PacienteLayoutComponent {
-
+  //TODO: Implementar igual ao de técnico
 }
