@@ -63,7 +63,7 @@ export class TecnicoDashboardComponent implements OnInit {
       // Show error notification
       return;
     }
-    this.router.navigate(['/formulario', tipo], {
+    this.router.navigate(['/formularios/' + tipo], {
       queryParams: { pacienteId: this.selectedPaciente.cpf }
     });
   }

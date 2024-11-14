@@ -48,8 +48,18 @@ const routes: Routes = [
       { path: 'paciente/ver-perfil', component: VerPerfilComponent },
     ]
   },
+  {
+    path: 'formularios',
+    children: [
+      { path: 'form-factf', component: FormFactfComponent },
+      { path: 'form-ivcf20', component: FormIvcf20Component },
+      { path: 'form-minimental', component: FormMinimentalComponent },
+      { path: 'form-pfs', component: FormPfsComponent },
+      { path: 'form-sedentarismo', component: FormSedentarismoComponent },
+    ]
+  },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({

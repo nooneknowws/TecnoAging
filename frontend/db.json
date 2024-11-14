@@ -27,7 +27,7 @@
         "bairro": "Centro",
         "municipio": "São Paulo",
         "UF": "SP",
-        "CEP": 01001000
+        "cep": "01001-000"
       },
       "dataNasc": "1988-05-15",
       "cpf": "12345678901",
@@ -46,11 +46,11 @@
       "sexo": "F",
       "idade": 45,
       "endereco": {
-        "rua": "Avenida Secundária",
+        "logradouro": "Avenida Secundária",
         "numero": 456,
         "bairro": "Jardim",
-        "cidade": "São Paulo",
-        "estado": "SP",
+        "municipio": "São Paulo",
+        "UF": "SP",
         "cep": "02002-000"
       },
       "dataNasc": "1978-08-20",
@@ -75,11 +75,11 @@
       "sexo": "M",
       "idade": 50,
       "endereco": {
-        "rua": "Rua Principal",
+        "logradouro": "Rua Principal",
         "numero": 123,
         "bairro": "Centro",
-        "cidade": "Rio de Janeiro",
-        "estado": "RJ",
+        "municipio": "Rio de Janeiro",
+        "UF": "RJ",
         "cep": "20001-000"
       },
       "dataNasc": "1972-02-15",
@@ -109,11 +109,11 @@
       "sexo": "F",
       "idade": 30,
       "endereco": {
-        "rua": "Avenida Terciária",
+        "logradouro": "Avenida Terciária",
         "numero": 789,
         "bairro": "Bairro Novo",
-        "cidade": "Belo Horizonte",
-        "estado": "MG",
+        "municipio": "Belo Horizonte",
+        "UF": "MG",
         "cep": "30001-000"
       },
       "dataNasc": "1992-08-20",
@@ -143,11 +143,11 @@
       "sexo": "M",
       "idade": 40,
       "endereco": {
-        "rua": "Rua Secundária",
+        "logradouro": "Rua Secundária",
         "numero": 901,
         "bairro": "Bairro Velho",
-        "cidade": "Curitiba",
-        "estado": "PR",
+        "municipio": "Curitiba",
+        "UF": "PR",
         "cep": "80001-000"
       },
       "dataNasc": "1982-05-10",
@@ -177,11 +177,11 @@
       "sexo": "F",
       "idade": 35,
       "endereco": {
-        "rua": "Avenida Quaternária",
+        "logradouro": "Avenida Quaternária",
         "numero": 111,
         "bairro": "Bairro Novo",
-        "cidade": "Porto Alegre",
-        "estado": "RS",
+        "municipio": "Porto Alegre",
+        "UF": "RS",
         "cep": "90001-000"
       },
       "dataNasc": "1987-03-20",
@@ -211,11 +211,11 @@
       "sexo": "M",
       "idade": 50,
       "endereco": {
-        "rua": "Rua Principal",
+        "logradouro": "Rua Principal",
         "numero": 123,
         "bairro": "Centro",
-        "cidade": "Recife",
-        "estado": "PE",
+        "municipio": "Recife",
+        "UF": "PE",
         "cep": "50001-000"
       },
       "dataNasc": "1972-02-15",
@@ -234,5 +234,6 @@
         }
       ]
     }
-  ]
+  ],
+  "formularios": []
 }

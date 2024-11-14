@@ -1,1 +1,17 @@
-<p>form-sedentarismo works!</p>
+<div class="container">
+    <h1>Nível de Atividade Física e Comportamento Sedentário</h1>
+    <div *ngFor="let etapa of etapas; let i = index">
+      <div *ngIf="i === etapaAtual">
+        <h2>{{ etapa.titulo }}</h2>
+        <p>{{ etapa.descricao }}</p>
+        <div *ngFor="let pergunta of etapa.perguntas">
+          <p>{{ pergunta.texto }}</p>
+          <input *ngIf="pergunta.tipo === 'tempo'" type="text" [(ngModel)]="pergunta.resposta">
+          <input *ngIf="pergunta.tipo === 'dias'" type="number" [(ngModel)]="pergunta.resposta">
+        </div>
+        <button (click)="etapaAnterior()">Voltar</button>
+        <button (click)="proximaEtapa()">Próximo</button>
+        <button *ngIf="etapaAtual === etapas.length - 1" (click)="salvarRespostas()">Salvar Respostas</button>
+      </div>
+    </div>
+  </div>
