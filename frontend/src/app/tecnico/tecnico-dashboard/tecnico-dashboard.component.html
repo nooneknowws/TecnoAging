@@ -49,25 +49,9 @@
       <div *ngIf="activeTab === 'formularios'" class="tab-content">
         <h2>Formulários Disponíveis</h2>
         <div class="forms-grid">
-          <div class="form-card">
-            <h3>Nível de Atividade Física</h3>
-            <button (click)="navigateToFormulario('form-sedentarismo')">Preencher</button>
-          </div>
-          <div class="form-card">
-            <h3>Vulnerabilidade Clínico Funcional</h3>
-            <button (click)="navigateToFormulario('form-ivcf20')">Preencher</button>
-          </div>
-          <div class="form-card">
-            <h3>Fatigabilidade de Pittsburgh</h3>
-            <button (click)="navigateToFormulario('form-pfs')">Preencher</button>
-          </div>
-          <div class="form-card">
-            <h3>Mini Exame do Estado Mental</h3>
-            <button (click)="navigateToFormulario('form-minimental')">Preencher</button>
-          </div>
-          <div class="form-card">
-            <h3>FACT-F</h3>
-            <button (click)="navigateToFormulario('form-factf')">Preencher</button>
+          <div class="form-card" *ngFor="let form of formulariosDisponiveis">
+            <h3>{{form.titulo}}</h3>
+            <button (click)="navigateToFormulario(form.tipo)">Preencher</button>
           </div>
         </div>
       </div>

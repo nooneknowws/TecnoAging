@@ -1,0 +1,113 @@
+<div class="container mt-4" *ngIf="formulario">
+    <div class="progress mb-4">
+      <div class="progress-bar" 
+           [style.width.%]="(etapaAtual / (formulario.etapas.length - 1)) * 100">
+        {{etapaAtual + 1}} / {{formulario.etapas.length}}
+      </div>
+    </div>
+  
+    <div class="card">
+      <div class="card-header">
+        <h4>{{formulario.titulo}}</h4>
+      </div>
+  
+      <div class="card-body">
+        <h5 class="card-title">{{formulario.etapas[etapaAtual].titulo}}</h5>
+        <p class="card-text">{{formulario.etapas[etapaAtual].descricao}}</p>
+  
+        <form [formGroup]="formGroup">
+          <div class="mb-4" *ngFor="let pergunta of formulario.etapas[etapaAtual].perguntas; let perguntaIndex = index">
+            <ng-container [ngSwitch]="pergunta.tipo">
+              
+              <!-- Input Numérico -->
+              <div *ngSwitchCase="'numero'" class="form-group">
+                <label [for]="getControlName(etapaAtual, perguntaIndex)" class="form-label">
+                  {{pergunta.texto}}
+                </label>
+                <input type="number" 
+                       [id]="getControlName(etapaAtual, perguntaIndex)"
+                       [formControlName]="getControlName(etapaAtual, perguntaIndex)"
+                       class="form-control"
+                       [class.is-invalid]="formGroup.get(getControlName(etapaAtual, perguntaIndex))?.invalid && 
+                                         formGroup.get(getControlName(etapaAtual, perguntaIndex))?.touched">
+                <div class="invalid-feedback">
+                  {{getFieldError(etapaAtual, perguntaIndex)}}
+                </div>
+              </div>
+  
+              <!-- Input Tempo -->
+              <div *ngSwitchCase="'tempo'" class="form-group">
+                <label [for]="getControlName(etapaAtual, perguntaIndex)" class="form-label">
+                  {{pergunta.texto}}
+                </label>
+                <input type="time" 
+                       [id]="getControlName(etapaAtual, perguntaIndex)"
+                       [formControlName]="getControlName(etapaAtual, perguntaIndex)"
+                       class="form-control"
+                       [class.is-invalid]="formGroup.get(getControlName(etapaAtual, perguntaIndex))?.invalid && 
+                                         formGroup.get(getControlName(etapaAtual, perguntaIndex))?.touched">
+                <div class="invalid-feedback">
+                  {{getFieldError(etapaAtual, perguntaIndex)}}
+                </div>
+              </div>
+  
+              <!-- Radio Buttons -->
+              <div *ngSwitchCase="'radio'" class="form-group">
+                <label class="form-label">{{pergunta.texto}}</label>
+                <div class="form-check" *ngFor="let opcao of pergunta.opcoes">
+                  <input class="form-check-input" 
+                         type="radio" 
+                         [id]="getControlName(etapaAtual, perguntaIndex) + opcao"
+                         [formControlName]="getControlName(etapaAtual, perguntaIndex)"
+                         [value]="opcao">
+                  <label class="form-check-label" [for]="getControlName(etapaAtual, perguntaIndex) + opcao">
+                    {{opcao}}
+                  </label>
+                </div>
+                <div class="invalid-feedback" *ngIf="formGroup.get(getControlName(etapaAtual, perguntaIndex))?.invalid && 
+                                                    formGroup.get(getControlName(etapaAtual, perguntaIndex))?.touched">
+                  {{getFieldError(etapaAtual, perguntaIndex)}}
+                </div>
+              </div>
+  
+              <!-- Checkbox -->
+              <div *ngSwitchCase="'checkbox'" class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" 
+                         type="checkbox" 
+                         [id]="getControlName(etapaAtual, perguntaIndex)"
+                         [formControlName]="getControlName(etapaAtual, perguntaIndex)">
+                  <label class="form-check-label" [for]="getControlName(etapaAtual, perguntaIndex)">
+                    {{pergunta.texto}}
+                  </label>
+                </div>
+              </div>
+  
+            </ng-container>
+          </div>
+        </form>
+      </div>
+  
+      <div class="card-footer d-flex justify-content-between">
+        <button class="btn btn-secondary" 
+                (click)="etapaAnterior()" 
+                *ngIf="etapaAtual > 0">
+          Anterior
+        </button>
+        
+        <button class="btn btn-primary" 
+                *ngIf="etapaAtual < formulario.etapas.length - 1"
+                [disabled]="!verificarValidadeEtapaAtual()"
+                (click)="proximaEtapa()">
+          Próxima
+        </button>
+        
+        <button class="btn btn-success" 
+                *ngIf="etapaAtual === formulario.etapas.length - 1"
+                [disabled]="!formGroup.valid"
+                (click)="salvarAvaliacao()">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  </div>

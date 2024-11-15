@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormIvcf20Component } from './form-ivcf20.component';
+import { FormularioComponent } from './formulario.component';
 
-describe('FormIvcf20Component', () => {
-  let component: FormIvcf20Component;
-  let fixture: ComponentFixture<FormIvcf20Component>;
+describe('FormularioComponent', () => {
+  let component: FormularioComponent;
+  let fixture: ComponentFixture<FormularioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FormIvcf20Component]
+      declarations: [FormularioComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(FormIvcf20Component);
+    fixture = TestBed.createComponent(FormularioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

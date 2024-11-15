@@ -1,9 +1,12 @@
-import { Avaliacao } from "../avaliacao/avaliacao";
+import { TipoFormulario } from "../tipos.formulario.enum";
+import { Etapa } from "./etapa";
 
 export class Formulario {
-    constructor(
-        public id: number,
-        public pontuacaoTotal: number,
-        public avaliacao: Avaliacao
-    ) {}
+  constructor(
+    public id: number,
+    public tipo: TipoFormulario,
+    public titulo: string,
+    public descricao: string,
+    public etapas: Etapa[]
+  ) {}
 }

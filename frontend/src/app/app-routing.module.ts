@@ -8,16 +8,12 @@ import { CompararResultadosComponent } from './tecnico/comparar-resultados/compa
 import { EditarPerfilComponent } from './tecnico/editar-perfil/editar-perfil.component';
 import { HistoricoPacienteComponent } from './tecnico/paciente/historico-paciente/historico-paciente.component';
 import { VerPerfilComponent } from './tecnico/paciente/ver-perfil/ver-perfil.component';
-import { FormFactfComponent } from './formularios/form-factf/form-factf.component';
-import { FormIvcf20Component } from './formularios/form-ivcf20/form-ivcf20.component';
-import { FormMinimentalComponent } from './formularios/form-minimental/form-minimental.component';
-import { FormPfsComponent } from './formularios/form-pfs/form-pfs.component';
-import { FormSedentarismoComponent } from './formularios/form-sedentarismo/form-sedentarismo.component';
 import { EditarPerfilPacienteComponent } from './tecnico/paciente/editar-perfil/editar-perfil.component';
 import { AuthGuard } from './auth.guard';
 import { PacienteDashboardComponent } from './paciente/paciente-dashboard/paciente-dashboard.component';
 import { TecnicoDashboardComponent } from './tecnico/tecnico-dashboard/tecnico-dashboard.component';
 import { TecnicoLayoutComponent } from './tecnico/tecnico-layout/tecnico-layout.component';
+import { FormularioComponent } from './formulario/formulario.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -50,12 +46,12 @@ const routes: Routes = [
   },
   {
     path: 'formularios',
+    canActivate: [AuthGuard],
     children: [
-      { path: 'form-factf', component: FormFactfComponent },
-      { path: 'form-ivcf20', component: FormIvcf20Component },
-      { path: 'form-minimental', component: FormMinimentalComponent },
-      { path: 'form-pfs', component: FormPfsComponent },
-      { path: 'form-sedentarismo', component: FormSedentarismoComponent },
+      {
+        path: ':tipo',
+        component: FormularioComponent
+      }
     ]
   },
 

@@ -7,29 +7,21 @@ import { AppComponent } from './app.component';
 import { TecnicoModule } from './tecnico/tecnico.module';
 import { PacienteModule } from './paciente/paciente.module';
 import { LoginComponent } from './_auth/login/login.component';
-import { FormFactfComponent } from './formularios/form-factf/form-factf.component';
-import { FormIvcf20Component } from './formularios/form-ivcf20/form-ivcf20.component';
-import { FormMinimentalComponent } from './formularios/form-minimental/form-minimental.component';
-import { FormPfsComponent } from './formularios/form-pfs/form-pfs.component';
-import { FormSedentarismoComponent } from './formularios/form-sedentarismo/form-sedentarismo.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './_shared/services/auth.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
+import { FormularioComponent } from './formulario/formulario.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     CadastroComponent,
-    FormFactfComponent,
-    FormIvcf20Component,
-    FormMinimentalComponent,
-    FormPfsComponent,
-    FormSedentarismoComponent,
-    NavbarComponent
+    NavbarComponent,
+    FormularioComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +33,8 @@ import { CadastroComponent } from './_auth/cadastro/cadastro.component';
     NgxMaskDirective, 
     NgxMaskPipe,
     CommonModule,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule
   ],
   providers: [
     AuthService,

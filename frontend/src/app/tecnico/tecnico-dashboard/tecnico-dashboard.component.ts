@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Formulario } from '../../_shared/models/formulario/formulario';
+import { FORMULARIOS_CONFIG } from '../../_shared/models/formulario/formularios.config';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
+import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';
 import { AuthService } from '../../_shared/services/auth.service';
 import { FormularioService } from '../../_shared/services/formulario.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
@@ -15,12 +17,20 @@ import { PacienteService } from '../../_shared/services/paciente.service';
 export class TecnicoDashboardComponent implements OnInit {
   currentTecnico: Tecnico | null = null;
   pacientes: Paciente[] = [];
-  formularios: Formulario[] = [];
+  tiposFormulario = Object.values(TipoFormulario);
+  formularios = Object.values(FORMULARIOS_CONFIG);
   selectedPaciente: Paciente | null = null;
   activeTab: 'pacientes' | 'formularios' | 'resultados' = 'pacientes';
-  
+
+  readonly formulariosDisponiveis = [
+    { tipo: TipoFormulario.SEDENTARISMO, titulo: 'Nível de Atividade Física' },
+    { tipo: TipoFormulario.IVCF20, titulo: 'Vulnerabilidade Clínico Funcional' },
+    { tipo: TipoFormulario.PFS, titulo: 'Fatigabilidade de Pittsburgh' },
+    { tipo: TipoFormulario.MINIMENTAL, titulo: 'Mini Exame do Estado Mental' },
+    { tipo: TipoFormulario.FACTF, titulo: 'FACT-F' }
+  ];
+ 
   constructor(
-    private formularioService: FormularioService,
     private pacienteService: PacienteService,
     private authService: AuthService,
     private router: Router
@@ -33,20 +43,13 @@ export class TecnicoDashboardComponent implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
-    
+   
     this.loadPacientes();
-    this.loadFormularios();
   }
 
   loadPacientes(): void {
     this.pacienteService.getPacientes().subscribe(pacientes => {
-      this.pacientes = pacientes
-    });
-  }
-
-  loadFormularios(): void {
-    this.formularioService.getFormularios().subscribe(formularios => {
-      this.formularios = formularios
+      this.pacientes = pacientes;
     });
   }
 
@@ -58,13 +61,13 @@ export class TecnicoDashboardComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  navigateToFormulario(tipo: string): void {
+  navigateToFormulario(tipo: TipoFormulario) {
     if (!this.selectedPaciente) {
-      // Show error notification
+      alert('Selecione um paciente primeiro');
       return;
     }
-    this.router.navigate(['/formularios/' + tipo], {
-      queryParams: { pacienteId: this.selectedPaciente.cpf }
+    this.router.navigate(['/formularios', tipo], {
+      queryParams: { pacienteId: this.selectedPaciente.id }
     });
   }
 
