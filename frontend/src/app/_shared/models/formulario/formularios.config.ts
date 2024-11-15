@@ -6,22 +6,22 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
     [TipoFormulario.SEDENTARISMO]: {
         id: 1,
         tipo: TipoFormulario.SEDENTARISMO,
-        titulo: 'Avaliação de Sedentarismo',
-        descricao: 'Avaliação do nível de sedentarismo do paciente',
+        titulo: 'Nível de Atividade Física e Comportamento Sedentário',
+        descricao: 'Nível de Atividade Física e Comportamento Sedentário',
         etapas: [
             {
                 titulo: 'Atividade Moderada',
                 descricao: 'Você consegue realizá-la conversando com dificuldade enquanto se movimenta e não vai conseguir cantar.',
                 perguntas: [
                     {
-                        texto: 'Quanto tempo por dia você realiza atividades moderadas?',
+                        texto: 'Quanto tempo por dia você realiza atividades moderadas? (HH:MM)',
                         tipo: 'tempo',
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Quantos dias por semana?',
-                        tipo: 'dias',
+                        tipo: 'numero',
                         resposta: '',
                         validacao: { required: true, min: 0, max: 7 }
                     }
@@ -32,14 +32,14 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 descricao: 'Você não vai conseguir nem conversar. A sua respiração vai ser muito mais rápida que o normal e os batimentos do seu coração vão aumentar muito.',
                 perguntas: [
                     {
-                        texto: 'Quanto tempo por dia você realiza atividades vigorosas?',
+                        texto: 'Quanto tempo por dia você realiza atividades vigorosas? (HH:MM)',
                         tipo: 'tempo',
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Quantos dias por semana?',
-                        tipo: 'dias',
+                        tipo: 'numero',
                         resposta: '',
                         validacao: { required: true, min: 0, max: 7 }
                     }
@@ -50,14 +50,14 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 descricao: 'Quanto tempo do seu dia, enquanto você está acordado, você gasta sentado, reclinado ou deitado, assistindo televisão, no celular, em frente ao computador, realizando trabalhos manuais, dirigindo ou lendo?',
                 perguntas: [
                     {
-                        texto: 'Quanto tempo por dia?',
+                        texto: 'Quanto tempo por dia? (HH:MM)',
                         tipo: 'tempo',
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Quantos dias por semana?',
-                        tipo: 'dias',
+                        tipo: 'numero',
                         resposta: '',
                         validacao: { required: true, min: 0, max: 7 }
                     }
@@ -176,12 +176,27 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 descricao: 'Avaliação geral da saúde comparada a outras pessoas da mesma idade.',
                 perguntas: [
                     {
-                        texto: 'Comparado com outras pessoas da sua idade, como você diria que está a sua saúde?',
+                        texto: 'Em geral, comparado com outras pessoas da sua idade, como você diria que está a sua saúde?',
                         tipo: 'radio',
-                        opcoes: ['Excelente', 'Boa', 'Ruim'],
+                        opcoes: ['Excelente, boa ou muito boa', 'Regular ou ruim'],
                         resposta: '',
                         validacao: { required: true }
-                    }
+                    },
+                    
+                ]
+            },
+            {
+                titulo: 'Percepção da saúde comparada',
+                descricao: 'Avaliação geral da saúde comparada historicamente.',
+                perguntas: [
+                    {
+                        texto: 'Comparada há um ano atrás, como você se classificaria sua saúde em geral, agora?',
+                        tipo: 'radio',
+                        opcoes: ['Melhor', 'Pior', 'Igual'],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    
                 ]
             },
             {
@@ -191,24 +206,28 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                     {
                         texto: 'Você deixou de fazer compras por causa da sua saúde ou condição física?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não ou não faz compras por outros motivos que não a saúde"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Você deixou de controlar seu dinheiro ou os gastos da casa por causa da sua saúde ou condição física?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não ou não controla o dinheiro por outros motivos que não a saúde"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
-                        texto: 'Você deixou de realizar pequenos trabalhos domésticos por causa da sua saúde ou condição física?',
+                        texto: 'Você deixou de realizar pequenos trabalhos domésticos (limpeza leve, arrumar a casa, lavar louças) por causa da sua saúde ou condição física?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não ou não faz trabalhos domésticos por outros motivos que não a saúde"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Você deixou de tomar banho sozinho por causa da sua saúde ou condição física?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     }
@@ -221,18 +240,21 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                     {
                         texto: 'Algum familiar ou amigo falou que você está ficando esquecido?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Este esquecimento está piorando nos últimos meses?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Este esquecimento está impedindo a realização de alguma atividade do cotidiano?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     }
@@ -245,12 +267,14 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                     {
                         texto: 'No último mês, você ficou com desânimo, tristeza ou desesperança?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     }
@@ -263,42 +287,78 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                     {
                         texto: 'Você é incapaz de elevar os braços acima do nível do ombro?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Você é incapaz de segurar pequenos objetos?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Você tem alguma das quatro condições abaixo relacionadas?',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "Perda de peso não intencional de 4,5 kg ou 5% do peso corporal no último ano ou 6 kg nos últimos 6 meses ou 3 kg no último mês",
+                            "Índice de Massa Corporal (IMC) menor que 22 kg/m²",
+                            "Circunferência da panturrilha < 31 cm",
+                            "Tempo gasto no teste de velocidade de marcha (4m) > 5 segundos"
+                        ],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
                         texto: 'Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
-                    }
+                    },
+                    {
+                        texto: 'Você caiu no último ano? Quantas vezes?',
+                        tipo: 'radio',
+                        opcoes: ["Não", "1 vez", "2 vezes", "3 vezes ou mais"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Você perde urina ou fezes, sem querer, em algum momento?',
+                        tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
                 ]
             },
             {
-                titulo: 'Comorbidades e Condições Múltiplas',
-                descricao: 'Avaliação de condições relacionadas a múltiplas doenças ou hospitalizações.',
+                titulo: 'Comunicação',
+                descricao: 'Avaliação de problemas de comunicação relacionados à saúde.',
                 perguntas: [
                     {
-                        texto: 'Você tem problemas de visão que impedem a realização de atividades do cotidiano?',
+                        texto: 'Você tem problemas de visão capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de óculos ou lentes de contato.',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
-                        texto: 'Você tem problemas de audição que impedem a realização de atividades do cotidiano?',
+                        texto: 'Você tem problemas de audição que impedem a realização de atividades do cotidiano? É permitido o uso de aparelhos de audição.',
                         tipo: 'radio',
+                        opcoes: ["Sim", "Não"],
                         resposta: '',
                         validacao: { required: true }
                     },
                     {
-                        texto: 'Você possui cinco ou mais doenças crônicas, uso regular de cinco ou mais medicamentos, ou internação recente nos últimos 6 meses?',
-                        tipo: 'radio',
+                        texto: 'Você tem alguma das três condições abaixo relacionadas?',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "Cinco ou mais doenças crônicas",
+                            "Uso regular de cinco ou mais medicamentos diferentes",
+                            "Internação recente, nos últimos 6 meses"
+                        ],
                         resposta: '',
                         validacao: { required: true }
                     }
@@ -307,6 +367,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
         ]
     },
     
+    //TODO: Terminar e adequar igual aos documentos
     [TipoFormulario.MINIMENTAL]: {
         id: 4,
         tipo: TipoFormulario.MINIMENTAL,
@@ -401,6 +462,8 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
             }
         ]
     },    
+
+    //TODO: Terminar e adequar igual aos documentos
     [TipoFormulario.FACTF]: {
         id: 5,
         tipo: TipoFormulario.FACTF,

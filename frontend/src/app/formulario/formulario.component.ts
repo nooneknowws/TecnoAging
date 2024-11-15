@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Formulario } from '../_shared/models/formulario/formulario';
 import { Pergunta } from '../_shared/models/formulario/pergunta';
 import { FormularioService } from '../_shared/services/formulario.service';
+import { AvaliacaoService } from '../_shared/services/avaliacao.service';
 import { TipoFormulario } from '../_shared/models/tipos.formulario.enum';
 import { Avaliacao } from '../_shared/models/avaliacao/avaliacao';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-formulario',
@@ -20,10 +21,17 @@ export class FormularioComponent implements OnInit {
   respostas: Record<string, any> = {};
   pacienteId?: number;
  
+  showSuccessAlert = false;
+  showErrorAlert = false;
+  errorMessage = '';
+  avaliacaoSalva = false;
+
   constructor(
     private fb: FormBuilder,
     private formularioService: FormularioService,
-    private route: ActivatedRoute
+    private avaliacaoService: AvaliacaoService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -41,6 +49,10 @@ export class FormularioComponent implements OnInit {
     try {
       this.formulario = await this.formularioService.getFormularioConfig(this.tipoFormulario).toPromise();
       this.inicializarFormulario();
+      
+      this.formGroup.valueChanges.subscribe(values => {
+        this.atualizarRespostas(values);
+      });
     } catch (error) {
       console.error('Erro ao carregar formulário:', error);
     }
@@ -54,11 +66,96 @@ export class FormularioComponent implements OnInit {
     this.formulario.etapas.forEach((etapa, etapaIndex) => {
       etapa.perguntas.forEach((pergunta, perguntaIndex) => {
         const controlName = this.getControlName(etapaIndex, perguntaIndex);
-        groupConfig[controlName] = ['', this.getValidators(pergunta)];
+        
+        if (pergunta.tipo === 'checkbox' && pergunta.opcoes) {
+          const checkboxControls = pergunta.opcoes.map(() => 
+            this.fb.control(false)
+          );
+          
+          groupConfig[controlName] = this.fb.array(
+            checkboxControls,
+            pergunta.validacao?.required ? [this.atLeastOneCheckboxSelected()] : []
+          );
+        } else {
+          groupConfig[controlName] = ['', this.getValidators(pergunta)];
+        }
       });
     });
     
     this.formGroup = this.fb.group(groupConfig);
+  }
+
+  private atLeastOneCheckboxSelected(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control instanceof FormArray) {
+        const checked = (control as FormArray).controls
+          .map(item => item.value)
+          .some(value => value === true);
+        return checked ? null : { required: true };
+      }
+      return null;
+    };
+  }
+
+  atualizarRespostas(values: any) {
+    if (!this.formulario) return;
+    
+    this.formulario.etapas.forEach((etapa, etapaIndex) => {
+      etapa.perguntas.forEach((pergunta, perguntaIndex) => {
+        const controlName = this.getControlName(etapaIndex, perguntaIndex);
+        
+        if (pergunta.tipo === 'checkbox' && pergunta.opcoes) {
+          const checkboxArray = this.getCheckboxFormArray(etapaIndex, perguntaIndex);
+          const selectedOptions = pergunta.opcoes.filter((_, index) => 
+            checkboxArray.at(index).value
+          );
+          pergunta.resposta = selectedOptions;
+        } else {
+          pergunta.resposta = values[controlName] || '';
+        }
+      });
+    });
+  }
+
+  async salvarAvaliacao() {
+    if (!this.formGroup.valid || !this.formulario) return;
+
+    try {
+      this.atualizarRespostas(this.formGroup.value);
+     
+      const avaliacao = new Avaliacao(
+        undefined,
+        undefined, // preenchidoPor será definido no service
+        undefined, // referenteA será definido no service
+        this.formulario,
+        this.calcularPontuacao(),
+        new Date(),
+        new Date()
+      );
+
+      await this.avaliacaoService.salvarAvaliacao(avaliacao, this.pacienteId).toPromise();
+      
+      this.showSuccessAlert = true;
+      this.showErrorAlert = false;
+      this.avaliacaoSalva = true;
+      window.scrollTo(0, 0);
+
+    } catch (error) {
+      console.error('Erro ao salvar avaliação:', error);
+      this.showErrorAlert = true;
+      this.showSuccessAlert = false;
+      this.errorMessage = 'Ocorreu um erro ao salvar a avaliação. Por favor, tente novamente.';
+      window.scrollTo(0, 0);
+    }
+  }
+
+  getCheckboxFormArray(etapaIndex: number, perguntaIndex: number): FormArray {
+    const controlName = this.getControlName(etapaIndex, perguntaIndex);
+    return this.formGroup.get(controlName) as FormArray;
+  }
+
+  isAnyCheckboxSelected(formArray: FormArray): boolean {
+    return formArray.value.some((value: boolean) => value);
   }
 
   private getValidators(pergunta: Pergunta) {
@@ -69,7 +166,7 @@ export class FormularioComponent implements OnInit {
       if (pergunta.validacao?.max !== undefined) validators.push(Validators.max(pergunta.validacao.max));
     }
     if (pergunta.tipo === 'tempo') {
-      validators.push(Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/));
+      validators.push(Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/));
     }
     return validators;
   }
@@ -111,28 +208,21 @@ export class FormularioComponent implements OnInit {
     });
   }
 
-  async salvarAvaliacao() {
-    if (!this.formGroup.valid || !this.formulario) return;
-
-    try {
-      const avaliacao = new Avaliacao(
-        undefined, // id será gerado pelo backend
-        undefined, // preenchidoPor será definido pelo service
-        undefined, // referenteA será definido pelo service
-        this.formulario,
-        this.calcularPontuacao(),
-        new Date(),
-        new Date()
-      );
-
-      await this.formularioService.salvarAvaliacao(avaliacao).toPromise();
-    } catch (error) {
-      console.error('Erro ao salvar avaliação:', error);
-    }
+  private calcularPontuacao(): number {
+    // TODO: cálculo da pontuação específica para cada tipo de formulário
+    return 0;
   }
 
-  private calcularPontuacao(): number {
-    // Implemente a lógica de cálculo da pontuação específica para cada tipo de formulário
-    return 0;
+  voltarParaInicio() {
+    this.router.navigate(['/']);
+  }
+
+  verPerfilPaciente() {
+    this.router.navigate(['/pacientes', this.pacienteId]);
+  }
+
+  fecharAlerta() {
+    this.showSuccessAlert = false;
+    this.showErrorAlert = false;
   }
 }

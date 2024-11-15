@@ -1,7 +1,7 @@
 export interface Pergunta {
     texto: string;
     tipo: 'numero' | 'radio' | 'tempo' | 'dias' | 'texto' | 'checkbox';
-    resposta: string | number | boolean;
+    resposta: string | string[] | number | boolean ;
     opcoes?: string[];
     validacao?: {
       min?: number;
