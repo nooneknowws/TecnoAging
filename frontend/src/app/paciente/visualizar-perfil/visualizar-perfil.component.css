@@ -1,0 +1,15 @@
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+  border: none;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+button {
+  font-size: 1.2rem;
+  font-weight: bold;
+}

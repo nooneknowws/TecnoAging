@@ -1,1 +1,44 @@
-<p>visualizar-perfil works!</p>
+<div class="container my-5">
+  <h1 class="text-center">Perfil do Paciente</h1>
+  <div class="card mt-4">
+    <div class="card-header bg-primary text-white">Dados do Paciente</div>
+    <div class="card-body">
+      <button
+        class="btn btn-primary w-100"
+        (click)="toggleDadosPessoais()"
+      >
+        Dados Pessoais
+      </button>
+
+      <div *ngIf="showDadosPessoais" class="mt-3">
+        <p><strong>Nome:</strong> {{ paciente?.nome }}</p>
+        <p><strong>CPF:</strong> {{ paciente?.cpf }}</p>
+        <p><strong>Telefone:</strong> {{ paciente?.telefone }}</p>
+        <p><strong>Endereço:</strong>
+          {{ paciente?.endereco?.logradouro }},
+          {{ paciente?.endereco?.numero }} -
+          {{ paciente?.endereco?.bairro }},
+          {{ paciente?.endereco?.municipio }} -
+          {{ paciente?.endereco?.UF }},
+          CEP: {{ paciente?.endereco?.CEP }}
+        </p>
+        <p><strong>Data de Nascimento:</strong> {{ paciente?.dataNasc }}</p>
+        <p><strong>Idade:</strong> {{ paciente?.idade }}</p>
+
+        <div class="mt-4">
+          <h5>Contatos de Parentes</h5>
+          <ul class="list-group">
+            <li
+              class="list-group-item"
+              *ngFor="let contato of paciente?.contatos || []"
+            >
+              <p><strong>Nome:</strong> {{ contato.nome }}</p>
+              <p><strong>Telefone:</strong> {{ contato.telefone }}</p>
+              <p><strong>Parentesco:</strong> {{ contato.parentesco }}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+.container {
+  max-width: 800px;
+  margin: auto;
+}
+
+.table {
+  background-color: #f9f9f9;
+}
+
+.thead-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  color: white;
+}

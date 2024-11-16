@@ -64,7 +64,29 @@
           "telefone": "11977777777",
           "parentesco": "FILHO"
         }
-      ]
+      ],
+      "historicoTestes": [
+      {
+        "id": "1",
+        "titulo": "Nível de Atividade Física",
+        "data": "2024-11-15",
+        "pontuacaoGeral": 80,
+        "pontuacaoPorPergunta": [
+          { "pergunta": "Pergunta 1", "pontuacao": 10 },
+          { "pergunta": "Pergunta 2", "pontuacao": 15 }
+        ]
+      },
+      {
+        "id": "2",
+        "titulo": "Índice de Vulnerabilidade",
+        "data": "2024-11-16",
+        "pontuacaoGeral": 75,
+        "pontuacaoPorPergunta": [
+          { "pergunta": "Pergunta 1", "pontuacao": 20 },
+          { "pergunta": "Pergunta 2", "pontuacao": 25 }
+        ]
+      }
+    ]
     },
     {
       "id": "2",

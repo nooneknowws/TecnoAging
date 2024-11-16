@@ -1,1 +1,33 @@
-<p>historico-testes works!</p>
+<div class="container my-5">
+  <h1 class="text-center">Histórico de Testes</h1>
+
+  <!-- Mensagem de carregamento -->
+  <div *ngIf="!testes || testes.length === 0" class="text-center">
+    <p *ngIf="!isLoading">Nenhum teste encontrado.</p>
+    <p *ngIf="isLoading">Carregando histórico de testes...</p>
+  </div>
+
+  <!-- Tabela de testes -->
+  <table *ngIf="testes && testes.length > 0" class="table table-striped mt-4">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Título</th>
+        <th scope="col">Data</th>
+        <th scope="col">Pontuação Geral</th>
+        <th scope="col">Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let teste of testes">
+        <td>{{ teste.titulo }}</td>
+        <td>{{ teste.data | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ teste.pontuacaoGeral }}%</td>
+        <td>
+          <button class="btn btn-sm btn-info" (click)="visualizarTeste(teste.id)">
+            Visualizar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

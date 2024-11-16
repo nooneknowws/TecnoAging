@@ -49,4 +49,8 @@ export class PacienteService {
     paciente.imc = this.calculateIMC(paciente.peso!, paciente.altura!);
     return this.updatePaciente(paciente);
   }
+
+  getHistoricoTestes(pacienteId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/pacientes/${pacienteId}/historico-testes`);
+  }
 }

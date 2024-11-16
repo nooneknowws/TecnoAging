@@ -14,6 +14,7 @@ import { PacienteDashboardComponent } from './paciente/paciente-dashboard/pacien
 import { TecnicoDashboardComponent } from './tecnico/tecnico-dashboard/tecnico-dashboard.component';
 import { TecnicoLayoutComponent } from './tecnico/tecnico-layout/tecnico-layout.component';
 import { FormularioComponent } from './formulario/formulario.component';
+import { PacienteLayoutComponent } from './paciente/paciente-layout/paciente-layout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -28,6 +29,8 @@ const routes: Routes = [
     children: [
       { path: 'historico-testes', component: HistoricoTestesComponent },
       { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
+      { path: 'paciente-layout', component: PacienteLayoutComponent },
+      { path: 'paciente-dashboard', component: PacienteDashboardComponent },
     ]
   },
   {
