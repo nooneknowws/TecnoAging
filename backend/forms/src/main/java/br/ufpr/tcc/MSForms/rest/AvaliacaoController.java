@@ -15,7 +15,7 @@ import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
 
 @RestController
 @RequestMapping("/avaliacoes")
-public class FormsController {
+public class AvaliacaoController {
 
     @Autowired
     private PacienteRepository pacienteRepository;

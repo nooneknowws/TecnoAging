@@ -2,12 +2,13 @@ package br.ufpr.tcc.MSForms.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 public class Etapa {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -15,60 +16,62 @@ public class Etapa {
     private String descricao;
 
     @ManyToOne
+    @JoinColumn(name = "formulario_id")
+    @JsonIgnore
     private Formulario formulario;
 
-    @OneToMany(mappedBy = "etapa", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "etapa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pergunta> perguntas;
-    
-    
-    public Etapa(Long id, String titulo, String descricao, Formulario formulario, List<Pergunta> perguntas) {
- 		super();
- 		this.id = id;
- 		this.titulo = titulo;
- 		this.descricao = descricao;
- 		this.formulario = formulario;
- 		this.perguntas = perguntas;
- 	}
 
-	public Long getId() {
-		return id;
-	}
+    public Etapa() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Etapa(Long id, String titulo, String descricao, Formulario formulario) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.formulario = formulario;
+    }
 
-	public String getTitulo() {
-		return titulo;
-	}
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
+    public String getTitulo() {
+        return titulo;
+    }
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-	public Formulario getFormulario() {
-		return formulario;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public void setFormulario(Formulario formulario) {
-		this.formulario = formulario;
-	}
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-	public List<Pergunta> getPerguntas() {
-		return perguntas;
-	}
+    public Formulario getFormulario() {
+        return formulario;
+    }
 
-	public void setPerguntas(List<Pergunta> perguntas) {
-		this.perguntas = perguntas;
-	}
+    public void setFormulario(Formulario formulario) {
+        this.formulario = formulario;
+    }
 
-    // Getters and Setters
+    public List<Pergunta> getPerguntas() {
+        return perguntas;
+    }
+
+    public void setPerguntas(List<Pergunta> perguntas) {
+        this.perguntas = perguntas;
+    }
 }
+

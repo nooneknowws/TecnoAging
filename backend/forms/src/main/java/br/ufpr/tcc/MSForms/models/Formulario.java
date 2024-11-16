@@ -7,9 +7,7 @@ import jakarta.persistence.*;
 @Entity
 public class Formulario {
 
-
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -17,58 +15,60 @@ public class Formulario {
     private String titulo;
     private String descricao;
 
-    @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Etapa> etapas;
-    
-    public Formulario(Long id, String tipo, String titulo, String descricao, List<Etapa> etapas) {
-		super();
-		this.id = id;
-		this.tipo = tipo;
-		this.titulo = titulo;
-		this.descricao = descricao;
-		this.etapas = etapas;
-	}
 
-	public Long getId() {
-		return id;
-	}
+    public Formulario() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    // Construtor com argumentos, getters e setters
+    public Formulario(Long id, String tipo, String titulo, String descricao) {
+        this.id = id;
+        this.tipo = tipo;
+        this.titulo = titulo;
+        this.descricao = descricao;
+    }
 
-	public String getTipo() {
-		return tipo;
-	}
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getTitulo() {
-		return titulo;
-	}
+    public String getTipo() {
+        return tipo;
+    }
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
+    public String getTitulo() {
+        return titulo;
+    }
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-	public List<Etapa> getEtapas() {
-		return etapas;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public void setEtapas(List<Etapa> etapas) {
-		this.etapas = etapas;
-	}
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-    // Getters and Setters
+    public List<Etapa> getEtapas() {
+        return etapas;
+    }
+
+    public void setEtapas(List<Etapa> etapas) {
+        this.etapas = etapas;
+    }
 }
+
 

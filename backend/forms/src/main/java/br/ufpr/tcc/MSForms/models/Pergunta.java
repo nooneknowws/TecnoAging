@@ -2,14 +2,14 @@ package br.ufpr.tcc.MSForms.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
 public class Pergunta {
 
-
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -20,81 +20,80 @@ public class Pergunta {
     private List<String> opcoes;
 
     private String resposta;
-
-    @Embedded
-    private Validacao validacao;
+    private boolean validacaoRequired;
 
     @ManyToOne
+    @JoinColumn(name = "etapa_id")
+    @JsonIgnore
     private Etapa etapa;
-    
-    public Pergunta(Long id, String texto, String tipo, List<String> opcoes, String resposta, Validacao validacao,
-			Etapa etapa) {
-		super();
-		this.id = id;
-		this.texto = texto;
-		this.tipo = tipo;
-		this.opcoes = opcoes;
-		this.resposta = resposta;
-		this.validacao = validacao;
-		this.etapa = etapa;
-	}
 
-	public Long getId() {
-		return id;
-	}
+    public Pergunta() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Pergunta(Long id, String texto, String tipo, List<String> opcoes, String resposta, boolean validacaoRequired, Etapa etapa) {
+        this.id = id;
+        this.texto = texto;
+        this.tipo = tipo;
+        this.opcoes = opcoes;
+        this.resposta = resposta;
+        this.validacaoRequired = validacaoRequired;
+        this.etapa = etapa;
+    }
 
-	public String getTexto() {
-		return texto;
-	}
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setTexto(String texto) {
-		this.texto = texto;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getTipo() {
-		return tipo;
-	}
+    public String getTexto() {
+        return texto;
+    }
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
+    public void setTexto(String texto) {
+        this.texto = texto;
+    }
 
-	public List<String> getOpcoes() {
-		return opcoes;
-	}
+    public String getTipo() {
+        return tipo;
+    }
 
-	public void setOpcoes(List<String> opcoes) {
-		this.opcoes = opcoes;
-	}
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
-	public String getResposta() {
-		return resposta;
-	}
+    public List<String> getOpcoes() {
+        return opcoes;
+    }
 
-	public void setResposta(String resposta) {
-		this.resposta = resposta;
-	}
+    public void setOpcoes(List<String> opcoes) {
+        this.opcoes = opcoes;
+    }
 
-	public Validacao getValidacao() {
-		return validacao;
-	}
+    public String getResposta() {
+        return resposta;
+    }
 
-	public void setValidacao(Validacao validacao) {
-		this.validacao = validacao;
-	}
+    public void setResposta(String resposta) {
+        this.resposta = resposta;
+    }
 
-	public Etapa getEtapa() {
-		return etapa;
-	}
+    public boolean isValidacaoRequired() {
+        return validacaoRequired;
+    }
 
-	public void setEtapa(Etapa etapa) {
-		this.etapa = etapa;
-	}
+    public void setValidacaoRequired(boolean validacaoRequired) {
+        this.validacaoRequired = validacaoRequired;
+    }
 
-    // Getters and Setters
+    public Etapa getEtapa() {
+        return etapa;
+    }
+
+    public void setEtapa(Etapa etapa) {
+        this.etapa = etapa;
+    }
 }
-
