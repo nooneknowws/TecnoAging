@@ -7,6 +7,7 @@ export class Formulario {
     public tipo: TipoFormulario,
     public titulo: string,
     public descricao: string,
-    public etapas: Etapa[]
+    public etapas: Etapa[],
+    public pontuacaoMaxima?: number
   ) {}
 }

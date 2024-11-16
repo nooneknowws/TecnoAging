@@ -60,7 +60,7 @@ export class FormularioComponent implements OnInit {
 
   private inicializarFormulario() {
     if (!this.formulario) return;
-
+  
     const groupConfig: Record<string, any> = {};
     
     this.formulario.etapas.forEach((etapa, etapaIndex) => {
@@ -76,6 +76,9 @@ export class FormularioComponent implements OnInit {
             checkboxControls,
             pergunta.validacao?.required ? [this.atLeastOneCheckboxSelected()] : []
           );
+        } else if (pergunta.tipo === 'range') {
+          const valorInicial = pergunta.validacao?.min || 0;
+          groupConfig[controlName] = [valorInicial, this.getValidators(pergunta)];
         } else {
           groupConfig[controlName] = ['', this.getValidators(pergunta)];
         }
@@ -110,6 +113,8 @@ export class FormularioComponent implements OnInit {
             checkboxArray.at(index).value
           );
           pergunta.resposta = selectedOptions;
+        } else if (pergunta.tipo === 'range') {
+          pergunta.resposta = Number(values[controlName]);
         } else {
           pergunta.resposta = values[controlName] || '';
         }
@@ -161,13 +166,20 @@ export class FormularioComponent implements OnInit {
   private getValidators(pergunta: Pergunta) {
     const validators = [];
     if (pergunta.validacao?.required) validators.push(Validators.required);
-    if (pergunta.tipo === 'numero' || pergunta.tipo === 'dias') {
-      if (pergunta.validacao?.min !== undefined) validators.push(Validators.min(pergunta.validacao.min));
-      if (pergunta.validacao?.max !== undefined) validators.push(Validators.max(pergunta.validacao.max));
+    
+    if (pergunta.tipo === 'numero' || pergunta.tipo === 'dias' || pergunta.tipo === 'range') {
+      if (pergunta.validacao?.min !== undefined) {
+        validators.push(Validators.min(pergunta.validacao.min));
+      }
+      if (pergunta.validacao?.max !== undefined) {
+        validators.push(Validators.max(pergunta.validacao.max));
+      }
     }
+    
     if (pergunta.tipo === 'tempo') {
       validators.push(Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/));
     }
+    
     return validators;
   }
 

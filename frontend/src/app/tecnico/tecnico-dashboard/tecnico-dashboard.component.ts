@@ -77,6 +77,12 @@ export class TecnicoDashboardComponent implements OnInit {
     });
   }
 
+  consultarPerfil(paciente: any) {
+    this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
+      queryParams: { id: paciente.id } 
+    });
+  }
+
   compareResults(): void {
     if (!this.selectedPaciente) {
       // Show error notification

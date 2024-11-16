@@ -134,7 +134,34 @@
                   </div>
                 </ng-template>
               </div>
-  
+              
+              <!-- Range Input -->
+              <div *ngSwitchCase="'range'" class="form-group">
+                <label [for]="getControlName(etapaAtual, perguntaIndex)" class="form-label fw-semibold">
+                  {{pergunta.texto}}
+                </label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="range" 
+                        [id]="getControlName(etapaAtual, perguntaIndex)"
+                        [formControlName]="getControlName(etapaAtual, perguntaIndex)"
+                        class="form-range"
+                        [min]="pergunta.validacao?.min || 0"
+                        [max]="pergunta.validacao?.max || 100"
+                        [class.is-invalid]="formGroup.get(getControlName(etapaAtual, perguntaIndex))?.invalid && 
+                                          formGroup.get(getControlName(etapaAtual, perguntaIndex))?.touched"
+                        (change)="atualizarRespostas(formGroup.value)">
+                  <span class="badge bg-secondary">
+                    {{formGroup.get(getControlName(etapaAtual, perguntaIndex))?.value || 0}}
+                  </span>
+                </div>
+                <div class="d-flex justify-content-between text-secondary small">
+                  <span>{{pergunta.validacao?.min || 0}}</span>
+                  <span>{{pergunta.validacao?.max || 100}}</span>
+                </div>
+                <div class="invalid-feedback">
+                  {{getFieldError(etapaAtual, perguntaIndex)}}
+                </div>
+              </div>
             </ng-container>
           </div>
         </form>

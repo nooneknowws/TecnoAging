@@ -73,93 +73,108 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
         descricao: 'Avaliação do nível de fadiga física e mental após diferentes atividades',
         etapas: [
             {
+                titulo: 'Escala de Fatigabilidade de Pittsburgh',
+                descricao: 'Instruções:  Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde “0” é igual a nenhuma fadiga e “5” é igual a fadiga extrema. Na última coluna indique se você realizou a atividade no último mês. Se você responder “Não”, dê seu melhor palpite para as questões sobre fadiga (veja o Exemplo 2 abaixo). Por favor, preencha todas as três colunas para cada atividade, mesmo aquelas que você não realiza. Preste também muita atenção à duração (por exemplo, 30 minutos) e à intensidade (por exemplo, moderada, rápida) de cada atividade.',
+                perguntas: []
+            },
+            {
                 titulo: 'Atividade 1',
-                descricao: 'Caminhar à lazer por 30 minutos.',
+                descricao: 'Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.',
                 perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Fadiga Física',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    },                    { 
+                        texto: 'Fadiga Mental',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    }
                 ]
             },
             {
                 titulo: 'Atividade 2',
-                descricao: 'Caminhada rápida ou acelerada por 1 hora.',
+                descricao: 'Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)',
                 perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Fadiga Física',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    },                    { 
+                        texto: 'Fadiga Mental',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    }
                 ]
             },
             {
                 titulo: 'Atividade 3',
-                descricao: 'Atividade doméstica leve por 1 hora.',
+                descricao: 'Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)',
                 perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Fadiga Física',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    },                    { 
+                        texto: 'Fadiga Mental',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    }
                 ]
             },
             {
                 titulo: 'Atividade 4',
-                descricao: 'Trabalho pesado de jardinagem ou ao ar livre por 1 hora.',
+                descricao: 'Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)',
                 perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 5',
-                descricao: 'Assistir à TV por 2 horas.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 6',
-                descricao: 'Sentar-se em silêncio por 1 hora.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 7',
-                descricao: 'Treinamento de força - intensidade moderada a alta por 30 minutos.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 8',
-                descricao: 'Participar de um evento social por 2 horas.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 9',
-                descricao: 'Atividade recreativa moderada por 1 hora.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
-                ]
-            },
-            {
-                titulo: 'Atividade 10',
-                descricao: 'Atividade aeróbica leve por 30 minutos.',
-                perguntas: [
-                    { texto: 'Fadiga Física (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Fadiga Mental (0-5)', tipo: 'numero', resposta: '', validacao: { required: true } },
-                    { texto: 'Você realizou essa atividade no último mês?', tipo: 'radio', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Fadiga Física',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    },                    { 
+                        texto: 'Fadiga Mental',
+                        tipo: 'range',
+                        resposta: '',
+                        validacao: {
+                            min: 0,
+                            max: 5,
+                            required: true
+                        }
+                    }
                 ]
             }
         ]

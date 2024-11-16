@@ -1,0 +1,62 @@
+.header {
+    background-color: #C2DFF0;
+    padding: 15px;
+ }
+ .header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+ }
+ .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+ }
+ .card-header {
+    background-color: #EAEAEA;
+    border-bottom: 2px solid #CCCCCC;
+    font-weight: bold;
+    color: #333;
+ }
+ .table th {
+    background-color: #F5F5F5;
+    font-weight: bold;
+    color: #555;
+ }
+ .table td, .table th {
+    vertical-align: middle;
+    padding: auto;
+ }
+ .btn-primary {
+    background-color: #4A90E2;
+    border: none;
+ }
+ .btn-primary:hover {
+    background-color: #357ABD;
+ }
+ .btn-secondary {
+    background-color: #7B8B9A;
+    border: none;
+ }
+ .btn-secondary:hover {
+    background-color: #5D6A74;
+ }
+ .img-fluid {
+    border-radius: 10px;
+ }
+ .d-grid button {
+    border-radius: 30px;
+ }
+ .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+ }
+ .action-buttons .btn {
+    flex: 1;
+    margin-bottom: 5px;
+ }
+ @media (min-width: 768px) {
+    .action-buttons .btn {
+       margin-bottom: 0;
+    }
+ }
