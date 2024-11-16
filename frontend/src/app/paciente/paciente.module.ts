@@ -4,6 +4,7 @@ import { HistoricoTestesComponent } from './historico-testes/historico-testes.co
 import { VisualizarPerfilComponent } from './visualizar-perfil/visualizar-perfil.component';
 import { PacienteDashboardComponent } from './paciente-dashboard/paciente-dashboard.component';
 import { PacienteLayoutComponent } from './paciente-layout/paciente-layout.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -15,7 +16,8 @@ import { PacienteLayoutComponent } from './paciente-layout/paciente-layout.compo
     PacienteLayoutComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
   ]
 })
 export class PacienteModule { }
