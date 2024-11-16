@@ -1,6 +1,7 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AvaliacaoDTO {
 
@@ -11,10 +12,12 @@ public class AvaliacaoDTO {
     private int pontuacaoTotal;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
+    private List<RespostaDTO> respostas;
 
     public AvaliacaoDTO() {}
 
-    public AvaliacaoDTO(Long id, Long pacienteId, Long tecnicoId, Long formularioId, int pontuacaoTotal, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao) {
+    public AvaliacaoDTO(Long id, Long pacienteId, Long tecnicoId, Long formularioId, int pontuacaoTotal, 
+                        LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<RespostaDTO> respostas) {
         this.id = id;
         this.pacienteId = pacienteId;
         this.tecnicoId = tecnicoId;
@@ -22,6 +25,7 @@ public class AvaliacaoDTO {
         this.pontuacaoTotal = pontuacaoTotal;
         this.dataCriacao = dataCriacao;
         this.dataAtualizacao = dataAtualizacao;
+        this.respostas = respostas;
     }
 
     public Long getId() {
@@ -78,5 +82,13 @@ public class AvaliacaoDTO {
 
     public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public List<RespostaDTO> getRespostas() {
+        return respostas;
+    }
+
+    public void setRespostas(List<RespostaDTO> respostas) {
+        this.respostas = respostas;
     }
 }

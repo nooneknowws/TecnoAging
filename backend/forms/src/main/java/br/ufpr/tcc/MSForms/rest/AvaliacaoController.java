@@ -1,17 +1,22 @@
 package br.ufpr.tcc.MSForms.rest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.ufpr.tcc.MSForms.models.*;
-import br.ufpr.tcc.MSForms.models.dto.AvaliacaoDTO;
+import br.ufpr.tcc.MSForms.models.dto.*;
 import br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository;
 import br.ufpr.tcc.MSForms.repositories.FormularioRepository;
 import br.ufpr.tcc.MSForms.repositories.PacienteRepository;
+import br.ufpr.tcc.MSForms.repositories.PerguntaRepository;
 import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
+import br.ufpr.tcc.MSForms.service.AvaliacaoService;
 
 @RestController
 @RequestMapping("/avaliacoes")
@@ -28,6 +33,14 @@ public class AvaliacaoController {
 
     @Autowired
     private FormularioRepository formularioRepository;
+
+    @Autowired
+    private PerguntaRepository perguntaRepository;
+    
+    @Autowired
+    private AvaliacaoService avaliacaoService;
+
+   
 
     @PostMapping("/forms")
     public ResponseEntity<String> salvarAvaliacao(@RequestBody AvaliacaoDTO avaliacaoDTO) {
@@ -46,8 +59,73 @@ public class AvaliacaoController {
         avaliacao.setDataCriacao(LocalDateTime.now());
         avaliacao.setDataAtualizacao(LocalDateTime.now());
 
+        if (avaliacao.getRespostas() == null) {
+            avaliacao.setRespostas(new ArrayList<>());
+        }
+
+        for (RespostaDTO respostaDTO : avaliacaoDTO.getRespostas()) {
+            Pergunta pergunta = perguntaRepository.findById(respostaDTO.getPerguntaId())
+                    .orElseThrow(() -> new RuntimeException("Pergunta não encontrada"));
+
+            Resposta resposta = new Resposta(pergunta, avaliacao, respostaDTO.getValor());
+            avaliacao.getRespostas().add(resposta);
+        }
+
         avaliacaoRepository.save(avaliacao);
 
         return ResponseEntity.ok("Avaliação salva com sucesso");
     }
+    @GetMapping("/respostas/paciente/{id}")
+    public ResponseEntity<List<RespostaAvaliacaoPaciente>> getRespostasByPaciente(@PathVariable("id") Long pacienteId) {
+        
+        List<Avaliacao> avaliacoes = avaliacaoService.findAllByPacienteId(pacienteId);
+        
+        List<RespostaAvaliacaoPaciente> avaliacaoResponses = new ArrayList<>();
+
+        for (Avaliacao avaliacao : avaliacoes) {
+            Tecnico tecnico = avaliacao.getTecnico();
+            List<Resposta> respostas = avaliacao.getRespostas(); 
+            List<PerguntaValorDTO> perguntaValorList = respostas.stream()
+                .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
+                .collect(Collectors.toList());
+
+            RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
+                tecnico.getId(), 
+                tecnico.getNome(), 
+                perguntaValorList
+            );
+
+            avaliacaoResponses.add(response);
+        }
+
+        return ResponseEntity.ok(avaliacaoResponses);
+    }
+    @GetMapping("/respostas/tecnico/{id}")
+    public ResponseEntity<List<RespostaAvaliacaoTecnico>> getRespostasByTecnico(@PathVariable("id") Long tecnicoId) {
+        
+        List<Avaliacao> avaliacoes = avaliacaoService.findAllByTecnicoId(tecnicoId);
+        
+        List<RespostaAvaliacaoTecnico> avaliacaoResponses = new ArrayList<>();
+
+        for (Avaliacao avaliacao : avaliacoes) {
+            Paciente paciente = avaliacao.getPaciente();
+            List<Resposta> respostas = avaliacao.getRespostas(); 
+            List<PerguntaValorDTO> perguntaValorList = respostas.stream()
+                .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
+                .collect(Collectors.toList());
+
+            RespostaAvaliacaoTecnico response = new RespostaAvaliacaoTecnico(
+                paciente.getId(), 
+                paciente.getNome(), 
+                perguntaValorList
+            );
+
+            avaliacaoResponses.add(response);
+        }
+
+        // Return the response
+        return ResponseEntity.ok(avaliacaoResponses);
+    }
+
+
 }

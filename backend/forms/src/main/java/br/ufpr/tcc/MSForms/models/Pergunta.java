@@ -19,9 +19,6 @@ public class Pergunta {
     @ElementCollection
     private List<String> opcoes;
 
-    private String resposta;
-    private boolean validacaoRequired;
-
     @ManyToOne
     @JoinColumn(name = "etapa_id")
     @JsonIgnore
@@ -35,8 +32,6 @@ public class Pergunta {
         this.texto = texto;
         this.tipo = tipo;
         this.opcoes = opcoes;
-        this.resposta = resposta;
-        this.validacaoRequired = validacaoRequired;
         this.etapa = etapa;
     }
 
@@ -73,21 +68,6 @@ public class Pergunta {
         this.opcoes = opcoes;
     }
 
-    public String getResposta() {
-        return resposta;
-    }
-
-    public void setResposta(String resposta) {
-        this.resposta = resposta;
-    }
-
-    public boolean isValidacaoRequired() {
-        return validacaoRequired;
-    }
-
-    public void setValidacaoRequired(boolean validacaoRequired) {
-        this.validacaoRequired = validacaoRequired;
-    }
 
     public Etapa getEtapa() {
         return etapa;
