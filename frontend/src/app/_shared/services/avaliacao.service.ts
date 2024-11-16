@@ -87,6 +87,7 @@ export class AvaliacaoService {
       avaliacaoData.referenteA,
       avaliacaoData.formulario,
       avaliacaoData.pontuacaoTotal,
+      avaliacaoData.pontuacaoMaxima,
       new Date(avaliacaoData.dataCriacao),
       new Date(avaliacaoData.dataAtualizacao)
     );

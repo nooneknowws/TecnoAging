@@ -63,36 +63,20 @@ export class CadastroComponent implements OnInit {
   }
 
   buscarCep(): void {
-    const cep = this.endereco.CEP?.toString().replace(/\D/g, '');
-   
-    if (cep?.length === 8) {
-      this.http.get(`https://viacep.com.br/ws/${cep}/json/`).pipe(
-        timeout(5000),
-        catchError(error => {
-          if (error.name === 'TimeoutError') {
-            this.erroTimeout = true;
-            this.cepInvalido = false;
-          } else {
-            this.cepInvalido = true;
-            this.erroTimeout = false;
-          }
-          return of(null);
-        })
-      ).subscribe((data: any) => {
-        if (data.erro != 'true') {
+    const cep = this.endereco.CEP?.toString();
+    if (cep) {
+      this.authService.buscarCep(cep).subscribe(endereco => {
+        if (endereco) {
           this.cepInvalido = false;
           this.erroTimeout = false;
-          this.endereco.CEP = parseInt(cep);
-          this.endereco.logradouro = data.logradouro;
-          this.endereco.complemento = data.complemento || '';
-          this.endereco.bairro = data.bairro;
-          this.endereco.municipio = data.localidade;
-          this.endereco.UF = data.uf;
+          this.endereco = endereco;
           this.form.endereco = this.endereco;
           this.cdRef.detectChanges();
         } else {
           this.cepInvalido = true;
         }
+      }, () => {
+        this.cepInvalido = true;
       });
     } else {
       this.cepInvalido = true;

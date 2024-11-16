@@ -7,6 +7,5 @@ export interface Pergunta {
       min?: number;
       max?: number;
       required?: boolean;
-      pattern?: string;
     };
 }

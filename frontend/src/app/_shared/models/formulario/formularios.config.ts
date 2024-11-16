@@ -1,7 +1,6 @@
 import { TipoFormulario } from "../tipos.formulario.enum";
 import { Formulario } from "./formulario";
 
-//TODO: adequar aos formulários
 export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
     [TipoFormulario.SEDENTARISMO]: {
         id: 1,
@@ -74,7 +73,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
         etapas: [
             {
                 titulo: 'Escala de Fatigabilidade de Pittsburgh',
-                descricao: 'Instruções:  Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde “0” é igual a nenhuma fadiga e “5” é igual a fadiga extrema. Na última coluna indique se você realizou a atividade no último mês. Se você responder “Não”, dê seu melhor palpite para as questões sobre fadiga (veja o Exemplo 2 abaixo). Por favor, preencha todas as três colunas para cada atividade, mesmo aquelas que você não realiza. Preste também muita atenção à duração (por exemplo, 30 minutos) e à intensidade (por exemplo, moderada, rápida) de cada atividade.',
+                descricao: 'Instruções:  Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde “0” é igual a nenhuma fadiga e “5” é igual a fadiga extrema.',
                 perguntas: []
             },
             {
@@ -318,12 +317,12 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         tipo: 'checkbox',
                         opcoes: [
                             "Perda de peso não intencional de 4,5 kg ou 5% do peso corporal no último ano ou 6 kg nos últimos 6 meses ou 3 kg no último mês",
-                            "Índice de Massa Corporal (IMC) menor que 22 kg/m²",
+                            // "Índice de Massa Corporal (IMC) menor que 22 kg/m²", -- Calcular isso aqui e atribuir pontuação
                             "Circunferência da panturrilha < 31 cm",
                             "Tempo gasto no teste de velocidade de marcha (4m) > 5 segundos"
                         ],
                         resposta: '',
-                        validacao: { required: true }
+                        validacao: { required: false }
                     },
                     {
                         texto: 'Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?',
@@ -375,14 +374,13 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                             "Internação recente, nos últimos 6 meses"
                         ],
                         resposta: '',
-                        validacao: { required: true }
+                        validacao: { required: false }
                     }
                 ]
             }
         ]
     },
     
-    //TODO: Terminar e adequar igual aos documentos
     [TipoFormulario.MINIMENTAL]: {
         id: 4,
         tipo: TipoFormulario.MINIMENTAL,
@@ -391,94 +389,220 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
         etapas: [
             {
                 titulo: 'Orientação Temporal',
-                descricao: 'Avaliação da capacidade de orientação no tempo.',
+                descricao: 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.',
                 perguntas: [
-                    { texto: 'Qual é o ano atual?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Qual é a estação do ano atual?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Qual é o mês atual?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Qual é a data de hoje?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Que dia da semana é hoje?', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Que dia é hoje?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que mês estamos?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que ano estamos?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que dia da semana estamos?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Qual a hora atual aproximada (considere variação de mais ou menos 1 hora)',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             },
             {
                 titulo: 'Orientação Espacial',
-                descricao: 'Avaliação da capacidade de orientação no espaço.',
+                descricao: 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.',
                 perguntas: [
-                    { texto: 'Em que país estamos?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Em que estado estamos?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Em que cidade estamos?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Em que local estamos?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Em que andar estamos?', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Em que local nós estamos? (consultório, sala, dormitório...)',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Que local é este aqui? (apontando ao redor num sentido mais amplo.... hospital, casa de repouso, própria casa...)',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que bairro nós estamos ou qual o nome de uma rua próxima?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que cidade nós estamos?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    },
+                    {
+                        texto: 'Em que estado nós estamos?',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             },
             {
                 titulo: 'Memória Imediata',
-                descricao: 'Teste de repetição de palavras.',
+                descricao: 'Eu vou dizer 3 palavras e você irá repeti-las a seguir: CARRO – VASO – TIJOLO. Pode repeti-las até três vezes para o aprendizado, se houver erros.',
                 perguntas: [
-                    { texto: 'Repita as palavras ditas pelo avaliador (ex.: "bola", "cavalo", "navio").', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Marque cada palavra repetida corretamente na 1ª vez.',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "CARRO",
+                            "VASO",
+                            "TIJOLO"
+                        ],
+                        resposta: '',
+                        validacao: { required: false }
+                    }
                 ]
             },
             {
                 titulo: 'Cálculo',
-                descricao: 'Teste de subtrações sequenciais.',
+                descricao: 'Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Se houver erro, corrija-o e prossiga. Considere correto se o avaliado espontaneamente se autocorrigir.',
                 perguntas: [
-                    { texto: 'Subtraia 7 de 100 e continue subtraindo 7 sucessivamente.', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Considere 1 ponto para cada resultado correto.',
+                        tipo: 'range', 
+                        resposta: '',
+                        validacao: { required: true, min: 0, max: 6 } 
+                    }
                 ]
             },
             {
-                titulo: 'Memória de Evocação',
-                descricao: 'Teste de memória de palavras mencionadas anteriormente.',
+                titulo: 'Evocação das palavras',
+                descricao: 'Pergunte quais as palavras que o indivíduo acabara de repetir (CARRO-VASO-TIJOLO).',
                 perguntas: [
-                    { texto: 'Quais eram as três palavras ditas anteriormente?', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Marque cada palavra repetida corretamente.',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "CARRO",
+                            "VASO",
+                            "TIJOLO"
+                        ],
+                        resposta: '',
+                        validacao: { required: false }
+                    }
                 ]
             },
             {
                 titulo: 'Nomeação',
-                descricao: 'Identificação de objetos simples.',
+                descricao: 'Peça para o indivíduo nomear os objetos mostrados (relógio, caneta). ',
                 perguntas: [
-                    { texto: 'Qual é o nome deste objeto (mostre um relógio)?', tipo: 'texto', resposta: '', validacao: { required: true } },
-                    { texto: 'Qual é o nome deste objeto (mostre uma caneta)?', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Marque cada objeto nomeado corretamente.',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "Relógio",
+                            "Caneta"
+                        ],
+                        resposta: '',
+                        validacao: { required: false }
+                    }
                 ]
             },
             {
                 titulo: 'Repetição',
-                descricao: 'Teste de repetição de frase.',
+                descricao: 'Preste atenção: Vou lhe dizer uma frase e quero que você repita depois de mim: “NEM AQUI, NEM ALI, NEM LÁ”.',
                 perguntas: [
-                    { texto: 'Repita a frase: "Nem aqui, nem ali, nem lá."', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Considere somente se a repetição for perfeita', 
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             },
             {
                 titulo: 'Comando',
-                descricao: 'Realização de instruções simples.',
+                descricao: 'Pegue este papel com a mão direita (1 ponto), dobre-o ao meio (1 ponto) e coloque-o no chão (1 ponto).  Se o indivíduo pedir ajuda no meio da tarefa não dê dicas.',
                 perguntas: [
-                    { texto: 'Pegue esta folha com a mão direita, dobre-a ao meio e coloque-a no chão.', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    {
+                        texto: 'Avalie cada critério.',
+                        tipo: 'checkbox',
+                        opcoes: [
+                            "Pegou o papel com a mão direita.",
+                            "Dobrou o papel ao meio.",
+                            "Colocou o papel no chão."
+                        ],
+                        resposta: '',
+                        validacao: { required: false }
+                    }
                 ]
             },
             {
                 titulo: 'Leitura e Obediência',
-                descricao: 'Leitura e execução de comando.',
+                descricao: 'Mostre a frase escrita: “FECHE OS OLHOS” e peça para o indivíduo fazer o que está sendo mandado. Não auxilie se pedir ajuda ou se só ler a frase sem realizar o comando. ',
                 perguntas: [
-                    { texto: 'Leia a frase "Feche os olhos" e siga o comando.', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Avalie o resultado.',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             },
             {
                 titulo: 'Escrita',
-                descricao: 'Escrita de uma frase.',
+                descricao: 'Peça ao indivíduo para escrever uma frase. Se não compreender o significado, ajude com: alguma frase que tenha começo, meio e fim, alguma coisa que aconteceu hoje; alguma coisa que queira dizer. Para a correção não são considerados erros gramaticais ou de ortografia. (1 ponto).',
                 perguntas: [
-                    { texto: 'Escreva uma frase com sentido completo.', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Avalie o resultado.',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             },
             {
                 titulo: 'Cópia do Desenho',
-                descricao: 'Reprodução de um modelo gráfico.',
+                descricao: 'Mostre o modelo e peça para fazer o melhor possível. Considere apenas se houver 2 pentágonos intersecionados (10 ângulos) formando uma figura de quatro lados ou com dois ângulos (1 ponto).',
                 perguntas: [
-                    { texto: 'Copie o desenho apresentado (ex.: dois pentágonos interligados).', tipo: 'texto', resposta: '', validacao: { required: true } }
+                    { 
+                        texto: 'Avalie o desenho.',
+                        tipo: 'radio',
+                        opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+                        resposta: '',
+                        validacao: { required: true }
+                    }
                 ]
             }
         ]
-    },    
+    },   
 
-    //TODO: Terminar e adequar igual aos documentos
     [TipoFormulario.FACTF]: {
         id: 5,
         tipo: TipoFormulario.FACTF,
@@ -557,5 +681,4 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
             }
         ]
     }
-    ,
 };

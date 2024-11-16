@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard.component';
 import { FormularioService } from '../_shared/services/formulario.service';
 import { TecnicoLayoutComponent } from './tecnico-layout/tecnico-layout.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     FormularioService

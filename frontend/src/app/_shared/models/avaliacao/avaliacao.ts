@@ -9,6 +9,7 @@ export class Avaliacao {
         public referenteA?: Paciente,      
         public formulario?: Formulario,
         public pontuacaoTotal?: number,
+        public pontuacaoMaxima?: number,
         public dataCriacao: Date = new Date(),
         public dataAtualizacao: Date = new Date()
     ){}

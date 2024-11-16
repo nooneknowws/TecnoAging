@@ -134,6 +134,7 @@ export class FormularioComponent implements OnInit {
         undefined, // referenteA será definido no service
         this.formulario,
         this.calcularPontuacao(),
+        this.calcularPontuacao(),
         new Date(),
         new Date()
       );

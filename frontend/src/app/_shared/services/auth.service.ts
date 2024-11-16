@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, timeout } from 'rxjs/operators';
 import { Tecnico } from '../models/pessoa/tecnico/tecnico';
 import { Paciente } from '../models/pessoa/paciente/paciente';
 import { LoginRequest } from '../models/_auth/login.request';
 import { LoginResponse } from '../models/_auth/login.response';
 import { AuthUser } from '../models/_auth/auth.user';
 import { AppComponent } from '../../app.component';
+import { Endereco } from '../models/pessoa/endereco';
 
 @Injectable({
   providedIn: 'root'
@@ -130,4 +131,32 @@ export class AuthService {
     const userType = sessionStorage.getItem(this.SESSION_USER_TYPE_KEY);
     return userType as 'tecnico' | 'paciente' | null;
   }
+
+  buscarCep(cep: string): Observable<Endereco | null> {
+    const sanitizedCep = cep.replace(/\D/g, '');
+    if (sanitizedCep.length !== 8) {
+      return of(null);
+    }
+  
+    return this.http.get<any>(`https://viacep.com.br/ws/${sanitizedCep}/json/`).pipe(
+      timeout(5000),
+      map(data => {
+        if (data.erro) {
+          return null;
+        }
+        return {
+          CEP: parseInt(sanitizedCep, 10),
+          logradouro: data.logradouro,
+          complemento: data.complemento || '',
+          bairro: data.bairro,
+          municipio: data.localidade,
+          UF: data.uf
+        } as Endereco;
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar CEP:', error);
+        return of(null);
+      })
+    );
+  }  
 }

@@ -1,3 +1,5 @@
+import { EnumEstadoCivil } from "../../estadocivil.enum";
+import { EnumEstadosBrasil } from "../../estadosbrasil.enum";
 import { Endereco } from "../endereco";
 import { Pessoa } from "../pessoa";
 import { Contato } from "./contato";
@@ -10,16 +12,16 @@ export class Paciente extends Pessoa {
         public socioeconomico?: string,
         public escolaridade?: string,
         public contatos?: Contato[],
-        public estadoCivil?: string,
+        public estadoCivil?: EnumEstadoCivil,
         public nacionalidade?: string,
         public municipioNasc?: string,
-        public ufNasc?: string,
+        public ufNasc?: EnumEstadosBrasil,
         public corRaca?: string,
         public fotoUrl?: string,
         public rg?: string,
         public dataExpedicao?: Date,
         public orgaoEmissor?: string,
-        public ufEmissor?: string,
+        public ufEmissor?: EnumEstadosBrasil,
         id?: number,
         nome?: string,
         sexo?: string,

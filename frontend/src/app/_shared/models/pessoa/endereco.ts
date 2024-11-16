@@ -1,3 +1,5 @@
+import { EnumEstadosBrasil } from "../estadosbrasil.enum";
+
 export class Endereco {
     constructor(
         public CEP?: number,
@@ -6,6 +8,6 @@ export class Endereco {
         public complemento?: string,
         public bairro?: string,
         public municipio?: string,
-        public UF?: string
+        public UF?: EnumEstadosBrasil
     ) {}
 }
