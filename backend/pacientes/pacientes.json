@@ -1,0 +1,203 @@
+{
+  "pacientes": [
+    {
+      "id": "1",
+      "peso": 70.5,
+      "altura": 1.75,
+      "imc": 23,
+      "socioeconomico": "B2",
+      "escolaridade": "Superior Completo",
+      "nome": "Maria Santos",
+      "sexo": "F",
+      "idade": 45,
+      "endereco": {
+        "logradouro": "Avenida Secundária",
+        "numero": 456,
+        "bairro": "Jardim",
+        "municipio": "São Paulo",
+        "UF": "SP",
+        "cep": "02002-000"
+      },
+      "dataNasc": "1978-08-20",
+      "cpf": "98765432101",
+      "telefone": "11988888888",
+      "contatos": [
+        {
+          "nome": "José Santos",
+          "telefone": "11977777777",
+          "parentesco": "FILHO"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "peso": 80,
+      "altura": 1.8,
+      "imc": 25,
+      "socioeconomico": "B1",
+      "escolaridade": "Médio Completo",
+      "nome": "João Silva",
+      "sexo": "M",
+      "idade": 50,
+      "endereco": {
+        "logradouro": "Rua Principal",
+        "numero": 123,
+        "bairro": "Centro",
+        "municipio": "Rio de Janeiro",
+        "UF": "RJ",
+        "cep": "20001-000"
+      },
+      "dataNasc": "1972-02-15",
+      "cpf": "12345678901",
+      "telefone": "11999999999",
+      "contatos": [
+        {
+          "nome": "Pedro Silva",
+          "telefone": "11955555555",
+          "parentesco": "FILHO"
+        },
+        {
+          "nome": "Ana Silva",
+          "telefone": "11944444444",
+          "parentesco": "FILHA"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "peso": 60,
+      "altura": 1.6,
+      "imc": 20,
+      "socioeconomico": "C1",
+      "escolaridade": "Fundamental Completo",
+      "nome": "Ana Oliveira",
+      "sexo": "F",
+      "idade": 30,
+      "endereco": {
+        "logradouro": "Avenida Terciária",
+        "numero": 789,
+        "bairro": "Bairro Novo",
+        "municipio": "Belo Horizonte",
+        "UF": "MG",
+        "cep": "30001-000"
+      },
+      "dataNasc": "1992-08-20",
+      "cpf": "98765432102",
+      "telefone": "11988888889",
+      "contatos": [
+        {
+          "nome": "Luiz Oliveira",
+          "telefone": "11933333333",
+          "parentesco": "FILHO"
+        },
+        {
+          "nome": "Maria Oliveira",
+          "telefone": "11922222222",
+          "parentesco": "FILHA"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "peso": 75,
+      "altura": 1.7,
+      "imc": 24,
+      "socioeconomico": "B2",
+      "escolaridade": "Superior Incompleto",
+      "nome": "Pedro Martins",
+      "sexo": "M",
+      "idade": 40,
+      "endereco": {
+        "logradouro": "Rua Secundária",
+        "numero": 901,
+        "bairro": "Bairro Velho",
+        "municipio": "Curitiba",
+        "UF": "PR",
+        "cep": "80001-000"
+      },
+      "dataNasc": "1982-05-10",
+      "cpf": "12345678902",
+      "telefone": "11977777778",
+      "contatos": [
+        {
+          "nome": "João Martins",
+          "telefone": "11966666667",
+          "parentesco": "FILHO"
+        },
+        {
+          "nome": "Maria Martins",
+          "telefone": "11955555556",
+          "parentesco": "FILHA"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "peso": 65,
+      "altura": 1.6,
+      "imc": 22,
+      "socioeconomico": "C2",
+      "escolaridade": "Médio Incompleto",
+      "nome": "Ana Souza",
+      "sexo": "F",
+      "idade": 35,
+      "endereco": {
+        "logradouro": "Avenida Quaternária",
+        "numero": 111,
+        "bairro": "Bairro Novo",
+        "municipio": "Porto Alegre",
+        "UF": "RS",
+        "cep": "90001-000"
+      },
+      "dataNasc": "1987-03-20",
+      "cpf": "98765432103",
+      "telefone": "11988888890",
+      "contatos": [
+        {
+          "nome": "Luiz Souza",
+          "telefone": "11933333334",
+          "parentesco": "FILHO"
+        },
+        {
+          "nome": "Maria Souza",
+          "telefone": "11922222223",
+          "parentesco": "FILHA"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "peso": 80,
+      "altura": 1.8,
+      "imc": 25,
+      "socioeconomico": "B1",
+      "escolaridade": "Superior Completo",
+      "nome": "João Lima",
+      "sexo": "M",
+      "idade": 50,
+      "endereco": {
+        "logradouro": "Rua Principal",
+        "numero": 123,
+        "bairro": "Centro",
+        "municipio": "Recife",
+        "UF": "PE",
+        "cep": "50001-000"
+      },
+      "dataNasc": "1972-02-15",
+      "cpf": "12345678903",
+      "telefone": "11999999998",
+      "contatos": [
+        {
+          "nome": "Pedro Lima",
+          "telefone": "11955555557",
+          "parentesco": "FILHO"
+        },
+        {
+          "nome": "Ana Lima",
+          "telefone": "11944444445",
+          "parentesco": "FILHA"
+        }
+      ]
+    }
+  ]
+}

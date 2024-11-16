@@ -1,26 +1,23 @@
 {
-    "tecnicos": 
-    [
-        {
-            "id": 1,
-            "cpf": "12345678910",
-            "nome": "Jão",
-            "dataDeNasc": "1996-04-08T08:07:04.573Z",
-            "email": "xd@mail.com",
-            "sexo": "Masculino",
-            "endereco": {
-                "cep": "83420000",
-                "logradouro": "rua rosemiro alves de paula",
-                "numero": "91",
-                "complemento": "casa 2",
-                "bairro": "jd patricia",
-                "cidade": "quatro barras",
-                "estado": "paraná"
-            },
-            "telefone": "41920032665",
-            "role": "tecnico",
-            "matricula": "1234",
-            "setor": "cuidados"
-        }
-    ]
+  "tecnicos": [
+    {
+      "id": "1",
+      "matricula": 12345,
+      "ativo": true,
+      "nome": "João Silva",
+      "sexo": "M",
+      "idade": 35,
+      "endereco": {
+        "logradouro": "Rua Principal",
+        "numero": 123,
+        "bairro": "Centro",
+        "municipio": "São Paulo",
+        "UF": "SP",
+        "cep": "01001-000"
+      },
+      "dataNasc": "1988-05-15",
+      "cpf": "12345678901",
+      "telefone": "11999999999"
+    }
+  ]
 }
