@@ -1,7 +1,6 @@
 package br.ufpr.tcc.MSForms.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -11,19 +10,52 @@ import java.util.List;
 @Entity
 public class Paciente {
 
-    @Id
+    public Paciente(Long id, String nome, String sexo, int idade, float peso, float altura, float imc, String socioeconomico,
+			String escolaridade, Endereco endereco, String dataNasc, String cpf, String telefone,
+			List<Contato> contatos) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.sexo = sexo;
+		this.idade = idade;
+		this.peso = peso;
+		this.altura = altura;
+		this.imc = imc;
+		this.socioeconomico = socioeconomico;
+		this.escolaridade = escolaridade;
+		this.endereco = endereco;
+		this.dataNasc = dataNasc;
+		this.cpf = cpf;
+		this.telefone = telefone;
+		this.contatos = contatos;
+	}
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
     private String sexo;
     private int idade;
-
+    
+    @Column(nullable = false)
+    private float peso;
+    
+    @Column(nullable = false)
+    private float altura;
+    
+    private float imc;
+    private String socioeconomico;
+    private String escolaridade;
+    
     @Embedded
     private Endereco endereco;
 
     private String dataNasc;
+    
+    @Column(unique = true, nullable = false)
     private String cpf;
+    
     private String telefone;
 
     @ElementCollection
@@ -47,8 +79,6 @@ public class Paciente {
         this.telefone = telefone;
         this.contatos = contatos;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -98,8 +128,6 @@ public class Paciente {
         this.dataNasc = dataNasc;
         calcularIdade();
     }
-
-
     private void calcularIdade() {
         if (this.dataNasc != null) {
             try {
@@ -134,4 +162,44 @@ public class Paciente {
     public void setContatos(List<Contato> contatos) {
         this.contatos = contatos;
     }
+
+	public float getPeso() {
+		return peso;
+	}
+
+	public void setPeso(float peso) {
+		this.peso = peso;
+	}
+
+	public float getAltura() {
+		return altura;
+	}
+
+	private float setAltura(float altura) {
+	    return this.altura = Math.round(altura * 100) / 100f;
+	}
+
+	public float getImc() {
+		return imc;
+	}
+
+	public void setImc(float imc) {
+		this.imc = imc;
+	}
+
+	public String getSocioeconomico() {
+		return socioeconomico;
+	}
+
+	public void setSocioeconomico(String socioeconomico) {
+		this.socioeconomico = socioeconomico;
+	}
+
+	public String getEscolaridade() {
+		return escolaridade;
+	}
+
+	public void setEscolaridade(String escolaridade) {
+		this.escolaridade = escolaridade;
+	}
 }

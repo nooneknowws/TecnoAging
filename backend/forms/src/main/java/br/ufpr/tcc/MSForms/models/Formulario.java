@@ -7,7 +7,16 @@ import jakarta.persistence.*;
 @Entity
 public class Formulario {
 
-    @Id
+    public Formulario(Long id, String tipo, String titulo, String descricao, List<Etapa> etapas) {
+		super();
+		this.id = id;
+		this.tipo = tipo;
+		this.titulo = titulo;
+		this.descricao = descricao;
+		this.etapas = etapas;
+	}
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -17,19 +26,17 @@ public class Formulario {
 
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Etapa> etapas;
-
+    
     public Formulario() {
     }
 
-    // Construtor com argumentos, getters e setters
     public Formulario(Long id, String tipo, String titulo, String descricao) {
         this.id = id;
         this.tipo = tipo;
         this.titulo = titulo;
         this.descricao = descricao;
     }
-
-    // Getters e Setters
+    
     public Long getId() {
         return id;
     }

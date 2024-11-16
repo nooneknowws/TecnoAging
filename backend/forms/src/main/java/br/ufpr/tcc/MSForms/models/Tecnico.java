@@ -33,9 +33,15 @@ public class Tecnico {
     private Endereco endereco;
 
     private String dataNasc;
+    
+    @Column(unique = true, nullable = false)
     private String cpf;
+    
     private String telefone;
+    
+    @Column(unique = true, nullable = false)
     private int matricula;
+    
     private boolean ativo;
     
     
