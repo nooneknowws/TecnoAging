@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Formulario } from '../../_shared/models/formulario/formulario';
 import { FORMULARIOS_CONFIG } from '../../_shared/models/formulario/formularios.config';
@@ -6,8 +6,8 @@ import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';
 import { AuthService } from '../../_shared/services/auth.service';
-import { FormularioService } from '../../_shared/services/formulario.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tecnico-dashboard',
@@ -21,6 +21,8 @@ export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
   pacientes: Paciente[] = [];
   selectedPaciente: Paciente | null = null;
   activeSection: string = 'pacientes';
+  viewMode: 'grid' | 'table' = 'grid';
+  historicoTestes$: Observable<any[]> | null = null;
 
   readonly sections = [
     { id: 'pacientes', label: 'Pacientes' },
@@ -82,14 +84,41 @@ export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loadPacientes(): void {
-    this.pacienteService.getPacientes().subscribe(pacientes => {
-      this.pacientes = pacientes;
-    });
+  toggleView(mode: 'grid' | 'table'): void {
+    this.viewMode = mode;
   }
 
   selectPaciente(paciente: Paciente): void {
     this.selectedPaciente = paciente;
+    this.historicoTestes$ = this.pacienteService.getHistoricoTestes(paciente.id!);
+    setTimeout(() => {
+      this.scrollToSection('formularios');
+    }, 100);
+  }
+
+  getStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'concluído':
+        return 'bg-success';
+      case 'em andamento':
+        return 'bg-warning';
+      case 'pendente':
+        return 'bg-secondary';
+      default:
+        return 'bg-primary';
+    }
+  }
+
+  clearSelectedPaciente(): void {
+    this.selectedPaciente = null;
+    this.historicoTestes$ = null;
+    this.scrollToSection('pacientes');
+  }
+
+  loadPacientes(): void {
+    this.pacienteService.getPacientes().subscribe(pacientes => {
+      this.pacientes = pacientes;
+    });
   }
 
   navigateToFormulario(tipo: TipoFormulario) {

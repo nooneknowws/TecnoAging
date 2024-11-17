@@ -50,6 +50,7 @@ export class PacienteService {
     return this.updatePaciente(paciente);
   }
 
+  //TODO: ajeitar o endpoint disso aqui
   getHistoricoTestes(pacienteId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URL}/pacientes/${pacienteId}/historico-testes`);
   }
