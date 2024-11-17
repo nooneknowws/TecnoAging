@@ -23,14 +23,13 @@ const routes: Routes = [
 
   {
     path: 'paciente',
-    component: PacienteDashboardComponent,
+    component: PacienteLayoutComponent,
     canActivate: [AuthGuard],
     data: { tipo: 'paciente' },
     children: [
+      { path: '', component: PacienteDashboardComponent },
       { path: 'historico-testes', component: HistoricoTestesComponent },
-      { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
-      { path: 'paciente-layout', component: PacienteLayoutComponent },
-      { path: 'paciente-dashboard', component: PacienteDashboardComponent },
+      { path: 'visualizar-perfil', component: VisualizarPerfilComponent }
     ]
   },
   {

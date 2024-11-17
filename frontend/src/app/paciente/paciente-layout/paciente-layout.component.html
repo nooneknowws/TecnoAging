@@ -1,0 +1,4 @@
+<div class="container container-paciente" [ngClass]="{'mt-2': !linkVoltarVisivel}">
+    <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()"><i class="fas fa-chevron-left"></i> Voltar</a>
+    <router-outlet></router-outlet>
+</div>
