@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { Formulario } from '../../_shared/models/formulario/formulario';
 import { FORMULARIOS_CONFIG } from '../../_shared/models/formulario/formularios.config';
@@ -14,13 +14,19 @@ import { PacienteService } from '../../_shared/services/paciente.service';
   templateUrl: './tecnico-dashboard.component.html',
   styleUrls: ['./tecnico-dashboard.component.css']
 })
-export class TecnicoDashboardComponent implements OnInit {
+export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
+  @ViewChildren('sectionRef') sectionRefs!: QueryList<ElementRef>;
+  
   currentTecnico: Tecnico | null = null;
   pacientes: Paciente[] = [];
-  tiposFormulario = Object.values(TipoFormulario);
-  formularios = Object.values(FORMULARIOS_CONFIG);
   selectedPaciente: Paciente | null = null;
-  activeTab: 'pacientes' | 'formularios' | 'resultados' = 'pacientes';
+  activeSection: string = 'pacientes';
+
+  readonly sections = [
+    { id: 'pacientes', label: 'Pacientes' },
+    { id: 'formularios', label: 'Formulários' },
+    { id: 'resultados', label: 'Resultados' }
+  ];
 
   readonly formulariosDisponiveis = [
     { tipo: TipoFormulario.SEDENTARISMO, titulo: 'Nível de Atividade Física' },
@@ -29,7 +35,7 @@ export class TecnicoDashboardComponent implements OnInit {
     { tipo: TipoFormulario.MINIMENTAL, titulo: 'Mini Exame do Estado Mental' },
     { tipo: TipoFormulario.FACTF, titulo: 'FACT-F' }
   ];
- 
+
   constructor(
     private pacienteService: PacienteService,
     private authService: AuthService,
@@ -43,8 +49,37 @@ export class TecnicoDashboardComponent implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
-   
+    
     this.loadPacientes();
+    this.setupScrollObserver();
+  }
+
+  ngAfterViewInit() {
+    this.setupScrollObserver();
+  }
+
+  private setupScrollObserver() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.activeSection = entry.target.id;
+          }
+        });
+      },
+      {
+        threshold: 0.5
+      }
+    );
+
+    this.sectionRefs.forEach(ref => observer.observe(ref.nativeElement));
+  }
+
+  scrollToSection(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   loadPacientes(): void {
@@ -55,10 +90,6 @@ export class TecnicoDashboardComponent implements OnInit {
 
   selectPaciente(paciente: Paciente): void {
     this.selectedPaciente = paciente;
-  }
-
-  switchTab(tab: 'pacientes' | 'formularios' | 'resultados'): void {
-    this.activeTab = tab;
   }
 
   navigateToFormulario(tipo: TipoFormulario) {
@@ -77,17 +108,21 @@ export class TecnicoDashboardComponent implements OnInit {
     });
   }
 
-  consultarPerfil(paciente: any) {
-    this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
-      queryParams: { id: paciente.id } 
+  consultarPerfil(paciente: Paciente) {
+    this.router.navigate(['/tecnico/paciente/ver-perfil'], {
+      queryParams: { id: paciente.id }
+    });
+  }
+
+  editarPerfil(paciente: Paciente) {
+    this.router.navigate(['/tecnico/paciente/editar-perfil'], {
+      queryParams: { id: paciente.id }
     });
   }
 
   compareResults(): void {
-    if (!this.selectedPaciente) {
-      // Show error notification
-      return;
-    }
+    if (!this.selectedPaciente) return;
+    
     this.router.navigate(['/comparar-resultados'], {
       queryParams: { pacienteId: this.selectedPaciente.cpf }
     });
