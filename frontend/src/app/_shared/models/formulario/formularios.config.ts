@@ -61,7 +61,43 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         validacao: { required: true, min: 0, max: 7 }
                     }
                 ]
-            }
+            },
+            {
+              titulo: 'Atividade Leve',
+              descricao: 'Avaliação de atividades físicas leves.',
+              perguntas: [
+                  {
+                      texto: 'Quanto tempo por dia você realiza atividades leves? (como caminhar devagar ou alongar) (HH:MM)',
+                      tipo: 'tempo',
+                      resposta: '',
+                      validacao: { required: true }
+                  },
+                  {
+                      texto: 'Quantos dias por semana você realiza essas atividades?',
+                      tipo: 'numero',
+                      resposta: '',
+                      validacao: { required: true, min: 0, max: 7 }
+                  }
+              ]
+          },
+          {
+              titulo: 'Sedentarismo Adicional',
+              descricao: 'Avaliação de comportamentos sedentários.',
+              perguntas: [
+                  {
+                      texto: 'Durante quantas horas por dia você passa sentado assistindo TV ou no celular? (HH:MM)',
+                      tipo: 'tempo',
+                      resposta: '',
+                      validacao: { required: true }
+                  },
+                  {
+                      texto: 'Quantas vezes por semana você faz pequenas pausas para caminhar durante longos períodos sentado?',
+                      tipo: 'numero',
+                      resposta: '',
+                      validacao: { required: true, min: 0, max: 7 }
+                  }
+              ]
+          }
         ]
     },
 
@@ -80,7 +116,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Atividade 1',
                 descricao: 'Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Fadiga Física',
                         tipo: 'range',
                         resposta: '',
@@ -89,7 +125,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                             max: 5,
                             required: true
                         }
-                    },                    { 
+                    },                    {
                         texto: 'Fadiga Mental',
                         tipo: 'range',
                         resposta: '',
@@ -105,7 +141,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Atividade 2',
                 descricao: 'Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Fadiga Física',
                         tipo: 'range',
                         resposta: '',
@@ -114,7 +150,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                             max: 5,
                             required: true
                         }
-                    },                    { 
+                    },                    {
                         texto: 'Fadiga Mental',
                         tipo: 'range',
                         resposta: '',
@@ -130,7 +166,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Atividade 3',
                 descricao: 'Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Fadiga Física',
                         tipo: 'range',
                         resposta: '',
@@ -139,7 +175,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                             max: 5,
                             required: true
                         }
-                    },                    { 
+                    },                    {
                         texto: 'Fadiga Mental',
                         tipo: 'range',
                         resposta: '',
@@ -155,7 +191,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Atividade 4',
                 descricao: 'Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Fadiga Física',
                         tipo: 'range',
                         resposta: '',
@@ -164,7 +200,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                             max: 5,
                             required: true
                         }
-                    },                    { 
+                    },                    {
                         texto: 'Fadiga Mental',
                         tipo: 'range',
                         resposta: '',
@@ -196,7 +232,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         resposta: '',
                         validacao: { required: true }
                     },
-                    
+
                 ]
             },
             {
@@ -210,7 +246,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         resposta: '',
                         validacao: { required: true }
                     },
-                    
+
                 ]
             },
             {
@@ -377,10 +413,40 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         validacao: { required: false }
                     }
                 ]
-            }
+            },
+            {
+              titulo: 'Atividades Adicionais',
+              descricao: 'Classificação da fadiga em situações cotidianas.',
+              perguntas: [
+                  {
+                      texto: 'Classifique os níveis de fadiga ao subir escadas por 5 minutos.',
+                      tipo: 'range',
+                      resposta: '',
+                      validacao: { min: 0, max: 5, required: true }
+                  },
+                  {
+                      texto: 'Classifique os níveis de fadiga ao realizar caminhada rápida por 15 minutos.',
+                      tipo: 'range',
+                      resposta: '',
+                      validacao: { min: 0, max: 5, required: true }
+                  }
+              ]
+          },
+          {
+              titulo: 'Atividades Domésticas',
+              descricao: 'Classificação da fadiga durante tarefas domésticas pesadas.',
+              perguntas: [
+                  {
+                      texto: 'Classifique os níveis de fadiga ao carregar compras por 10 minutos.',
+                      tipo: 'range',
+                      resposta: '',
+                      validacao: { min: 0, max: 5, required: true }
+                  }
+              ]
+          }
         ]
     },
-    
+
     [TipoFormulario.MINIMENTAL]: {
         id: 4,
         tipo: TipoFormulario.MINIMENTAL,
@@ -490,11 +556,11 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Cálculo',
                 descricao: 'Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Se houver erro, corrija-o e prossiga. Considere correto se o avaliado espontaneamente se autocorrigir.',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Considere 1 ponto para cada resultado correto.',
-                        tipo: 'range', 
+                        tipo: 'range',
                         resposta: '',
-                        validacao: { required: true, min: 0, max: 6 } 
+                        validacao: { required: true, min: 0, max: 6 }
                     }
                 ]
             },
@@ -535,8 +601,8 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Repetição',
                 descricao: 'Preste atenção: Vou lhe dizer uma frase e quero que você repita depois de mim: “NEM AQUI, NEM ALI, NEM LÁ”.',
                 perguntas: [
-                    { 
-                        texto: 'Considere somente se a repetição for perfeita', 
+                    {
+                        texto: 'Considere somente se a repetição for perfeita',
                         tipo: 'radio',
                         opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
                         resposta: '',
@@ -565,7 +631,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Leitura e Obediência',
                 descricao: 'Mostre a frase escrita: “FECHE OS OLHOS” e peça para o indivíduo fazer o que está sendo mandado. Não auxilie se pedir ajuda ou se só ler a frase sem realizar o comando. ',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Avalie o resultado.',
                         tipo: 'radio',
                         opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
@@ -578,7 +644,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Escrita',
                 descricao: 'Peça ao indivíduo para escrever uma frase. Se não compreender o significado, ajude com: alguma frase que tenha começo, meio e fim, alguma coisa que aconteceu hoje; alguma coisa que queira dizer. Para a correção não são considerados erros gramaticais ou de ortografia. (1 ponto).',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Avalie o resultado.',
                         tipo: 'radio',
                         opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
@@ -591,7 +657,7 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                 titulo: 'Cópia do Desenho',
                 descricao: 'Mostre o modelo e peça para fazer o melhor possível. Considere apenas se houver 2 pentágonos intersecionados (10 ângulos) formando uma figura de quatro lados ou com dois ângulos (1 ponto).',
                 perguntas: [
-                    { 
+                    {
                         texto: 'Avalie o desenho.',
                         tipo: 'radio',
                         opcoes: ["O paciente respondeu corretamente", "Respondeu incorretamente"],
@@ -599,9 +665,35 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                         validacao: { required: true }
                     }
                 ]
-            }
+            },
+            {
+              titulo: 'Cálculo Adicional',
+              descricao: 'Avaliação de habilidades matemáticas simples.',
+              perguntas: [
+                  {
+                      texto: 'Conte de 1 a 10 de trás para frente. Avalie se ele erra.',
+                      tipo: 'radio',
+                      opcoes: ['Sim', 'Não'],
+                      resposta: '',
+                      validacao: { required: true }
+                  }
+              ]
+          },
+          {
+              titulo: 'Desenho Adicional',
+              descricao: 'Avaliação da capacidade de reprodução gráfica.',
+              perguntas: [
+                  {
+                      texto: 'Desenhe um relógio marcando 3 horas. Avalie se os ponteiros e números estão corretos.',
+                      tipo: 'radio',
+                      opcoes: ['Sim', 'Não'],
+                      resposta: '',
+                      validacao: { required: true }
+                  }
+              ]
+          }
         ]
-    },   
+    },
 
     [TipoFormulario.FACTF]: {
         id: 5,
@@ -678,7 +770,27 @@ export const FORMULARIOS_CONFIG: { [key in TipoFormulario]: Formulario } = {
                     { texto: 'Estou frustrado(a) por estar cansado(a) demais para fazer as coisas que quero', tipo: 'radio', resposta: '', opcoes: ['Nem um pouco', 'Um pouco', 'Mais ou menos', 'Muito', 'Muitíssimo'], validacao: { required: true } },
                     { texto: 'Tenho que limitar as minhas atividades sociais por estar cansado(a)', tipo: 'radio', resposta: '', opcoes: ['Nem um pouco', 'Um pouco', 'Mais ou menos', 'Muito', 'Muitíssimo'], validacao: { required: true } }
                 ]
-            }
+            },
+            {
+              titulo: 'Impacto no Dia a Dia',
+              descricao: 'Avaliação de como a fadiga impacta o cotidiano.',
+              perguntas: [
+                  {
+                      texto: 'Tenho que planejar meu dia para evitar o cansaço.',
+                      tipo: 'radio',
+                      resposta: '',
+                      opcoes: ['Sim', 'Não'],
+                      validacao: { required: true }
+                  },
+                  {
+                      texto: 'Evito sair de casa por falta de energia.',
+                      tipo: 'radio',
+                      resposta: '',
+                      opcoes: ['Sim', 'Não'],
+                      validacao: { required: true }
+                  }
+              ]
+          }
         ]
     }
 };
