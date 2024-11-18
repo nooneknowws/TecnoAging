@@ -6,6 +6,8 @@ import { FormularioService } from '../_shared/services/formulario.service';
 import { AvaliacaoService } from '../_shared/services/avaliacao.service';
 import { TipoFormulario } from '../_shared/models/tipos.formulario.enum';
 import { Avaliacao } from '../_shared/models/avaliacao/avaliacao';
+import { Resposta } from '../_shared/models/avaliacao/resposta';
+import { Etapa } from '../_shared/models/formulario/etapa';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -124,28 +126,35 @@ export class FormularioComponent implements OnInit {
 
   async salvarAvaliacao() {
     if (!this.formGroup.valid || !this.formulario) return;
-
+  
     try {
       this.atualizarRespostas(this.formGroup.value);
-     
+  
+      const respostas = this.formulario.etapas.flatMap(etapa =>
+        etapa.perguntas.map(pergunta => new Resposta(pergunta, pergunta.resposta))
+      );
+  
       const avaliacao = new Avaliacao(
         undefined,
-        undefined, // preenchidoPor será definido no service
-        undefined, // referenteA será definido no service
+        undefined,
+        undefined,
         this.formulario,
+        respostas,
         this.calcularPontuacao(),
         this.calcularPontuacao(),
         new Date(),
         new Date()
       );
 
+      console.log('JSON da avaliação a ser enviada:', JSON.stringify(avaliacao, null, 2));
+  
       await this.avaliacaoService.salvarAvaliacao(avaliacao, this.pacienteId).toPromise();
-      
+  
       this.showSuccessAlert = true;
       this.showErrorAlert = false;
       this.avaliacaoSalva = true;
       window.scrollTo(0, 0);
-
+  
     } catch (error) {
       console.error('Erro ao salvar avaliação:', error);
       this.showErrorAlert = true;
@@ -154,6 +163,8 @@ export class FormularioComponent implements OnInit {
       window.scrollTo(0, 0);
     }
   }
+  
+  
 
   getCheckboxFormArray(etapaIndex: number, perguntaIndex: number): FormArray {
     const controlName = this.getControlName(etapaIndex, perguntaIndex);

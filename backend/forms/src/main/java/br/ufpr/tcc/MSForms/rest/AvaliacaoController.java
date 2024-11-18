@@ -3,6 +3,7 @@ package br.ufpr.tcc.MSForms.rest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class AvaliacaoController {
    
 
     @PostMapping("/forms")
-    public ResponseEntity<String> salvarAvaliacao(@RequestBody AvaliacaoDTO avaliacaoDTO) {
+    public ResponseEntity<Map<String, String>> salvarAvaliacao(@RequestBody AvaliacaoDTO avaliacaoDTO) {
         Paciente paciente = pacienteRepository.findById(avaliacaoDTO.getPacienteId())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         Tecnico tecnico = tecnicoRepository.findById(avaliacaoDTO.getTecnicoId())
@@ -73,7 +74,7 @@ public class AvaliacaoController {
 
         avaliacaoRepository.save(avaliacao);
 
-        return ResponseEntity.ok("Avaliação salva com sucesso");
+        return ResponseEntity.ok(Map.of("message", "Avaliação salva com sucesso"));
     }
     @GetMapping("/respostas/paciente/{id}")
     public ResponseEntity<List<RespostaAvaliacaoPaciente>> getRespostasByPaciente(@PathVariable("id") Long pacienteId) {
@@ -84,6 +85,7 @@ public class AvaliacaoController {
 
         for (Avaliacao avaliacao : avaliacoes) {
             Tecnico tecnico = avaliacao.getTecnico();
+            Formulario formulario = avaliacao.getFormulario();
             List<Resposta> respostas = avaliacao.getRespostas(); 
             List<PerguntaValorDTO> perguntaValorList = respostas.stream()
                 .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
@@ -92,6 +94,8 @@ public class AvaliacaoController {
             RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
                 tecnico.getId(), 
                 tecnico.getNome(), 
+                formulario.getTitulo(),
+                formulario.getDescricao(),
                 perguntaValorList
             );
 

@@ -1,11 +1,11 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';
 import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
+import { Observable } from 'rxjs';
 
 type ViewMode = 'grid' | 'table';
 type Section = 'pacientes' | 'formularios' | 'resultados';

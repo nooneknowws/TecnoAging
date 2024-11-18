@@ -17,7 +17,7 @@
   ],
   "tecnicos": [
     {
-      "id": "1",
+      "id": 1,
       "matricula": 12345,
       "ativo": true,
       "nome": "João Silva",
@@ -38,7 +38,7 @@
   ],
   "pacientes": [
     {
-      "id": "1",
+      "id": 1,
       "peso": 70.5,
       "altura": 1.75,
       "imc": 23,
@@ -64,6 +64,7 @@
           "telefone": "11977777777",
           "parentesco": "FILHO"
         }
+
       ]
     },
     {
@@ -3149,6 +3150,204 @@
       "pontuacaoMaxima": 0,
       "dataCriacao": "2024-11-16T20:34:20.700Z",
       "dataAtualizacao": "2024-11-16T20:34:20.700Z"
+    },
+    {
+      "id": "4aec",
+      "preenchidoPor": {
+        "id": "1",
+        "nome": "João Silva",
+        "sexo": "M",
+        "idade": 35,
+        "endereco": {
+          "logradouro": "Rua Principal",
+          "numero": 123,
+          "bairro": "Centro",
+          "municipio": "São Paulo",
+          "UF": "SP",
+          "cep": "01001-000"
+        },
+        "dataNasc": "1988-05-15",
+        "cpf": "12345678901",
+        "telefone": "11999999999",
+        "matricula": 12345,
+        "ativo": true
+      },
+      "referenteA": {
+        "id": "2",
+        "peso": 80,
+        "altura": 1.8,
+        "imc": 25,
+        "socioeconomico": "B1",
+        "escolaridade": "Médio Completo",
+        "nome": "João Silva",
+        "sexo": "M",
+        "idade": 50,
+        "endereco": {
+          "logradouro": "Rua Principal",
+          "numero": 123,
+          "bairro": "Centro",
+          "municipio": "Rio de Janeiro",
+          "UF": "RJ",
+          "cep": "20001-000"
+        },
+        "dataNasc": "1972-02-15",
+        "cpf": "12345678901",
+        "telefone": "11999999999",
+        "contatos": [
+          {
+            "nome": "Pedro Silva",
+            "telefone": "11955555555",
+            "parentesco": "FILHO"
+          },
+          {
+            "nome": "Ana Silva",
+            "telefone": "11944444444",
+            "parentesco": "FILHA"
+          }
+        ]
+      },
+      "formulario": {
+        "id": 1,
+        "tipo": "pfs",
+        "titulo": "Formulário PFS",
+        "descricao": "Avaliação do nível de fadiga física e mental após diferentes atividades",
+        "etapas": [
+          {
+            "id": 1,
+            "titulo": "Escala de Fatigabilidade de Pittsburgh",
+            "descricao": "Instruções: Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde '0' é igual a nenhuma fadiga e '5' é igual a fadiga extrema.",
+            "perguntas": []
+          },
+          {
+            "id": 2,
+            "titulo": "Atividade 1",
+            "descricao": "Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.",
+            "perguntas": [
+              {
+                "id": 1,
+                "texto": "Fadiga Física",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 4
+              },
+              {
+                "id": 2,
+                "texto": "Fadiga Mental",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 2
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "titulo": "Atividade 2",
+            "descricao": "Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)",
+            "perguntas": [
+              {
+                "id": 3,
+                "texto": "Fadiga Física",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              },
+              {
+                "id": 4,
+                "texto": "Fadiga Mental",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "titulo": "Atividade 3",
+            "descricao": "Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)",
+            "perguntas": [
+              {
+                "id": 5,
+                "texto": "Fadiga Física",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              },
+              {
+                "id": 6,
+                "texto": "Fadiga Mental",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "titulo": "Atividade 4",
+            "descricao": "Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)",
+            "perguntas": [
+              {
+                "id": 7,
+                "texto": "Fadiga Física",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              },
+              {
+                "id": 8,
+                "texto": "Fadiga Mental",
+                "tipo": "range",
+                "opcoes": [],
+                "validacao": {
+                  "min": 0,
+                  "max": 5,
+                  "required": true
+                },
+                "resposta": 5
+              }
+            ]
+          }
+        ]
+      },
+      "pontuacaoTotal": 0,
+      "pontuacaoMaxima": 0,
+      "dataCriacao": "2024-11-18T00:33:28.137Z",
+      "dataAtualizacao": "2024-11-18T00:33:28.137Z"
     }
   ]
 }
