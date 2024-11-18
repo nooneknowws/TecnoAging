@@ -10,6 +10,8 @@ import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard
 import { FormularioService } from '../_shared/services/formulario.service';
 import { TecnicoLayoutComponent } from './tecnico-layout/tecnico-layout.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConsultarAvaliacaoComponent } from './paciente/consultar-avaliacao/consultar-avaliacao.component';
+import { EditarAvaliacaoComponent } from './paciente/editar-avaliacao/editar-avaliacao.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HistoricoPacienteComponent,
     VerPerfilComponent,
     TecnicoDashboardComponent,
-    TecnicoLayoutComponent
+    TecnicoLayoutComponent,
+    ConsultarAvaliacaoComponent,
+    EditarAvaliacaoComponent
   ],  
   imports: [
     CommonModule,

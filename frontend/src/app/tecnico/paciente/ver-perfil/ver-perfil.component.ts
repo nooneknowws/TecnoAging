@@ -54,11 +54,13 @@ export class VerPerfilComponent {
   }
 
   consultarAvaliacao(avaliacaoId: number) {
-    // TODO: Implementar visualização da avaliação
+    this.router.navigate(['/tecnico/avaliacoes/consultar', this.paciente?.id], {
+      queryParams: { avaliacaoId: avaliacaoId }
+    });
   }
-
+  
   editarAvaliacao(avaliacaoId: number) {
-    // TODO: Implementar edição da avaliação
+    this.router.navigate(['/tecnico/avaliacoes/editar', avaliacaoId]);
   }
 
   voltar() {

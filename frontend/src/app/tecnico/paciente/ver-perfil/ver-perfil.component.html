@@ -105,7 +105,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let avaliacao of avaliacoes">
-                <td>{{avaliacao.formulario?.titulo}}</td>
+                <td>{{avaliacao.formulario}}</td> 
+                <!-- TODO: colocar um objeto de Formulario no array de Avaliacao recebido do back -->
                 <td>{{avaliacao.pontuacaoTotal}}/{{avaliacao.pontuacaoMaxima || 'N/D'}}</td>
                 <td>
                   <div class="btn-group">
@@ -149,11 +150,11 @@
                </tr>
                <tr>
                  <th>Município/UF</th>
-                 <td>{{paciente.endereco?.municipio}}/{{paciente.endereco?.UF}}</td>
+                 <td>{{paciente.endereco?.municipio}}/{{paciente.endereco?.uf}}</td>
                </tr>
                <tr>
                  <th>CEP</th>
-                 <td>{{paciente.endereco?.CEP}}</td>
+                 <td>{{paciente.endereco?.cep}}</td>
                </tr>
              </tbody>
            </table>

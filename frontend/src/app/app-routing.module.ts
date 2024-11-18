@@ -15,12 +15,13 @@ import { TecnicoDashboardComponent } from './tecnico/tecnico-dashboard/tecnico-d
 import { TecnicoLayoutComponent } from './tecnico/tecnico-layout/tecnico-layout.component';
 import { FormularioComponent } from './formulario/formulario.component';
 import { PacienteLayoutComponent } from './paciente/paciente-layout/paciente-layout.component';
+import { ConsultarAvaliacaoComponent } from './tecnico/paciente/consultar-avaliacao/consultar-avaliacao.component';
+import { EditarAvaliacaoComponent } from './tecnico/paciente/editar-avaliacao/editar-avaliacao.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'cadastro', component: CadastroComponent },
-
   {
     path: 'paciente',
     component: PacienteLayoutComponent,
@@ -44,6 +45,8 @@ const routes: Routes = [
       { path: 'paciente/editar-perfil', component: EditarPerfilPacienteComponent },
       { path: 'paciente/historico-paciente', component: HistoricoPacienteComponent },
       { path: 'paciente/ver-perfil', component: VerPerfilComponent },
+      { path: 'avaliacoes/consultar/:pacienteId', component: ConsultarAvaliacaoComponent },
+      { path: 'avaliacoes/editar/:id', component: EditarAvaliacaoComponent }
     ]
   },
   {
@@ -56,7 +59,6 @@ const routes: Routes = [
       }
     ]
   },
-
   { path: '**', redirectTo: '/' }
 ];
 

@@ -8,38 +8,46 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "avaliacao")
 public class Avaliacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
     @ManyToOne
+    @JoinColumn(name = "tecnico_id", nullable = false)
     private Tecnico tecnico;
 
     @ManyToOne
+    @JoinColumn(name = "formulario_id", nullable = false)
     private Formulario formulario;
 
     @OneToMany(mappedBy = "avaliacao", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Resposta> respostas;
 
+    @Column(name = "pontuacao_total")
     private int pontuacaoTotal;
+
+    @Column(name = "pontuacao_maxima")
     private int pontuacaoMaxima;
-    
+
+    @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
+
+    @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-    public Avaliacao() {
-        super();
-    }
+    public Avaliacao() {}
 
     public Avaliacao(Long id, Paciente paciente, Tecnico tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
                      LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<Resposta> respostas) {
-        super();
         this.id = id;
         this.paciente = paciente;
         this.tecnico = tecnico;
@@ -51,6 +59,7 @@ public class Avaliacao {
         this.respostas = respostas;
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -115,11 +124,11 @@ public class Avaliacao {
         this.dataAtualizacao = dataAtualizacao;
     }
 
-	public int getPontuacaoMaxima() {
-		return pontuacaoMaxima;
-	}
+    public int getPontuacaoMaxima() {
+        return pontuacaoMaxima;
+    }
 
-	public void setPontuacaoMaxima(int pontuacaoMaxima) {
-		this.pontuacaoMaxima = pontuacaoMaxima;
-	}
+    public void setPontuacaoMaxima(int pontuacaoMaxima) {
+        this.pontuacaoMaxima = pontuacaoMaxima;
+    }
 }
