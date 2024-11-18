@@ -17,6 +17,7 @@ public class Resposta {
     @JoinColumn(name = "avaliacao_id")
     private Avaliacao avaliacao;
 
+    @Column(columnDefinition = "TEXT") 
     private String valor;
 
     public Resposta() {}

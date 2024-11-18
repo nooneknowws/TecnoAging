@@ -1,4 +1,46 @@
+<nav class="navbar" [ngClass]="{'open': isNavbarOpen}">
+  <button class="navbar-toggler" (click)="toggleNavbar()">
+    <span class="fas fa-bars"></span>
+  </button>
+  <div>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/tecnico">
+          <i class="fas fa-home"></i>
+          <span class="nav-text">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/tecnico/editar-perfil">
+          <i class="fas fa-user-edit"></i>
+          <span class="nav-text">Meu Perfil</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/tecnico/comparar-resultados">
+          <i class="fas fa-chart-line"></i>
+          <span class="nav-text">Resultados</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/tecnico/paciente/historico-paciente">
+          <i class="fas fa-history"></i>
+          <span class="nav-text">Histórico</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="nav-text">Sair</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 <div class="container container-funcionario" [ngClass]="{'mt-2': !linkVoltarVisivel}">
-  <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()"><i class="fas fa-chevron-left"></i> Voltar</a>
+  <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()">
+    <i class="fas fa-chevron-left"></i> Voltar
+  </a>
   <router-outlet></router-outlet>
 </div>

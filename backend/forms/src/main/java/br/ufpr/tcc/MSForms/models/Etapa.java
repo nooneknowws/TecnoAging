@@ -14,9 +14,8 @@ public class Etapa {
 
     private String titulo;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") 
     private String descricao;
-
 
     @ManyToOne
     @JoinColumn(name = "formulario_id")

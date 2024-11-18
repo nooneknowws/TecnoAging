@@ -1,16 +1,21 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from '../../_shared/services/auth.service';
 
 @Component({
   selector: 'app-paciente-layout',
   templateUrl: './paciente-layout.component.html',
-  styleUrl: './paciente-layout.component.css'
+  styleUrls: ['./paciente-layout.component.css']
 })
 export class PacienteLayoutComponent {
   linkVoltarVisivel: boolean = false;
-  
-  constructor(private router: Router) {}
+  isNavbarOpen: boolean = true;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.router.events.pipe(
@@ -20,11 +25,20 @@ export class PacienteLayoutComponent {
     });
   }
 
+  toggleNavbar(): void {
+    this.isNavbarOpen = !this.isNavbarOpen;
+  }
+
   voltar() {
     history.back();
   }
 
   isRotaInicial(): boolean {
     return this.router.url === '/paciente';
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
