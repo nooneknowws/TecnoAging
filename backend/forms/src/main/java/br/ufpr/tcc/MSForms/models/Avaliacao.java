@@ -28,6 +28,8 @@ public class Avaliacao {
     private List<Resposta> respostas;
 
     private int pontuacaoTotal;
+    private int pontuacaoMaxima;
+    
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
 
@@ -35,7 +37,7 @@ public class Avaliacao {
         super();
     }
 
-    public Avaliacao(Long id, Paciente paciente, Tecnico tecnico, Formulario formulario, int pontuacaoTotal,
+    public Avaliacao(Long id, Paciente paciente, Tecnico tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
                      LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<Resposta> respostas) {
         super();
         this.id = id;
@@ -43,6 +45,7 @@ public class Avaliacao {
         this.tecnico = tecnico;
         this.formulario = formulario;
         this.pontuacaoTotal = pontuacaoTotal;
+        this.pontuacaoMaxima = pontuacaoMaxima;
         this.dataCriacao = dataCriacao;
         this.dataAtualizacao = dataAtualizacao;
         this.respostas = respostas;
@@ -111,4 +114,12 @@ public class Avaliacao {
     public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
     }
+
+	public int getPontuacaoMaxima() {
+		return pontuacaoMaxima;
+	}
+
+	public void setPontuacaoMaxima(int pontuacaoMaxima) {
+		this.pontuacaoMaxima = pontuacaoMaxima;
+	}
 }

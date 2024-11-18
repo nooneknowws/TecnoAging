@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Formulario } from '../../_shared/models/formulario/formulario';
-import { FORMULARIOS_CONFIG } from '../../_shared/models/formulario/formularios.config';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';

@@ -13,6 +13,8 @@ public class Etapa {
     private Long id;
 
     private String titulo;
+    
+    @Column(columnDefinition = "TEXT") 
     private String descricao;
 
     @ManyToOne
