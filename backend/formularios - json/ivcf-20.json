@@ -16,8 +16,7 @@
                     "Excelente, boa ou muito boa",
                     "Regular ou ruim"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -33,8 +32,7 @@
                     "Pior",
                     "Igual"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -49,8 +47,7 @@
                     "Sim",
                     "Não ou não faz compras por outros motivos que não a saúde"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você deixou de controlar seu dinheiro ou os gastos da casa por causa da sua saúde ou condição física?",
@@ -59,8 +56,7 @@
                     "Sim",
                     "Não ou não controla o dinheiro por outros motivos que não a saúde"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você deixou de realizar pequenos trabalhos domésticos (limpeza leve, arrumar a casa, lavar louças) por causa da sua saúde ou condição física?",
@@ -69,8 +65,7 @@
                     "Sim",
                     "Não ou não faz trabalhos domésticos por outros motivos que não a saúde"
                 ],
-                "resposta":null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você deixou de tomar banho sozinho por causa da sua saúde ou condição física?",
@@ -79,8 +74,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -95,8 +89,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Este esquecimento está piorando nos últimos meses?",
@@ -105,8 +98,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Este esquecimento está impedindo a realização de alguma atividade do cotidiano?",
@@ -115,8 +107,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -131,8 +122,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta":null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?",
@@ -141,8 +131,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta":null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -157,8 +146,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você é incapaz de segurar pequenos objetos?",
@@ -167,8 +155,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta":null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você tem alguma das quatro condições abaixo relacionadas?",
@@ -179,8 +166,7 @@
                     "Circunferência da panturrilha < 31 cm",
                     "Tempo gasto no teste de velocidade de marcha (4m) > 5 segundos"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": false }
             },
             {
                 "texto": "Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?",
@@ -189,8 +175,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você caiu no último ano? Quantas vezes?",
@@ -201,8 +186,7 @@
                     "2 vezes",
                     "3 vezes ou mais"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você perde urina ou fezes, sem querer, em algum momento?",
@@ -211,8 +195,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             }
         ]
     },
@@ -227,8 +210,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você tem problemas de audição que impedem a realização de atividades do cotidiano? É permitido o uso de aparelhos de audição.",
@@ -237,8 +219,7 @@
                     "Sim",
                     "Não"
                 ],
-                "resposta": null,
-                "validacao_required": true
+                "validacao": { "required": true }
             },
             {
                 "texto": "Você tem alguma das três condições abaixo relacionadas?",
@@ -248,8 +229,7 @@
                     "Uso regular de cinco ou mais medicamentos diferentes",
                     "Internação recente, nos últimos 6 meses"
                 ],
-                "resposta":null,
-                "validacao_required": true
+                "validacao": { "required": false }
             }
         ]
     }

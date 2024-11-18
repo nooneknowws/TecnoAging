@@ -13,7 +13,10 @@ public class Etapa {
     private Long id;
 
     private String titulo;
+    
+    @Column(columnDefinition = "TEXT")
     private String descricao;
+
 
     @ManyToOne
     @JoinColumn(name = "formulario_id")

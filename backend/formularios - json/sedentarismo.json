@@ -11,15 +11,13 @@
                     "texto": "Quanto tempo por dia você realiza atividades moderadas? (HH:MM)",
                     "tipo": "tempo",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true }
                 },
                 {
                     "texto": "Quantos dias por semana?",
                     "tipo": "numero",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true, "min": 0, "max": 7 }
                 }
             ]
         },
@@ -31,15 +29,13 @@
                     "texto": "Quanto tempo por dia você realiza atividades vigorosas? (HH:MM)",
                     "tipo": "tempo",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true }
                 },
                 {
                     "texto": "Quantos dias por semana?",
                     "tipo": "numero",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true, "min": 0, "max": 7 }
                 }
             ]
         },
@@ -51,15 +47,13 @@
                     "texto": "Quanto tempo por dia? (HH:MM)",
                     "tipo": "tempo",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true }
                 },
                 {
                     "texto": "Quantos dias por semana?",
                     "tipo": "numero",
                     "opcoes": [],
-                    "resposta": null,
-                    "validacao_required": true
+                    "validacao": { "required": true, "min": 0, "max": 7 }
                 }
             ]
         }
