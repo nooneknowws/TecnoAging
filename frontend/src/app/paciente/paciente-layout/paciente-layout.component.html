@@ -1,4 +1,46 @@
-<div class="container container-paciente" [ngClass]="{'mt-2': !linkVoltarVisivel}">
-    <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()"><i class="fas fa-chevron-left"></i> Voltar</a>
+<nav class="navbar" [ngClass]="{'open': isNavbarOpen}">
+    <button class="navbar-toggler" (click)="toggleNavbar()">
+      <span class="fas fa-bars"></span>
+    </button>
+    <div>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/paciente">
+            <i class="fas fa-home"></i>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/paciente/visualizar-perfil">
+            <i class="fas fa-user"></i>
+            <span class="nav-text">Meu Perfil</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/paciente/historico-testes">
+            <i class="fas fa-history"></i>
+            <span class="nav-text">Histórico de Testes</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/formularios/novo">
+            <i class="fas fa-file-medical"></i>
+            <span class="nav-text">Novo Teste</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="nav-text">Sair</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="container container-paciente" [ngClass]="{'mt-2': !linkVoltarVisivel}">
+    <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()">
+      <i class="fas fa-chevron-left"></i> Voltar
+    </a>
     <router-outlet></router-outlet>
-</div>
+  </div>
