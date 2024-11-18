@@ -11,14 +11,15 @@
     <button
       *ngFor="let section of sections"
       [class.active]="activeSection === section.id"
-      (click)="scrollToSection(section.id)"
-      [disabled]="!selectedPaciente">
+      (click)="switchSection(section.id)"
+      [disabled]="section.requiresPaciente && !selectedPaciente">
       {{section.label}}
     </button>
   </nav>
 
   <div class="content">
-    <section #sectionRef id="pacientes" class="section">
+    <!-- Seção de Pacientes -->
+    <section #sectionRef id="pacientes" class="section" [class.active]="activeSection === 'pacientes'">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h2>Lista de Pacientes</h2>
@@ -38,65 +39,68 @@
         </div>
       </div>
       
-      <div class="patients-list">
-        <!-- Grid -->
-        <div class="patient-cards" *ngIf="viewMode === 'grid'">
-          <div *ngFor="let paciente of pacientes"
-               class="patient-card"
-               [class.selected]="selectedPaciente?.cpf === paciente.cpf"
-               (click)="selectPaciente(paciente)">
-            <div class="patient-info">
-              <h3>{{paciente.nome}}</h3>
-              <p>CPF: {{paciente.cpf}}</p>
-              <p>Idade: {{paciente.idade}} anos</p>
-            </div>
-            <div class="card-actions">
-              <button class="btn-primary" (click)="consultarPerfil(paciente)">Ver Perfil</button>
-              <button class="btn-secondary" (click)="editarPerfil(paciente)">Editar Perfil</button>
-            </div>
+      <!-- Grid View -->
+      <div class="patient-cards" *ngIf="viewMode === 'grid'">
+        <div *ngFor="let paciente of pacientes"
+             class="patient-card"
+             [class.selected]="selectedPaciente?.cpf === paciente.cpf"
+             (click)="selectPaciente(paciente)">
+          <div class="patient-info">
+            <h3>{{paciente.nome}}</h3>
+            <p>CPF: {{paciente.cpf}}</p>
+            <p>Idade: {{paciente.idade}} anos</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-primary" (click)="consultarPerfil(paciente)">
+              <i class="fas fa-user"></i> Ver Perfil
+            </button>
+            <button class="btn-secondary" (click)="editarPerfil(paciente)">
+              <i class="fas fa-edit"></i> Editar Perfil
+            </button>
           </div>
         </div>
-    
-        <!-- Tabela -->
-        <div class="table-responsive" *ngIf="viewMode === 'table'">
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th>RG</th>
-                <th>CPF</th>
-                <th>Nome</th>
-                <th>Idade</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let paciente of pacientes"
-                  [class.table-active]="selectedPaciente?.cpf === paciente.cpf"
-                  (click)="selectPaciente(paciente)"
-                  style="cursor: pointer;">
-                <td>{{paciente.rg}}</td>
-                <td>{{paciente.cpf}}</td>
-                <td>{{paciente.nome}}</td>
-                <td>{{paciente.idade}} anos</td>
-                <td>
-                  <div class="table-actions">
-                    <button class="btn btn-sm btn-primary me-2" (click)="consultarPerfil(paciente)">
-                      <i class="fas fa-eye"></i>
-                      Ver Perfil
-                    </button>
-                    <button class="btn btn-sm btn-secondary" (click)="editarPerfil(paciente)">
-                      <i class="fas fa-edit"></i>
-                      Editar Perfil
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-responsive" *ngIf="viewMode === 'table'">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>RG</th>
+              <th>CPF</th>
+              <th>Nome</th>
+              <th>Idade</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let paciente of pacientes"
+                [class.table-active]="selectedPaciente?.cpf === paciente.cpf"
+                (click)="selectPaciente(paciente)"
+                style="cursor: pointer;">
+              <td>{{paciente.rg}}</td>
+              <td>{{paciente.cpf}}</td>
+              <td>{{paciente.nome}}</td>
+              <td>{{paciente.idade}} anos</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn btn-sm btn-primary me-2" (click)="consultarPerfil(paciente)">
+                    <i class="fas fa-eye"></i>
+                    Ver Perfil
+                  </button>
+                  <button class="btn btn-sm btn-secondary" (click)="editarPerfil(paciente)">
+                    <i class="fas fa-edit"></i>
+                    Editar Perfil
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
+    <!-- Seção de Formulários -->
     <section #sectionRef id="formularios" class="section">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
@@ -105,110 +109,114 @@
         </div>
         <div class="view-toggle">
           <button class="btn btn-outline-secondary btn-sm me-2" 
-                  [class.active]="viewMode === 'grid'"
-                  (click)="toggleView('grid')">
+                  [class.active]="viewMode === 'table'"
+                  (click)="toggleView('table')">
             <i class="fas fa-th"></i> Grid
           </button>
           <button class="btn btn-outline-secondary btn-sm"
-                  [class.active]="viewMode === 'table'"
-                  (click)="toggleView('table')">
+                  [class.active]="viewMode === 'grid'"
+                  (click)="toggleView('grid')">
             <i class="fas fa-list"></i> Tabela
           </button>
         </div>
       </div>
-      
-      <div class="selected-patient-info" *ngIf="selectedPaciente">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <div class="col-md-8 col-sm-12 mx-auto">
-            <div class="card mb-4">
-              <div class="card-header d-flex justify-content-between">
-                <h4>Paciente selecionado:</h4>
-                <a class="btn btn-sm btn-outline-danger mb-2" (click)="clearSelectedPaciente()">
-                  Cancelar Seleção
-                </a>
+      <div class="row">
+        <div class="selected-patient-info col-6" *ngIf="selectedPaciente">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="w-100">
+              <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between">
+                  <h4>Paciente selecionado:</h4>
+                  <a class="btn btn-sm btn-outline-danger mb-2" (click)="clearSelectedPaciente()">
+                    Cancelar Seleção
+                  </a>
+                </div>
+                <div class="card-body row">
+                  <div class="col-md-4">
+                    <img [src]="selectedPaciente.fotoUrl || 'https://place-hold.it/192x256'" 
+                         class="img-fluid w-100" 
+                         alt="Foto do Paciente">
+                  </div>
+                  <div class="col-md-8">
+                    <table class="table table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>Nome</th>
+                          <td>{{selectedPaciente.nome}}</td>
+                        </tr>
+                        <tr>
+                          <th>Idade</th>
+                          <td>{{selectedPaciente.idade}}</td>
+                        </tr>
+                        <tr>
+                          <th>RG</th>
+                          <td>{{selectedPaciente.rg}}</td>
+                        </tr>
+                        <tr>
+                          <th>CPF</th>
+                          <td>{{selectedPaciente.cpf}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>     
               </div>
-              <div class="card-body row">
-                <div class="col-md-4">
-                  <img [src]="selectedPaciente.fotoUrl || 'https://place-hold.it/192x256'" 
-                       class="img-fluid w-100" 
-                       alt="Foto do Paciente">
-                </div>
-                <div class="col-md-8">
-                  <table class="table table-bordered">
-                    <tbody>
-                      <tr>
-                        <th>Nome</th>
-                        <td>{{selectedPaciente.nome}}</td>
-                      </tr>
-                      <tr>
-                        <th>Idade</th>
-                        <td>{{selectedPaciente.idade}}</td>
-                      </tr>
-                      <tr>
-                        <th>RG</th>
-                        <td>{{selectedPaciente.rg}}</td>
-                      </tr>
-                      <tr>
-                        <th>CPF</th>
-                        <td>{{selectedPaciente.cpf}}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>     
             </div>
           </div>
-        </div>
-      </div>
-    
-      <hr>
-      
-      <div class="forms-list" [class.disabled]="!selectedPaciente">
-        <!-- Grid -->
-        <div class="forms-grid" *ngIf="viewMode === 'grid'">
-          <div class="form-card" *ngFor="let form of formulariosDisponiveis">
-            <h3>{{form.titulo}}</h3>
-            <button
-              class="btn btn-primary"
-              (click)="navigateToFormulario(form.tipo)"
-              [disabled]="!selectedPaciente">
-              <i class="fas fa-clipboard"></i>
-              Preencher
-            </button>
+        </div>      
+        <div class="forms-list col-6" [class.disabled]="!selectedPaciente" [class.col-12]="!selectedPaciente">
+          <!-- Grid -->
+          <div class="forms-grid" *ngIf="viewMode === 'table'">
+            <div class="form-card" *ngFor="let form of formulariosDisponiveis">
+              <h5>{{form.titulo}}</h5>
+              <button
+                class="btn btn-primary"
+                (click)="navigateToFormulario(form.tipo)"
+                [disabled]="!selectedPaciente">
+                <i class="fas fa-clipboard"></i>
+                Preencher
+              </button>
+            </div>
           </div>
-        </div>
-    
-        <!-- Tabela -->
-        <div class="table-responsive" *ngIf="viewMode === 'table'">
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th>Formulário</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let form of formulariosDisponiveis">
-                <td>{{form.titulo}}</td>
-                <td>
-                  <button
-                    class="btn btn-sm btn-primary"
-                    (click)="navigateToFormulario(form.tipo)"
-                    [disabled]="!selectedPaciente">
-                    <i class="fas fa-clipboard"></i>
-                    Preencher
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      
+          <!-- Tabela -->
+          <div class="table-responsive" *ngIf="viewMode === 'grid'">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>Formulário</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let form of formulariosDisponiveis">
+                  <td>{{form.titulo}}</td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      (click)="navigateToFormulario(form.tipo)"
+                      [disabled]="!selectedPaciente">
+                      <i class="fas fa-clipboard"></i>
+                      Preencher
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
-    
-    <section #sectionRef id="resultados" class="section">
+
+    <!-- Seção de Resultados -->
+    <section #sectionRef id="resultados" class="section" [class.active]="activeSection === 'resultados'">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Resultados e Comparações</h2>
+        <div>
+          <h2>Resultados e Comparações</h2>
+          <p *ngIf="!selectedPaciente" class="text-muted">
+            Selecione um paciente para ver os resultados
+          </p>
+        </div>
         <button *ngIf="selectedPaciente" 
                 class="btn btn-outline-primary btn-sm" 
                 (click)="compareResults()">
@@ -216,7 +224,7 @@
           Comparar Resultados
         </button>
       </div>
-    
+
       <div class="results-content">
         <ng-container *ngIf="selectedPaciente">
           <div *ngIf="historicoTestes$ | async as historico; else loading">
@@ -258,10 +266,6 @@
             </div>
           </ng-template>
         </ng-container>
-    
-        <div *ngIf="!selectedPaciente" class="no-selection">
-          Selecione um paciente para ver os resultados
-        </div>
       </div>
     </section>
   </div>

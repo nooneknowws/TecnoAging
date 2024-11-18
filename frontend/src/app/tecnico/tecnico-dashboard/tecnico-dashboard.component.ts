@@ -1,33 +1,47 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
-import { Formulario } from '../../_shared/models/formulario/formulario';
-import { FORMULARIOS_CONFIG } from '../../_shared/models/formulario/formularios.config';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';
 import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
-import { Observable } from 'rxjs';
+
+type ViewMode = 'grid' | 'table';
+type Section = 'pacientes' | 'formularios' | 'resultados';
+
+interface DashboardSection {
+  id: Section;
+  label: string;
+  requiresPaciente: boolean;
+  order: number;
+}
 
 @Component({
   selector: 'app-tecnico-dashboard',
   templateUrl: './tecnico-dashboard.component.html',
   styleUrls: ['./tecnico-dashboard.component.css']
 })
-export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
-  @ViewChildren('sectionRef') sectionRefs!: QueryList<ElementRef>;
+export class TecnicoDashboardComponent implements OnInit {
+  @ViewChildren('sectionRef', { read: ElementRef }) 
+  private sectionRefs!: QueryList<ElementRef<HTMLElement>>;
+  private sectionElements: Map<Section, ElementRef> = new Map();
   
   currentTecnico: Tecnico | null = null;
   pacientes: Paciente[] = [];
   selectedPaciente: Paciente | null = null;
-  activeSection: string = 'pacientes';
-  viewMode: 'grid' | 'table' = 'grid';
+  private pacienteSubject = new BehaviorSubject<Paciente[]>([]);
+  pacientes$ = this.pacienteSubject.asObservable();
+  
+  activeSection: Section = 'pacientes';
+  viewMode: ViewMode = 'grid';
   historicoTestes$: Observable<any[]> | null = null;
+  loading = false;
 
-  readonly sections = [
-    { id: 'pacientes', label: 'Pacientes' },
-    { id: 'formularios', label: 'Formulários' },
-    { id: 'resultados', label: 'Resultados' }
+  readonly sections: DashboardSection[] = [
+    { id: 'pacientes', label: 'Pacientes', requiresPaciente: false, order: 1 },
+    { id: 'formularios', label: 'Formulários', requiresPaciente: true, order: 2 },
+    { id: 'resultados', label: 'Resultados', requiresPaciente: true, order: 3 }
   ];
 
   readonly formulariosDisponiveis = [
@@ -45,107 +59,127 @@ export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const user = this.authService.getCurrentUser();
-    if (user instanceof Tecnico) {
-      this.currentTecnico = user;
-    } else {
-      this.router.navigate(['/login']);
-    }
-    
-    this.loadPacientes();
-    this.setupScrollObserver();
+    this.initializeUser();
   }
 
   ngAfterViewInit() {
-    this.setupScrollObserver();
+    this.sectionRefs.forEach(ref => {
+      const sectionId = ref.nativeElement.id as Section;
+      this.sectionElements.set(sectionId, ref);
+    });
   }
 
-  private setupScrollObserver() {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            this.activeSection = entry.target.id;
-          }
-        });
-      },
-      {
-        threshold: 0.5
-      }
-    );
-
-    this.sectionRefs.forEach(ref => observer.observe(ref.nativeElement));
-  }
-
-  scrollToSection(sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  private initializeUser(): void {
+    const user = this.authService.getCurrentUser();
+    if (user instanceof Tecnico) {
+      this.currentTecnico = user;
+      this.loadPacientes();
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 
-  toggleView(mode: 'grid' | 'table'): void {
+  switchSection(sectionId: Section): void {
+    const section = this.sections.find(s => s.id === sectionId);
+    if (!section) return;
+
+    if (section.requiresPaciente && !this.selectedPaciente) {
+      return;
+    }
+
+    this.activeSection = sectionId;
+    this.scrollToSection(sectionId);
+  }
+
+  private scrollToSection(sectionId: Section): void {
+    const sectionRef = this.sectionElements.get(sectionId);
+    if (sectionRef) {
+      sectionRef.nativeElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+  }
+
+  toggleView(mode: ViewMode): void {
     this.viewMode = mode;
   }
 
-  selectPaciente(paciente: Paciente): void {
-    this.selectedPaciente = paciente;
-    this.historicoTestes$ = this.pacienteService.getHistoricoTestes(paciente.id!);
-    setTimeout(() => {
-      this.scrollToSection('formularios');
-    }, 100);
+  private loadPacientes(): void {
+    this.loading = true;
+    this.pacienteService.getPacientes().subscribe({
+      next: (pacientes) => {
+        this.pacientes = pacientes;
+        this.pacienteSubject.next(pacientes);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar pacientes:', error);
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 
-  getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'concluído':
-        return 'bg-success';
-      case 'em andamento':
-        return 'bg-warning';
-      case 'pendente':
-        return 'bg-secondary';
-      default:
-        return 'bg-primary';
-    }
+  selectPaciente(paciente: Paciente): void {
+    if (this.selectedPaciente?.id === paciente.id) return;
+    
+    this.selectedPaciente = paciente;
+    this.loadHistoricoTestes(paciente.id!);
+    this.switchSection('formularios');
   }
 
   clearSelectedPaciente(): void {
     this.selectedPaciente = null;
     this.historicoTestes$ = null;
-    this.scrollToSection('pacientes');
+    this.switchSection('pacientes');
   }
 
-  loadPacientes(): void {
-    this.pacienteService.getPacientes().subscribe(pacientes => {
-      this.pacientes = pacientes;
-    });
+  private loadHistoricoTestes(pacienteId: number): void {
+    this.historicoTestes$ = this.pacienteService.getHistoricoTestes(pacienteId);
   }
 
-  navigateToFormulario(tipo: TipoFormulario) {
+  navigateToFormulario(tipo: TipoFormulario, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     if (!this.selectedPaciente) {
-      alert('Selecione um paciente primeiro');
       return;
     }
+
     this.router.navigate(['/formularios', tipo], {
-      queryParams: { pacienteId: this.selectedPaciente.id }
+      queryParams: { 
+        pacienteId: this.selectedPaciente.id,
+        returnUrl: this.router.url
+      }
     });
   }
 
-  viewPatientHistory(paciente: Paciente): void {
-    this.router.navigate(['/historico'], {
-      queryParams: { pacienteId: paciente.cpf }
-    });
-  }
-
-  consultarPerfil(paciente: Paciente) {
+  consultarPerfil(paciente: Paciente, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
     this.router.navigate(['/tecnico/paciente/ver-perfil'], {
-      queryParams: { id: paciente.id }
+      queryParams: { 
+        id: paciente.id,
+        returnUrl: this.router.url
+      }
     });
   }
 
-  editarPerfil(paciente: Paciente) {
+  editarPerfil(paciente: Paciente, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
     this.router.navigate(['/tecnico/paciente/editar-perfil'], {
-      queryParams: { id: paciente.id }
+      queryParams: { 
+        id: paciente.id,
+        returnUrl: this.router.url
+      }
     });
   }
 
@@ -153,11 +187,32 @@ export class TecnicoDashboardComponent implements OnInit, AfterViewInit {
     if (!this.selectedPaciente) return;
     
     this.router.navigate(['/comparar-resultados'], {
-      queryParams: { pacienteId: this.selectedPaciente.cpf }
+      queryParams: { 
+        pacienteId: this.selectedPaciente.id,
+        returnUrl: this.router.url
+      }
     });
   }
 
-  logout() {
-    this.authService.logout();
+  getStatusClass(status: string): string {
+    const statusMap: Record<string, string> = {
+      'concluído': 'bg-success',
+      'em andamento': 'bg-warning',
+      'pendente': 'bg-secondary',
+      'cancelado': 'bg-danger'
+    };
+
+    return statusMap[status.toLowerCase()] || 'bg-primary';
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Erro ao fazer logout:', error);
+      }
+    });
   }
 }

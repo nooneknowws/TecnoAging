@@ -72,7 +72,7 @@
 }
 
 .section {
-  min-height: calc(100vh - 180px);
+  min-height: auto;
   padding: 2rem;
   margin-bottom: 2rem;
   background: white;

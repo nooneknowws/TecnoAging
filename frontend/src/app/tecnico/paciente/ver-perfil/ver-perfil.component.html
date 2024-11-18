@@ -106,7 +106,7 @@
              <tbody>
                <tr *ngFor="let avaliacao of avaliacoes">
                  <td>{{avaliacao.formulario?.titulo}}</td>
-                 <td>{{avaliacao.pontuacaoTotal}}/{{avaliacao.formulario?.pontuacaoMaxima || 'N/D'}}</td>
+                 <td>{{avaliacao.pontuacaoTotal}}/{{avaliacao.pontuacaoMaxima || 'N/D'}}</td>
                  <td>
                    <div class="btn-group">
                      <button class="btn btn-sm btn-secondary" 
@@ -157,31 +157,34 @@
        </div>
      </div>
 
-     <!-- Contatos -->
-     <div class="col-md-6">
-       <div class="card mb-4">
-         <div class="card-header">
-           <h4><i class="fas fa-phone"></i> Contatos</h4>
-         </div>
-         <div class="card-body">
-           <table class="table table-bordered">
-             <tbody *ngFor="let contato of paciente.contatos">
-               <tr>
-                 <th>Nome</th>
-                 <td>{{contato.nome}}</td>
-               </tr>
-               <tr>
-                 <th>Telefone</th>
-                 <td>{{contato.telefone}}</td>
-               </tr>
-               <tr>
-                 <th>Parentesco</th>
-                 <td>{{contato.parentesco}}</td>
-               </tr>
-             </tbody>
-           </table>
-         </div>
-       </div>
-     </div>
+      <!-- Contatos -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4><i class="fas fa-phone"></i> Contatos</h4>
+          </div>
+          <div class="card-body">
+            <ng-container *ngFor="let contato of paciente.contatos; let last = last">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>Parentesco</th>
+                    <td>{{contato.parentesco}}</td>
+                  </tr>
+                  <tr>
+                    <th>Nome</th>
+                    <td>{{contato.nome}}</td>
+                  </tr>
+                  <tr>
+                    <th>Telefone</th>
+                    <td>{{contato.telefone}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <hr *ngIf="!last" />
+            </ng-container>
+          </div>
+        </div>
+      </div>
    </div>
 </div>
