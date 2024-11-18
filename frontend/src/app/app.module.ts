@@ -7,7 +7,6 @@ import { AppComponent } from './app.component';
 import { TecnicoModule } from './tecnico/tecnico.module';
 import { PacienteModule } from './paciente/paciente.module';
 import { LoginComponent } from './_auth/login/login.component';
-import { NavbarComponent } from './navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './_shared/services/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +19,6 @@ import { FormularioComponent } from './formulario/formulario.component';
     AppComponent,
     LoginComponent,
     CadastroComponent,
-    NavbarComponent,
     FormularioComponent
   ],
   imports: [

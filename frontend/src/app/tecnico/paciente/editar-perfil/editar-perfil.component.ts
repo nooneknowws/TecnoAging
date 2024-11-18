@@ -7,33 +7,57 @@ import { Contato } from '../../../_shared/models/pessoa/paciente/contato';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
+import { finalize, of, switchMap } from 'rxjs';
+import { EnumParentesco } from '../../../_shared/models/parentesco.enum';
 
 @Component({
-  selector: 'app-editar-perfil',
+  selector: 'app-editar-paciente',
   templateUrl: './editar-perfil.component.html',
   styleUrls: ['./editar-perfil.component.css']
 })
 export class EditarPerfilPacienteComponent implements OnInit {
   pacienteForm: FormGroup;
   paciente?: Paciente;
-  estadosCivis = Object.values(EnumEstadoCivil)
-  ufs = Object.values(EnumEstadosBrasil)
-  
+  loading = false;
+
+  estadosCivis = Object.values(EnumEstadoCivil);
+  parentescos = Object.values(EnumParentesco);
+  ufs = Object.values(EnumEstadosBrasil);
+
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private pacienteService: PacienteService,
-    private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private route: ActivatedRoute
   ) {
     this.pacienteForm = this.inicializarFormulario();
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      const pacienteId = params['id'];
-      if (pacienteId) {
-        this.carregarPaciente(pacienteId);
+    this.loading = true;
+    this.route.queryParams.pipe(
+      switchMap(params => {
+        const id = params['id'];
+        if (id) {
+          return this.pacienteService.getPacienteById(id);
+        }
+        return of(null);
+      }),
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: (paciente) => {
+        if (paciente) {
+          this.paciente = paciente;
+          this.preencherFormulario(paciente);
+        } else {
+          console.error('Paciente não encontrado');
+          this.router.navigate(['/tecnico/dashboard']);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar paciente:', error);
+        this.router.navigate(['/tecnico/dashboard']);
       }
     });
   }
@@ -45,10 +69,11 @@ export class EditarPerfilPacienteComponent implements OnInit {
         dataNasc: ['', Validators.required],
         sexo: ['', Validators.required],
         estadoCivil: ['', Validators.required],
-        nacionalidade: ['', Validators.required],
+        nacionalidade: ['Brasileiro', Validators.required],
         municipioNasc: ['', Validators.required],
         ufNasc: ['', Validators.required],
-        corRaca: ['', Validators.required]
+        corRaca: ['', Validators.required],
+        idade: [{ value: '', disabled: true }]
       }),
       documentacao: this.fb.group({
         rg: ['', Validators.required],
@@ -58,15 +83,97 @@ export class EditarPerfilPacienteComponent implements OnInit {
         ufEmissor: ['', Validators.required]
       }),
       endereco: this.fb.group({
-        cep: ['', [Validators.required, Validators.pattern(/^\d{5}\-\d{3}$/)]],
+        CEP: ['', [Validators.required, Validators.pattern(/^\d{5}\-\d{3}$/)]],
         logradouro: ['', Validators.required],
         numero: ['', Validators.required],
+        complemento: [''],
         bairro: ['', Validators.required],
         municipio: ['', Validators.required],
-        uf: ['', Validators.required]
+        UF: ['', Validators.required]
       }),
       contatos: this.fb.array([])
     });
+  }
+
+  private preencherFormulario(paciente: Paciente) {
+    if (!paciente) return;
+
+    const dadosPessoais = this.pacienteForm.get('dadosPessoais');
+    const documentacao = this.pacienteForm.get('documentacao');
+    const endereco = this.pacienteForm.get('endereco');
+
+    if (dadosPessoais && documentacao && endereco) {
+      dadosPessoais.patchValue({
+        nome: paciente.nome,
+        dataNasc: this.formatarData(paciente.dataNasc),
+        sexo: paciente.sexo,
+        estadoCivil: paciente.estadoCivil,
+        nacionalidade: paciente.nacionalidade,
+        municipioNasc: paciente.municipioNasc,
+        ufNasc: paciente.ufNasc,
+        corRaca: paciente.corRaca,
+        idade: paciente.idade
+      });
+
+      documentacao.patchValue({
+        rg: paciente.rg,
+        cpf: paciente.cpf,
+        dataExpedicao: this.formatarData(paciente.dataExpedicao),
+        orgaoEmissor: paciente.orgaoEmissor,
+        ufEmissor: paciente.ufEmissor
+      });
+
+      if (paciente.endereco) {
+        endereco.patchValue({
+          CEP: paciente.endereco.CEP,
+          logradouro: paciente.endereco.logradouro,
+          numero: paciente.endereco.numero,
+          complemento: paciente.endereco.complemento,
+          bairro: paciente.endereco.bairro,
+          municipio: paciente.endereco.municipio,
+          UF: paciente.endereco.UF
+        });
+      }
+
+      // Limpa e recria os contatos
+      this.contatosFormArray.clear();
+      paciente.contatos?.forEach(contato => {
+        this.adicionarContato(contato);
+      });
+    }
+  }
+
+  private formatarData(data: Date | undefined): string {
+    if (!data) return '';
+    const d = new Date(data);
+    return d.toISOString().split('T')[0];
+  }
+
+  buscarCep(cep: string) {
+    if (!cep) return;
+
+    this.loading = true;
+    const enderecoGroup = this.pacienteForm.get('endereco');
+
+    this.authService.buscarCep(cep)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (endereco) => {
+          if (endereco && enderecoGroup) {
+            enderecoGroup.patchValue({
+              logradouro: endereco.logradouro,
+              bairro: endereco.bairro,
+              municipio: endereco.municipio,
+              UF: endereco.UF,
+              CEP: endereco.CEP
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao buscar CEP:', error);
+          alert('Erro ao buscar CEP. Por favor, verifique o CEP informado.');
+        }
+      });
   }
 
   get contatosFormArray() {
@@ -82,115 +189,155 @@ export class EditarPerfilPacienteComponent implements OnInit {
       error: (error) => console.error('Erro ao carregar paciente:', error)
     });
   }
-
-  private preencherFormulario(paciente: Paciente) {
-    const dadosPessoais = this.pacienteForm.get('dadosPessoais');
-    const documentacao = this.pacienteForm.get('documentacao');
-    const endereco = this.pacienteForm.get('endereco');
-
-    if (dadosPessoais && documentacao && endereco) {
-      dadosPessoais.patchValue({
-        nome: paciente.nome,
-        dataNasc: paciente.dataNasc,
-        sexo: paciente.sexo,
-        estadoCivil: paciente.estadoCivil,
-        nacionalidade: paciente.nacionalidade,
-        municipioNasc: paciente.municipioNasc,
-        ufNasc: paciente.ufNasc,
-        corRaca: paciente.corRaca
-      });
-
-      documentacao.patchValue({
-        rg: paciente.rg,
-        cpf: paciente.cpf,
-        dataExpedicao: paciente.dataExpedicao,
-        orgaoEmissor: paciente.orgaoEmissor,
-        ufEmissor: paciente.ufEmissor
-      });
-
-      endereco.patchValue({
-        cep: paciente.endereco?.CEP,
-        logradouro: paciente.endereco?.logradouro,
-        numero: paciente.endereco?.numero,
-        bairro: paciente.endereco?.bairro,
-        municipio: paciente.endereco?.municipio,
-        uf: paciente.endereco?.UF
-      });
-
-      while (this.contatosFormArray.length) {
-        this.contatosFormArray.removeAt(0);
+  
+  private marcarCamposInvalidos() {
+    const form = this.pacienteForm;
+    
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      if (control instanceof FormGroup) {
+        Object.keys(control.controls).forEach(k => {
+          const ctrl = control.get(k);
+          if (ctrl?.invalid) {
+            ctrl.markAsTouched();
+          }
+        });
+      } else if (control instanceof FormArray) {
+        control.controls.forEach(ctrl => {
+          if (ctrl instanceof FormGroup) {
+            Object.keys(ctrl.controls).forEach(k => {
+              const c = ctrl.get(k);
+              if (c?.invalid) {
+                c.markAsTouched();
+              }
+            });
+          }
+        });
       }
-
-      paciente.contatos?.forEach(contato => {
-        this.adicionarContato(contato);
-      });
-    }
+    });
   }
-
+  
   adicionarContato(contato?: Contato) {
+    // Format phone number if it exists
+    let telefoneFormatado = '';
+    if (contato?.telefone) {
+      // Remove all non-digits
+      const digits = contato.telefone.replace(/\D/g, '');
+      if (digits.length === 11) {
+        telefoneFormatado = `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+      } else {
+        telefoneFormatado = contato.telefone; // Keep original if can't format
+      }
+    }
+
     const contatoForm = this.fb.group({
-      nome: [contato?.nome || '', Validators.required],
-      telefone: [contato?.telefone || '', [Validators.required, Validators.pattern(/^\(\d{2}\) \d{5}\-\d{4}$/)]],
-      parentesco: [contato?.parentesco || '', Validators.required]
+      nome: [contato?.nome || '', [
+        Validators.required,
+        Validators.minLength(3)
+      ]],
+      telefone: [telefoneFormatado || '', [
+        Validators.required,
+        Validators.pattern(/^\(\d{2}\) \d{5}\-\d{4}$/)
+      ]],
+      parentesco: [contato?.parentesco || '', [
+        Validators.required
+      ]]
     });
 
     this.contatosFormArray.push(contatoForm);
   }
 
-  removerContato(index: number) {
-    this.contatosFormArray.removeAt(index);
+  formatarTelefone(event: any, index: number) {
+    let telefone = event.target.value.replace(/\D/g, '');
+    
+    if (telefone.length === 11) {
+      telefone = `(${telefone.slice(0,2)}) ${telefone.slice(2,7)}-${telefone.slice(7)}`;
+      const contatoControl = this.contatosFormArray.at(index);
+      contatoControl.patchValue({ telefone }, { emitEvent: false });
+    }
   }
 
   async salvar() {
     if (this.pacienteForm.valid) {
       try {
-        const pacienteAtualizado = {
+        this.loading = true;
+        
+        const dadosPessoais = this.pacienteForm.get('dadosPessoais')?.value;
+        const documentacao = this.pacienteForm.get('documentacao')?.value;
+        const endereco = this.pacienteForm.get('endereco')?.value;
+        const contatos = this.contatosFormArray.value.map((contato: any) => ({
+          nome: contato.nome.trim(),
+          telefone: contato.telefone.replace(/\D/g, ''), // Remove formatting before saving
+          parentesco: contato.parentesco as EnumParentesco
+        }));
+  
+        const pacienteAtualizado: Paciente = {
           ...this.paciente,
-          ...this.pacienteForm.get('dadosPessoais')?.value,
-          ...this.pacienteForm.get('documentacao')?.value,
-          endereco: this.pacienteForm.get('endereco')?.value,
-          contatos: this.pacienteForm.get('contatos')?.value
+          nome: dadosPessoais.nome,
+          dataNasc: new Date(dadosPessoais.dataNasc),
+          sexo: dadosPessoais.sexo,
+          estadoCivil: dadosPessoais.estadoCivil as EnumEstadoCivil,
+          nacionalidade: dadosPessoais.nacionalidade,
+          municipioNasc: dadosPessoais.municipioNasc,
+          ufNasc: dadosPessoais.ufNasc as EnumEstadosBrasil,
+          corRaca: dadosPessoais.corRaca,
+          
+          rg: documentacao.rg,
+          cpf: documentacao.cpf,
+          dataExpedicao: new Date(documentacao.dataExpedicao),
+          orgaoEmissor: documentacao.orgaoEmissor,
+          ufEmissor: documentacao.ufEmissor as EnumEstadosBrasil,
+          
+          endereco: {
+            CEP: endereco.CEP.replace(/\D/g, ''),
+            logradouro: endereco.logradouro,
+            numero: endereco.numero,
+            complemento: endereco.complemento,
+            bairro: endereco.bairro,
+            municipio: endereco.municipio,
+            UF: endereco.UF as EnumEstadosBrasil
+          },
+          
+          contatos
         };
-
+  
         await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
+        
         this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
           queryParams: { id: this.paciente?.id } 
         });
       } catch (error) {
         console.error('Erro ao salvar paciente:', error);
+        alert('Erro ao salvar as alterações. Por favor, tente novamente.');
+      } finally {
+        this.loading = false;
       }
+    } else {
+      this.marcarCamposInvalidos();
+      
+      // Debug information for contact validation
+      const contatos = this.contatosFormArray.controls;
+      contatos.forEach((contato, index) => {
+        if (contato.invalid) {
+          console.log(`Contato ${index + 1} inválido:`, {
+            nome: contato.get('nome')?.errors,
+            telefone: contato.get('telefone')?.errors,
+            parentesco: contato.get('parentesco')?.errors
+          });
+        }
+      });
+      
+      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
     }
+  }
+  
+  removerContato(index: number) {
+    this.contatosFormArray.removeAt(index);
   }
 
   voltar() {
     this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
       queryParams: { id: this.paciente?.id } 
     });
-  }
-
-  buscarCep(cep: string) {
-    const cepLimpo = cep.replace(/\D/g, '');
-    
-    if (cepLimpo.length === 8) {
-      this.authService.buscarCep(cepLimpo).subscribe({
-        next: (dados: any) => {
-          if (dados) {
-            const endereco = this.pacienteForm.get('endereco');
-            if (endereco) {
-              endereco.patchValue({
-                logradouro: dados.logradouro,
-                bairro: dados.bairro,
-                municipio: dados.localidade, 
-                uf: dados.uf
-              });
-            }
-          }
-        },
-        error: (error) => {
-          console.error('Erro ao buscar CEP:', error);
-          alert('Erro ao buscar CEP. Por favor, verifique o CEP informado.');
-        }
-      });
-    }
   }
 }

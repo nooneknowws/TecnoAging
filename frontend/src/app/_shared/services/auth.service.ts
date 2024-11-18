@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, catchError, switchMap, timeout } from 'rxjs/operators';
+import { map, catchError, switchMap, timeout, delay, tap } from 'rxjs/operators';
 import { Tecnico } from '../models/pessoa/tecnico/tecnico';
 import { Paciente } from '../models/pessoa/paciente/paciente';
 import { LoginRequest } from '../models/_auth/login.request';
@@ -108,11 +108,16 @@ export class AuthService {
     );
   }
 
-  logout(): void {
-    this.currentUser = null;
-    sessionStorage.removeItem(this.SESSION_TOKEN_KEY);
-    sessionStorage.removeItem(this.SESSION_USER_TYPE_KEY);
-    sessionStorage.removeItem(this.SESSION_USER_DATA_KEY);
+  logout(): Observable<void> {
+    return of(void 0).pipe(
+      delay(1),
+      tap(() => {
+        this.currentUser = null;
+        sessionStorage.removeItem(this.SESSION_TOKEN_KEY);
+        sessionStorage.removeItem(this.SESSION_USER_TYPE_KEY);
+        sessionStorage.removeItem(this.SESSION_USER_DATA_KEY);
+      })
+    );
   }
 
   getCurrentUser(): Tecnico | Paciente | null {
