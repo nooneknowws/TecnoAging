@@ -10,7 +10,7 @@ import { AuthService } from '../../_shared/services/auth.service';
 })
 export class TecnicoLayoutComponent {
   linkVoltarVisivel: boolean = false;
-  isNavbarOpen: boolean = true;
+  isNavbarOpen: boolean = false;
 
   constructor(
     private router: Router,

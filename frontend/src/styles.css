@@ -63,8 +63,8 @@ body {
 
 .main-content {
   transition: margin-left 0.3s ease !important;
+  margin-left: 63px;
   padding: 20px !important;
-  padding-top: 60px !important;
 }
 
 .main-content.shifted {

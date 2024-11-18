@@ -1,5 +1,6 @@
 package br.ufpr.tcc.MSForms.rest;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,12 @@ public class FormularioController {
         Formulario salvo = formularioRepository.save(formulario);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
+    
+    @GetMapping("/")
+    public List<Formulario> getTodosFormularios() {
+        return formularioRepository.findAll();
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<Formulario> buscarFormularioPorId(@PathVariable("id") Long id) {
         Optional<Formulario> formulario = formularioRepository.findById(id);

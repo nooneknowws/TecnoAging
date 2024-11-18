@@ -125,13 +125,13 @@ export class EditarPerfilPacienteComponent implements OnInit {
 
       if (paciente.endereco) {
         endereco.patchValue({
-          CEP: paciente.endereco.CEP,
+          cep: paciente.endereco.cep,
           logradouro: paciente.endereco.logradouro,
           numero: paciente.endereco.numero,
           complemento: paciente.endereco.complemento,
           bairro: paciente.endereco.bairro,
           municipio: paciente.endereco.municipio,
-          UF: paciente.endereco.UF
+          uf: paciente.endereco.uf
         });
       }
 
@@ -164,8 +164,8 @@ export class EditarPerfilPacienteComponent implements OnInit {
               logradouro: endereco.logradouro,
               bairro: endereco.bairro,
               municipio: endereco.municipio,
-              UF: endereco.UF,
-              CEP: endereco.CEP
+              uf: endereco.uf,
+              cep: endereco.cep
             });
           }
         },
@@ -289,13 +289,13 @@ export class EditarPerfilPacienteComponent implements OnInit {
           ufEmissor: documentacao.ufEmissor as EnumEstadosBrasil,
           
           endereco: {
-            CEP: endereco.CEP.replace(/\D/g, ''),
+            cep: endereco.CEP.replace(/\D/g, ''),
             logradouro: endereco.logradouro,
             numero: endereco.numero,
             complemento: endereco.complemento,
             bairro: endereco.bairro,
             municipio: endereco.municipio,
-            UF: endereco.UF as EnumEstadosBrasil
+            uf: endereco.uf as EnumEstadosBrasil
           },
           
           contatos

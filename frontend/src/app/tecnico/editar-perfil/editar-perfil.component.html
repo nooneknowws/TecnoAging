@@ -130,7 +130,7 @@
                            id="floatingCep" 
                            placeholder="CEP" 
                            name="cep" 
-                           [(ngModel)]="endereco.CEP" 
+                           [(ngModel)]="endereco.cep" 
                            mask="00000-000" 
                            required 
                            #cep="ngModel" 
@@ -230,7 +230,7 @@
                     <select class="form-select" 
                             id="floatingUF" 
                             name="uf" 
-                            [(ngModel)]="endereco.UF" 
+                            [(ngModel)]="endereco.uf" 
                             required 
                             #uf="ngModel" 
                             [ngClass]="{ 'is-invalid': f.submitted && uf.errors }">

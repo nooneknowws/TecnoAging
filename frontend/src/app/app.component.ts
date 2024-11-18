@@ -6,22 +6,10 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   isAuthRoute =  true;
   isOpen = false;
   static API_URL: string = "http://localhost:3000";
 
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.isAuthRoute = event.url === '/login' || event.url === '/cadastro';
-      }
-    });
-  }
-
-  toggleMenu(): void {
-    this.isOpen = !this.isOpen;
-  }
+  constructor(){}
 }

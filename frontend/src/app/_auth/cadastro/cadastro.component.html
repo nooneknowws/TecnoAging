@@ -66,7 +66,7 @@
 
             <div class="input-group mb-2">
                 <div class="form-floating w-75">
-                    <input type="text" class="form-control" id="floatingCep" placeholder="CEP" name="cep" [(ngModel)]="endereco.CEP" mask="00000-000" required #cep="ngModel" [ngClass]="{ 'is-invalid': f.submitted && (cep.errors || cepInvalido || erroTimeout) }">
+                    <input type="text" class="form-control" id="floatingCep" placeholder="CEP" name="cep" [(ngModel)]="endereco.cep" mask="00000-000" required #cep="ngModel" [ngClass]="{ 'is-invalid': f.submitted && (cep.errors || cepInvalido || erroTimeout) }">
                     <label for="floatingCep">CEP</label>
                     <div *ngIf="cep.errors && f.submitted" class="invalid-feedback">
                         O CEP é obrigatório!
@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 <div class="form-floating w-25">
-                    <select class="form-select" id="floatingUF" name="UF" [(ngModel)]="endereco.UF" required #uf="ngModel" [ngClass]="{ 'is-invalid': f.submitted && uf.errors }">
+                    <select class="form-select" id="floatingUF" name="UF" [(ngModel)]="endereco.uf" required #uf="ngModel" [ngClass]="{ 'is-invalid': f.submitted && uf.errors }">
                         <option value="">Selecione</option>
                         <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
                     </select>

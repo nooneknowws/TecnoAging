@@ -63,7 +63,7 @@ export class EditarPerfilComponent implements OnInit {
   }
 
   buscarCep(): void {
-    const cep = this.endereco.CEP?.toString().replace(/\D/g, '');
+    const cep = this.endereco.cep?.toString().replace(/\D/g, '');
     
     if (cep?.length === 8) {
       this.http.get(`https://viacep.com.br/ws/${cep}/json/`).pipe(
@@ -82,12 +82,12 @@ export class EditarPerfilComponent implements OnInit {
         if (data && !data.erro) {
           this.cepInvalido = false;
           this.erroTimeout = false;
-          this.endereco.CEP = parseInt(cep);
+          this.endereco.cep = parseInt(cep);
           this.endereco.logradouro = data.logradouro;
           this.endereco.complemento = data.complemento || '';
           this.endereco.bairro = data.bairro;
           this.endereco.municipio = data.localidade;
-          this.endereco.UF = data.uf;
+          this.endereco.uf = data.uf;
           this.form.endereco = this.endereco;
           this.cdRef.detectChanges();
         } else {

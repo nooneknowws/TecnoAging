@@ -220,7 +220,6 @@
   vertical-align: middle;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .btn-outline-primary {
     margin-top: 1rem;

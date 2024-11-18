@@ -38,7 +38,7 @@
     </div>
   </nav>
   
-  <div class="container container-paciente" [ngClass]="{'mt-2': !linkVoltarVisivel}">
+  <div class="main-content container-paciente" [ngClass]="{'shifted': isNavbarOpen}">
     <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()">
       <i class="fas fa-chevron-left"></i> Voltar
     </a>

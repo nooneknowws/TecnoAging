@@ -38,4 +38,9 @@ public class ApiController {
     public List<Paciente> getAllPacientes() {
         return pacienteRepository.findAll();
     }
+    
+    @GetMapping("/pacientes/{id}")
+    public Paciente getPacienteById(@PathVariable(name = "id") Long pacienteId) {
+        return pacienteRepository.findById(pacienteId).get();
+    }
 }

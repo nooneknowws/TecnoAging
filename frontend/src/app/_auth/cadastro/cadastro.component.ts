@@ -63,7 +63,7 @@ export class CadastroComponent implements OnInit {
   }
 
   buscarCep(): void {
-    const cep = this.endereco.CEP?.toString();
+    const cep = this.endereco.cep?.toString();
     if (cep) {
       this.authService.buscarCep(cep).subscribe(endereco => {
         if (endereco) {
