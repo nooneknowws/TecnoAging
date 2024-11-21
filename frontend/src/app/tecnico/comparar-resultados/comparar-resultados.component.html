@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <th scope="col"><i class="fas fa-file-alt"></i> Tipo de Teste</th>
-        <th scope="col"><i class="fas fa-clock"></i> Tempo Total</th>
+        <th scope="col"><i class="fas fa-clock"></i> Data/hora Finalização</th>
         <th scope="col"><i class="fas fa-star"></i> Pontuação Total</th>
         <th scope="col"><i class="fas fa-tools"></i> Ações</th>
       </tr>
@@ -12,7 +12,7 @@
     <tbody>
       <tr *ngFor="let teste of testes">
         <td>{{ teste.tipo }}</td>
-        <td>{{ teste.tempoTotal }}</td>
+        <td>{{ teste.dataFinalizacao }}</td>
         <td>{{ teste.pontuacaoTotal }}</td>
         <td>
           <button class="btn btn-primary btn-sm" (click)="exibirDetalhes(teste)">
@@ -22,8 +22,6 @@
       </tr>
     </tbody>
   </table>
-
-  <!-- Dropdown para exibir resultados -->
   <div *ngIf="resultadoSelecionado" class="mt-4">
     <h5><i class="fas fa-info-circle"></i> Resultados para: {{ resultadoSelecionado.tipo }}</h5>
     <table class="table">
@@ -35,10 +33,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let questao of resultadoSelecionado.detalhes">
-          <td>{{ questao.texto }}</td>
-          <td>{{ questao.resposta }}</td>
-          <td>{{ questao.media }}</td>
+        <tr *ngFor="let detalhe of resultadoSelecionado.detalhes">
+          <td>{{ detalhe.texto }}</td>
+          <td>{{ detalhe.resposta }}</td>
+          <td>{{ detalhe.media }}</td>
         </tr>
       </tbody>
     </table>
