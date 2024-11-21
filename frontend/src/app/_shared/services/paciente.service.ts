@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppComponent } from '../../app.component';
@@ -50,8 +50,8 @@ export class PacienteService {
     return this.updatePaciente(paciente);
   }
 
-  //TODO: ajeitar o endpoint disso aqui
   getHistoricoTestes(pacienteId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/pacientes/${pacienteId}/historico-testes`);
+    const params = new HttpParams().set('id', pacienteId.toString());
+    return this.http.get<any[]>(`http://localhost:5000/avaliacoes/respostas/paciente/${pacienteId}`);
   }
 }

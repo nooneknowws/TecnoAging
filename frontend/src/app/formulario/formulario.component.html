@@ -15,8 +15,8 @@
 
     <div class="progress mb-4">
       <div class="progress-bar" 
-           [style.width.%]="(etapaAtual / (formulario.etapas.length - 1)) * 100">
-        {{etapaAtual + 1}} / {{formulario.etapas.length}}
+           [style.width.%]="(etapaAtual / (formulario.etapas!.length - 1)) * 100">
+        {{etapaAtual + 1}} / {{formulario.etapas!.length}}
       </div>
     </div>
   
@@ -26,11 +26,11 @@
       </div>
   
       <div class="card-body">
-        <h5 class="card-title">{{formulario.etapas[etapaAtual].titulo}}</h5>
-        <p class="card-text">{{formulario.etapas[etapaAtual].descricao}}</p>
+        <h5 class="card-title">{{formulario.etapas![etapaAtual].titulo}}</h5>
+        <p class="card-text">{{formulario.etapas![etapaAtual].descricao}}</p>
   
         <form [formGroup]="formGroup">
-          <div class="mb-4" *ngFor="let pergunta of formulario.etapas[etapaAtual].perguntas; let perguntaIndex = index">
+          <div class="mb-4" *ngFor="let pergunta of formulario.etapas![etapaAtual].perguntas; let perguntaIndex = index">
             <hr>
             <ng-container [ngSwitch]="pergunta.tipo">
               
@@ -175,14 +175,14 @@
         </button>
         
         <button class="btn btn-primary" 
-                *ngIf="etapaAtual < formulario.etapas.length - 1"
+                *ngIf="etapaAtual < formulario.etapas!.length - 1"
                 [disabled]="!verificarValidadeEtapaAtual()"
                 (click)="proximaEtapa()">
           Próxima
         </button>
         
         <button class="btn btn-success" 
-                *ngIf="etapaAtual === formulario.etapas.length - 1"
+                *ngIf="etapaAtual === formulario.etapas!.length - 1"
                 [disabled]="!formGroup.valid"
                 (click)="salvarAvaliacao()">
           Finalizar

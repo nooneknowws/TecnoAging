@@ -119,31 +119,48 @@ export class AvaliacaoService {
   
   
   private deserializeAvaliacao(avaliacaoData: any): Avaliacao {
+    const tecnico = {
+      id: avaliacaoData.tecnicoId,
+      nome: avaliacaoData.tecnico
+    };
+
+    const paciente = {
+      id: avaliacaoData.pacienteId,
+      nome: avaliacaoData.paciente
+    };
+
+    const formulario = {
+      id: avaliacaoData.avaliacaoId,
+      tipo: undefined,
+      titulo: avaliacaoData.formulario,
+      descricao: avaliacaoData.formularioDesc,
+      etapas: undefined
+    };
+
+    const respostas = avaliacaoData.perguntasValores?.map((item: any) => {
+      const pergunta = {
+        id: undefined,
+        texto: item.pergunta,
+        tipo: undefined, 
+        resposta: item.valor
+      };
+
+      return new Resposta(
+        pergunta,
+        item.valor
+      );
+    }) || [];
+
     return new Avaliacao(
-      avaliacaoData.id,
-      avaliacaoData.tecnico,
-      avaliacaoData.paciente,
-      avaliacaoData.formulario,
-      avaliacaoData.respostas?.map((resposta: any) => {
-        const pergunta = avaliacaoData.formulario.etapas
-          .flatMap((etapa: any) => etapa.perguntas)
-          .find((p: any) => p.id === resposta.id);
-  
-        return new Resposta(
-          {
-            id: pergunta?.id,
-            texto: pergunta?.texto || '',
-            tipo: pergunta?.tipo || '',
-            resposta: pergunta?.resposta || '',
-          },
-          resposta.valor
-        );
-      }),
+      avaliacaoData.avaliacaoId,
+      tecnico,
+      paciente,
+      formulario,
+      respostas,
       avaliacaoData.pontuacaoTotal,
       avaliacaoData.pontuacaoMaxima,
-      new Date(avaliacaoData.dataCriacao),
-      new Date(avaliacaoData.dataAtualizacao)
+      new Date(), // Since dataCriacao is not in the new JSON, using current date
+      new Date()  // Since dataAtualizacao is not in the new JSON, using current date
     );
   }
-  
 }

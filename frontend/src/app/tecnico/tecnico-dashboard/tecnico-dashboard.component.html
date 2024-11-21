@@ -232,21 +232,34 @@
               <table class="table table-bordered table-hover">
                 <thead>
                   <tr>
-                    <th>Data</th>
-                    <th>Tipo de Teste</th>
-                    <th>Resultado</th>
+                    <th>Formulário</th>
+                    <th>Técnico</th>
                     <th>Status</th>
+                    <th>Respostas</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let teste of historico">
-                    <td>{{teste.data | date:'dd/MM/yyyy'}}</td>
-                    <td>{{teste.tipoTeste}}</td>
-                    <td>{{teste.resultado}}</td>
+                    <td>{{teste.formularioDesc}}</td>
+                    <td>{{teste.tecnico}}</td>
                     <td>
-                      <span [class]="'badge ' + getStatusClass(teste.status)">
-                        {{teste.status}}
-                      </span>
+                      <button class="btn btn-sm btn-info" 
+                              type="button" 
+                              data-bs-toggle="collapse" 
+                              [attr.data-bs-target]="'#respostas-' + teste.avaliacaoId"
+                              aria-expanded="false">
+                        Ver Respostas
+                      </button>
+                      <div class="collapse mt-2" [id]="'respostas-' + teste.avaliacaoId">
+                        <div class="card card-body">
+                          <ul class="list-unstyled">
+                            <li *ngFor="let resposta of teste.perguntasValores" class="mb-2">
+                              <strong>{{resposta.pergunta}}</strong><br>
+                              <span class="text-muted">{{resposta.valor}}</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

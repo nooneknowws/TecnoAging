@@ -65,7 +65,7 @@ export class FormularioComponent implements OnInit {
   
     const groupConfig: Record<string, any> = {};
     
-    this.formulario.etapas.forEach((etapa, etapaIndex) => {
+    this.formulario.etapas!.forEach((etapa, etapaIndex) => {
       etapa.perguntas.forEach((pergunta, perguntaIndex) => {
         const controlName = this.getControlName(etapaIndex, perguntaIndex);
         
@@ -105,7 +105,7 @@ export class FormularioComponent implements OnInit {
   atualizarRespostas(values: any) {
     if (!this.formulario) return;
     
-    this.formulario.etapas.forEach((etapa, etapaIndex) => {
+    this.formulario.etapas!.forEach((etapa, etapaIndex) => {
       etapa.perguntas.forEach((pergunta, perguntaIndex) => {
         const controlName = this.getControlName(etapaIndex, perguntaIndex);
         
@@ -130,7 +130,7 @@ export class FormularioComponent implements OnInit {
     try {
       this.atualizarRespostas(this.formGroup.value);
   
-      const respostas = this.formulario.etapas.flatMap(etapa =>
+      const respostas = this.formulario.etapas!.flatMap(etapa =>
         etapa.perguntas.map(pergunta => new Resposta(pergunta, pergunta.resposta))
       );
   
@@ -211,7 +211,7 @@ export class FormularioComponent implements OnInit {
   }
 
   proximaEtapa() {
-    if (this.formulario && this.etapaAtual < this.formulario.etapas.length - 1) {
+    if (this.formulario && this.etapaAtual < this.formulario.etapas!.length - 1) {
       this.etapaAtual++;
     }
   }
@@ -225,7 +225,7 @@ export class FormularioComponent implements OnInit {
   verificarValidadeEtapaAtual(): boolean {
     if (!this.formulario || !this.formGroup) return false;
     
-    const etapaAtual = this.formulario.etapas[this.etapaAtual];
+    const etapaAtual = this.formulario.etapas![this.etapaAtual];
     return etapaAtual.perguntas.every((_, index) => {
       const controlName = this.getControlName(this.etapaAtual, index);
       return this.formGroup.get(controlName)?.valid;

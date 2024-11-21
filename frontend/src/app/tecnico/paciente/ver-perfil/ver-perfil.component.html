@@ -105,8 +105,9 @@
             </thead>
             <tbody>
               <tr *ngFor="let avaliacao of avaliacoes">
-                <td>{{avaliacao.formulario}}</td> 
-                <!-- TODO: colocar um objeto de Formulario no array de Avaliacao recebido do back -->
+                <td>{{avaliacao.formulario!.titulo}}</td> 
+                <!-- TODO: COMPLETAR um objeto de Formulario no array de Avaliacao recebido do back -->
+                <!-- checar AvaliacaoService, alguns atributos são undefined -->
                 <td>{{avaliacao.pontuacaoTotal}}/{{avaliacao.pontuacaoMaxima || 'N/D'}}</td>
                 <td>
                   <div class="btn-group">

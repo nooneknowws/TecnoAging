@@ -12,7 +12,7 @@ import { Avaliacao } from '../../../_shared/models/avaliacao/avaliacao';
       
       <div class="card mt-3" *ngFor="let avaliacao of avaliacoes">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">{{avaliacao.formulario}}</h5>
+          <h5 class="mb-0">{{avaliacao.formulario!.titulo}}</h5>
           <span class="badge bg-primary">{{avaliacao.dataAtualizacao | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="card-body">
@@ -27,13 +27,20 @@ import { Avaliacao } from '../../../_shared/models/avaliacao/avaliacao';
           </div>
           
           <div class="mt-3">
-            <h6>Respostas:</h6>
-            <div class="list-group">
-              <div class="list-group-item" *ngFor="let resposta of avaliacao.respostas">
-                <p class="mb-1"><strong>{{resposta.pergunta?.texto}}</strong></p>
-                <p class="mb-0">{{resposta.resposta}}</p>
-              </div>
-            </div>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Pergunta</th>
+                  <th>Resposta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let resposta of avaliacao.respostas">
+                  <td>{{resposta.pergunta?.texto}}</td>
+                  <td>{{resposta.resposta}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           
           <div class="mt-3">
