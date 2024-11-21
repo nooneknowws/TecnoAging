@@ -62,15 +62,17 @@ export class AuthService {
       }))
     );
   }
+  private normalizeCpf(cpf: string): string {
+    return cpf.replace(/[.\-]/g, '');
+  }
 
   private checkCredentials(cpf: string, senha: string, tipo: 'tecnico' | 'paciente'): Observable<AuthUser | null> {
     return this.http.get<AuthUser[]>(`${this.API_URL}/auth`).pipe(
       map(authUsers => authUsers.find(u =>
-        u.cpf === cpf &&
+        this.normalizeCpf(u.cpf) === this.normalizeCpf(cpf) &&
         u.senha === senha &&
         u.tipo === tipo
-      ) || null)
-    );
+      ) || null));
   }
 
   private fetchUserData(cpf: string, tipo: 'tecnico' | 'paciente'): Observable<LoginResponse> {
@@ -79,7 +81,7 @@ export class AuthService {
     return this.http.get<(Tecnico | Paciente)[]>(`${this.API_URL}/${endpoint}`).pipe(
       map(users => {
         const user = users.find(u => u.cpf === cpf);
-        
+        console.log(user)
         if (!user) {
           return {
             success: false,
