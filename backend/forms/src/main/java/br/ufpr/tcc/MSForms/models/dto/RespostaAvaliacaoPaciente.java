@@ -1,11 +1,14 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class RespostaAvaliacaoPaciente {
 	
-    public RespostaAvaliacaoPaciente(Long avaliacaoId, Long pacienteId, String paciente, Long tecnicoId, String tecnico, String formulario, String formularioDesc,
-			int pontuacaoTotal, int pontuacaoMaxima, List<PerguntaValorDTO> perguntasValores) {
+    public RespostaAvaliacaoPaciente(Long avaliacaoId, Long pacienteId, String paciente, Long tecnicoId, String tecnico,
+			String formulario, String formularioDesc, int pontuacaoTotal, int pontuacaoMaxima,
+			LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<PerguntaValorDTO> perguntasValores) {
+		super();
 		this.avaliacaoId = avaliacaoId;
 		this.pacienteId = pacienteId;
 		this.paciente = paciente;
@@ -15,8 +18,11 @@ public class RespostaAvaliacaoPaciente {
 		this.formularioDesc = formularioDesc;
 		this.pontuacaoTotal = pontuacaoTotal;
 		this.pontuacaoMaxima = pontuacaoMaxima;
+		this.dataCriacao = dataCriacao;
+		this.dataAtualizacao = dataAtualizacao;
 		this.perguntasValores = perguntasValores;
 	}
+
 
 	private Long avaliacaoId;
 	private Long pacienteId;
@@ -27,6 +33,9 @@ public class RespostaAvaliacaoPaciente {
     private String formularioDesc;
     private int pontuacaoTotal;
     private int pontuacaoMaxima;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAtualizacao;
+    
     private List<PerguntaValorDTO> perguntasValores;
 
     public List<PerguntaValorDTO> getPerguntasValores() {
@@ -107,5 +116,21 @@ public class RespostaAvaliacaoPaciente {
 
 	public void setAvaliacaoId(Long avaliacaoId) {
 		this.avaliacaoId = avaliacaoId;
+	}
+
+	public LocalDateTime getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(LocalDateTime dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public LocalDateTime getDataAtualizacao() {
+		return dataAtualizacao;
+	}
+
+	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+		this.dataAtualizacao = dataAtualizacao;
 	}
 }

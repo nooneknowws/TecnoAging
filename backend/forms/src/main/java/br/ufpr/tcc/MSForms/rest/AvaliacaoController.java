@@ -101,6 +101,8 @@ public class AvaliacaoController {
                 formulario.getDescricao(),
                 avaliacao.getPontuacaoTotal(),
                 avaliacao.getPontuacaoMaxima(),
+                avaliacao.getDataCriacao(),
+                avaliacao.getDataAtualizacao(),
                 perguntaValorList
             );
 
@@ -136,28 +138,4 @@ public class AvaliacaoController {
         return ResponseEntity.ok(avaliacaoResponses);
     }
 
-    @GetMapping("/forms/{id}")
-    public ResponseEntity<RespostaAvaliacaoPaciente> getAvaliacaoById(@PathVariable("id") Long avaliacaoId) {
-        Avaliacao avaliacao = avaliacaoRepository.findById(avaliacaoId)
-                .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
-
-        List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
-                .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
-                .collect(Collectors.toList());
-
-        RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
-                avaliacao.getId(),
-                avaliacao.getPaciente().getId(),
-                avaliacao.getPaciente().getNome(),
-                avaliacao.getTecnico().getId(),
-                avaliacao.getTecnico().getNome(),
-                avaliacao.getFormulario().getTitulo(),
-                avaliacao.getFormulario().getDescricao(),
-                avaliacao.getPontuacaoTotal(),
-                avaliacao.getPontuacaoMaxima(),
-                perguntaValorList
-        );
-
-        return ResponseEntity.ok(response);
-    }
 }

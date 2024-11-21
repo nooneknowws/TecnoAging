@@ -38,7 +38,7 @@
   ],
   "pacientes": [
 	{
-	  "id": "1",
+	  "id": 1,
 	  "peso": 80,
 	  "altura": 1.8,
 	  "imc": 25,
@@ -57,7 +57,7 @@
 		"complemento": "Apto 101"
 	  },
 	  "dataNasc": "1972-02-15",
-	  "cpf": "123.456.789-03",
+	  "cpf": "98765432101",
 	  "telefone": "(11) 99999-9998",
 	  "contatos": [
 		{
