@@ -20,7 +20,7 @@ export class FormularioComponent implements OnInit {
   formulario?: Formulario;
   formGroup!: FormGroup;
   etapaAtual = 0;
-  respostas: Record<string, any> = {};
+  respostasTemp: Map<number, Resposta> = new Map();
   pacienteId?: number;
  
   showSuccessAlert = false;
@@ -108,18 +108,23 @@ export class FormularioComponent implements OnInit {
     this.formulario.etapas!.forEach((etapa, etapaIndex) => {
       etapa.perguntas.forEach((pergunta, perguntaIndex) => {
         const controlName = this.getControlName(etapaIndex, perguntaIndex);
+        let valorResposta: string | string[] | number | boolean | undefined;
         
         if (pergunta.tipo === 'checkbox' && pergunta.opcoes) {
           const checkboxArray = this.getCheckboxFormArray(etapaIndex, perguntaIndex);
-          const selectedOptions = pergunta.opcoes.filter((_, index) => 
+          valorResposta = pergunta.opcoes.filter((_, index) => 
             checkboxArray.at(index).value
           );
-          pergunta.resposta = selectedOptions;
         } else if (pergunta.tipo === 'range') {
-          pergunta.resposta = Number(values[controlName]);
+          valorResposta = Number(values[controlName]);
         } else {
-          pergunta.resposta = values[controlName] || '';
+          valorResposta = values[controlName] || '';
         }
+
+        this.respostasTemp.set(pergunta.id!, new Resposta(
+          pergunta,
+          valorResposta
+        ));
       });
     });
   }
@@ -130,9 +135,7 @@ export class FormularioComponent implements OnInit {
     try {
       this.atualizarRespostas(this.formGroup.value);
   
-      const respostas = this.formulario.etapas!.flatMap(etapa =>
-        etapa.perguntas.map(pergunta => new Resposta(pergunta, pergunta.resposta))
-      );
+      const respostas = Array.from(this.respostasTemp.values());
   
       const avaliacao = new Avaliacao(
         undefined,
@@ -162,9 +165,7 @@ export class FormularioComponent implements OnInit {
       this.errorMessage = 'Ocorreu um erro ao salvar a avaliação. Por favor, tente novamente.';
       window.scrollTo(0, 0);
     }
-  }
-  
-  
+  }  
 
   getCheckboxFormArray(etapaIndex: number, perguntaIndex: number): FormArray {
     const controlName = this.getControlName(etapaIndex, perguntaIndex);

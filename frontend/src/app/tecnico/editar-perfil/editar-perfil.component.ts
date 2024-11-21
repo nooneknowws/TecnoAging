@@ -22,6 +22,7 @@ export class EditarPerfilComponent implements OnInit {
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   
+  //TODO: Tirar essa ´porra e colocar o EnumEstadosBrasil
   estados = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
     'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
@@ -62,6 +63,7 @@ export class EditarPerfilComponent implements OnInit {
     return idade;
   }
 
+  // TODO: Trocar pelo buscarCep do AuthService
   buscarCep(): void {
     const cep = this.endereco.cep?.toString().replace(/\D/g, '');
     
