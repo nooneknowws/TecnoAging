@@ -79,7 +79,7 @@ export class ConsultarAvaliacaoComponent implements OnInit {
 
   editarAvaliacao(avaliacaoId: number | undefined) {
     if (avaliacaoId) {
-      this.router.navigate(['/avaliacoes/editar', avaliacaoId]);
+      this.router.navigate(['/tecnico/avaliacoes/editar', avaliacaoId]);
     }
   }
 }

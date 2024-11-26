@@ -15,7 +15,7 @@ import { Resposta } from '../../../_shared/models/avaliacao/resposta';
       <form [formGroup]="avaliacaoForm" (ngSubmit)="onSubmit()" *ngIf="avaliacao">
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">{{avaliacao.formulario}}</h5>
+            <h5 class="mb-0">{{avaliacao.formulario?.titulo}}</h5>
           </div>
           <div class="card-body">
             <div class="row mb-3">
