@@ -138,4 +138,35 @@ public class AvaliacaoController {
         return ResponseEntity.ok(avaliacaoResponses);
     }
 
+    @GetMapping("/avaliacao/{id}")
+    public ResponseEntity<RespostaAvaliacaoPaciente> getAvaliacaoById(@PathVariable("id") Long avaliacaoId) {
+        
+        Avaliacao avaliacao = avaliacaoRepository.findById(avaliacaoId)
+                .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
+
+        Tecnico tecnico = avaliacao.getTecnico();
+        Paciente paciente = avaliacao.getPaciente();
+        Formulario formulario = avaliacao.getFormulario();
+        List<Resposta> respostas = avaliacao.getRespostas(); 
+        List<PerguntaValorDTO> perguntaValorList = respostas.stream()
+            .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
+            .collect(Collectors.toList());
+
+        RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
+            avaliacao.getId(),
+            paciente.getId(), 
+            paciente.getNome(), 
+            tecnico.getId(), 
+            tecnico.getNome(), 
+            formulario.getTitulo(),
+            formulario.getDescricao(),
+            avaliacao.getPontuacaoTotal(),
+            avaliacao.getPontuacaoMaxima(),
+            avaliacao.getDataCriacao(),
+            avaliacao.getDataAtualizacao(),
+            perguntaValorList
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
