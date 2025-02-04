@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Paciente } from '../../../_shared/models/pessoa/paciente/paciente';
 import { PacienteService } from '../../../_shared/services/paciente.service';
@@ -48,8 +48,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
     ).subscribe({
       next: (paciente) => {
         if (paciente) {
-          this.paciente = paciente;
-          this.preencherFormulario(paciente);
+          this.carregarPaciente(paciente.id!);
         } else {
           console.error('Paciente não encontrado');
           this.router.navigate(['/tecnico/dashboard']);
@@ -66,7 +65,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
     return this.fb.group({
       dadosPessoais: this.fb.group({
         nome: ['', Validators.required],
-        dataNasc: ['', Validators.required],
+        dataNasc: ['', [Validators.required, this.validarData]],
         sexo: ['', Validators.required],
         estadoCivil: ['', Validators.required],
         nacionalidade: ['Brasileiro', Validators.required],
@@ -78,18 +77,18 @@ export class EditarPerfilPacienteComponent implements OnInit {
       documentacao: this.fb.group({
         rg: ['', Validators.required],
         cpf: ['', [Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/)]],
-        dataExpedicao: ['', Validators.required],
+        dataExpedicao: ['', [Validators.required, this.validarData]],
         orgaoEmissor: ['', Validators.required],
         ufEmissor: ['', Validators.required]
       }),
       endereco: this.fb.group({
-        CEP: ['', [Validators.required, Validators.pattern(/^\d{5}\-\d{3}$/)]],
+        cep: ['', [Validators.required, Validators.pattern(/^\d{5}\-\d{3}$/)]],
         logradouro: ['', Validators.required],
         numero: ['', Validators.required],
         complemento: [''],
         bairro: ['', Validators.required],
         municipio: ['', Validators.required],
-        UF: ['', Validators.required]
+        uf: ['', Validators.required]
       }),
       contatos: this.fb.array([])
     });
@@ -257,6 +256,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
     }
   }
 
+
   async salvar() {
     if (this.pacienteForm.valid) {
       try {
@@ -265,16 +265,17 @@ export class EditarPerfilPacienteComponent implements OnInit {
         const dadosPessoais = this.pacienteForm.get('dadosPessoais')?.value;
         const documentacao = this.pacienteForm.get('documentacao')?.value;
         const endereco = this.pacienteForm.get('endereco')?.value;
+        console.log(JSON.stringify(endereco))
         const contatos = this.contatosFormArray.value.map((contato: any) => ({
           nome: contato.nome.trim(),
           telefone: contato.telefone.replace(/\D/g, ''), // Remove formatting before saving
           parentesco: contato.parentesco as EnumParentesco
         }));
-  
+    
         const pacienteAtualizado: Paciente = {
           ...this.paciente,
           nome: dadosPessoais.nome,
-          dataNasc: new Date(dadosPessoais.dataNasc),
+          dataNasc: dadosPessoais.dataNasc, // Mantém como string "yyyy-mm-dd"
           sexo: dadosPessoais.sexo,
           estadoCivil: dadosPessoais.estadoCivil as EnumEstadoCivil,
           nacionalidade: dadosPessoais.nacionalidade,
@@ -284,12 +285,12 @@ export class EditarPerfilPacienteComponent implements OnInit {
           
           rg: documentacao.rg,
           cpf: documentacao.cpf,
-          dataExpedicao: new Date(documentacao.dataExpedicao),
+          dataExpedicao: documentacao.dataExpedicao, // Mantém como string "yyyy-mm-dd"
           orgaoEmissor: documentacao.orgaoEmissor,
           ufEmissor: documentacao.ufEmissor as EnumEstadosBrasil,
           
           endereco: {
-            cep: endereco.CEP.replace(/\D/g, ''),
+            cep: endereco.cep.replace(/\D/g, ''),
             logradouro: endereco.logradouro,
             numero: endereco.numero,
             complemento: endereco.complemento,
@@ -300,7 +301,11 @@ export class EditarPerfilPacienteComponent implements OnInit {
           
           contatos
         };
-  
+    
+        // Antes de enviar, garantimos que as datas estão no formato correto
+        pacienteAtualizado.dataNasc = pacienteAtualizado.dataNasc;
+        pacienteAtualizado.dataExpedicao = pacienteAtualizado.dataExpedicao;
+    
         await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
         
         this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
@@ -339,5 +344,21 @@ export class EditarPerfilPacienteComponent implements OnInit {
     this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
       queryParams: { id: this.paciente?.id } 
     });
+  }
+
+  private validarData(control: FormControl): { [s: string]: boolean } | null {
+    if (!control.value) return null;
+    
+    const data = control.value.split('-');
+    if (data.length !== 3) return { dataInvalida: true };
+    
+    const dia = parseInt(data[2], 10);
+    const mes = parseInt(data[1], 10);
+    const ano = parseInt(data[0], 10);
+    
+    const dataValida = new Date(ano, mes - 1, dia).getTime() === new Date(ano, mes - 1, dia).getTime();
+    if (!dataValida) return { dataInvalida: true };
+    
+    return null;
   }
 }

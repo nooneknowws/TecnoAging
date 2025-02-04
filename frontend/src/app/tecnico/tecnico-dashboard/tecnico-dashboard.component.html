@@ -39,6 +39,10 @@
         </div>
       </div>
       
+      <div class="alert alert-info" *ngIf="pacientes.length == 0">
+        <p class="text-muted">Não há pacientes cadastrados.</p>
+      </div>
+
       <!-- Grid View -->
       <div class="patient-cards" *ngIf="viewMode === 'grid'">
         <div *ngFor="let paciente of pacientes"
@@ -217,6 +221,7 @@
             Selecione um paciente para ver os resultados
           </p>
         </div>
+
         <button *ngIf="selectedPaciente" 
                 class="btn btn-outline-primary btn-sm" 
                 (click)="compareResults()">
@@ -225,6 +230,10 @@
         </button>
       </div>
 
+      <div class="alert alert-info" *ngIf="pacientes.length == 0">
+        <p class="text-muted">Não há pacientes cadastrados.</p>
+      </div>
+      
       <div class="results-content">
         <ng-container *ngIf="selectedPaciente">
           <div *ngIf="historicoTestes$ | async as historico; else loading">

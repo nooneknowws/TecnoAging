@@ -210,7 +210,7 @@ public class Paciente {
 		return altura;
 	}
 
-	private float setAltura(float altura) {
+	public float setAltura(float altura) {
 	    return this.altura = Math.round(altura * 100) / 100f;
 	}
 
