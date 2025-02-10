@@ -12,37 +12,48 @@ import java.time.format.DateTimeParseException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @MappedSuperclass
-public abstract class Pessoa {
+public class Pessoa {
     
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     @Column(unique = true, nullable = false)
+    @JsonProperty("cpf")
     protected String cpf;
 
     @Column(name = "nome", nullable = false)
+    @JsonProperty("nome")
     protected String nome;
 
     @Column(name = "sexo", nullable = false)
+    @JsonProperty("sexo")
     protected String sexo;
 
     @Column(name = "idade")
+    @JsonProperty("idade")
     protected int idade;
 
     @Embedded
+    @JsonProperty("endereco")
     protected Endereco endereco;
 
     @Column(name = "data_nasc")
+    @JsonProperty("dataNasc")
     protected String dataNasc;
 
     @Column(name = "telefone")
+    @JsonProperty("telefone")
     protected String telefone;
 
-    protected String salt;
+    @JsonProperty("senha")
     protected String senha;
-    protected String passwordHash;
+    protected String salt;
+    protected String passwordHash; 
 
     public Pessoa() {
         super();

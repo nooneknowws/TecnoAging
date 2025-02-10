@@ -1,6 +1,7 @@
 package br.ufpr.tcc.MSForms.auth;
 
 import br.ufpr.tcc.MSForms.models.Paciente;
+import br.ufpr.tcc.MSForms.models.Pessoa;
 import br.ufpr.tcc.MSForms.models.Tecnico;
 import br.ufpr.tcc.MSForms.repositories.PacienteRepository;
 import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
@@ -13,7 +14,6 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -29,39 +29,69 @@ public class AuthService {
     private static final String ALGORITMO = "PBKDF2WithHmacSHA256";
 
     public LoginResponse loginTecnico(LoginRequest loginRequest) {
-        Optional<Tecnico> tecnico = tecnicoRepository.findByCpf(loginRequest.cpf());
-        
-        if (tecnico.isPresent() && checkPassword(loginRequest.senha(), tecnico.get().getSalt(), tecnico.get().getPasswordHash())) {
-            return createSuccessResponse(tecnico.get(), "tecnico");
-        }
-        return createFailureResponse("Credenciais inválidas");
+        return tecnicoRepository.findByCpf(loginRequest.cpf())
+                .map(tecnico -> {
+                    if (checkPassword(loginRequest.senha(), tecnico.getSalt(), tecnico.getPasswordHash())) {
+                        Pessoa pessoa = new Pessoa(
+                                tecnico.getId(),
+                                tecnico.getCpf(),
+                                tecnico.getNome(),
+                                tecnico.getSexo(),
+                                tecnico.getIdade(),
+                                tecnico.getEndereco(),
+                                tecnico.getDataNasc(),
+                                tecnico.getTelefone()
+                        );
+                        return createSuccessResponse(pessoa, "tecnico");
+                    } else {
+                        return createFailureResponse("Credenciais inválidas");
+                    }
+                })
+                .orElse(createFailureResponse("Credenciais inválidas"));
     }
 
     public LoginResponse loginPaciente(LoginRequest loginRequest) {
-        Optional<Paciente> paciente = pacienteRepository.findByCpf(loginRequest.cpf());
-        
-        if (paciente.isPresent() && checkPassword(loginRequest.senha(), paciente.get().getSalt(), paciente.get().getPasswordHash())) {
-            return createSuccessResponse(paciente.get(), "paciente");
+        return pacienteRepository.findByCpf(loginRequest.cpf())
+                .map(paciente -> {
+                    if (checkPassword(loginRequest.senha(), paciente.getSalt(), paciente.getPasswordHash())) {
+                        Pessoa pessoa = new Pessoa(
+                                paciente.getId(),
+                                paciente.getCpf(),
+                                paciente.getNome(),
+                                paciente.getSexo(),
+                                paciente.getIdade(),
+                                paciente.getEndereco(),
+                                paciente.getDataNasc(),
+                                paciente.getTelefone()
+                        );
+                        return createSuccessResponse(pessoa, "paciente");
+                    } else {
+                        return createFailureResponse("Credenciais inválidas");
+                    }
+                })
+                .orElse(createFailureResponse("Credenciais inválidas"));
+    }
+    
+    public LoginResponse registrarTecnico(@RequestBody Pessoa tecnico) {
+        return registrarPessoa(tecnico, "tecnico");
+    }
+
+    public LoginResponse registrarPaciente(@RequestBody Pessoa paciente) {
+        return registrarPessoa(paciente, "paciente");
+    }
+
+    private LoginResponse registrarPessoa(Pessoa pessoa, String tipo) {
+        String password = pessoa.getSenha();
+        String[] saltAndHash = hashPassword(password);
+        pessoa.setSalt(saltAndHash[0]);
+        pessoa.setPasswordHash(saltAndHash[1]);
+
+        if (pessoa instanceof Tecnico) {
+            return createSuccessResponse(tecnicoRepository.save((Tecnico) pessoa), tipo);
+        } else if (pessoa instanceof Paciente) {
+            return createSuccessResponse(pacienteRepository.save((Paciente) pessoa), tipo);
         }
-        return createFailureResponse("Credenciais inválidas");
-    }
-
-    public LoginResponse registrarTecnico(@RequestBody Tecnico tecnico) {
-        String password = tecnico.getSenha();
-        String[] saltAndHash = hashPassword(password);
-        tecnico.setSalt(saltAndHash[0]);
-        tecnico.setPasswordHash(saltAndHash[1]);
-        Tecnico savedTecnico = tecnicoRepository.save(tecnico);
-        return createSuccessResponse(savedTecnico, "tecnico");
-    }
-
-    public LoginResponse registrarPaciente(Paciente paciente) {
-        String password = paciente.getSenha();
-        String[] saltAndHash = hashPassword(password);
-        paciente.setSalt(saltAndHash[0]);
-        paciente.setPasswordHash(saltAndHash[1]);
-        Paciente savedPaciente = pacienteRepository.save(paciente);
-        return createSuccessResponse(savedPaciente, "paciente");
+        else return createFailureResponse("Erro ao registrar");
     }
     
     private boolean checkPassword(String senha, String salt, String hash) {
@@ -95,13 +125,13 @@ public class AuthService {
         }
     }
 
-    private LoginResponse createSuccessResponse(Object user, String tipo) {
+    private LoginResponse createSuccessResponse(Pessoa user, String tipo) {
         String token = generateToken(user, tipo);
-        return new LoginResponse(true, user, tipo, token, "Login realizado com sucesso");
+        return new LoginResponse(true, user.getId(), user, tipo, token, "Login realizado com sucesso");
     }
 
     private LoginResponse createFailureResponse(String message) {
-        return new LoginResponse(false, null, null, null, message);
+        return new LoginResponse(false, null, null, null, null, message);
     }
 
     private String generateToken(Object user, String tipo) {
