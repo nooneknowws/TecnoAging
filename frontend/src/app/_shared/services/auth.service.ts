@@ -39,21 +39,21 @@ export class AuthService {
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return forkJoin([
-      this.checkCredentials(loginRequest.cpf, loginRequest.senha, 'tecnico'),
-      this.checkCredentials(loginRequest.cpf, loginRequest.senha, 'paciente')
+      this.http.post<LoginResponse>(`${this.API_URL}/auth/tecnicos/login`, loginRequest),
+      this.http.post<LoginResponse>(`${this.API_URL}/auth/pacientes/login`, loginRequest)
     ]).pipe(
-      switchMap(([tecnicoAuth, pacienteAuth]) => {
-        if (tecnicoAuth) {
-          return this.fetchUserData(loginRequest.cpf, 'tecnico');
+      map(([tecnicoResponse, pacienteResponse]) => {
+        if (tecnicoResponse.success) {
+          return this.handleSuccessLogin(tecnicoResponse, 'tecnico');
         }
-        if (pacienteAuth) {
-          return this.fetchUserData(loginRequest.cpf, 'paciente');
+        if (pacienteResponse.success) {
+          return this.handleSuccessLogin(pacienteResponse, 'paciente');
         }
-        return of({
+        return {
           success: false,
           user: null,
           message: 'Credenciais inválidas'
-        });
+        };
       }),
       catchError(error => of({
         success: false,
@@ -62,52 +62,66 @@ export class AuthService {
       }))
     );
   }
-  private normalizeCpf(cpf: string): string {
-    return cpf.replace(/[.\-]/g, '');
-  }
 
-  private checkCredentials(cpf: string, senha: string, tipo: 'tecnico' | 'paciente'): Observable<AuthUser | null> {
-    return this.http.get<AuthUser[]>(`${this.API_URL}/auth`).pipe(
-      map(authUsers => authUsers.find(u =>
-        this.normalizeCpf(u.cpf) === this.normalizeCpf(cpf) &&
-        u.senha === senha &&
-        u.tipo === tipo
-      ) || null));
-  }
-
-  private fetchUserData(cpf: string, tipo: 'tecnico' | 'paciente'): Observable<LoginResponse> {
-    const endpoint = tipo === 'tecnico' ? 'tecnicos' : 'pacientes';
-    
-    return this.http.get<(Tecnico | Paciente)[]>(`${this.API_URL}/${endpoint}`).pipe(
-      map(users => {
-        const user = users.find(u => u.cpf === cpf);
-        console.log(user)
-        if (!user) {
-          return {
-            success: false,
-            user: null,
-            message: 'Usuário não encontrado'
-          };
+  registrarTecnico(tecnico: Tecnico): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/tecnicos`, tecnico).pipe(
+      map((response) => {
+        if (response.success) {
+          this.storeSessionData(response.user, 'tecnico', response.token!);
+          return response;
         }
-
-        this.currentUser = tipo === 'tecnico'
-          ? Object.assign(new Tecnico(), user)
-          : Object.assign(new Paciente(), user);
-
-        const token = btoa(JSON.stringify({ cpf, tipo }));
-        
-        sessionStorage.setItem(this.SESSION_TOKEN_KEY, token);
-        sessionStorage.setItem(this.SESSION_USER_TYPE_KEY, tipo);
-        sessionStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(user));
-
         return {
-          success: true,
-          user: this.currentUser,
-          tipo: tipo,
-          token
+          success: false,
+          user: null,
+          message: 'Registro falhou'
         };
+      }),
+      catchError((error) => {
+        return of({
+          success: false,
+          user: null,
+          message: 'Erro ao registrar técnico: ' + error.message
+        });
       })
     );
+  }
+
+  registrarPaciente(paciente: Paciente): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/pacientes`, paciente).pipe(
+      map((response) => {
+        if (response.success) {
+          this.storeSessionData(response.user, 'paciente', response.token!);
+          return response;
+        }
+        return {
+          success: false,
+          user: null,
+          message: 'Registro falhou'
+        };
+      }),
+      catchError((error) => {
+        return of({
+          success: false,
+          user: null,
+          message: 'Erro ao registrar paciente: ' + error.message
+        });
+      })
+    );
+  }
+
+  private handleSuccessLogin(response: LoginResponse, type: 'tecnico' | 'paciente'): LoginResponse {
+    this.storeSessionData(response.user, type, response.token!);
+    return response;
+  }
+
+  private storeSessionData(user: Tecnico | Paciente | null, type: string, token: string): void {
+    if (user) {
+      sessionStorage.setItem(this.SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(this.SESSION_USER_TYPE_KEY, type);
+      sessionStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(user));
+      this.currentUser = type === 'tecnico' ? new Tecnico() : new Paciente();
+      Object.assign(this.currentUser, user);
+    }
   }
 
   logout(): Observable<void> {
@@ -152,12 +166,12 @@ export class AuthService {
           return null;
         }
         return {
-          CEP: parseInt(sanitizedCep, 10),
+          cep: parseInt(sanitizedCep, 10),
           logradouro: data.logradouro,
           complemento: data.complemento || '',
           bairro: data.bairro,
           municipio: data.localidade,
-          UF: data.uf
+          uf: data.uf
         } as Endereco;
       }),
       catchError(error => {
@@ -165,5 +179,5 @@ export class AuthService {
         return of(null);
       })
     );
-  }  
+  }
 }

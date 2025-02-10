@@ -9,6 +9,7 @@ export class Pessoa {
         public endereco?: Endereco,
         public dataNasc?: Date,
         public cpf?: string,
-        public telefone?: string
+        public telefone?: string,
+        public senha?: string
     ) {}
 }

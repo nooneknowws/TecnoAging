@@ -9,21 +9,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "paciente")
-public class Paciente {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "nome", nullable = false)
-    private String nome;
-
-    @Column(name = "sexo", nullable = false)
-    private String sexo;
-
-    @Column(name = "idade")
-    private int idade;
-
+public class Paciente extends Pessoa {
+    
     @Column(name = "peso", nullable = false)
     private float peso;
 
@@ -65,18 +52,6 @@ public class Paciente {
     
     @Column(name = "uf_emissor")
     private String ufEmissor;
-    
-    @Embedded
-    private Endereco endereco;
-
-    @Column(name = "data_nasc")
-    private String dataNasc;
-    
-    @Column(name = "cpf", unique = true, nullable = false)
-    private String cpf;
-    
-    @Column(name = "telefone")
-    private String telefone;
 
     @ElementCollection
     @CollectionTable(name = "paciente_contatos", joinColumns = @JoinColumn(name = "paciente_id"))
@@ -90,104 +65,135 @@ public class Paciente {
             String escolaridade, String estadoCivil, String nacionalidade, String municipioNasc, String ufNasc,
             String corRaca, String rg, String dataExpedicao, String orgaoEmissor, String ufEmissor, 
             Endereco endereco, String dataNasc, String cpf, String telefone, List<Contato> contatos) {
-	    this.id = id;
-	    this.nome = nome;
-	    this.sexo = sexo;
-	    this.idade = idade;
-	    this.peso = peso;
-	    this.altura = altura;
-	    this.imc = imc;
-	    this.socioeconomico = socioeconomico;
-	    this.escolaridade = escolaridade;
-	    this.estadoCivil = estadoCivil;
-	    this.nacionalidade = nacionalidade;
-	    this.municipioNasc = municipioNasc;
-	    this.ufNasc = ufNasc;
-	    this.corRaca = corRaca;
-	    this.rg = rg;
-	    this.dataExpedicao = dataExpedicao;
-	    this.orgaoEmissor = orgaoEmissor;
-	    this.ufEmissor = ufEmissor;
-	    this.endereco = endereco;
-	    this.dataNasc = dataNasc;
-	    this.cpf = cpf;
-	    this.telefone = telefone;
-	    this.contatos = contatos;
-	}
-
-    public Long getId() {
-        return id;
+        super(id, cpf, nome, sexo, idade, endereco, dataNasc, telefone);
+        this.peso = peso;
+        this.altura = altura;
+        this.imc = imc;
+        this.socioeconomico = socioeconomico;
+        this.escolaridade = escolaridade;
+        this.estadoCivil = estadoCivil;
+        this.nacionalidade = nacionalidade;
+        this.municipioNasc = municipioNasc;
+        this.ufNasc = ufNasc;
+        this.corRaca = corRaca;
+        this.rg = rg;
+        this.dataExpedicao = dataExpedicao;
+        this.orgaoEmissor = orgaoEmissor;
+        this.ufEmissor = ufEmissor;
+        this.contatos = contatos;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getters e Setters específicos do Paciente
+    public float getPeso() {
+        return peso;
     }
 
-    public String getNome() {
-        return nome;
+    public void setPeso(float peso) {
+        this.peso = peso;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public float getAltura() {
+        return altura;
     }
 
-    public String getSexo() {
-        return sexo;
+    public float setAltura(float altura) {
+        return this.altura = Math.round(altura * 100) / 100f;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public float getImc() {
+        return imc;
     }
 
-    public int getIdade() {
-        return idade;
+    public void setImc(float imc) {
+        this.imc = imc;
     }
 
-    public void setIdade(int idade) {
-        this.idade = idade;
+    public String getSocioeconomico() {
+        return socioeconomico;
     }
 
-    public Endereco getEndereco() {
-        return endereco;
+    public void setSocioeconomico(String socioeconomico) {
+        this.socioeconomico = socioeconomico;
     }
 
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
+    public String getEscolaridade() {
+        return escolaridade;
     }
 
-    public String getDataNasc() {
-        return dataNasc;
+    public void setEscolaridade(String escolaridade) {
+        this.escolaridade = escolaridade;
     }
 
-    public void setDataNasc(String dataNasc) {
-        this.dataNasc = dataNasc;
-        calcularIdade();
-    }
-    private void calcularIdade() {
-        if (this.dataNasc != null) {
-            try {
-                LocalDate nascimento = LocalDate.parse(this.dataNasc, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                this.idade = Period.between(nascimento, LocalDate.now()).getYears();
-            } catch (DateTimeParseException e) {
-                throw new IllegalArgumentException("Data de nascimento inválida. Use o formato yyyy-MM-dd.");
-            }
-        }
+    public String getEstadoCivil() {
+        return estadoCivil;
     }
 
-	public String getCpf() {
-        return cpf;
+    public void setEstadoCivil(String estadoCivil) {
+        this.estadoCivil = estadoCivil;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public String getNacionalidade() {
+        return nacionalidade;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public void setNacionalidade(String nacionalidade) {
+        this.nacionalidade = nacionalidade;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public String getMunicipioNasc() {
+        return municipioNasc;
+    }
+
+    public void setMunicipioNasc(String municipioNasc) {
+        this.municipioNasc = municipioNasc;
+    }
+
+    public String getUfNasc() {
+        return ufNasc;
+    }
+
+    public void setUfNasc(String ufNasc) {
+        this.ufNasc = ufNasc;
+    }
+
+    public String getCorRaca() {
+        return corRaca;
+    }
+
+    public void setCorRaca(String corRaca) {
+        this.corRaca = corRaca;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getDataExpedicao() {
+        return dataExpedicao;
+    }
+
+    public void setDataExpedicao(String dataExpedicao) {
+        this.dataExpedicao = dataExpedicao;
+    }
+
+    public String getOrgaoEmissor() {
+        return orgaoEmissor;
+    }
+
+    public void setOrgaoEmissor(String orgaoEmissor) {
+        this.orgaoEmissor = orgaoEmissor;
+    }
+
+    public String getUfEmissor() {
+        return ufEmissor;
+    }
+
+    public void setUfEmissor(String ufEmissor) {
+        this.ufEmissor = ufEmissor;
     }
 
     public List<Contato> getContatos() {
@@ -197,115 +203,4 @@ public class Paciente {
     public void setContatos(List<Contato> contatos) {
         this.contatos = contatos;
     }
-
-	public float getPeso() {
-		return peso;
-	}
-
-	public void setPeso(float peso) {
-		this.peso = peso;
-	}
-
-	public float getAltura() {
-		return altura;
-	}
-
-	public float setAltura(float altura) {
-	    return this.altura = Math.round(altura * 100) / 100f;
-	}
-
-	public float getImc() {
-		return imc;
-	}
-
-	public void setImc(float imc) {
-		this.imc = imc;
-	}
-
-	public String getSocioeconomico() {
-		return socioeconomico;
-	}
-
-	public void setSocioeconomico(String socioeconomico) {
-		this.socioeconomico = socioeconomico;
-	}
-
-	public String getEscolaridade() {
-		return escolaridade;
-	}
-
-	public void setEscolaridade(String escolaridade) {
-		this.escolaridade = escolaridade;
-	}
-
-	public String getEstadoCivil() {
-		return estadoCivil;
-	}
-
-	public void setEstadoCivil(String estadoCivil) {
-		this.estadoCivil = estadoCivil;
-	}
-
-	public String getNacionalidade() {
-		return nacionalidade;
-	}
-
-	public void setNacionalidade(String nacionalidade) {
-		this.nacionalidade = nacionalidade;
-	}
-
-	public String getMunicipioNasc() {
-		return municipioNasc;
-	}
-
-	public void setMunicipioNasc(String municipioNasc) {
-		this.municipioNasc = municipioNasc;
-	}
-
-	public String getUfNasc() {
-		return ufNasc;
-	}
-
-	public void setUfNasc(String ufNasc) {
-		this.ufNasc = ufNasc;
-	}
-
-	public String getCorRaca() {
-		return corRaca;
-	}
-
-	public void setCorRaca(String corRaca) {
-		this.corRaca = corRaca;
-	}
-
-	public String getRg() {
-		return rg;
-	}
-
-	public void setRg(String rg) {
-		this.rg = rg;
-	}
-	public String getDataExpedicao() {
-	    return dataExpedicao;
-	}
-
-	public void setDataExpedicao(String dataExpedicao) {
-	    this.dataExpedicao = dataExpedicao;
-	}
-
-	public String getOrgaoEmissor() {
-	    return orgaoEmissor;
-	}
-
-	public void setOrgaoEmissor(String orgaoEmissor) {
-	    this.orgaoEmissor = orgaoEmissor;
-	}
-
-	public String getUfEmissor() {
-	    return ufEmissor;
-	}
-
-	public void setUfEmissor(String ufEmissor) {
-	    this.ufEmissor = ufEmissor;
-	}
 }

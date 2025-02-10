@@ -116,7 +116,7 @@ export class EditarAvaliacaoComponent implements OnInit {
         );
       });
 
-      this.avaliacaoService.salvarAvaliacao(updatedAvaliacao).subscribe({
+      this.avaliacaoService.updateAvaliacao(updatedAvaliacao).subscribe({
         next: () => {
           this.router.navigate(['/avaliacoes/consultar']);
         },

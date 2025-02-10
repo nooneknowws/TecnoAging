@@ -9,7 +9,8 @@ import { Router, NavigationEnd } from '@angular/router';
 export class AppComponent {
   isAuthRoute =  true;
   isOpen = false;
-  static API_URL: string = "http://localhost:3000";
+  static API_URL: string = "http://localhost:5000";
+  static JSON_SERVER_API_URL: string = "http://localhost:3000";
 
   constructor(){}
 }

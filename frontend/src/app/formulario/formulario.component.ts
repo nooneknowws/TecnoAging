@@ -151,7 +151,7 @@ export class FormularioComponent implements OnInit {
 
       console.log('JSON da avaliação a ser enviada:', JSON.stringify(avaliacao, null, 2));
   
-      await this.avaliacaoService.salvarAvaliacao(avaliacao, this.pacienteId).toPromise();
+      await this.avaliacaoService.createAvaliacao(avaliacao, this.pacienteId).toPromise();
   
       this.showSuccessAlert = true;
       this.showErrorAlert = false;
