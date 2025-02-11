@@ -1,4 +1,4 @@
-//TODO: arrancar esse html estático que o Claude gerou
+//TODO: arrancar esse html estático que o Claude gerou e refazer esse component pra ficar tipo o de formulario
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -100,7 +100,7 @@ export class EditarAvaliacaoComponent implements OnInit {
       this.respostasFormArray.push(
         this.fb.group({
           perguntaId: [resposta.pergunta?.id],
-          valor: [resposta.resposta, Validators.required]
+          valor: [resposta.valor, Validators.required]
         })
       );
     });

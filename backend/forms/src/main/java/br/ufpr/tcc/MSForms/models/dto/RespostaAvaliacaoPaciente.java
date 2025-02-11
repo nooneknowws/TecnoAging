@@ -7,7 +7,7 @@ public class RespostaAvaliacaoPaciente {
 	
     public RespostaAvaliacaoPaciente(Long avaliacaoId, Long pacienteId, String paciente, Long tecnicoId, String tecnico,
 			String formulario, String formularioDesc, int pontuacaoTotal, int pontuacaoMaxima,
-			LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<PerguntaValorDTO> perguntasValores) {
+			LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<PerguntaValorDTO> respostas) {
 		super();
 		this.avaliacaoId = avaliacaoId;
 		this.pacienteId = pacienteId;
@@ -20,7 +20,7 @@ public class RespostaAvaliacaoPaciente {
 		this.pontuacaoMaxima = pontuacaoMaxima;
 		this.dataCriacao = dataCriacao;
 		this.dataAtualizacao = dataAtualizacao;
-		this.perguntasValores = perguntasValores;
+		this.respostas = respostas;
 	}
 
 
@@ -36,14 +36,14 @@ public class RespostaAvaliacaoPaciente {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     
-    private List<PerguntaValorDTO> perguntasValores;
+    private List<PerguntaValorDTO> respostas;
 
     public List<PerguntaValorDTO> getPerguntasValores() {
-        return perguntasValores;
+        return respostas;
     }
 
     public void setPerguntasValores(List<PerguntaValorDTO> perguntasValores) {
-        this.perguntasValores = perguntasValores;
+        this.respostas = perguntasValores;
     }
 
 	public Long getPacienteId() {

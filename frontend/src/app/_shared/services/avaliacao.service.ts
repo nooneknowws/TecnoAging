@@ -80,14 +80,13 @@ export class AvaliacaoService {
 
   private serializeAvaliacao(avaliacao: Avaliacao): any {
     return {
+      avaliacaoId: avaliacao.id,
       pacienteId: avaliacao.paciente?.id,
       tecnicoId: avaliacao.tecnico?.id,
       formularioId: avaliacao.formulario?.id,
       respostas: avaliacao.respostas?.map(resposta => ({
-        perguntaId: resposta.pergunta?.id,
-        valor: Array.isArray(resposta.resposta) 
-               ? resposta.resposta.join(', ')
-               : resposta.resposta 
+        pergunta: resposta.pergunta?.texto,
+        valor: resposta.valor
       })),
       pontuacaoTotal: avaliacao.pontuacaoTotal,
       pontuacaoMaxima: avaliacao.pontuacaoMaxima,
@@ -115,7 +114,7 @@ export class AvaliacaoService {
       etapas: undefined
     };
 
-    const respostas = avaliacaoData.respostas?.map((item: any) => {
+    const respostas = avaliacaoData.perguntasValores?.map((item: any) => {
       const pergunta = {
         id: item.perguntaId,
         texto: item.pergunta,
