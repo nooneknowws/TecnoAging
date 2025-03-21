@@ -1,8 +1,6 @@
 
 # TelasTCC
 
-
-# Ta rodando no backend agora, favor iniciar o spring antes de usar
 mudar o application.properties pra funcionar com tua máquina
 ```Java
 spring.application.name=forms
@@ -17,16 +15,23 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.properties.hibernate.jdbc.time_zone=UTC
 server.port=5000
 ```
-
-Repositório Temporário do projeto de TCC
+# TCC TecnoAging
 
 ## Estrutura do Projeto
 
 ```plaintext
 TelasTCC/
-├── frontend/                  # Angular
-├── backend/                   # Node.js API Gateway e Spring Boot MS
+├── frontend/                
+    └── mobile/                # Kotlyn        
+    └── web/                   # Angular
+├── backend/                   
+     └── _Auth                 # SpringBoot MS de Autenticação
+     └── _Forms                # SpringBoot MS dos Formulários
+     └── _Gateway              # Node.js API Gateway
+     └── _Pacientes            # SpringBoot MS dos Pacientes
+     └── _SAGA                 # SpringBoot MS da SAGA Orquestrada
+     └── _Tecnicos             # SpringBoot MS dos Tecnicos
+     └──  Postman              # Arquivos variados dos TESTES via postman e etc...
 └── README.md                  # Documentação
 ```
 
-### Ta rodando no backend agora, favor iniciar o spring antes de usar
