@@ -35,3 +35,7 @@ TelasTCC/
 └── README.md                  # Documentação
 ```
 
+## Telas
+
+![Captura de tela 2025-03-23 191031](https://github.com/user-attachments/assets/21929d92-21eb-41ed-b13d-29fdecfa3d00)
+
