@@ -37,5 +37,11 @@ TelasTCC/
 
 ## Telas
 
+1. Login
 ![Captura de tela 2025-03-23 191031](https://github.com/user-attachments/assets/21929d92-21eb-41ed-b13d-29fdecfa3d00)
+
+2. Cadastro
+![image](https://github.com/user-attachments/assets/0e670579-4474-4ee8-af75-62f1cd4d472d)
+
+
 
