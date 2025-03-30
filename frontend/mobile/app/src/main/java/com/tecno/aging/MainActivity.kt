@@ -45,6 +45,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.tecno.aging.ui.screens.cadastro.CadastroScreen
+import com.tecno.aging.ui.screens.home.HomeScreen
+import com.tecno.aging.ui.screens.login.LoginScreen
 import org.w3c.dom.Text
 
 class MainActivity : ComponentActivity() {
@@ -53,138 +59,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TecnoAgingTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreenUi(paddingValues = innerPadding)
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "login"
+                ) {
+                    composable("login") { LoginScreen(navController) }
+                    composable("cadastro") { CadastroScreen(navController) }
+                    composable("home") { HomeScreen(navController) }
                 }
             }
         }
     }
-}
+  }
 
-@Composable
-fun LoginScreenUi(paddingValues: PaddingValues) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var emailError by remember { mutableStateOf("") }
-    var passwordError by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize() // Ocupa toda a tela
-            .padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center // Centraliza verticalmente os elementos
-    ) {
-        Text(text = "TecnoAging", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = {
-                Text(
-                    emailError.ifEmpty { "email" },
-                    color = if (emailError.isNotEmpty()) Red else Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    Icons.Rounded.AccountCircle,
-                    contentDescription = ""
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp, horizontal = 20.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Transparent,
-                unfocusedIndicatorColor = Transparent,
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = {
-                Text(
-                    passwordError.ifEmpty { "Senha" },
-                    color = if (passwordError.isNotEmpty()) Red else Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    Icons.Rounded.Lock,
-                    contentDescription = ""
-                )
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (passwordVisible)
-                    painterResource(id = R.drawable.visibility_24)
-                else painterResource(id = R.drawable.visibility_off_24)
-
-                Icon(
-                    painter = image,
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { passwordVisible = !passwordVisible }
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp, horizontal = 20.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Transparent,
-                unfocusedIndicatorColor = Transparent,
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                emailError = if (email.isBlank()) "Email é obrigatório" else ""
-                passwordError = if (password.isBlank()) "Senha é obrigatória" else ""
-                if (emailError.isEmpty() && passwordError.isEmpty()) {
-                    // TODO: Lógica de login
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 70.dp)
-        ) {
-            Text(text = "Entrar")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Esqueceu a senha?",
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable {
-                // TODO: Lógica para recuperação de senha
-            }
-        )
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Row {
-            Text(text = "Não tem uma conta?")
-            Text(
-                text = " Cadastre-se",
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable {
-                    // TODO: Lógica para cadastro
-                }
-            )
-        }
-    }
-}
 
