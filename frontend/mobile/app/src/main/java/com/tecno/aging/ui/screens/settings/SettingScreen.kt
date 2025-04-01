@@ -1,4 +1,5 @@
-package com.tecno.aging.ui.screens.home
+package com.tecno.aging.ui.screens.settings
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,14 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    Column(
+fun SettingsScreen(modifier: Modifier = Modifier) {
+    Column (
         modifier = modifier
             .fillMaxWidth()
             .background(Color(0xFF724ABB)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = "Home Screen")
+        Text(text = "Settings Page")
     }
 }
