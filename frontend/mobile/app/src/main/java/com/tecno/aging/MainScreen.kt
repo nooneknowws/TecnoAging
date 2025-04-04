@@ -62,7 +62,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
    when (selectedIndex) {
-       0 -> HomeScreen()
+       0 -> HomeScreen("Gabriel")
        1 -> SettingsScreen()
        2 -> ProfileScreen()
        3 -> SettingsScreen()

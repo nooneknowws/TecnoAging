@@ -13,15 +13,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             TecnoAgingTheme {
                 MainScreen()
-//                val navController = rememberNavController()
-//                NavHost(
-//                    navController = navController,
-//                    startDestination = "login"
-//                ) {
-//                    composable("login") { LoginScreen(navController) }
-//                    composable("cadastro") { CadastroScreen(navController) }
-//                    composable("home") { HomeScreen(navController) }
-//                }
             }
         }
     }
