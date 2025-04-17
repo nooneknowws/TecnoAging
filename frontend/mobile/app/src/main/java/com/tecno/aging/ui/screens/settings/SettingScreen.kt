@@ -18,7 +18,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF724ABB))
+            .background(Color.Black)
             .fillMaxHeight(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

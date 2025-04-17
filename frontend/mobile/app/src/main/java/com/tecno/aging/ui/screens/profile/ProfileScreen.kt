@@ -62,7 +62,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(Color.Gray)
+                .background(Color.Black)
                 .clickable {
 
                 },

@@ -96,12 +96,13 @@ fun MainContent(innerPadding: androidx.compose.foundation.layout.PaddingValues) 
             .fillMaxWidth()
             .padding(innerPadding)
             .padding(16.dp)
+            .background(Color.White)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().background(Color.White),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FeatureCard(
@@ -115,7 +116,6 @@ fun MainContent(innerPadding: androidx.compose.foundation.layout.PaddingValues) 
                 modifier = Modifier.weight(1f)
             )
         }
-        // Segunda linha com 2 cards
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
