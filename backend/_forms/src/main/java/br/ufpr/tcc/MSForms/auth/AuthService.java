@@ -13,6 +13,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 @Service
@@ -96,12 +97,32 @@ public class AuthService {
     
     private boolean checkPassword(String senha, String salt, String hash) {
         try {
+            System.out.println("Iniciando verificação de senha...");
+            System.out.println("Senha: " + senha);
+            System.out.println("Salt: " + salt);
+            System.out.println("Hash: " + hash);
+
             byte[] saltBytes = Base64.getDecoder().decode(salt);
+            System.out.println("Salt decodificado: " + Arrays.toString(saltBytes));
+
             KeySpec spec = new PBEKeySpec(senha.toCharArray(), saltBytes, ITERACOES, TAMANHO_CHAVE);
+            System.out.println("KeySpec criado: " + spec);
+
             SecretKeyFactory f = SecretKeyFactory.getInstance(ALGORITMO);
+            System.out.println("SecretKeyFactory instanciada: " + f.getAlgorithm());
+
             byte[] hashCalculado = f.generateSecret(spec).getEncoded();
-            return Base64.getEncoder().encodeToString(hashCalculado).equals(hash);
+            System.out.println("Hash calculado: " + Arrays.toString(hashCalculado));
+
+            String hashCalculadoBase64 = Base64.getEncoder().encodeToString(hashCalculado);
+            System.out.println("Hash calculado em Base64: " + hashCalculadoBase64);
+
+            boolean resultado = hashCalculadoBase64.equals(hash);
+            System.out.println("Resultado da verificação: " + resultado);
+
+            return resultado;
         } catch (Exception e) {
+            System.out.println("Erro ao verificar senha: " + e.getMessage());
             throw new RuntimeException("Erro ao verificar senha", e);
         }
     }

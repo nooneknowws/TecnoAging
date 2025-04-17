@@ -85,7 +85,7 @@ export class AvaliacaoService {
       tecnicoId: avaliacao.tecnico?.id,
       formularioId: avaliacao.formulario?.id,
       respostas: avaliacao.respostas?.map(resposta => ({
-        pergunta: resposta.pergunta?.texto,
+        perguntaId: resposta.pergunta?.id,
         valor: resposta.valor
       })),
       pontuacaoTotal: avaliacao.pontuacaoTotal,
