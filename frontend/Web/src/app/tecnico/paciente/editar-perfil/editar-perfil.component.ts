@@ -96,50 +96,105 @@ export class EditarPerfilPacienteComponent implements OnInit {
 
   private preencherFormulario(paciente: Paciente) {
     if (!paciente) return;
-
+  
     const dadosPessoais = this.pacienteForm.get('dadosPessoais');
     const documentacao = this.pacienteForm.get('documentacao');
     const endereco = this.pacienteForm.get('endereco');
-
+  
     if (dadosPessoais && documentacao && endereco) {
       dadosPessoais.patchValue({
-        nome: paciente.nome,
-        dataNasc: this.formatarData(paciente.dataNasc),
-        sexo: paciente.sexo,
-        estadoCivil: paciente.estadoCivil,
-        nacionalidade: paciente.nacionalidade,
-        municipioNasc: paciente.municipioNasc,
-        ufNasc: paciente.ufNasc,
-        corRaca: paciente.corRaca,
-        idade: paciente.idade
+        nome: paciente.nome || '',
+        dataNasc: paciente.dataNasc || '',  // Já vem como string
+        sexo: paciente.sexo || '',
+        estadoCivil: paciente.estadoCivil || '',  // Tratar como string
+        nacionalidade: paciente.nacionalidade || 'Brasileiro',
+        municipioNasc: paciente.municipioNasc || '',
+        ufNasc: paciente.ufNasc || '',  // Tratar como string
+        corRaca: paciente.corRaca || ''
       });
-
+  
       documentacao.patchValue({
-        rg: paciente.rg,
-        cpf: paciente.cpf,
-        dataExpedicao: this.formatarData(paciente.dataExpedicao),
-        orgaoEmissor: paciente.orgaoEmissor,
-        ufEmissor: paciente.ufEmissor
+        rg: paciente.rg || '',
+        cpf: this.formatarCpfSeNecessario(paciente.cpf),
+        dataExpedicao: paciente.dataExpedicao || '',  // Já vem como string
+        orgaoEmissor: paciente.orgaoEmissor || '',
+        ufEmissor: paciente.ufEmissor || ''  // Tratar como string
       });
-
+  
       if (paciente.endereco) {
         endereco.patchValue({
-          cep: paciente.endereco.cep,
-          logradouro: paciente.endereco.logradouro,
-          numero: paciente.endereco.numero,
-          complemento: paciente.endereco.complemento,
-          bairro: paciente.endereco.bairro,
-          municipio: paciente.endereco.municipio,
-          uf: paciente.endereco.uf
+          cep: this.formatarCepSeNecessario(paciente.endereco.cep),
+          logradouro: paciente.endereco.logradouro || '',
+          numero: paciente.endereco.numero || '',
+          complemento: paciente.endereco.complemento || '',
+          bairro: paciente.endereco.bairro || '',
+          municipio: paciente.endereco.municipio || '',
+          uf: paciente.endereco.uf || ''  // Tratar como string
         });
       }
-
+  
       // Limpa e recria os contatos
       this.contatosFormArray.clear();
       paciente.contatos?.forEach(contato => {
-        this.adicionarContato(contato);
+        this.adicionarContato({
+          nome: contato.nome,
+          telefone: this.formatarTelefoneSeNecessario(contato.telefone),
+          parentesco: contato.parentesco
+        });
       });
     }
+  }
+  
+  // Métodos auxiliares para formatação
+  private formatarCpfSeNecessario(cpf: string | undefined): string {
+    if (!cpf) return '';
+    // Se já estiver formatado, retorna como está
+    if (cpf.includes('.') && cpf.includes('-')) return cpf;
+    // Se for apenas números e tiver 11 dígitos
+    if (/^\d{11}$/.test(cpf)) {
+      return `${cpf.substring(0,3)}.${cpf.substring(3,6)}.${cpf.substring(6,9)}-${cpf.substring(9)}`;
+    }
+    return cpf;
+  }
+  
+  private formatarCepSeNecessario(cep: string | number | undefined): string {
+    if (!cep) return '';
+    
+    const cepStr = cep.toString().trim(); // Convert to string and trim whitespace
+    const hasHyphen = cepStr.includes('-');
+  
+    // Check if already formatted (has hyphen and 8 total digits)
+    if (hasHyphen) {
+      return cepStr;
+    }
+  
+    // Clean to only digits
+    const cleaned = cepStr.replace(/\D/g, '');
+  
+    if (cleaned.length === 8) {
+      return `${cleaned.slice(0, 5)}-${cleaned.slice(5)}`;
+    }
+  
+    return cepStr;
+  }
+  
+  private formatarTelefoneSeNecessario(telefone: string | undefined): string {
+    if (!telefone) return '';
+    // Se já estiver formatado com parênteses e hífen
+    if (telefone.includes('(') && telefone.includes(')') && telefone.includes('-')) {
+      return telefone;
+    }
+    // Se for apenas números
+    const numbers = telefone.replace(/\D/g, '');
+    if (numbers.length === 11) {
+      return `(${numbers.substring(0,2)}) ${numbers.substring(2,7)}-${numbers.substring(7)}`;
+    }
+    return telefone;
+  }
+
+  private formatarTelefoneParaExibicao(telefone: string | undefined): string {
+    if (!telefone || telefone.length !== 11) return telefone || '';
+    return `(${telefone.slice(0,2)}) ${telefone.slice(2,7)}-${telefone.slice(7)}`;
   }
 
   private formatarData(data: Date | undefined): string {
@@ -256,6 +311,10 @@ export class EditarPerfilPacienteComponent implements OnInit {
     }
   }
 
+  private formatarCpf(cpf: string | undefined): string {
+    if (!cpf || cpf.length !== 11) return '';
+    return `${cpf.substr(0, 3)}.${cpf.substr(3, 3)}.${cpf.substr(6, 3)}-${cpf.substr(9, 2)}`;
+  }
 
   async salvar() {
     if (this.pacienteForm.valid) {
@@ -265,48 +324,58 @@ export class EditarPerfilPacienteComponent implements OnInit {
         const dadosPessoais = this.pacienteForm.get('dadosPessoais')?.value;
         const documentacao = this.pacienteForm.get('documentacao')?.value;
         const endereco = this.pacienteForm.get('endereco')?.value;
-        console.log(JSON.stringify(endereco))
         const contatos = this.contatosFormArray.value.map((contato: any) => ({
           nome: contato.nome.trim(),
-          telefone: contato.telefone.replace(/\D/g, ''), // Remove formatting before saving
-          parentesco: contato.parentesco as EnumParentesco
+          telefone: contato.telefone.replace(/\D/g, ''), // Remove formatação
+          parentesco: contato.parentesco // Vai como string, não enum
         }));
     
-        const pacienteAtualizado: Paciente = {
+        const pacienteAtualizado: any = { // Use `any` para evitar problemas de tipo
           ...this.paciente,
           nome: dadosPessoais.nome,
-          dataNasc: dadosPessoais.dataNasc, // Mantém como string "yyyy-mm-dd"
+          dataNasc: dadosPessoais.dataNasc, // Já está no formato correto como string
           sexo: dadosPessoais.sexo,
-          estadoCivil: dadosPessoais.estadoCivil as EnumEstadoCivil,
+          estadoCivil: dadosPessoais.estadoCivil, // Enviar como string, não enum
           nacionalidade: dadosPessoais.nacionalidade,
           municipioNasc: dadosPessoais.municipioNasc,
-          ufNasc: dadosPessoais.ufNasc as EnumEstadosBrasil,
+          ufNasc: dadosPessoais.ufNasc, // Enviar como string, não enum
           corRaca: dadosPessoais.corRaca,
           
           rg: documentacao.rg,
-          cpf: documentacao.cpf,
-          dataExpedicao: documentacao.dataExpedicao, // Mantém como string "yyyy-mm-dd"
+          cpf: documentacao.cpf, // Manter formatação ou remover conforme necessário
+          dataExpedicao: documentacao.dataExpedicao, // Já está no formato correto
           orgaoEmissor: documentacao.orgaoEmissor,
-          ufEmissor: documentacao.ufEmissor as EnumEstadosBrasil,
+          ufEmissor: documentacao.ufEmissor, // Enviar como string, não enum
           
           endereco: {
-            cep: endereco.cep.replace(/\D/g, ''),
+            cep: endereco.cep.replace(/\D/g, ''), // Remover formatação
             logradouro: endereco.logradouro,
             numero: endereco.numero,
-            complemento: endereco.complemento,
+            complemento: endereco.complemento || '',
             bairro: endereco.bairro,
             municipio: endereco.municipio,
-            uf: endereco.uf as EnumEstadosBrasil
+            uf: endereco.uf // Enviar como string, não enum
           },
           
           contatos
         };
+        
+        // Remover undefined ou null para não sobrescrever valores existentes
+        Object.keys(pacienteAtualizado).forEach(key => {
+          if (pacienteAtualizado[key] === undefined || pacienteAtualizado[key] === null) {
+            delete pacienteAtualizado[key];
+          }
+        });
     
-        // Antes de enviar, garantimos que as datas estão no formato correto
-        pacienteAtualizado.dataNasc = pacienteAtualizado.dataNasc;
-        pacienteAtualizado.dataExpedicao = pacienteAtualizado.dataExpedicao;
-    
-        await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
+        // Garantir que o ID existe e está correto
+        if (!pacienteAtualizado.id && this.paciente?.id) {
+          pacienteAtualizado.id = this.paciente.id;
+        }
+        
+        console.log('Enviando paciente:', pacienteAtualizado);
+        
+        const resultado = await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
+        console.log('Resposta da API:', resultado);
         
         this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
           queryParams: { id: this.paciente?.id } 

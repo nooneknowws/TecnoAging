@@ -73,7 +73,8 @@ public class ApiController {
         paciente.setTelefone(pacienteAtualizado.getTelefone());
         paciente.setContatos(pacienteAtualizado.getContatos());
         
-        return ResponseEntity.ok(paciente);
+        Paciente updated = pacienteRepository.save(paciente);
+        return ResponseEntity.ok(updated);
     }
     
     @PutMapping("/tecnicos/{id}")

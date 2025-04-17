@@ -28,8 +28,8 @@
                    <th scope="row">Sexo</th>
                    <td>
                      <select class="form-select form-select-sm" formControlName="sexo">
-                       <option value="M">Masculino</option>
-                       <option value="F">Feminino</option>
+                       <option value="Masculino">Masculino</option>
+                       <option value="Feminino">Feminino</option>
                      </select>
                    </td>
                  </tr>
@@ -241,6 +241,42 @@
       </div>
     </div>
  
+    <div *ngIf="!pacienteForm.valid" class="alert alert-danger" role="alert">
+      <i class="fas fa-exclamation-circle"></i> Formulario inválido
+      <ul>
+        <!-- Dados Pessoais -->
+        <li *ngIf="pacienteForm.get('dadosPessoais.nome')?.invalid && pacienteForm.get('dadosPessoais.nome')?.touched">Nome é obrigatório</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.dataNasc')?.invalid && pacienteForm.get('dadosPessoais.dataNasc')?.touched">Data de Nascimento é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.sexo')?.invalid && pacienteForm.get('dadosPessoais.sexo')?.touched">Sexo é obrigatório</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.estadoCivil')?.value == '' && pacienteForm.get('dadosPessoais.estadoCivil')?.touched">Estado Civil é obrigatório</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.municipioNasc')?.invalid && pacienteForm.get('dadosPessoais.municipioNasc')?.touched">Município de Nascimento é obrigatório</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.ufNasc')?.value == '' && pacienteForm.get('dadosPessoais.ufNasc')?.touched">UF de Nascimento é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.corRaca')?.value == '' && pacienteForm.get('dadosPessoais.corRaca')?.touched">Cor/Raça é obrigatória</li>
+
+        <!-- Documentação -->
+        <li *ngIf="pacienteForm.get('documentacao.rg')?.invalid && pacienteForm.get('documentacao.rg')?.touched">RG é obrigatório</li>
+        <li *ngIf="pacienteForm.get('documentacao.cpf')?.invalid && pacienteForm.get('documentacao.cpf')?.touched">CPF é obrigatório</li>
+        <li *ngIf="pacienteForm.get('documentacao.dataExpedicao')?.invalid && pacienteForm.get('documentacao.dataExpedicao')?.touched">Data de Expedição é obrigatória</li>
+        <li *ngIf="pacienteForm.get('documentacao.orgaoEmissor')?.invalid && pacienteForm.get('documentacao.orgaoEmissor')?.touched">Órgão Emissor é obrigatório</li>
+        <li *ngIf="pacienteForm.get('documentacao.ufEmissor')?.value == '' && pacienteForm.get('documentacao.ufEmissor')?.touched">UF Emissor é obrigatória</li>
+
+        <!-- Endereço -->
+        <li *ngIf="pacienteForm.get('endereco.cep')?.invalid && pacienteForm.get('endereco.cep')?.touched">CEP é obrigatório</li>
+        <li *ngIf="pacienteForm.get('endereco.logradouro')?.invalid && pacienteForm.get('endereco.logradouro')?.touched">Logradouro é obrigatório</li>
+        <li *ngIf="pacienteForm.get('endereco.numero')?.invalid && pacienteForm.get('endereco.numero')?.touched">Número é obrigatório</li>
+        <li *ngIf="pacienteForm.get('endereco.bairro')?.invalid && pacienteForm.get('endereco.bairro')?.touched">Bairro é obrigatório</li>
+        <li *ngIf="pacienteForm.get('endereco.municipio')?.invalid && pacienteForm.get('endereco.municipio')?.touched">Município é obrigatório</li>
+        <li *ngIf="pacienteForm.get('endereco.uf')?.value == '' && pacienteForm.get('endereco.uf')?.touched">UF é obrigatória</li>
+
+        <!-- Contatos -->
+        <ng-container *ngFor="let contato of contatosFormArray.controls; let i = index">
+          <li *ngIf="contato.get('nome')?.invalid && contato.get('nome')?.touched">Nome do contato {{i+1}} é obrigatório</li>
+          <li *ngIf="contato.get('telefone')?.invalid && contato.get('telefone')?.touched">Telefone do contato {{i+1}} é obrigatório</li>
+          <li *ngIf="contato.get('parentesco')?.value == '' && contato.get('parentesco')?.touched">Parentesco do contato {{i+1}} é obrigatório</li>
+        </ng-container>
+      </ul>
+    </div>
+
      <!-- Ações -->
      <div class="text-center">
        <button type="submit" class="btn btn-success me-2" (click)="salvar()" [disabled]="!pacienteForm.valid">
