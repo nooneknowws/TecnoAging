@@ -7,6 +7,7 @@ import { Endereco } from '../../_shared/models/pessoa/endereco';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { AuthService } from '../../_shared/services/auth.service';
 import { TecnicoService } from '../../_shared/services/tecnico.service';
+import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -22,11 +23,7 @@ export class EditarPerfilComponent implements OnInit {
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   
-  //TODO: Tirar essa ´porra e colocar o EnumEstadosBrasil
-  estados = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
-    'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
-  ];
+  estados = Object.values(EnumEstadosBrasil);
   
   cepInvalido = false;
   erroTimeout = false;
@@ -63,14 +60,26 @@ export class EditarPerfilComponent implements OnInit {
     return idade;
   }
 
-  // TODO: Trocar pelo buscarCep do AuthService
+
   buscarCep(): void {
-    const cep = this.endereco.cep?.toString().replace(/\D/g, '');
-    
-    if (cep?.length === 8) {
-      this.http.get(`https://viacep.com.br/ws/${cep}/json/`).pipe(
-        timeout(5000),
-        catchError(error => {
+    const cep = this.endereco.cep?.toString().replace(/\D/g, '') || '';
+    this.authService.buscarCep(cep) // Use service method
+      .pipe(
+        timeout(5000) // Keep timeout if needed, but service might handle it
+      )
+      .subscribe({
+        next: (endereco: Endereco | null) => {
+          if (endereco) {
+            this.endereco = endereco;
+            this.form.endereco = this.endereco;
+            this.cepInvalido = false;
+            this.erroTimeout = false;
+            this.cdRef.detectChanges();
+          } else {
+            this.cepInvalido = true;
+          }
+        },
+        error: (error) => {
           if (error.name === 'TimeoutError') {
             this.erroTimeout = true;
             this.cepInvalido = false;
@@ -78,27 +87,8 @@ export class EditarPerfilComponent implements OnInit {
             this.cepInvalido = true;
             this.erroTimeout = false;
           }
-          return of(null);
-        })
-      ).subscribe((data: any) => {
-        if (data && !data.erro) {
-          this.cepInvalido = false;
-          this.erroTimeout = false;
-          this.endereco.cep = parseInt(cep);
-          this.endereco.logradouro = data.logradouro;
-          this.endereco.complemento = data.complemento || '';
-          this.endereco.bairro = data.bairro;
-          this.endereco.municipio = data.localidade;
-          this.endereco.uf = data.uf;
-          this.form.endereco = this.endereco;
-          this.cdRef.detectChanges();
-        } else {
-          this.cepInvalido = true;
         }
       });
-    } else {
-      this.cepInvalido = true;
-    }
   }
 
   onFileSelected(event: any): void {

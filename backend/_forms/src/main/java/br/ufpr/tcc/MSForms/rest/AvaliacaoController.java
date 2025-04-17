@@ -20,7 +20,7 @@ import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
 import br.ufpr.tcc.MSForms.service.AvaliacaoService;
 
 @RestController
-@RequestMapping("/avaliacoes")
+@RequestMapping("/api/avaliacoes")
 public class AvaliacaoController {
 
     @Autowired

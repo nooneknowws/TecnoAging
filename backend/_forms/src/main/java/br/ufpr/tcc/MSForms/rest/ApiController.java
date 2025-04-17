@@ -75,4 +75,24 @@ public class ApiController {
         
         return ResponseEntity.ok(paciente);
     }
+    
+    @PutMapping("/tecnicos/{id}")
+    public ResponseEntity<Tecnico> updateTecnico(@PathVariable("id") Long tecnicoId, @RequestBody Tecnico tecnicoAtualizado) {
+
+        Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+            .orElseThrow(() -> new RuntimeException("Tecnico não encontrado com o ID: " + tecnicoId));
+
+        tecnico.setNome(tecnicoAtualizado.getNome());
+        tecnico.setSexo(tecnicoAtualizado.getSexo());
+        tecnico.setIdade(tecnicoAtualizado.getIdade());
+        tecnico.setEndereco(tecnicoAtualizado.getEndereco());
+        tecnico.setDataNasc(tecnicoAtualizado.getDataNasc());
+        tecnico.setCpf(tecnicoAtualizado.getCpf());
+        tecnico.setTelefone(tecnicoAtualizado.getTelefone());
+        tecnico.setMatricula(tecnicoAtualizado.getMatricula());
+        tecnico.setAtivo(tecnicoAtualizado.isAtivo());
+
+        Tecnico updated = tecnicoRepository.save(tecnico);
+        return ResponseEntity.ok(updated);
+    }
 }
