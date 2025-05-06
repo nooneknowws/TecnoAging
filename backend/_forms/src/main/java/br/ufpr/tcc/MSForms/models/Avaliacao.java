@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.ufpr.tcc.MSForms.models.dto.PacienteDTO;
+import br.ufpr.tcc.MSForms.models.dto.TecnicoDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,11 +20,11 @@ public class Avaliacao {
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
-    private Long paciente;
+    private PacienteDTO paciente;
 
     @ManyToOne
     @JoinColumn(name = "tecnico_id", nullable = false)
-    private Long tecnico;
+    private TecnicoDTO tecnico;
 
     @ManyToOne
     @JoinColumn(name = "formulario_id", nullable = false)
@@ -46,7 +48,7 @@ public class Avaliacao {
 
     public Avaliacao() {}
 
-    public Avaliacao(Long id, Long paciente, Long tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
+    public Avaliacao(Long id, PacienteDTO paciente, TecnicoDTO tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
                      LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<Resposta> respostas) {
         this.id = id;
         this.paciente = paciente;
@@ -68,19 +70,19 @@ public class Avaliacao {
         this.id = id;
     }
 
-    public Paciente getPaciente() {
+    public PacienteDTO getPaciente() {
         return paciente;
     }
 
-    public void setPaciente(Paciente paciente) {
+    public void setPaciente(PacienteDTO paciente) {
         this.paciente = paciente;
     }
 
-    public Tecnico getTecnico() {
+    public TecnicoDTO getTecnico() {
         return tecnico;
     }
 
-    public void setTecnico(Tecnico tecnico) {
+    public void setTecnico(TecnicoDTO tecnico) {
         this.tecnico = tecnico;
     }
 
@@ -131,12 +133,4 @@ public class Avaliacao {
     public void setPontuacaoMaxima(int pontuacaoMaxima) {
         this.pontuacaoMaxima = pontuacaoMaxima;
     }
-
-	public void setPaciente(int paciente) {
-		this.paciente = paciente;
-	}
-
-	public void setTecnico(int tecnico) {
-		this.tecnico = tecnico;
-	}
 }

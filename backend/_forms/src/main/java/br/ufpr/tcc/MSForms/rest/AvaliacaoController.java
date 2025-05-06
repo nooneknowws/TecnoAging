@@ -14,20 +14,13 @@ import br.ufpr.tcc.MSForms.models.*;
 import br.ufpr.tcc.MSForms.models.dto.*;
 import br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository;
 import br.ufpr.tcc.MSForms.repositories.FormularioRepository;
-import br.ufpr.tcc.MSForms.repositories.PacienteRepository;
 import br.ufpr.tcc.MSForms.repositories.PerguntaRepository;
-import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
 import br.ufpr.tcc.MSForms.service.AvaliacaoService;
 
 @RestController
 @RequestMapping("/api/avaliacoes")
 public class AvaliacaoController {
 
-    @Autowired
-    private PacienteRepository pacienteRepository;
-
-    @Autowired
-    private TecnicoRepository tecnicoRepository;
 
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
@@ -63,12 +56,12 @@ public class AvaliacaoController {
                 }
             }
         }
-
-        Paciente paciente = pacienteRepository.findById(avaliacaoDTO.getPacienteId())
+        // chamada via RABBITMQ para encontrar o paciente trazer NOME, ID, IDADE E IMC
+        PacienteDTO paciente = pacienteRepository.findById(avaliacaoDTO.getPacienteId())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         System.out.println("Paciente encontrado com id: " + paciente.getId());
-
-        Tecnico tecnico = tecnicoRepository.findById(avaliacaoDTO.getTecnicoId())
+        // chamada via RABBITMQ para encontrar o tecnico trazer NOME e ID apenas
+        TecnicoDTO tecnico = tecnicoRepository.findById(avaliacaoDTO.getTecnicoId())
                 .orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
         System.out.println("Técnico encontrado com id: " + tecnico.getId());
 
@@ -126,8 +119,8 @@ public class AvaliacaoController {
         List<RespostaAvaliacaoPaciente> avaliacaoResponses = new ArrayList<>();
 
         for (Avaliacao avaliacao : avaliacoes) {
-            Tecnico tecnico = avaliacao.getTecnico();
-            Paciente paciente = avaliacao.getPaciente();
+            TecnicoDTO tecnico = avaliacao.getTecnico(); // ID tecnico
+            PacienteDTO paciente = avaliacao.getPaciente(); // ID paciente
             Formulario formulario = avaliacao.getFormulario();
             List<Resposta> respostas = avaliacao.getRespostas(); 
             List<PerguntaValorDTO> perguntaValorList = respostas.stream()
@@ -136,8 +129,10 @@ public class AvaliacaoController {
 
             RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
         		avaliacao.getId(),
-                paciente.getId(), 
-                paciente.getNome(), 
+                paciente.getId(),
+                paciente.getNome(),
+                paciente.getIdade(),
+                paciente.getImc(),
                 tecnico.getId(), 
                 tecnico.getNome(), 
                 formulario.getTitulo(),
@@ -162,7 +157,7 @@ public class AvaliacaoController {
         List<RespostaAvaliacaoTecnico> avaliacaoResponses = new ArrayList<>();
 
         for (Avaliacao avaliacao : avaliacoes) {
-            Paciente paciente = avaliacao.getPaciente();
+            PacienteDTO paciente = avaliacao.getPaciente();
             List<Resposta> respostas = avaliacao.getRespostas(); 
             List<PerguntaValorDTO> perguntaValorList = respostas.stream()
                 .map(resposta -> new PerguntaValorDTO(resposta.getPergunta().getTexto(), resposta.getValor()))
@@ -187,8 +182,8 @@ public class AvaliacaoController {
         Avaliacao avaliacao = avaliacaoRepository.findById(avaliacaoId)
                 .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
 
-        Tecnico tecnico = avaliacao.getTecnico();
-        Paciente paciente = avaliacao.getPaciente();
+        TecnicoDTO tecnico = avaliacao.getTecnico();
+        PacienteDTO paciente = avaliacao.getPaciente();
         Formulario formulario = avaliacao.getFormulario();
         List<Resposta> respostas = avaliacao.getRespostas(); 
         List<PerguntaValorDTO> perguntaValorList = respostas.stream()
@@ -198,7 +193,9 @@ public class AvaliacaoController {
         RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
             avaliacao.getId(),
             paciente.getId(), 
-            paciente.getNome(), 
+            paciente.getNome(),
+            paciente.getIdade(),
+            paciente.getImc(),
             tecnico.getId(), 
             tecnico.getNome(), 
             formulario.getTitulo(),
