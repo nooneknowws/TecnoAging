@@ -1,10 +1,6 @@
-package br.ufpr.tcc.MSForms.models;
+package br.ufpr.tcc.MSPacientes.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Entity
@@ -13,7 +9,11 @@ public class Paciente extends Pessoa {
     
     @Column(name = "peso", nullable = false)
     private float peso;
+    
 
+    @Version
+    private Long version;
+    
     @Column(name = "altura", nullable = false)
     private float altura;
 
@@ -65,7 +65,7 @@ public class Paciente extends Pessoa {
             String escolaridade, String estadoCivil, String nacionalidade, String municipioNasc, String ufNasc,
             String corRaca, String rg, String dataExpedicao, String orgaoEmissor, String ufEmissor, 
             Endereco endereco, String dataNasc, String cpf, String telefone, List<Contato> contatos) {
-        super(id, cpf, nome, sexo, idade, endereco, dataNasc, telefone);
+        super(id, cpf, nome, sexo, endereco, dataNasc, telefone);
         this.peso = peso;
         this.altura = altura;
         this.imc = imc;
@@ -81,23 +81,25 @@ public class Paciente extends Pessoa {
         this.orgaoEmissor = orgaoEmissor;
         this.ufEmissor = ufEmissor;
         this.contatos = contatos;
+        calcularIMC();
     }
 
-    // Getters e Setters específicos do Paciente
     public float getPeso() {
         return peso;
     }
 
     public void setPeso(float peso) {
         this.peso = peso;
+        calcularIMC();
     }
 
     public float getAltura() {
         return altura;
     }
 
-    public float setAltura(float altura) {
-        return this.altura = Math.round(altura * 100) / 100f;
+    public void setAltura(float altura) {
+        this.altura = Math.round(altura * 100) / 100f;
+        calcularIMC();
     }
 
     public float getImc() {
@@ -106,6 +108,14 @@ public class Paciente extends Pessoa {
 
     public void setImc(float imc) {
         this.imc = imc;
+    }
+
+    private void calcularIMC() {
+        if (altura > 0) {
+            this.imc = peso / (altura * altura);
+        } else {
+            this.imc = 0; 
+        }
     }
 
     public String getSocioeconomico() {

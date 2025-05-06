@@ -1,4 +1,4 @@
-package br.ufpr.tcc.MSForms.models;
+package br.ufpr.tcc.MSPacientes.models;
 
 import jakarta.persistence.*;
 

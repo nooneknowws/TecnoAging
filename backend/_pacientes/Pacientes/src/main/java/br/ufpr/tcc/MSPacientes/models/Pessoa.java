@@ -1,23 +1,19 @@
-package br.ufpr.tcc.MSForms.models;
+package br.ufpr.tcc.MSPacientes.models;
 
 import jakarta.persistence.*;
-
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @MappedSuperclass
 public class Pessoa {
     
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -36,7 +32,7 @@ public class Pessoa {
 
     @Column(name = "idade")
     @JsonProperty("idade")
-    protected int idade;
+    protected int idade; 
 
     @Embedded
     @JsonProperty("endereco")
@@ -59,14 +55,13 @@ public class Pessoa {
         super();
     }
     
-    public Pessoa(Long id, String cpf, String nome, String sexo, int idade, Endereco endereco, String dataNasc, String telefone) {
+    public Pessoa(Long id, String cpf, String nome, String sexo, Endereco endereco, String dataNasc, String telefone) {
         this.id = id;
         this.cpf = cpf;
         this.nome = nome;
         this.sexo = sexo;
-        this.idade = idade;
         this.endereco = endereco;
-        this.dataNasc = dataNasc;
+        this.setDataNasc(dataNasc);
         this.telefone = telefone;
     }
     
@@ -98,7 +93,7 @@ public class Pessoa {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    protected void setIdade(int idade) {
         this.idade = idade;
     }
 
@@ -155,12 +150,15 @@ public class Pessoa {
     }
     
     public String getSenha() {
-		return senha;
-	}
+        return senha;
+    }
     
     public void setSenha(String senha) {
-		this.senha = senha;
-	}
+        this.senha = senha; 
+        String[] saltAndHash = hashPassword(senha);
+        this.salt = saltAndHash[0];
+        this.passwordHash = saltAndHash[1];
+    }
 
     public String getPasswordHash() {
         return passwordHash;

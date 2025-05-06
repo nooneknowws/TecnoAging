@@ -1,4 +1,4 @@
-package br.ufpr.tcc.MSForms.auth;
+package br.ufpr.tcc.MSAuth;
 
 import br.ufpr.tcc.MSForms.models.Pessoa;
 

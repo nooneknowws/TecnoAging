@@ -1,45 +1,49 @@
-package br.ufpr.tcc.MSForms.rest;
+package br.ufpr.tcc.MSPacientes.rest;
 
-import br.ufpr.tcc.MSForms.models.Paciente;
-import br.ufpr.tcc.MSForms.models.Tecnico;
-import br.ufpr.tcc.MSForms.repositories.PacienteRepository;
-import br.ufpr.tcc.MSForms.repositories.TecnicoRepository;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import br.ufpr.tcc.MSPacientes.models.Paciente;
+import br.ufpr.tcc.MSPacientes.repository.PacienteRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class ApiController {
+public class PacientesController {
 
-    @Autowired
-    private TecnicoRepository tecnicoRepository;
 
     @Autowired
     private PacienteRepository pacienteRepository;
-
-    @PostMapping("/tecnicos")
-    public Tecnico createTecnico(@RequestBody Tecnico tecnico) {
-        return tecnicoRepository.save(tecnico);
-    }
-
+	
     @PostMapping("/pacientes")
-    public Paciente createPaciente(@RequestBody Paciente paciente) {
-        return pacienteRepository.save(paciente);
-    }
-
-    @GetMapping("/tecnicos")
-    public List<Tecnico> getAllTecnicos() {
-        return tecnicoRepository.findAll();
+    @Transactional
+    public ResponseEntity<?> createPaciente(@RequestBody Paciente paciente) {
+        try {
+            if(paciente.getId() != null) {
+                Paciente existing = pacienteRepository.findById(paciente.getId())
+                    .orElseThrow(() -> new EntityNotFoundException());
+                BeanUtils.copyProperties(paciente, existing, "id", "version");
+                return ResponseEntity.ok(pacienteRepository.save(existing));
+            }
+            return ResponseEntity.ok(pacienteRepository.save(paciente));
+        } catch (ObjectOptimisticLockingFailureException e) {
+            return ResponseEntity.status(409)
+                .body("Conflict: Record was modified by another user");
+        }
     }
 
     @GetMapping("/pacientes")
     public List<Paciente> getAllPacientes() {
         return pacienteRepository.findAll();
     }
-    
+
     @GetMapping("/pacientes/{id}")
     public Paciente getPacienteById(@PathVariable(name = "id") Long pacienteId) {
         return pacienteRepository.findById(pacienteId).get();
@@ -52,7 +56,6 @@ public class ApiController {
         
         paciente.setNome(pacienteAtualizado.getNome());
         paciente.setSexo(pacienteAtualizado.getSexo());
-        paciente.setIdade(pacienteAtualizado.getIdade());
         paciente.setPeso(pacienteAtualizado.getPeso());
         paciente.setAltura(pacienteAtualizado.getAltura());
         paciente.setImc(pacienteAtualizado.getImc());
@@ -77,23 +80,5 @@ public class ApiController {
         return ResponseEntity.ok(updated);
     }
     
-    @PutMapping("/tecnicos/{id}")
-    public ResponseEntity<Tecnico> updateTecnico(@PathVariable("id") Long tecnicoId, @RequestBody Tecnico tecnicoAtualizado) {
 
-        Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
-            .orElseThrow(() -> new RuntimeException("Tecnico não encontrado com o ID: " + tecnicoId));
-
-        tecnico.setNome(tecnicoAtualizado.getNome());
-        tecnico.setSexo(tecnicoAtualizado.getSexo());
-        tecnico.setIdade(tecnicoAtualizado.getIdade());
-        tecnico.setEndereco(tecnicoAtualizado.getEndereco());
-        tecnico.setDataNasc(tecnicoAtualizado.getDataNasc());
-        tecnico.setCpf(tecnicoAtualizado.getCpf());
-        tecnico.setTelefone(tecnicoAtualizado.getTelefone());
-        tecnico.setMatricula(tecnicoAtualizado.getMatricula());
-        tecnico.setAtivo(tecnicoAtualizado.isAtivo());
-
-        Tecnico updated = tecnicoRepository.save(tecnico);
-        return ResponseEntity.ok(updated);
-    }
 }

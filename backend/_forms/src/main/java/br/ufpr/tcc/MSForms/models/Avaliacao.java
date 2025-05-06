@@ -18,11 +18,11 @@ public class Avaliacao {
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
-    private Paciente paciente;
+    private Long paciente;
 
     @ManyToOne
     @JoinColumn(name = "tecnico_id", nullable = false)
-    private Tecnico tecnico;
+    private Long tecnico;
 
     @ManyToOne
     @JoinColumn(name = "formulario_id", nullable = false)
@@ -46,7 +46,7 @@ public class Avaliacao {
 
     public Avaliacao() {}
 
-    public Avaliacao(Long id, Paciente paciente, Tecnico tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
+    public Avaliacao(Long id, Long paciente, Long tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
                      LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<Resposta> respostas) {
         this.id = id;
         this.paciente = paciente;
@@ -131,4 +131,12 @@ public class Avaliacao {
     public void setPontuacaoMaxima(int pontuacaoMaxima) {
         this.pontuacaoMaxima = pontuacaoMaxima;
     }
+
+	public void setPaciente(int paciente) {
+		this.paciente = paciente;
+	}
+
+	public void setTecnico(int tecnico) {
+		this.tecnico = tecnico;
+	}
 }

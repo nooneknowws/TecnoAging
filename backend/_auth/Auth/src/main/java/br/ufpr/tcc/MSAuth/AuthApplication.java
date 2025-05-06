@@ -1,13 +1,13 @@
-package com.example.demo;
+package br.ufpr.tcc.MSAuth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PacientesApplication {
+public class AuthApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PacientesApplication.class, args);
+		SpringApplication.run(AuthApplication.class, args);
 	}
 
 }

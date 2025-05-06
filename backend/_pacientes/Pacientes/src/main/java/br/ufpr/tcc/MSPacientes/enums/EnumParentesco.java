@@ -1,10 +1,17 @@
-package br.ufpr.tcc.MSForms.enums;
+package br.ufpr.tcc.MSPacientes.enums;
 
 public enum EnumParentesco {
     PAI("Pai"),
     MAE("Mãe"),
     FILHO("Filho"),
     FILHA("Filha"),
+    ESPOSA("Esposa"),
+    MARIDO("Marido"),
+    CONJUGUE("Conjuguê"),
+    COMPANHEIRO("Companheiro"),
+    COMPANHEIRA("Companheira"),
+    NAMORADO("Namorado"),
+    NAMORADA("Namorada"),
 
     AVO_PATERNO("Avô Paterno"),
     AVO_MATERNO("Avô Materno"),
