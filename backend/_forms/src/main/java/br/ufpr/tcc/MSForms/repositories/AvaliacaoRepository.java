@@ -10,14 +10,13 @@ import java.util.List;
 @Repository
 public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
 
-    List<Avaliacao> findByPacienteId(Long pacienteId);
+    List<Avaliacao> findByPaciente(Long pacienteId);
 
-    List<Avaliacao> findByTecnicoId(Long tecnicoId);
+    List<Avaliacao> findByTecnico(Long tecnicoId);
 
-    List<Avaliacao> findByTecnicoIdAndPacienteId(Long tecnicoId, Long pacienteId);
-    @Query
-    ("SELECT p.texto, r.valor FROM Resposta r JOIN r.pergunta p WHERE r.avaliacao.id = :avaliacaoId")
+    List<Avaliacao> findByTecnicoAndPaciente(Long tecnicoId, Long pacienteId);
+
+    @Query("SELECT p.texto, r.valor FROM Resposta r JOIN r.pergunta p WHERE r.avaliacao.id = :avaliacaoId")
     List<Object[]> findPerguntasAndValoresByAvaliacaoId(@Param("avaliacaoId") Long avaliacaoId);
-    List<Avaliacao> findAllByTecnicoId(Long tecnicoId);
-    List<Avaliacao> findAllByPacienteId(Long pacienteId);
+
 }

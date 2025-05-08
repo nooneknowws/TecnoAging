@@ -2,14 +2,17 @@ require("dotenv-safe").config();
 const jwt = require('jsonwebtoken');
 var http = require('http');
 const express = require('express');
+const cors = require('cors');
 const httpProxy = require('express-http-proxy')
 const app = express()
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
 const helmet = require('helmet');
+
 //configurações
 app.use(logger('dev'));
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

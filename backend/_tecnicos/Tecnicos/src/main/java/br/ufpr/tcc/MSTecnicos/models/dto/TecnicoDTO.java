@@ -1,4 +1,4 @@
-package br.ufpr.tcc.MSForms.models.dto;
+package br.ufpr.tcc.MSTecnicos.models.dto;
 
 public class TecnicoDTO {
     private Long id;

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RespostaAvaliacaoPaciente {
 	
-    public RespostaAvaliacaoPaciente(Long avaliacaoId, Long pacienteId, String paciente, Long idade, Long IMC, Long tecnicoId, String tecnico,
+    public RespostaAvaliacaoPaciente(Long avaliacaoId, Long pacienteId, String paciente, int idade, float IMC, Long tecnicoId, String tecnico,
 			String formulario, String formularioDesc, int pontuacaoTotal, int pontuacaoMaxima,
 			LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<PerguntaValorDTO> respostas) {
 		super();
@@ -29,8 +29,8 @@ public class RespostaAvaliacaoPaciente {
 	private Long avaliacaoId;
 	private Long pacienteId;
     private String paciente;
-    private Long pacienteIMC;
-    private Long pacienteIDADE;
+    private float pacienteIMC;
+    private int pacienteIDADE;
     private Long tecnicoId;
     private String tecnico;
     private String formulario;
@@ -138,19 +138,19 @@ public class RespostaAvaliacaoPaciente {
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
-	public Long getPacienteIMC() {
+	public float getPacienteIMC() {
 		return pacienteIMC;
 	}
 
-	public void setPacienteIMC(Long pacienteIMC) {
+	public void setPacienteIMC(float pacienteIMC) {
 		this.pacienteIMC = pacienteIMC;
 	}
 
-	public Long getPacienteIDADE() {
+	public int getPacienteIDADE() {
 		return pacienteIDADE;
 	}
 
-	public void setPacienteIDADE(Long pacienteIDADE) {
+	public void setPacienteIDADE(int pacienteIDADE) {
 		this.pacienteIDADE = pacienteIDADE;
 	}
 }

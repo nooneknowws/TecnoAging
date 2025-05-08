@@ -3,51 +3,35 @@
     <div class="login-form">
         <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
             <div class="form-group">
-                <input 
-                    type="text" 
-                    placeholder="CPF" 
-                    class="form-control" 
-                    [(ngModel)]="loginRequest.cpf" 
-                    name="cpf" 
-                    required 
-                    #cpfInput="ngModel"
-                    mask="000.000.000-00" 
-                />
+                <input type="text" placeholder="CPF" class="form-control" [(ngModel)]="loginRequest.cpf" name="cpf"
+                    required #cpfInput="ngModel" mask="000.000.000-00" />
                 <div *ngIf="cpfInput.invalid && (cpfInput.dirty || cpfInput.touched)" class="text-danger">
                     <small *ngIf="cpfInput.errors?.['required']">CPF é obrigatório</small>
                 </div>
             </div>
-           
+
             <div class="form-group">
-                <input 
-                    type="password" 
-                    placeholder="Senha" 
-                    class="form-control" 
-                    [(ngModel)]="loginRequest.senha" 
-                    name="senha" 
-                    required 
-                    #senhaInput="ngModel"
-                />
+                <input type="password" placeholder="Senha" class="form-control" [(ngModel)]="loginRequest.senha"
+                    name="senha" required #senhaInput="ngModel" />
                 <div *ngIf="senhaInput.invalid && (senhaInput.dirty || senhaInput.touched)" class="text-danger">
                     <small *ngIf="senhaInput.errors?.['required']">Senha é obrigatória</small>
                 </div>
             </div>
-           
+
             <div class="password-reset">
                 <a href="#">Recuperar senha</a>
             </div>
-           
+
             <div *ngIf="errorMessage" class="alert alert-danger">
                 {{ errorMessage }}
             </div>
 
-            <button 
-                type="submit" 
-                class="login-button" 
-                [disabled]="loginForm.invalid"
-            >
+            <button type="submit" class="login-button" [disabled]="loginForm.invalid">
                 Login
             </button>
+            <a routerLink="/cadastro">
+                <button class="login-button">Cadastro</button>
+            </a>
         </form>
     </div>
 </div>

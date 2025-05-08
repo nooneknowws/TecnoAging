@@ -13,18 +13,44 @@ import jakarta.persistence.*;
 @Table(name = "avaliacao")
 public class Avaliacao {
 
-    @Id
+    public Avaliacao(Long id, Long paciente, String paciente_nome, int paciente_idade_avaliacao,
+			float paciente_imc_avaliacao, Long tecnico, String tecnico_nome, Formulario formulario,
+			List<Resposta> respostas, int pontuacaoTotal, int pontuacaoMaxima, LocalDateTime dataCriacao,
+			LocalDateTime dataAtualizacao) {
+		super();
+		this.id = id;
+		this.paciente = paciente;
+		this.paciente_nome = paciente_nome;
+		this.paciente_idade_avaliacao = paciente_idade_avaliacao;
+		this.paciente_imc_avaliacao = paciente_imc_avaliacao;
+		this.tecnico = tecnico;
+		this.tecnico_nome = tecnico_nome;
+		this.formulario = formulario;
+		this.respostas = respostas;
+		this.pontuacaoTotal = pontuacaoTotal;
+		this.pontuacaoMaxima = pontuacaoMaxima;
+		this.dataCriacao = dataCriacao;
+		this.dataAtualizacao = dataAtualizacao;
+	}
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "paciente_id", nullable = false)
-    private PacienteDTO paciente;
-
-    @ManyToOne
-    @JoinColumn(name = "tecnico_id", nullable = false)
-    private TecnicoDTO tecnico;
+    @Column(name = "paciente_id", nullable = false)
+    private Long paciente;
+    @Column(name = "paciente_nome")
+    private String paciente_nome;
+    @Column(name = "paciente_idade_avaliacao")
+    private int paciente_idade_avaliacao;
+    @Column(name = "paciente_imc_avaliacao")
+    private float paciente_imc_avaliacao;
+    
+    @Column(name = "tecnico_id", nullable = false)
+    private Long tecnico;
+    @Column(name = "tecnico_nome")
+    private String tecnico_nome;
 
     @ManyToOne
     @JoinColumn(name = "formulario_id", nullable = false)
@@ -47,19 +73,7 @@ public class Avaliacao {
     private LocalDateTime dataAtualizacao;
 
     public Avaliacao() {}
-
-    public Avaliacao(Long id, PacienteDTO paciente, TecnicoDTO tecnico, Formulario formulario, int pontuacaoMaxima, int pontuacaoTotal,
-                     LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, List<Resposta> respostas) {
-        this.id = id;
-        this.paciente = paciente;
-        this.tecnico = tecnico;
-        this.formulario = formulario;
-        this.pontuacaoTotal = pontuacaoTotal;
-        this.pontuacaoMaxima = pontuacaoMaxima;
-        this.dataCriacao = dataCriacao;
-        this.dataAtualizacao = dataAtualizacao;
-        this.respostas = respostas;
-    }
+    
 
     // Getters e Setters
     public Long getId() {
@@ -70,19 +84,19 @@ public class Avaliacao {
         this.id = id;
     }
 
-    public PacienteDTO getPaciente() {
+    public Long getPaciente() {
         return paciente;
     }
 
-    public void setPaciente(PacienteDTO paciente) {
+    public void setPaciente(Long paciente) {
         this.paciente = paciente;
     }
 
-    public TecnicoDTO getTecnico() {
+    public Long getTecnico() {
         return tecnico;
     }
 
-    public void setTecnico(TecnicoDTO tecnico) {
+    public void setTecnico(Long tecnico) {
         this.tecnico = tecnico;
     }
 
@@ -133,4 +147,51 @@ public class Avaliacao {
     public void setPontuacaoMaxima(int pontuacaoMaxima) {
         this.pontuacaoMaxima = pontuacaoMaxima;
     }
+
+	public String getPaciente_nome() {
+		return paciente_nome;
+	}
+
+	public void setPaciente_nome(String paciente_nome) {
+		this.paciente_nome = paciente_nome;
+	}
+
+	public int getPaciente_idade_avaliacao() {
+		return paciente_idade_avaliacao;
+	}
+
+	public void setPaciente_idade_avaliacao(int paciente_idade_avaliacao) {
+		this.paciente_idade_avaliacao = paciente_idade_avaliacao;
+	}
+
+	public float getPaciente_imc_avaliacao() {
+		return paciente_imc_avaliacao;
+	}
+
+	public void setPaciente_imc_avaliacao(float paciente_imc_avaliacao) {
+		this.paciente_imc_avaliacao = paciente_imc_avaliacao;
+	}
+
+	public String getTecnico_nome() {
+		return tecnico_nome;
+	}
+
+	public void setTecnico_nome(String tecnico_nome) {
+		this.tecnico_nome = tecnico_nome;
+	}
+	public TecnicoDTO getTecnicoDTO() {
+	    return new TecnicoDTO(
+	        this.tecnico,
+	        this.tecnico_nome
+	    );
+	}
+
+	public PacienteDTO getPacienteDTO() {
+	    return new PacienteDTO(
+	        this.paciente,
+	        this.paciente_nome,
+	        this.paciente_idade_avaliacao,
+	        this.paciente_imc_avaliacao
+	    );
+	}
 }

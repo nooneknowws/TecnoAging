@@ -64,7 +64,8 @@ export class AuthService {
   }
 
   registrarTecnico(tecnico: Tecnico): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/tecnicos`, tecnico).pipe(
+    tecnico.ativo = true;
+    return this.http.post<LoginResponse>(`${this.API_URL}/tecnicos`, tecnico).pipe(
       map((response) => {
         if (response.success) {
           this.storeSessionData(response.user, 'tecnico', response.token!);
@@ -154,15 +155,17 @@ export class AuthService {
   }
 
   buscarCep(cep: string): Observable<Endereco | null> {
+    console.log('oi');
     const sanitizedCep = cep.replace(/\D/g, '');
     if (sanitizedCep.length !== 8) {
       return of(null);
     }
   
     return this.http.get<any>(`https://viacep.com.br/ws/${sanitizedCep}/json/`).pipe(
-      timeout(5000),
+      timeout(10000),
       map(data => {
         if (data.erro) {
+          console.log(data.erro)
           return null;
         }
         return {

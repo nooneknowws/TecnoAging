@@ -8,7 +8,7 @@ import { Paciente } from '../models/pessoa/paciente/paciente';
   providedIn: 'root'
 })
 export class PacienteService {
-  private readonly API_URL = 'http://localhost:5000/api';
+  private readonly API_URL = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) {}
 

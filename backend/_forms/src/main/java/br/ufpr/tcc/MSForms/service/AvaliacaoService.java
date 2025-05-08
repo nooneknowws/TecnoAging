@@ -17,10 +17,4 @@ public class AvaliacaoService {
     public List<Object[]> getPerguntasAndValores(Long avaliacaoId) {
         return respostaRepository.findPerguntasAndValoresByAvaliacaoId(avaliacaoId);
     }
-    public List<Avaliacao> findAllByTecnicoId(Long tecnicoId) {
-        return respostaRepository.findAllByTecnicoId(tecnicoId);
-    }
-    public List<Avaliacao> findAllByPacienteId(Long pacienteId) {
-        return respostaRepository.findAllByPacienteId(pacienteId);
-    }
 }

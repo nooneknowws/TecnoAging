@@ -1,4 +1,4 @@
-package br.ufpr.tcc.MSForms.models.dto;
+package br.ufpr.tcc.MSPacientes.models.dto;
 
 public class PacienteDTO {
     private Long id;
