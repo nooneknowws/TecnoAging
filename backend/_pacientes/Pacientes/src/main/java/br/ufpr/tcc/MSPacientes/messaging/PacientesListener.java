@@ -43,8 +43,8 @@ public class PacientesListener {
             
             logger.debug("Sending paciente response: {}", response);
             rabbitTemplate.convertAndSend(
-                "saga.exchange",
-                "query.paciente",
+                "saga-exchange",
+                "response.paciente",
                 response,
                 message -> {
                     message.getMessageProperties().setContentType("application/json");
@@ -54,7 +54,7 @@ public class PacientesListener {
         } catch (Exception e) {
             logger.error("Error processing paciente query for ID: {}", pacienteId, e);
             rabbitTemplate.convertAndSend(
-            	"saga.exchange",
+            	"saga-exchange",
                 "response.paciente.queue.error",
                 "Error processing paciente query: " + e.getMessage()
             );

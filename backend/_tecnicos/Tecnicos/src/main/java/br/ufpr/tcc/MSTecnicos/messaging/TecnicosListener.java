@@ -41,7 +41,7 @@ public class TecnicosListener {
             logger.debug("Sending tecnico response: {}", response);
             rabbitTemplate.convertAndSend(
             	"saga-exchange",
-                "query.tecnico",
+                "response.tecnico",
                 response,
                 message -> {
                     message.getMessageProperties().setContentType("application/json");
