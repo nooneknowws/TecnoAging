@@ -2,6 +2,7 @@ package br.ufpr.tcc.MSTecnicos.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,8 @@ import br.ufpr.tcc.MSTecnicos.repository.TecnicoRepository;
 
 @Component
 public class TecnicosListener {
-	
-	private static final Logger logger = LoggerFactory.getLogger(TecnicosListener.class);
+    
+    private static final Logger logger = LoggerFactory.getLogger(TecnicosListener.class);
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -23,11 +24,19 @@ public class TecnicosListener {
     private TecnicoRepository tecnicoRepository;
 
     @RabbitListener(queues = "query.tecnico.queue")
-    public void handleTecnicoQuery(String tecnicoId) {
-        logger.info("Received tecnico query for ID: {}", tecnicoId);
+    public void handleTecnicoQuery(Message message) {
+    	
+
+        logger.info("FULL MESSAGE PROPERTIES: {}", message.getMessageProperties());
+    	
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        logger.info("Received message with correlationId: {}", correlationId);
+        
+        String tecnicoId = new String(message.getBody());
+        logger.info("Processing tecnico query for ID: {}", tecnicoId);
+
         try {
-        	String cleanId = tecnicoId.replaceAll("^\"|\"$", "");
-            Long id = Long.parseLong(tecnicoId);
+            Long id = Long.parseLong(tecnicoId.replaceAll("^\"|\"$", ""));
             logger.debug("Looking up tecnico with ID: {}", id);
             
             Tecnico tecnico = tecnicoRepository.findById(id)
@@ -38,22 +47,27 @@ public class TecnicosListener {
                 tecnico.getNome()
             );
             
-            logger.debug("Sending tecnico response: {}", response);
+            logger.info("Sending tecnico response with correlationId: {}", correlationId);
             rabbitTemplate.convertAndSend(
-            	"saga-exchange",
+                "saga-exchange",
                 "response.tecnico",
                 response,
-                message -> {
-                    message.getMessageProperties().setContentType("application/json");
-                    return message;
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    m.getMessageProperties().setContentType("application/json");
+                    return m;
                 }
             );
         } catch (Exception e) {
             logger.error("Error processing tecnico query for ID: {}", tecnicoId, e);
             rabbitTemplate.convertAndSend(
-            	"saga-exchange",
-            	"response.tecnico.queue.error",
-                "Error processing tecnico query: " + e.getMessage()
+                "saga-exchange",
+                "response.tecnico.queue.error",
+                "Error processing tecnico query: " + e.getMessage(),
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
             );
         }
     }

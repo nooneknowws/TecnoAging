@@ -8,6 +8,7 @@ import br.ufpr.tcc.MSTecnicos.models.Tecnico;
 import br.ufpr.tcc.MSTecnicos.repository.TecnicoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +26,13 @@ public class TecnicoController {
     public List<Tecnico> getAllTecnicos() {
         return tecnicoRepository.findAll();
     }
+	@GetMapping("/tecnicos/{id}")
+	public Tecnico getTecnicosByID(@PathVariable("id") Long tecnicoId) {
+		
+		Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+	            .orElseThrow(() -> new RuntimeException("Tecnico não encontrado com o ID: " + tecnicoId));
+		return tecnico;
+	}
 	@PutMapping("/tecnicos/{id}")
     public ResponseEntity<Tecnico> updateTecnico(@PathVariable("id") Long tecnicoId, @RequestBody Tecnico tecnicoAtualizado) {
 
@@ -44,4 +52,5 @@ public class TecnicoController {
         Tecnico updated = tecnicoRepository.save(tecnico);
         return ResponseEntity.ok(updated);
     }
-}
+	}
+

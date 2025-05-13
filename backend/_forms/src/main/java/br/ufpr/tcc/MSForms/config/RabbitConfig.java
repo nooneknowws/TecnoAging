@@ -1,9 +1,7 @@
 package br.ufpr.tcc.MSForms.config;
+
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -17,24 +15,38 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 public class RabbitConfig {
-	
-	@Bean
-	public ObjectMapper objectMapper() {
-	    ObjectMapper mapper = new ObjectMapper();
-	    mapper.registerModule(new JavaTimeModule());
-	    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-	    return mapper;
-	}
-
+    
+    // JSON Configuration
     @Bean
-    MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 
+    // Message Converter
     @Bean
-    AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
+    public MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter(objectMapper());
+    }
+
+    // RabbitTemplate Configuration
+    @Bean
+    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter());
         return rabbitTemplate;
+    }
+
+    // Listener Container Factory
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(messageConverter());
+        factory.setMissingQueuesFatal(false);
+        return factory;
     }
 }

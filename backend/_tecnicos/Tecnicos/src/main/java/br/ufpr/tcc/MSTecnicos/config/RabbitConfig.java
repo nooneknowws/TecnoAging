@@ -1,4 +1,4 @@
-package br.ufpr.tcc.SAGA.config;
+package br.ufpr.tcc.MSTecnicos.config;
 
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;

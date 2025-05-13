@@ -85,6 +85,7 @@ function verifyJWT(req, res, next) {
         next();
     });
 }
+console.log(`Gateway online rodando na porta: ${process.env.PORT}` )
 // AUTH
 app.post('/login', (req, res, next) => {
     authServiceProxy(req, res, next);

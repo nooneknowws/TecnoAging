@@ -17,7 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FormsService {
 
     private static final Logger logger = LoggerFactory.getLogger(FormsService.class);
-
+    
+   
+    
     @Autowired
     private RabbitTemplate rabbitTemplate;
     
@@ -39,6 +41,7 @@ public class FormsService {
                 message.getMessageProperties().setReplyTo("response.paciente.queue");
                 message.getMessageProperties().setContentType("application/json");
                 logger.debug("Set replyTo: {}", "response.paciente.queue");
+                logger.info("mensagem {}, ID: {}", message, correlationId);
                 return message;
             });
         

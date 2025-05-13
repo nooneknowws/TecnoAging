@@ -22,7 +22,7 @@ public class FormsMessageListener {
                                      org.springframework.amqp.core.Message message) {
         String correlationId = message.getMessageProperties().getCorrelationId();
         logger.info("Received paciente response for correlationId: {}", correlationId);
-        logger.debug("PacienteDTO: {}", pacienteDTO);
+        logger.info("PacienteDTO: {}", pacienteDTO);
         messageSender.completeRequest(correlationId, pacienteDTO);
     }
 
@@ -31,7 +31,7 @@ public class FormsMessageListener {
                                     org.springframework.amqp.core.Message message) {
         String correlationId = message.getMessageProperties().getCorrelationId();
         logger.info("Received tecnico response for correlationId: {}", correlationId);
-        logger.debug("TecnicoDTO: {}", tecnicoDTO);
+        logger.info("TecnicoDTO: {}", tecnicoDTO);
         messageSender.completeRequest(correlationId, tecnicoDTO);
     }
 

@@ -2,6 +2,7 @@ package br.ufpr.tcc.MSPacientes.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,17 @@ public class PacientesListener {
     private PacienteRepository pacienteRepository;
 
     @RabbitListener(queues = "query.paciente.queue")
-    public void handlePacienteQuery(String pacienteId) {
-        logger.info("Received paciente query for ID: {}", pacienteId);
+    public void handlePacienteQuery(Message message) {
+       
+    	String correlationId = message.getMessageProperties().getCorrelationId();
+        logger.info("Received message with correlationId: {}", correlationId);
+        
+        String pacienteId = new String(message.getBody());
+        logger.info("Processing tecnico query for ID: {}", pacienteId);
+        
         try {
-
-            String cleanId = pacienteId.replaceAll("^\"|\"$", "");
-            Long id = Long.parseLong(pacienteId);
-            logger.debug("Looking up paciente with ID: {}", id);
-            
+        	Long id = Long.parseLong(pacienteId.replaceAll("^\"|\"$", ""));
+        	
             Paciente paciente = pacienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + id));
             
@@ -46,9 +50,12 @@ public class PacientesListener {
                 "saga-exchange",
                 "response.paciente",
                 response,
-                message -> {
-                    message.getMessageProperties().setContentType("application/json");
-                    return message;
+                m -> {
+                	m.getMessageProperties().setCorrelationId(correlationId);
+                    m.getMessageProperties().setContentType("application/json");
+
+                    logger.info("JSON: {}", m);
+                    return m;
                 }
             );
         } catch (Exception e) {
@@ -56,7 +63,11 @@ public class PacientesListener {
             rabbitTemplate.convertAndSend(
             	"saga-exchange",
                 "response.paciente.queue.error",
-                "Error processing paciente query: " + e.getMessage()
+                "Error processing paciente query: " + e.getMessage(),
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
             );
         }
     }
