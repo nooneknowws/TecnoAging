@@ -1,4 +1,4 @@
-package com.tecno.aging
+package com.tecno.aging.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

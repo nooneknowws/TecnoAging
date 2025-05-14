@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.login
 
+import com.tecno.aging.domain.models.auth.LoginResponse
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,9 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,14 +40,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tecno.aging.R
+import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.data.remote.RetrofitInstance
+import com.tecno.aging.domain.models.auth.LoginRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    var cpf by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var emailError by remember { mutableStateOf("") }
+    var cpfError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
+    var loginError by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -58,9 +70,18 @@ fun LoginScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(emailError.ifEmpty { "Email" }, color = if (emailError.isNotEmpty()) Red else Unspecified) },
+            value = cpf,
+            onValueChange = {
+                cpf = it
+                cpfError = ""
+                loginError = ""
+            },
+            label = {
+                Text(
+                    text = cpfError.ifEmpty { "CPF" },
+                    color = if (cpfError.isNotEmpty()) Red else Color.Unspecified
+                )
+            },
             leadingIcon = { Icon(Icons.Rounded.AccountCircle, contentDescription = null) },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
@@ -76,8 +97,17 @@ fun LoginScreen(navController: NavController) {
 
         TextField(
             value = password,
-            onValueChange = { password = it },
-            label = { Text(passwordError.ifEmpty { "Senha" }, color = if (passwordError.isNotEmpty()) Red else Unspecified) },
+            onValueChange = {
+                password = it
+                passwordError = ""
+                loginError = ""
+            },
+            label = {
+                Text(
+                    text = passwordError.ifEmpty { "Senha" },
+                    color = if (passwordError.isNotEmpty()) Red else Color.Unspecified
+                )
+            },
             leadingIcon = { Icon(Icons.Rounded.Lock, contentDescription = null) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -104,21 +134,76 @@ fun LoginScreen(navController: NavController) {
             )
         )
 
+        if (loginError.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = loginError, color = Red)
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                emailError = if (email.isBlank()) "Email é obrigatório" else ""
+                cpfError = if (cpf.isBlank()) "CPF é obrigatório" else ""
                 passwordError = if (password.isBlank()) "Senha é obrigatória" else ""
-                if (emailError.isEmpty() && passwordError.isEmpty()) {
-                    navController.navigate("home")
+
+                if (cpfError.isEmpty() && passwordError.isEmpty()) {
+                    isLoading = true
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = RetrofitInstance.api.login(
+                                LoginRequest(
+                                    cpf = cpf.trim(),
+                                    senha = password.trim()
+                                )
+                            )
+
+                            if (response.isSuccessful) {
+                                val loginResponse = response.body()
+                                if (loginResponse?.success == true) {
+                                    SessionManager.apply {
+                                        saveAuthToken(loginResponse.token)
+                                        saveUserId(loginResponse.ID)
+                                        saveUserProfile(loginResponse.Perfil)
+                                    }
+
+                                    withContext(Dispatchers.Main) {
+                                        navController.navigate("home") {
+                                            popUpTo("login") { inclusive = true }
+                                        }
+                                    }
+                                } else {
+                                    loginError = loginResponse?.message ?: "Erro ao realizar login"
+                                }
+                            } else {
+                                loginError = when (response.code()) {
+                                    401 -> "Credenciais inválidas"
+                                    400 -> "Requisição inválida"
+                                    else -> "Erro no servidor"
+                                }
+                            }
+                        } catch (e: IOException) {
+                            loginError = "Erro de conexão. Verifique sua internet."
+                        } catch (e: Exception) {
+                            loginError = "Erro inesperado: ${e.localizedMessage}"
+                        } finally {
+                            isLoading = false
+                        }
+                    }
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 70.dp)
+                .padding(horizontal = 70.dp),
+            enabled = !isLoading
         ) {
-            Text(text = "Entrar")
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text(text = "Entrar")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -126,9 +211,7 @@ fun LoginScreen(navController: NavController) {
         Text(
             text = "Esqueceu a senha?",
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable {
-                // Implementar a lógica para recuperação de senha
-            }
+            modifier = Modifier.clickable {  }
         )
 
         Spacer(modifier = Modifier.height(50.dp))
@@ -139,7 +222,6 @@ fun LoginScreen(navController: NavController) {
                 text = " Cadastre-se",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
-                    // Navegar para a tela de cadastro
                     navController.navigate("cadastro")
                 }
             )
