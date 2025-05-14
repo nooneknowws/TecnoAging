@@ -33,4 +33,7 @@ export class Paciente extends Pessoa {
     ) {
         super(id, nome, sexo, idade, endereco, dataNasc, cpf, telefone);
     }
+    static fromJSON(json: any): Paciente {
+        return Object.assign(new Paciente(), json);
+      }
 }

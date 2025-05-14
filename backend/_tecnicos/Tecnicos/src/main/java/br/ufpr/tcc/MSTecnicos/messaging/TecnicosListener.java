@@ -25,11 +25,11 @@ public class TecnicosListener {
 
     @RabbitListener(queues = "query.tecnico.queue")
     public void handleTecnicoQuery(Message message) {
-    	
 
-        logger.info("FULL MESSAGE PROPERTIES: {}", message.getMessageProperties());
+    	logger.info("Message: {}", message.getMessageProperties());
     	
         String correlationId = message.getMessageProperties().getCorrelationId();
+        
         logger.info("Received message with correlationId: {}", correlationId);
         
         String tecnicoId = new String(message.getBody());

@@ -206,13 +206,7 @@ export class TecnicoDashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        console.error('Erro ao fazer logout:', error);
-      }
-    });
+    this.authService.logout(); 
+    this.router.navigate(['/login']);
   }
 }

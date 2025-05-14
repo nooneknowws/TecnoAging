@@ -17,13 +17,23 @@ public class SAGAExchange {
     // Exchange
     public static final String SAGA_EXCHANGE = "saga-exchange";
     
-    // Query Queues
+    // Avaliacao Query Queues
     public static final String PACIENTE_QUERY_QUEUE = "query.paciente.queue";
     public static final String TECNICO_QUERY_QUEUE = "query.tecnico.queue";
     
-    // Response Queues
+    // Avaliacao Response Queues
     public static final String PACIENTE_RESPONSE_QUEUE = "response.paciente.queue";
     public static final String TECNICO_RESPONSE_QUEUE = "response.tecnico.queue";
+    
+    // Auth Query Queues 
+    public static final String AUTH_PACIENTE_QUERY_QUEUE = "auth.query.paciente.queue";
+    public static final String AUTH_TECNICO_QUERY_QUEUE = "auth.query.tecnico.queue";
+
+    // Auth Response Queues
+    public static final String AUTH_PACIENTE_RESPONSE_QUEUE = "auth.response.paciente.queue";
+    public static final String AUTH_TECNICO_RESPONSE_QUEUE = "auth.response.tecnico.queue";
+    public static final String AUTH_PACIENTE_ERROR_QUEUE = "auth.response.paciente.error";
+    public static final String AUTH_TECNICO_ERROR_QUEUE = "auth.response.tecnico.error";
 
     public static final String PACIENTE_RESPONSE_QUEUE_ERROR = "response.paciente.queue.error";
     public static final String TECNICO_RESPONSE_QUEUE_ERROR = "response.tecnico.queue.error";
@@ -33,12 +43,47 @@ public class SAGAExchange {
     public static final String TECNICO_QUERY_ROUTING_KEY = "query.tecnico.queue";  
     public static final String PACIENTE_RESPONSE_ROUTING_KEY = "response.paciente";
     public static final String TECNICO_RESPONSE_ROUTING_KEY = "response.tecnico";
+    public static final String AUTH_PACIENTE_QUERY_ROUTING_KEY = "auth.query.paciente";
+    public static final String AUTH_TECNICO_QUERY_ROUTING_KEY = "auth.query.tecnico";
+    public static final String AUTH_PACIENTE_RESPONSE_ROUTING_KEY = "auth.response.paciente";
+    public static final String AUTH_TECNICO_RESPONSE_ROUTING_KEY = "auth.response.tecnico";
+    public static final String AUTH_PACIENTE_ERROR_ROUTING_KEY = "auth.response.paciente.error";
+    public static final String AUTH_TECNICO_ERROR_ROUTING_KEY = "auth.response.tecnico.error";
     
     @Bean
     public DirectExchange sagaExchange() {
         return new DirectExchange(SAGA_EXCHANGE, true, false);
     }
+    
+    @Bean
+    public Queue authPacienteQueryQueue() {
+        return new Queue(AUTH_PACIENTE_QUERY_QUEUE, true);
+    }
 
+    @Bean
+    public Queue authTecnicoQueryQueue() {
+        return new Queue(AUTH_TECNICO_QUERY_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authPacienteResponseQueue() {
+        return new Queue(AUTH_PACIENTE_RESPONSE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authTecnicoResponseQueue() {
+        return new Queue(AUTH_TECNICO_RESPONSE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authPacienteErrorQueue() {
+        return new Queue(AUTH_PACIENTE_ERROR_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authTecnicoErrorQueue() {
+        return new Queue(AUTH_TECNICO_ERROR_QUEUE, true);
+    }
     @Bean
     public Queue pacienteQueryQueue() {
         logger.info("Declaring Paciente Query Queue: {}", PACIENTE_QUERY_QUEUE);
@@ -117,6 +162,47 @@ public class SAGAExchange {
                 .to(sagaExchange())
                 .with(TECNICO_RESPONSE_QUEUE_ERROR);
     }
+    @Bean
+    public Binding authPacienteQueryBinding() {
+        return BindingBuilder.bind(authPacienteQueryQueue())
+                .to(sagaExchange())
+                .with(AUTH_PACIENTE_QUERY_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authTecnicoQueryBinding() {
+        return BindingBuilder.bind(authTecnicoQueryQueue())
+                .to(sagaExchange())
+                .with(AUTH_TECNICO_QUERY_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authPacienteResponseBinding() {
+        return BindingBuilder.bind(authPacienteResponseQueue())
+                .to(sagaExchange())
+                .with(AUTH_PACIENTE_RESPONSE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authTecnicoResponseBinding() {
+        return BindingBuilder.bind(authTecnicoResponseQueue())
+                .to(sagaExchange())
+                .with(AUTH_TECNICO_RESPONSE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authPacienteErrorBinding() {
+        return BindingBuilder.bind(authPacienteErrorQueue())
+                .to(sagaExchange())
+                .with(AUTH_PACIENTE_ERROR_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authTecnicoErrorBinding() {
+        return BindingBuilder.bind(authTecnicoErrorQueue())
+                .to(sagaExchange())
+                .with(AUTH_TECNICO_ERROR_ROUTING_KEY);
+    }
     @PostConstruct
     public void logConfiguration() {
         logger.info("SAGA Exchange Configuration:");
@@ -126,4 +212,5 @@ public class SAGAExchange {
         logger.info("Tecnico Query: Queue={}, RoutingKey={}", 
             TECNICO_QUERY_QUEUE, TECNICO_QUERY_ROUTING_KEY);
     }
+    
 }

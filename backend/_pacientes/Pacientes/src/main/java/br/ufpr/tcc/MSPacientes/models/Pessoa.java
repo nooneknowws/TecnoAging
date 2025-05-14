@@ -180,10 +180,21 @@ public class Pessoa {
 
     private boolean checkPassword(String senha, String salt, String hash) {
         try {
-            KeySpec spec = new PBEKeySpec(senha.toCharArray(), salt.getBytes(), 10000, 256);
+            byte[] saltBytes = java.util.Base64.getDecoder().decode(salt);
+            
+            KeySpec spec = new PBEKeySpec(
+                senha.toCharArray(), 
+                saltBytes, 
+                10000, 
+                256
+            );
+            
             SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             byte[] hashCalculado = f.generateSecret(spec).getEncoded();
-            return java.util.Base64.getEncoder().encodeToString(hashCalculado).equals(hash);
+            
+            String hashCalculadoBase64 = java.util.Base64.getEncoder().encodeToString(hashCalculado);
+            return hashCalculadoBase64.equals(hash);
+            
         } catch (Exception e) {
             throw new RuntimeException("Erro ao verificar senha", e);
         }

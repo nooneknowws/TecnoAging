@@ -25,8 +25,10 @@ public class PacientesListener {
 
     @RabbitListener(queues = "query.paciente.queue")
     public void handlePacienteQuery(Message message) {
-       
-    	String correlationId = message.getMessageProperties().getCorrelationId();
+    	logger.info("Message: {}", message.getMessageProperties());
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        
         logger.info("Received message with correlationId: {}", correlationId);
         
         String pacienteId = new String(message.getBody());

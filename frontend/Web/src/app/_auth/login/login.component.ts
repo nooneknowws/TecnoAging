@@ -12,7 +12,6 @@ export class LoginComponent {
     loginRequest: LoginRequest = {
         cpf: "",
         senha: '',
-        tipo: ''
     };
     errorMessage: string | null = null;
 
@@ -32,8 +31,7 @@ export class LoginComponent {
         this.authService.login(this.loginRequest).subscribe({
             next: (response) => {
                 if (response.success) {
-                    const route = response.tipo === 'tecnico' ? '/tecnico' : '/paciente';
-                    this.router.navigate([route]);
+                    this.router.navigate(['/']);
                 } else {
                     this.errorMessage = response.message || 'Erro ao realizar login';
                 }

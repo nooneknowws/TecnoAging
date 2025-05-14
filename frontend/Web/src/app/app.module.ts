@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -13,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 import { FormularioComponent } from './formulario/formulario.component';
+import { AuthInterceptor } from './_shared/models/_auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,12 @@ import { FormularioComponent } from './formulario/formulario.component';
   ],
   providers: [
     AuthService,
-    provideNgxMask()
+    provideNgxMask(),
+    { 
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
