@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, catchError, switchMap, timeout, delay, tap } from 'rxjs/operators';
 import { Tecnico } from '../models/pessoa/tecnico/tecnico';
 import { Paciente } from '../models/pessoa/paciente/paciente';
 import { LoginRequest } from '../models/_auth/login.request';
 import { LoginResponse } from '../models/_auth/login.response';
-import { AuthUser } from '../models/_auth/auth.user';
 import { AppComponent } from '../../app.component';
 import { Endereco } from '../models/pessoa/endereco';
 
@@ -18,6 +17,7 @@ export class AuthService {
   private readonly SESSION_TOKEN_KEY = 'token';
   private readonly SESSION_USER_TYPE_KEY = 'userType';
   private readonly SESSION_USER_DATA_KEY = 'userData';
+  private readonly SESSION_USER_ID_KEY = 'userID';
   
   private currentUser: Tecnico | Paciente | null = null;
 
@@ -26,114 +26,73 @@ export class AuthService {
   }
 
   private initializeFromSession(): void {
-    const userData = sessionStorage.getItem(this.SESSION_USER_DATA_KEY);
-    const userType = sessionStorage.getItem(this.SESSION_USER_TYPE_KEY);
+    const userData =  localStorage.getItem(this.SESSION_USER_DATA_KEY);
+    const userType =  localStorage.getItem(this.SESSION_USER_TYPE_KEY);
     
     if (userData && userType) {
       const parsedUser = JSON.parse(userData);
       this.currentUser = userType === 'tecnico' 
-        ? Object.assign(new Tecnico(), parsedUser)
-        : Object.assign(new Paciente(), parsedUser);
+        ? Tecnico.fromJSON(parsedUser)
+        : Paciente.fromJSON(parsedUser);
     }
   }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
-    return forkJoin([
-      this.http.post<LoginResponse>(`${this.API_URL}/auth/tecnicos/login`, loginRequest),
-      this.http.post<LoginResponse>(`${this.API_URL}/auth/pacientes/login`, loginRequest)
-    ]).pipe(
-      map(([tecnicoResponse, pacienteResponse]) => {
-        if (tecnicoResponse.success) {
-          return this.handleSuccessLogin(tecnicoResponse, 'tecnico');
-        }
-        if (pacienteResponse.success) {
-          return this.handleSuccessLogin(pacienteResponse, 'paciente');
-        }
-        return {
-          success: false,
-          user: null,
-          message: 'Credenciais inválidas'
-        };
-      }),
-      catchError(error => of({
-        success: false,
-        user: null,
-        message: 'Erro ao realizar login: ' + error.message
-      }))
-    );
-  }
-
-  registrarTecnico(tecnico: Tecnico): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/tecnicos`, tecnico).pipe(
-      map((response) => {
-        if (response.success) {
-          this.storeSessionData(response.user, 'tecnico', response.token!);
-          return response;
-        }
-        return {
-          success: false,
-          user: null,
-          message: 'Registro falhou'
-        };
-      }),
-      catchError((error) => {
-        return of({
-          success: false,
-          user: null,
-          message: 'Erro ao registrar técnico: ' + error.message
-        });
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, loginRequest).pipe(
+      switchMap(loginResponse => {
+        this.storeSessionData(loginResponse.ID!, loginResponse.Perfil!, loginResponse.token!);
+        
+        const endpoint = loginResponse.Perfil === 'PACIENTE' 
+          ? `http://localhost:3000/api/pacientes/${loginResponse.ID}`
+          : `http://localhost:5002/api/tecnicos/${loginResponse.ID}`;
+  
+        return this.http.get<any>(endpoint, {
+          headers: { Authorization: `Bearer ${loginResponse.token}` }
+        }).pipe(
+          map(userData => {
+            this.storeUserData(userData, loginResponse.Perfil!);
+            return loginResponse;
+          }),
+          catchError(error => {
+            console.error('Erro ao buscar dados do usuário:', error);
+            return of(loginResponse);
+          })
+        );
       })
     );
   }
 
-  registrarPaciente(paciente: Paciente): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/pacientes`, paciente).pipe(
-      map((response) => {
-        if (response.success) {
-          this.storeSessionData(response.user, 'paciente', response.token!);
-          return response;
-        }
-        return {
-          success: false,
-          user: null,
-          message: 'Registro falhou'
-        };
-      }),
-      catchError((error) => {
-        return of({
-          success: false,
-          user: null,
-          message: 'Erro ao registrar paciente: ' + error.message
-        });
-      })
-    );
+  registrarTecnico(tecnico: Tecnico): Observable<Tecnico> {
+    tecnico.ativo = true;
+    console.log(tecnico);
+    return this.http.post<Tecnico>(`${this.API_URL}/tecnicos`, tecnico);
   }
 
-  private handleSuccessLogin(response: LoginResponse, type: 'tecnico' | 'paciente'): LoginResponse {
-    this.storeSessionData(response.user, type, response.token!);
-    return response;
+  registrarPaciente(paciente: Paciente): Observable<Paciente> {
+    return this.http.post<Paciente>(`${this.API_URL}/auth/pacientes`, paciente)
   }
 
-  private storeSessionData(user: Tecnico | Paciente | null, type: string, token: string): void {
-    if (user) {
-      sessionStorage.setItem(this.SESSION_TOKEN_KEY, token);
-      sessionStorage.setItem(this.SESSION_USER_TYPE_KEY, type);
-      sessionStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(user));
-      this.currentUser = type === 'tecnico' ? new Tecnico() : new Paciente();
-      Object.assign(this.currentUser, user);
-    }
+  private storeUserData(userData: any, perfil: string): void {
+    localStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(userData));
+    this.currentUser = perfil.toLowerCase() === 'tecnico' 
+      ? Object.assign(new Tecnico(), userData)
+      : Object.assign(new Paciente(), userData);
   }
 
-  logout(): Observable<void> {
-    return of(void 0).pipe(
-      delay(1),
-      tap(() => {
-        this.currentUser = null;
-        sessionStorage.removeItem(this.SESSION_TOKEN_KEY);
-        sessionStorage.removeItem(this.SESSION_USER_TYPE_KEY);
-        sessionStorage.removeItem(this.SESSION_USER_DATA_KEY);
-      })
-    );
+  private storeSessionData(ID: string, perfil: string, token: string): void {
+    localStorage.setItem(this.SESSION_TOKEN_KEY, token);
+    localStorage.setItem(this.SESSION_USER_TYPE_KEY, perfil.toLowerCase());
+    localStorage.setItem(this.SESSION_USER_ID_KEY, ID);
+  }
+  
+
+  logout(): void {
+     localStorage.clear();
+    this.currentUser = null;
+    this.http.post(`${this.API_URL}/auth/logout`, null).subscribe({
+      next: () => console.log('Logged out successfully'),
+      error: (err) => console.error('Logout error:', err)
+    });
   }
 
   getCurrentUser(): Tecnico | Paciente | null {
@@ -141,28 +100,29 @@ export class AuthService {
   }
 
   updateCurrentUser(user: any): void {
-    sessionStorage.setItem('userData', JSON.stringify(user));
+     localStorage.setItem('userData', JSON.stringify(user));
   }
 
+  getUserProfile(): string | null {
+    return localStorage.getItem(this.SESSION_USER_TYPE_KEY);
+  }
+  
   isLoggedIn(): boolean {
-    return this.currentUser !== null;
-  }
-
-  getUserType(): 'tecnico' | 'paciente' | null {
-    const userType = sessionStorage.getItem(this.SESSION_USER_TYPE_KEY);
-    return userType as 'tecnico' | 'paciente' | null;
+    return !! localStorage.getItem(this.SESSION_TOKEN_KEY);
   }
 
   buscarCep(cep: string): Observable<Endereco | null> {
+    console.log('oi');
     const sanitizedCep = cep.replace(/\D/g, '');
     if (sanitizedCep.length !== 8) {
       return of(null);
     }
   
     return this.http.get<any>(`https://viacep.com.br/ws/${sanitizedCep}/json/`).pipe(
-      timeout(5000),
+      timeout(10000),
       map(data => {
         if (data.erro) {
+          console.log(data.erro)
           return null;
         }
         return {

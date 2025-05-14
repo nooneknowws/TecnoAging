@@ -11,35 +11,35 @@
             "texto": "Que dia é hoje?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que mês estamos?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que ano estamos?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que dia da semana estamos?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Qual a hora atual aproximada (considere variação de mais ou menos 1 hora)",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]
@@ -52,35 +52,35 @@
             "texto": "Em que local nós estamos? (consultório, sala, dormitório...)",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Que local é este aqui? (apontando ao redor num sentido mais amplo.... hospital, casa de repouso, própria casa...)",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que bairro nós estamos ou qual o nome de uma rua próxima?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que cidade nós estamos?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           },
           {
             "texto": "Em que estado nós estamos?",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]
@@ -93,7 +93,7 @@
             "texto": "Marque cada palavra repetida corretamente na 1ª vez.",
             "tipo": "checkbox",
             "opcoes": ["CARRO", "VASO", "TIJOLO"],
-            "resposta": "",
+             
             "validacao": { "required": false }
           }
         ]
@@ -105,7 +105,7 @@
           {
             "texto": "Considere 1 ponto para cada resultado correto.",
             "tipo": "range",
-            "resposta": "",
+             
             "validacao": { "required": true, "min": 0, "max": 6 }
           }
         ]
@@ -118,7 +118,7 @@
             "texto": "Marque cada palavra repetida corretamente.",
             "tipo": "checkbox",
             "opcoes": ["CARRO", "VASO", "TIJOLO"],
-            "resposta": "",
+             
             "validacao": { "required": false }
           }
         ]
@@ -131,7 +131,7 @@
             "texto": "Marque cada objeto nomeado corretamente.",
             "tipo": "checkbox",
             "opcoes": ["Relógio", "Caneta"],
-            "resposta": "",
+             
             "validacao": { "required": false }
           }
         ]
@@ -144,7 +144,7 @@
             "texto": "Considere somente se a repetição for perfeita",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]
@@ -161,7 +161,7 @@
               "Dobrou o papel ao meio.",
               "Colocou o papel no chão."
             ],
-            "resposta": "",
+             
             "validacao": { "required": false }
           }
         ]
@@ -174,7 +174,7 @@
             "texto": "Avalie o resultado.",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]
@@ -187,7 +187,7 @@
             "texto": "Avalie o resultado.",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]
@@ -200,7 +200,7 @@
             "texto": "Avalie o desenho.",
             "tipo": "radio",
             "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
-            "resposta": "",
+             
             "validacao": { "required": true }
           }
         ]

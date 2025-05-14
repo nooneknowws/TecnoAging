@@ -17,9 +17,10 @@ import { FormularioComponent } from './formulario/formulario.component';
 import { PacienteLayoutComponent } from './paciente/paciente-layout/paciente-layout.component';
 import { ConsultarAvaliacaoComponent } from './tecnico/paciente/consultar-avaliacao/consultar-avaliacao.component';
 import { EditarAvaliacaoComponent } from './tecnico/paciente/editar-avaliacao/editar-avaliacao.component';
+import { HomeComponent } from './_auth/home.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
   { path: 'login', component: LoginComponent },
   { path: 'cadastro', component: CadastroComponent },
   {

@@ -60,10 +60,11 @@ export class CadastroComponent implements OnInit {
         }
       });
   }
+  
 
   onSubmit(form: NgForm): void {
     if (form.valid && this.tecnico.senha === this.repetirSenha) {
-      this.tecnico.idade = this.calcularIdade(this.tecnico.dataNasc!);
+      this.tecnico.idade = undefined;
       this.tecnico.endereco = this.endereco;
 
       this.authService.registrarTecnico(this.tecnico)

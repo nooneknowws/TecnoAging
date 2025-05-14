@@ -82,12 +82,26 @@ export class AvaliacaoService {
     return {
       avaliacaoId: avaliacao.id,
       pacienteId: avaliacao.paciente?.id,
+      pacienteNome: avaliacao.paciente?.nome,
+      pacienteIdade: avaliacao.paciente?.idade,
+      pacienteIMC: avaliacao.paciente?.imc,
       tecnicoId: avaliacao.tecnico?.id,
+      tecnicoNome: avaliacao.tecnico?.nome,
       formularioId: avaliacao.formulario?.id,
-      respostas: avaliacao.respostas?.map(resposta => ({
-        perguntaId: resposta.pergunta?.id,
-        valor: resposta.valor
-      })),
+      respostas: avaliacao.respostas?.map(resposta => {
+        let serializedValue: string;
+        
+        if (Array.isArray(resposta.valor)) {
+          serializedValue = JSON.stringify(resposta.valor);
+        } else {
+          serializedValue = JSON.stringify(resposta.valor);
+        }
+        
+        return {
+          perguntaId: resposta.pergunta?.id,
+          valor: serializedValue
+        };
+      }),
       pontuacaoTotal: avaliacao.pontuacaoTotal,
       pontuacaoMaxima: avaliacao.pontuacaoMaxima,
       dataCriacao: avaliacao.dataCriacao,

@@ -8,11 +8,12 @@ import { TipoFormulario } from '../models/tipos.formulario.enum';
   providedIn: 'root',
 })
 export class FormularioService {
-  private apiUrl = 'http://localhost:5000/api/formularios'; 
+  private apiUrl = 'http://localhost:3000/api/formularios'; 
 
   constructor(private http: HttpClient) {}
 
   getFormularioConfig(tipo: TipoFormulario): Observable<Formulario> {
+    console.log(localStorage.getItem('token'))
     return this.http.get<Formulario>(`${this.apiUrl}/${this.mapTipoToId(tipo)}`);
   }
 

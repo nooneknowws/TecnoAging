@@ -11,44 +11,51 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const expectedRole = route.data['tipo'];
+    const expectedRole = route.data['tipo']; 
     const currentUser = this.authService.getCurrentUser();
-    const userType = this.authService.getUserType();
+    const rawProfile = this.authService.getUserProfile();
+    const userProfile = rawProfile?.toLowerCase(); 
 
     if (state.url === '/login') {
-      if (currentUser && userType) {
-        this.router.navigate([userType]);
+      if (currentUser && userProfile) {
+        this.redirectToProfilePage(userProfile);
         return false;
       }
       return true;
     }
 
-    if (!currentUser || !userType) {
-      this.router.navigate(['login']);
+    if (!currentUser || !userProfile) {
+      this.router.navigate(['/login']);
       return false;
     }
 
-    if (expectedRole && expectedRole !== userType) {
-      this.router.navigate([userType]); 
+    const normalizedExpected = expectedRole?.toLowerCase();
+    const normalizedUser = userProfile.toLowerCase();
+
+    if (normalizedExpected && normalizedExpected !== normalizedUser) {
+      this.redirectToProfilePage(normalizedUser);
       return false;
     }
 
-    switch (userType) {
-      case 'paciente':
-        if (!(currentUser instanceof Paciente)) {
-          this.router.navigate(['login']);
-          return false;
-        }
-        break;
-      case 'tecnico':
-        if (!(currentUser instanceof Tecnico)) {
-          this.router.navigate(['login']);
-          return false;
-        }
-        break;
-      default:
-        this.router.navigate(['login']);
-        return false;
+    return this.validateUserType(normalizedUser, currentUser);
+  }
+
+  private redirectToProfilePage(profile: string): void {
+    const route = profile === 'tecnico' ? '/tecnico' : '/paciente';
+    this.router.navigate([route]);
+  }
+
+  private validateUserType(profile: string, user: any): boolean {
+    const isValidType = (
+      (profile === 'paciente' && user instanceof Paciente) ||
+      (profile === 'tecnico' && user instanceof Tecnico)
+    );
+
+    if (!isValidType) {
+      console.error('User type mismatch, forcing logout');
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return false;
     }
 
     return true;
