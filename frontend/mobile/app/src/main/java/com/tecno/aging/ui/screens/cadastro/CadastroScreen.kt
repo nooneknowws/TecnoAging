@@ -1,6 +1,5 @@
 package com.tecno.aging.ui.screens.cadastro
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,236 +8,226 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.tecno.aging.R
+import androidx.navigation.compose.rememberNavController
+import com.tecno.aging.domain.models.pessoa.Endereco
+import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
+import com.tecno.aging.ui.components.buttons.LoadingButton
+import com.tecno.aging.ui.components.forms.DatePickerInput
+import com.tecno.aging.ui.components.forms.GenderDropdown
+import com.tecno.aging.ui.components.forms.MaskedInput
+import com.tecno.aging.ui.components.forms.TextFieldWithError
+import com.tecno.aging.ui.components.sections.AddressSection
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun CadastroScreen(navController: NavController) {
-    var nome by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
-    var confirmarSenha by remember { mutableStateOf("") }
-    var senhaVisible by remember { mutableStateOf(false) }
-    var confirmarSenhaVisible by remember { mutableStateOf(false) }
+fun CadastroScreenPreview() {
+    MaterialTheme {
+        val navController = rememberNavController()
+        CadastroScreen(
+            navController = navController,
+            viewModel = object : CadastroViewModel() {
+                init {
+                    _uiState.value = CadastroState(
+                        tecnico = Tecnico(
+                            matricula = "12345678",
+                            nome = "João Silva",
+                            cpf = "123.456.789-09",
+                            telefone = "(11) 98765-4321",
+                            sexo = "Masculino",
+                            dataNasc = "15/05/1985",
+                            endereco = Endereco(
+                                cep = "01234-567",
+                                logradouro = "Rua das Flores",
+                                numero = "123",
+                                complemento = "Apto 45",
+                                bairro = "Centro",
+                                municipio = "São Paulo",
+                                uf = "SP"
+                            )
+                        ),
+                        senha = "password123",
+                        confirmarSenha = "password123"
+                    )
+                }
+            },
+            onSuccess = { navController.navigate("login") }
+        )
+    }
+}
+@Composable
+fun CadastroScreen(
+    navController: NavController,
+    viewModel: CadastroViewModel = viewModel(),
+    onSuccess: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var nomeError by remember { mutableStateOf("") }
-    var emailError by remember { mutableStateOf("") }
-    var senhaError by remember { mutableStateOf("") }
-    var confirmarSenhaError by remember { mutableStateOf("") }
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) {
+            onSuccess()
+            viewModel.resetState()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.resetState()
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ){
         Text(
-            text = "Cadastro",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold
+            text = "Cadastro de Técnico",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Campo Nome
-        TextField(
-            value = nome,
-            onValueChange = { nome = it },
-            label = {
-                Text(
-                    nomeError.ifEmpty { "Nome" },
-                    color = if (nomeError.isNotEmpty()) Color.Red else Color.Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_person),
-                    contentDescription = null
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = {
-                Text(
-                    emailError.ifEmpty { "Email" },
-                    color = if (emailError.isNotEmpty()) Color.Red else Color.Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = null
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Campo Senha
-        TextField(
-            value = senha,
-            onValueChange = { senha = it },
-            label = {
-                Text(
-                    senhaError.ifEmpty { "Senha" },
-                    color = if (senhaError.isNotEmpty()) Color.Red else Color.Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Rounded.Lock,
-                    contentDescription = null
-                )
-            },
-            visualTransformation = if (senhaVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (senhaVisible)
-                    painterResource(id = R.drawable.visibility_24)
-                else
-                    painterResource(id = R.drawable.visibility_off_24)
-                Icon(
-                    painter = image,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { senhaVisible = !senhaVisible }
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = confirmarSenha,
-            onValueChange = { confirmarSenha = it },
-            label = {
-                Text(
-                    confirmarSenhaError.ifEmpty { "Confirmar Senha" },
-                    color = if (confirmarSenhaError.isNotEmpty()) Color.Red else Color.Unspecified
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Rounded.Lock,
-                    contentDescription = null
-                )
-            },
-            visualTransformation = if (confirmarSenhaVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (confirmarSenhaVisible)
-                    painterResource(id = R.drawable.visibility_24)
-                else
-                    painterResource(id = R.drawable.visibility_off_24)
-                Icon(
-                    painter = image,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { confirmarSenhaVisible = !confirmarSenhaVisible }
-                )
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 4.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                nomeError = if (nome.isBlank()) "Nome é obrigatório" else ""
-                emailError = if (email.isBlank()) "Email é obrigatório" else ""
-                senhaError = if (senha.isBlank()) "Senha é obrigatória" else ""
-                confirmarSenhaError = if (confirmarSenha.isBlank()) "Confirmação é obrigatória" else ""
-
-                if (senha != confirmarSenha) {
-                    confirmarSenhaError = "As senhas não coincidem"
-                }
-
-                if (nomeError.isEmpty() && emailError.isEmpty() &&
-                    senhaError.isEmpty() && confirmarSenhaError.isEmpty()
-                ) {
-                    // TODO: Implementar cadastro
-                    navController.navigate("home")
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 70.dp)
+        // Matrícula/Nome Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "Cadastrar")
+            MaskedInput(
+                value = uiState.tecnico.matricula,
+                onValueChange = { viewModel.updateTecnico(uiState.tecnico.copy(matricula = it)) },
+                mask = "########",
+                label = "Matrícula",
+                error = uiState.erros["matricula"],
+                modifier = Modifier.weight(1f)
+            )
+
+            TextFieldWithError(
+                value = uiState.tecnico.nome,
+                onValueChange = { viewModel.updateTecnico(uiState.tecnico.copy(nome = it)) },
+                label = "Nome",
+                error = uiState.erros["nome"],
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            MaskedInput(
+                value = uiState.tecnico.cpf,
+                onValueChange = { viewModel.updateTecnico(uiState.tecnico.copy(cpf = it)) },
+                mask = "###.###.###-##",
+                label = "CPF",
+                error = uiState.erros["cpf"],
+                modifier = Modifier.weight(1f)
+            )
+
+            MaskedInput(
+                value = uiState.tecnico.telefone,
+                onValueChange = { viewModel.updateTecnico(uiState.tecnico.copy(telefone = it)) },
+                mask = "(##) #####-####",
+                label = "Telefone",
+                error = uiState.erros["telefone"],
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            GenderDropdown(
+                selectedGender = uiState.tecnico.sexo,
+                onGenderSelected = { viewModel.updateTecnico(uiState.tecnico.copy(sexo = it)) },
+                error = uiState.erros["sexo"],
+                modifier = Modifier.weight(1f)
+            )
+
+            DatePickerInput(
+                selectedDate = uiState.tecnico.dataNasc,
+                onDateSelected = { viewModel.updateTecnico(uiState.tecnico.copy(dataNasc = it)) },
+                error = uiState.erros["dataNasc"],
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TextFieldWithError(
+                value = uiState.senha,
+                onValueChange = { viewModel.updateSenha(it) },
+                label = "Senha",
+                error = uiState.erros["senha"],
+                isPassword = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextFieldWithError(
+                value = uiState.confirmarSenha,
+                onValueChange = { viewModel.updateConfirmarSenha(it) },
+                label = "Confirmar Senha",
+                error = uiState.erros["confirmarSenha"],
+                isPassword = true
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row {
-            Text(text = "Já tem uma conta?")
-            Text(
-                text = " Fazer Login",
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable {
-                    navController.navigate("login")
+        AddressSection(
+            address = uiState.tecnico.endereco,
+            onAddressChange = { viewModel.updateEndereco(it) },
+            onCepSearch = {
+                if (uiState.tecnico.endereco.cep.filter { it.isDigit() }.length == 8) {
+                    viewModel.buscarCep()
                 }
+            },
+            loadingCep = uiState.loadingCep,
+            cepError = uiState.cepError,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LoadingButton(
+            text = "Cadastrar",
+            loading = uiState.loading,
+            onClick = { viewModel.submitForm() },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextButton(
+            onClick = { navController.navigate("login") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Text("Já tem uma conta? Faça Login")
+        }
+
+        uiState.error?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -34,15 +35,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(name: String, modifier: Modifier = Modifier) {
+fun HomeScreen(
+    name: String,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             CenteredTopAppBar(name = name, onMenuClick = {}, onProfileClick = {})
         },
     ) { innerPadding ->
-        MainContent(innerPadding)
+        MainContent(innerPadding, navController)
     }
 }
 
@@ -90,7 +96,10 @@ fun CenteredTopAppBar(
 }
 
 @Composable
-fun MainContent(innerPadding: androidx.compose.foundation.layout.PaddingValues) {
+fun MainContent(
+    innerPadding: androidx.compose.foundation.layout.PaddingValues,
+    navController: NavController
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,17 +140,31 @@ fun MainContent(innerPadding: androidx.compose.foundation.layout.PaddingValues) 
                 modifier = Modifier.weight(1f)
             )
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            FeatureCard(
+                icon = Icons.Filled.Add,
+                title = "Novo Cadastro",
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("cadastro") }
+            )
+        }
     }
-}
+    }
+
 
 @Composable
 fun FeatureCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {} // Add click handler
 ) {
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = onClick // Add click to card
     ) {
         Column(
             modifier = Modifier

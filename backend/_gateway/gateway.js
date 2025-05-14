@@ -27,7 +27,6 @@ const pacientesServiceProxy = httpProxy(process.env.PACIENTES_SERVICE_URL);
 const tecnicosServiceProxy = httpProxy(process.env.TECNICOS_SERVICE_URL);
 const formsServiceProxy = httpProxy(process.env.FORMS_SERVICE_URL);
 
-console.log(`auth: ${process.env.AUTH_SERVICE_URL} pacientes: ${process.env.PACIENTES_SERVICE_URL} tecnicos: ${process.env.TECNICOS_SERVICE_URL} forms: ${process.env.FORMS_SERVICE_URL}`)
 async function verifyJWT(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -78,7 +77,6 @@ async function verifyJWT(req, res, next) {
         });
     }
 }
-console.log(`Gateway online rodando na porta: ${process.env.PORT}` )
 // AUTH
 app.post('/api/auth/login', (req, res, next) => {
     authServiceProxy(req, res, next);
@@ -120,4 +118,7 @@ app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
 })
 
 var server = http.createServer(app);
-server.listen(process.env.PORT);
+
+server.listen(process.env.PORT, '0.0.0.0', () => {
+    console.log(`Gateway online rodando na porta: ${process.env.PORT}`);
+});

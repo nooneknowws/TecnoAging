@@ -10,7 +10,6 @@ public class AuthValidationResponse {
     private final Long userId;
     private final String userName;
 
-    // Single constructor with all fields
     @JsonCreator
     public AuthValidationResponse(
         @JsonProperty("success") boolean success,
