@@ -9,7 +9,8 @@ object SessionManager {
     private const val PREFS_NAME = "tecno_aging_prefs"
     private const val KEY_TOKEN = "auth_token"
     private const val KEY_USER_ID = "user_id"
-    private const val KEY_PROFILE = "user_profile"
+    private const val KEY_USER_PROFILE = "user_profile"
+    private const val KEY_USER_NAME = "user_name"
 
     private lateinit var prefs: SharedPreferences
 
@@ -24,23 +25,29 @@ object SessionManager {
 
     fun getAuthToken(): String? = prefs.getString(KEY_TOKEN, null)
 
+    fun saveUserName(userName: String?){
+        prefs.edit {putString(KEY_USER_NAME, userName)}
+    }
+    fun getUserName(): String? = prefs.getString(KEY_USER_NAME, null)
+
     fun saveUserId(userId: String?) {
         prefs.edit { putString(KEY_USER_ID, userId) }
     }
 
+
     fun getUserId(): String? = prefs.getString(KEY_USER_ID, null)
 
     fun saveUserProfile(profile: String?) {
-        prefs.edit { putString(KEY_PROFILE, profile) }
+        prefs.edit { putString(KEY_USER_PROFILE, profile) }
     }
 
-    fun getUserProfile(): String? = prefs.getString(KEY_PROFILE, null)
+    fun getUserProfile(): String? = prefs.getString(KEY_USER_PROFILE, null)
 
     fun clearSession() {
         prefs.edit {
             remove(KEY_TOKEN)
             remove(KEY_USER_ID)
-            remove(KEY_PROFILE)
+            remove(KEY_USER_PROFILE)
         }
     }
 }

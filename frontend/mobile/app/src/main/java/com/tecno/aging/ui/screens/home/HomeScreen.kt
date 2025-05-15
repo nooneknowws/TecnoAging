@@ -40,6 +40,8 @@ import androidx.navigation.NavController
 @Composable
 fun HomeScreen(
     name: String,
+    ID: String,
+    Perfil: String,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {

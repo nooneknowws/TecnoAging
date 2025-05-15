@@ -3,6 +3,8 @@ package com.tecno.aging.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.platform.LocalContext
+import com.tecno.aging.data.local.SessionManager
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -24,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import com.tecno.aging.ui.navigation.NavItem
 import com.tecno.aging.ui.screens.cadastro.CadastroScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
@@ -34,6 +37,13 @@ import com.tecno.aging.ui.screens.settings.SettingsScreen
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    SessionManager.init(context)
+    val userName = SessionManager.getUserName() ?: ""
+    val token = SessionManager.getAuthToken() ?: ""
+    val userId = SessionManager.getUserId() ?: ""
+    val userProfile = SessionManager.getUserProfile() ?: ""
+
     val navItems = listOf(
         NavItem("Home", Icons.Default.Home, "home"),
         NavItem("Settings", Icons.Default.Settings, "settings"),
@@ -65,7 +75,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ) {
             composable("home") {
                 HomeScreen(
-                    name = "User",
+                    name = userName,
+                    ID = userId,
+                    Perfil = userProfile,
                     navController = navController
                 )
             }
