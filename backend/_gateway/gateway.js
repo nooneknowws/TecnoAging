@@ -26,8 +26,7 @@ const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL);
 const pacientesServiceProxy = httpProxy(process.env.PACIENTES_SERVICE_URL);
 const tecnicosServiceProxy = httpProxy(process.env.TECNICOS_SERVICE_URL);
 const formsServiceProxy = httpProxy(process.env.FORMS_SERVICE_URL);
-
-console.log(`auth: ${process.env.AUTH_SERVICE_URL} pacientes: ${process.env.PACIENTES_SERVICE_URL} tecnicos: ${process.env.TECNICOS_SERVICE_URL} forms: ${process.env.FORMS_SERVICE_URL}`)
+//Funções
 async function verifyJWT(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -80,6 +79,7 @@ async function verifyJWT(req, res, next) {
 }
 console.log(`Gateway online rodando na porta: ${process.env.PORT}` )
 // AUTH
+
 app.post('/api/auth/login', (req, res, next) => {
     authServiceProxy(req, res, next);
 })
@@ -89,35 +89,44 @@ app.post('/api/auth/logout', (req, res, next) => {
 })
 
 // PACIENTES
+
+// cadastro
 app.post('/api/pacientes', (req, res, next) => {
     pacientesServiceProxy(req, res, next);
 })
+//busca por ID
 app.get('/api/pacientes/:id', verifyJWT, (req, res, next) => {
     pacientesServiceProxy(req,res,next);
 })
+//listagem geral
 app.get('/api/pacientes', verifyJWT, (req, res, next) => {
     pacientesServiceProxy(req,res,next);
 })
 
 // TECNICOS
+// cadastro
 app.post('/api/tecnicos', (req, res, next) => {
     tecnicosServiceProxy(req, res, next)
 })
+// busca por id
 app.get('/api/tecnicos/:id', verifyJWT, (req, res, next) => {
     tecnicosServiceProxy(req,res,next);
 })
 
 // FORMS
+// listagem geral
 app.get('/api/formularios/', verifyJWT, (req,  res,  next) => {
     formsServiceProxy(req, res, next);
 })
-
+// busca por ID
 app.get('/api/formularios/:id', verifyJWT, (req,  res,  next) => {
     formsServiceProxy(req, res, next);
 })
+// registro de avaliações
 app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);
 })
+//
 
 var server = http.createServer(app);
 server.listen(process.env.PORT);

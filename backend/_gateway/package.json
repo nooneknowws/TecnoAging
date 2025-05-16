@@ -2,12 +2,12 @@
     "name": "api-gateway",
     "version": "1.0.0",
     "description": "Gateway de autenticação e roteamento para microsserviços",
-    "main": "index.js",
+    "main": "gateway.js",
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js"
     },
-    "author": "Seu Nome",
+    "author": "Thaly",
     "license": "ISC",
     "dependencies": {
         "axios": "^1.9.0",
