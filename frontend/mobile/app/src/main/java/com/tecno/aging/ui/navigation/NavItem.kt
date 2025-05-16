@@ -1,4 +1,4 @@
-package com.tecno.aging
+package com.tecno.aging.ui.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

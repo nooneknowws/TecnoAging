@@ -77,7 +77,6 @@ async function verifyJWT(req, res, next) {
         });
     }
 }
-console.log(`Gateway online rodando na porta: ${process.env.PORT}` )
 // AUTH
 
 app.post('/api/auth/login', (req, res, next) => {
@@ -129,4 +128,7 @@ app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
 //
 
 var server = http.createServer(app);
-server.listen(process.env.PORT);
+
+server.listen(process.env.PORT, '0.0.0.0', () => {
+    console.log(`Gateway online rodando na porta: ${process.env.PORT}`);
+});
