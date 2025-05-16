@@ -1,19 +1,11 @@
 
 # TelasTCC
 
-mudar o application.properties pra funcionar com tua máquina
-```Java
-spring.application.name=forms
-spring.datasource.url=jdbc:postgresql://localhost:5432/forms-test
-spring.datasource.username=postgres
-spring.datasource.password=admin
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
-spring.datasource.hikari.maximum-pool-size=10
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.jpa.properties.hibernate.jdbc.time_zone=UTC
-server.port=5000
+pra buildar todo o backend no docker
+
+abrir um terminal no backend e rodar o seguinte comando
+```bash
+docker-compose up --build
 ```
 # TCC TecnoAging
 
