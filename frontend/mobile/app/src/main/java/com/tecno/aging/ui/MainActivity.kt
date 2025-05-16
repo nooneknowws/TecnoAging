@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.tecno.aging.ui.navigation.AppNavGraph
 import com.tecno.aging.ui.theme.TecnoAgingTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TecnoAgingTheme {
-                MainScreen()
+                AppNavGraph();
             }
         }
     }

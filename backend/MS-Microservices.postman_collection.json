@@ -1,0 +1,321 @@
+{
+  "info": {
+    "name": "MS-Microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Coleção com Pacientes, Técnicos, Avaliações e Auth"
+  },
+  "variable": [
+    {
+      "key": "baseUrlPacientes",
+      "value": "http://localhost:5001/api"
+    },
+    {
+      "key": "baseUrlTecnicos",
+      "value": "http://localhost:5002/api"
+    },
+    {
+      "key": "baseUrlAvaliacao",
+      "value": "http://localhost:5000/api/avaliacoes"
+    },
+    {
+      "key": "baseUrlAuth",
+      "value": "http://localhost:5003/api/auth"
+    }
+  ],
+  "item": [
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Criar Paciente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Santos\",\n  \"sexo\": \"M\",\n  \"idade\": 45,\n  \"peso\": 85,\n  \"altura\": 1.75,\n  \"imc\": 28,\n  \"socioeconomico\": \"C2\",\n  \"escolaridade\": \"Médio Incompleto\",\n  \"estadoCivil\": \"Casado\",\n  \"nacionalidade\": \"Brasileiro\",\n  \"municipioNasc\": \"Belo Horizonte\",\n  \"ufNasc\": \"MG\",\n  \"corRaca\": \"Parda\",\n  \"rg\": \"90.123.456-7\",\n  \"dataExpedicao\": \"1995-06-15\",\n  \"orgaoEmissor\": \"SSP\",\n  \"ufEmissor\": \"MG\",\n  \"endereco\": { /* … */ },\n  \"dataNasc\": \"1977-09-20\",\n  \"cpf\": \"987.654.321-01\",\n  \"telefone\": \"(21) 99999-9996\",\n  \"contatos\": [ /* … */ ]\n}"
+            },
+            "url": "{{baseUrlPacientes}}/pacientes"
+          }
+        },
+        {
+          "name": "Listar Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrlPacientes}}/pacientes"
+          }
+        },
+        {
+          "name": "Obter Paciente por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrlPacientes}}/pacientes/{{pacienteId}}",
+              "host": ["{{baseUrlPacientes}}"],
+              "path": ["pacientes", "{{pacienteId}}"]
+            }
+          },
+          "variable": [
+            {
+              "key": "pacienteId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Atualizar Paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Santos Atualizado\",\n  /* resto dos campos … */\n}"
+            },
+            "url": "{{baseUrlPacientes}}/pacientes/{{pacienteId}}"
+          },
+          "variable": [
+            {
+              "key": "pacienteId",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Técnicos",
+      "item": [
+        {
+          "name": "Criar Técnico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"sexo\": \"M\",\n  \"idade\": 30,\n  \"matricula\": \"12345\",\n  \"ativo\": true,\n  \"endereco\": { /* … */ },\n  \"dataNasc\": \"1995-01-10\",\n  \"cpf\": \"111.222.333-44\",\n  \"telefone\": \"(41) 98888-8888\"\n}"
+            },
+            "url": "{{baseUrlTecnicos}}/tecnicos"
+          }
+        },
+        {
+          "name": "Listar Técnicos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrlTecnicos}}/tecnicos"
+          }
+        },
+        {
+          "name": "Obter Técnico por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrlTecnicos}}/tecnicos/{{tecnicoId}}",
+              "host": ["{{baseUrlTecnicos}}"],
+              "path": ["tecnicos", "{{tecnicoId}}"]
+            }
+          },
+          "variable": [
+            {
+              "key": "tecnicoId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Atualizar Técnico",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  /* resto dos campos … */\n}"
+            },
+            "url": "{{baseUrlTecnicos}}/tecnicos/{{tecnicoId}}"
+          },
+          "variable": [
+            {
+              "key": "tecnicoId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Desativar Técnico",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrlTecnicos}}/tecnicos/{{tecnicoId}}/desativar"
+          },
+          "variable": [
+            {
+              "key": "tecnicoId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Ativar Técnico",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrlTecnicos}}/tecnicos/{{tecnicoId}}/ativar"
+          },
+          "variable": [
+            {
+              "key": "tecnicoId",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Avaliações",
+      "item": [
+        {
+          "name": "Salvar Avaliação",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pacienteId\": 1,\n  \"tecnicoId\": 1,\n  \"formularioId\": 1,\n  \"pontuacaoTotal\": 10,\n  \"respostas\": [ { \"perguntaId\": 1, \"valor\": 5 } ],\n  \"dataCriacao\": \"2025-05-16T18:00:00\",\n  \"dataAtualizacao\": \"2025-05-16T18:00:00\"\n}"
+            },
+            "url": "{{baseUrlAvaliacao}}/forms"
+          }
+        },
+        {
+          "name": "Respostas por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrlAvaliacao}}/respostas/paciente/{{pacienteId}}"
+          },
+          "variable": [
+            {
+              "key": "pacienteId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Respostas por Técnico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrlAvaliacao}}/respostas/tecnico/{{tecnicoId}}"
+          },
+          "variable": [
+            {
+              "key": "tecnicoId",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "Obter Avaliação por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrlAvaliacao}}/avaliacao/{{avaliacaoId}}"
+          },
+          "variable": [
+            {
+              "key": "avaliacaoId",
+              "value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"username\": \"admin\", \"password\": \"admin\" }"
+            },
+            "url": "{{baseUrlAuth}}/login"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrlAuth}}/logout"
+          },
+          "variable": [
+            {
+              "key": "token",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "name": "Verify JWT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrlAuth}}/verify-jwt"
+          },
+          "variable": [
+            {
+              "key": "token",
+              "value": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

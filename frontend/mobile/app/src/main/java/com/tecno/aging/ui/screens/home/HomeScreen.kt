@@ -1,10 +1,12 @@
 package com.tecno.aging.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,7 +35,6 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -47,10 +49,19 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            CenteredTopAppBar(name = name, onMenuClick = {}, onProfileClick = {})
-        },
+            CenteredTopAppBar(
+                name = name,
+                onMenuClick = { /* TODO: abrir menu */ },
+                onProfileClick = { navController.navigate("profile") }
+            )
+        }
     ) { innerPadding ->
-        MainContent(innerPadding, navController)
+        MainContent(
+            modifier = modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            navController = navController
+        )
     }
 }
 
@@ -80,7 +91,8 @@ fun CenteredTopAppBar(
             IconButton(onClick = onMenuClick) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu"
+                    contentDescription = "Menu",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         },
@@ -89,7 +101,8 @@ fun CenteredTopAppBar(
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "Profile",
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         },
@@ -99,34 +112,37 @@ fun CenteredTopAppBar(
 
 @Composable
 fun MainContent(
-    innerPadding: androidx.compose.foundation.layout.PaddingValues,
+    modifier: Modifier = Modifier,
     navController: NavController
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(innerPadding)
-            .padding(16.dp)
-            .background(Color.White)
-            .verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Primeira linha: Forms e Ver Resultados
         Row(
-            modifier = Modifier.fillMaxWidth().background(Color.White),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FeatureCard(
                 icon = Icons.Filled.AccountBox,
                 title = "Formulários",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("forms/ivcf20") }
             )
             FeatureCard(
                 icon = Icons.Filled.Create,
                 title = "Ver Resultados",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("forms/pittsburgh") }
             )
         }
+
+        // Segunda linha: Contato e Ajuda
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -134,14 +150,18 @@ fun MainContent(
             FeatureCard(
                 icon = Icons.Filled.Email,
                 title = "Contato",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("profile") }
             )
             FeatureCard(
                 icon = Icons.Filled.Info,
                 title = "Ajuda",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("settings") }
             )
         }
+
+        // Linha de cadastro
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -154,24 +174,25 @@ fun MainContent(
             )
         }
     }
-    }
-
+}
 
 @Composable
 fun FeatureCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {} // Add click handler
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier,
-        onClick = onClick // Add click to card
+        modifier = modifier
+            .height(120.dp)
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .background(Color.White),
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -184,8 +205,7 @@ fun FeatureCard(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }
