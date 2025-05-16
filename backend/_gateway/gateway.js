@@ -101,15 +101,34 @@ app.get('/api/pacientes/:id', verifyJWT, (req, res, next) => {
 app.get('/api/pacientes', verifyJWT, (req, res, next) => {
     pacientesServiceProxy(req,res,next);
 })
-
+//alterar dados
+app.put('/api/pacientes/:id', verifyJWT, (req, res, next) => {
+    pacientesServiceProxy(req, res, next);
+})
 // TECNICOS
 // cadastro
 app.post('/api/tecnicos', (req, res, next) => {
     tecnicosServiceProxy(req, res, next)
 })
+// listagem geral
+app.get('/api/tecnicos', verifyJWT, (req, res, next) => {
+    tecnicosServiceProxy(req, res, next)
+})
 // busca por id
 app.get('/api/tecnicos/:id', verifyJWT, (req, res, next) => {
-    tecnicosServiceProxy(req,res,next);
+    tecnicosServiceProxy(req, res, next);
+})
+// alterar tecnico
+app.put('/api/tecnicos/:id', verifyJWT, (req, res, next) => {
+    tecnicosServiceProxy(req, res, next);
+})
+// desativar tecnico
+app.patch('/api/tecnicos/{id}/desativar', verifyJWT, (req, res, next) => {
+    tecnicosServiceProxy(req, res, next);
+})
+// reativar tecnico
+app.patch('/api/tecnicos/{id}/ativar', verifyJWT, (req, res, next) => {
+    tecnicosServiceProxy(req, res, next);
 })
 
 // FORMS
@@ -125,7 +144,18 @@ app.get('/api/formularios/:id', verifyJWT, (req,  res,  next) => {
 app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);
 })
-//
+// avaliações por paciente ID
+app.get('/api/avaliacoes/respostas/paciente/:id', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req,res,next);
+})
+// avaliações por tecnico ID
+app.get('/api/avaliacoes/respostas/tecnico/:id', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req,res,next);
+})
+// avaliações por avaliacao ID
+app.get('/api/avaliacoes/avaliacao/:id', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req,res,next);
+})
 
 var server = http.createServer(app);
 
