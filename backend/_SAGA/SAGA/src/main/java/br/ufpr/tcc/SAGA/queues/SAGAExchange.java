@@ -16,6 +16,8 @@ public class SAGAExchange {
 
     // Exchange
     public static final String SAGA_EXCHANGE = "saga-exchange";
+    //Conection Queue
+    public static final String CONECTION_QUEUE = "connection.queue";
     
     // Avaliacao Query Queues
     public static final String PACIENTE_QUERY_QUEUE = "query.paciente.queue";
@@ -55,6 +57,11 @@ public class SAGAExchange {
         return new DirectExchange(SAGA_EXCHANGE, true, false);
     }
     
+    @Bean
+    public Queue conectionQueue() {
+        return new Queue(CONECTION_QUEUE, true);
+    }
+
     @Bean
     public Queue authPacienteQueryQueue() {
         return new Queue(AUTH_PACIENTE_QUERY_QUEUE, true);
@@ -115,6 +122,14 @@ public class SAGAExchange {
     @Bean
     public Queue tecnicoErrorQueue() {
         return new Queue(TECNICO_RESPONSE_QUEUE_ERROR, true);
+    }
+    @Bean
+    public Binding conectionBinding() {
+        logger.info("Binding {} to {} with routing key {}", 
+          CONECTION_QUEUE, SAGA_EXCHANGE);
+        return BindingBuilder.bind(pacienteQueryQueue())
+                .to(sagaExchange())
+                .with(SAGA_EXCHANGE);
     }
     
     @Bean

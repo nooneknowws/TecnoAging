@@ -16,4 +16,25 @@ public class SagaOrquestrador {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
+    @RabbitListener(queues = "connection.queue")
+    public void forwardPacienteQuery(String pacienteId) {
+        try {
+            logger.info("Received paciente query for ID: {}", pacienteId);
+            rabbitTemplate.convertAndSend(
+            	"saga-exchange",
+                "query.paciente.queue",
+                pacienteId,
+                message -> {
+                    message.getMessageProperties().setContentType("application/json");
+                    message.getMessageProperties().setReplyTo("response.paciente.queue");
+                    logger.debug("Set replyTo: {}", "response.paciente.queue");
+                    return message;
+                }
+            );
+            logger.info("Forwarded paciente query to routing key: {}", "query.paciente");
+        } catch (Exception e) {
+            logger.error("Error forwarding paciente query for ID: {}", pacienteId, e);
+        }
+    }
+
 }
