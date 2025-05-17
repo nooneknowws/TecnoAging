@@ -14,7 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 import { FormularioComponent } from './formulario/formulario.component';
-import { AuthInterceptor } from './_shared/models/_auth/auth.interceptor';
+import { AuthInterceptor } from './_auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -44,6 +44,7 @@ import { AuthInterceptor } from './_shared/models/_auth/auth.interceptor';
       useClass: AuthInterceptor,
       multi: true
     }
+    
   ],
   bootstrap: [AppComponent]
 })

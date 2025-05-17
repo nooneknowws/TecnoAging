@@ -43,8 +43,8 @@ export class AuthService {
         this.storeSessionData(loginResponse.ID!, loginResponse.Perfil!, loginResponse.token!);
         
         const endpoint = loginResponse.Perfil === 'PACIENTE' 
-          ? `http://localhost:3000/api/pacientes/${loginResponse.ID}`
-          : `http://localhost:5002/api/tecnicos/${loginResponse.ID}`;
+          ? `${this.API_URL}/pacientes/${loginResponse.ID}`
+          : `${this.API_URL}/tecnicos/${loginResponse.ID}`;
   
         return this.http.get<any>(endpoint, {
           headers: { Authorization: `Bearer ${loginResponse.token}` }
@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   registrarPaciente(paciente: Paciente): Observable<Paciente> {
-    return this.http.post<Paciente>(`${this.API_URL}/auth/pacientes`, paciente)
+    return this.http.post<Paciente>(`${this.API_URL}/pacientes`, paciente)
   }
 
   private storeUserData(userData: any, perfil: string): void {
@@ -87,12 +87,12 @@ export class AuthService {
   
 
   logout(): void {
-     localStorage.clear();
     this.currentUser = null;
     this.http.post(`${this.API_URL}/auth/logout`, null).subscribe({
       next: () => console.log('Logged out successfully'),
       error: (err) => console.error('Logout error:', err)
     });
+    localStorage.clear();
   }
 
   getCurrentUser(): Tecnico | Paciente | null {
