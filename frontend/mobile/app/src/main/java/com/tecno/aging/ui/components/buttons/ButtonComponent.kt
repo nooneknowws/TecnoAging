@@ -1,7 +1,6 @@
 package com.tecno.aging.ui.components.buttons
 
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,8 +25,8 @@ fun ButtonComponent(
     onClick: () -> Unit
 ) {
     val (bg, content) = when (variant) {
-        ButtonVariant.Primary   -> ColorPair(Color(0xFF0059AD), Color.White)
-        ButtonVariant.Secondary -> ColorPair(Color(0xFFDBEAFE), Color(0xFF0059AD))
+        ButtonVariant.Primary   -> ColorPair(Color(0xFF594FBF), Color.White)
+        ButtonVariant.Secondary -> ColorPair(Color(0xFF484374), Color.White)
         ButtonVariant.Danger    -> ColorPair(Color(0xFFDC3545), Color.White)
     }
 
@@ -41,7 +40,6 @@ fun ButtonComponent(
         shape = RoundedCornerShape(6.dp),
         modifier = modifier
             .height(42.dp)
-            .padding(horizontal = 10.dp)
     ) {
         if (loading) {
             CircularProgressIndicator(

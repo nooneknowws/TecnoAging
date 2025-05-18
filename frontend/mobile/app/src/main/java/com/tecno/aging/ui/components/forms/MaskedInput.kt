@@ -1,16 +1,17 @@
-package com.tecno.aging.ui.components.forms
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import com.tecno.aging.ui.components.masks.MaskTransformation
 
 @Composable
 fun MaskedInput(
@@ -35,38 +36,22 @@ fun MaskedInput(
         },
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        label = { Text(label) },
-        modifier = modifier,
+        label = { Text(label, color = Color.Black) },
+        modifier = modifier
+            .fillMaxWidth(),
+        textStyle = LocalTextStyle.current.copy(color = Color.Black),
         isError = error != null,
-        supportingText = { error?.let { Text(text = it) } }
+        supportingText = { error?.let { Text(text = it, color = Color.Red) } },
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor = Color.White,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            disabledTextColor = Color.Black,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = Color.LightGray
+        )
     )
-}
-
-class MaskTransformation(private val mask: String) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = text.text.take(mask.count { it == '#' })
-
-        var out = ""
-        var maskIndex = 0
-        trimmed.forEach { char ->
-            while (maskIndex < mask.length && mask[maskIndex] != '#') {
-                out += mask[maskIndex]
-                maskIndex++
-            }
-            out += char
-            maskIndex++
-        }
-
-        val offsetMapping = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                return out.take(offset).length
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                return out.take(offset).filter { it.isDigit() }.length
-            }
-        }
-
-        return TransformedText(AnnotatedString(out), offsetMapping)
-    }
 }

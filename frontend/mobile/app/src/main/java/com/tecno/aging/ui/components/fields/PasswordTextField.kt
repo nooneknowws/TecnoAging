@@ -2,7 +2,6 @@ package com.tecno.aging.ui.components.fields
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,11 +57,13 @@ fun PasswordTextField(
         },
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .fillMaxWidth(),
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Transparent,
             unfocusedIndicatorColor = Transparent,
+            disabledIndicatorColor = Transparent,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
         )
     )
 }

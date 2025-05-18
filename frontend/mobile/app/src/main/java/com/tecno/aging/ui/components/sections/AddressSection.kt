@@ -1,16 +1,16 @@
 package com.tecno.aging.ui.components.sections
 
+import MaskedInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.tecno.aging.domain.models.pessoa.Endereco
-import com.tecno.aging.ui.components.forms.MaskedInput
+import com.tecno.aging.ui.theme.cleanTextFieldColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,17 +91,18 @@ fun AddressSection(
             }
         }
 
-        // Logradouro with null safety
+        Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             value = address.logradouro ?: "",
             onValueChange = { onAddressChange(address.copy(logradouro = it)) },
             label = { Text("Logradouro") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier = Modifier.fillMaxWidth(),
+            colors = cleanTextFieldColors()
         )
 
-        // Número com segurança numérica
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -116,28 +117,31 @@ fun AddressSection(
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number
-                )
+                ),
+                colors = cleanTextFieldColors()
             )
 
             TextField(
                 value = address.complemento ?: "",
                 onValueChange = { onAddressChange(address.copy(complemento = it)) },
                 label = { Text("Complemento") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                colors = cleanTextFieldColors()
             )
         }
 
-        // Bairro com null safety
+        Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             value = address.bairro ?: "",
             onValueChange = { onAddressChange(address.copy(bairro = it)) },
             label = { Text("Bairro") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier = Modifier.fillMaxWidth(),
+            colors = cleanTextFieldColors()
         )
 
-        // Município e UF com validação
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -146,7 +150,8 @@ fun AddressSection(
                 value = address.municipio ?: "",
                 onValueChange = { onAddressChange(address.copy(municipio = it)) },
                 label = { Text("Município") },
-                modifier = Modifier.weight(2f)
+                modifier = Modifier.weight(2f),
+                colors = cleanTextFieldColors()
             )
 
             ExposedDropdownMenuBox(
@@ -162,7 +167,8 @@ fun AddressSection(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedUF)
                     },
-                    modifier = Modifier.menuAnchor()
+                    modifier = Modifier.menuAnchor(),
+                    colors = cleanTextFieldColors()
                 )
 
                 ExposedDropdownMenu(
