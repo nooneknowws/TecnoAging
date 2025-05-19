@@ -46,6 +46,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private validateUserType(profile: string, user: any): boolean {
+    const token = localStorage.getItem('token')
     const isValidType = (
       (profile === 'paciente' && user instanceof Paciente) ||
       (profile === 'tecnico' && user instanceof Tecnico)
@@ -53,7 +54,7 @@ export class AuthGuard implements CanActivate {
 
     if (!isValidType) {
       console.error('User type mismatch, forcing logout');
-      this.authService.logout();
+      this.authService.logout(token);
       this.router.navigate(['/login']);
       return false;
     }

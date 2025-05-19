@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError, switchMap, timeout, delay, tap } from 'rxjs/operators';
 import { Tecnico } from '../models/pessoa/tecnico/tecnico';
@@ -64,7 +64,6 @@ export class AuthService {
 
   registrarTecnico(tecnico: Tecnico): Observable<Tecnico> {
     tecnico.ativo = true;
-    console.log(tecnico);
     return this.http.post<Tecnico>(`${this.API_URL}/tecnicos`, tecnico);
   }
 
@@ -86,13 +85,19 @@ export class AuthService {
   }
   
 
-  logout(): void {
-    this.currentUser = null;
-    this.http.post(`${this.API_URL}/auth/logout`, null).subscribe({
-      next: () => console.log('Logged out successfully'),
-      error: (err) => console.error('Logout error:', err)
-    });
-    localStorage.clear();
+  logout(token: string | null): boolean {
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    if(this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
+      next: () => localStorage.clear(),
+      error: (err) => console.error('Logout failed:', err)
+    })){
+      console.log('logout realizado')
+      return true;
+    }
+    else {
+      console.log('erro ao realizar o logout')
+      return false;
+    }    
   }
 
   getCurrentUser(): Tecnico | Paciente | null {
