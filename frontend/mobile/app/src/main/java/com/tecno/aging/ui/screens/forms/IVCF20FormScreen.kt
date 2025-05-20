@@ -12,13 +12,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -28,8 +28,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.tecno.aging.ui.components.buttons.ArrowLeftComponent
 
 // --- Modelo de dados --------------------------------------------------------
 
@@ -85,12 +86,18 @@ private val ivcf20Form = listOf(
             Pergunta(
                 texto = "Você deixou de controlar seu dinheiro ou os gastos da casa por causa da sua saúde ou condição física?",
                 tipo = QuestionType.RADIO,
-                opcoes = listOf("Sim", "Não ou não controla o dinheiro por outros motivos que não a saúde")
+                opcoes = listOf(
+                    "Sim",
+                    "Não ou não controla o dinheiro por outros motivos que não a saúde"
+                )
             ),
             Pergunta(
                 texto = "Você deixou de realizar pequenos trabalhos domésticos (limpeza leve, arrumar a casa, lavar louças) por causa da sua saúde ou condição física?",
                 tipo = QuestionType.RADIO,
-                opcoes = listOf("Sim", "Não ou não faz trabalhos domésticos por outros motivos que não a saúde")
+                opcoes = listOf(
+                    "Sim",
+                    "Não ou não faz trabalhos domésticos por outros motivos que não a saúde"
+                )
             ),
             Pergunta(
                 texto = "Você deixou de tomar banho sozinho por causa da sua saúde ou condição física?",
@@ -103,25 +110,53 @@ private val ivcf20Form = listOf(
         titulo = "Cognição",
         descricao = "Avaliação de possíveis sinais de problemas de memória.",
         perguntas = listOf(
-            Pergunta("Algum familiar ou amigo falou que você está ficando esquecido?", QuestionType.RADIO, listOf("Sim", "Não")),
-            Pergunta("Este esquecimento está piorando nos últimos meses?", QuestionType.RADIO, listOf("Sim", "Não")),
-            Pergunta("Este esquecimento está impedindo a realização de alguma atividade do cotidiano?", QuestionType.RADIO, listOf("Sim", "Não"))
+            Pergunta(
+                "Algum familiar ou amigo falou que você está ficando esquecido?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
+            Pergunta(
+                "Este esquecimento está piorando nos últimos meses?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
+            Pergunta(
+                "Este esquecimento está impedindo a realização de alguma atividade do cotidiano?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            )
         )
     ),
     Etapa(
         titulo = "Humor",
         descricao = "Avaliação de sintomas relacionados ao humor.",
         perguntas = listOf(
-            Pergunta("No último mês, você ficou com desânimo, tristeza ou desesperança?", QuestionType.RADIO, listOf("Sim", "Não")),
-            Pergunta("No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?", QuestionType.RADIO, listOf("Sim", "Não"))
+            Pergunta(
+                "No último mês, você ficou com desânimo, tristeza ou desesperança?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
+            Pergunta(
+                "No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            )
         )
     ),
     Etapa(
         titulo = "Mobilidade",
         descricao = "Avaliação de mobilidade e capacidade física.",
         perguntas = listOf(
-            Pergunta("Você é incapaz de elevar os braços acima do nível do ombro?", QuestionType.RADIO, listOf("Sim", "Não")),
-            Pergunta("Você é incapaz de segurar pequenos objetos?", QuestionType.RADIO, listOf("Sim", "Não")),
+            Pergunta(
+                "Você é incapaz de elevar os braços acima do nível do ombro?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
+            Pergunta(
+                "Você é incapaz de segurar pequenos objetos?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
             Pergunta(
                 texto = "Você tem alguma das quatro condições abaixo relacionadas?",
                 tipo = QuestionType.CHECKBOX,
@@ -132,9 +167,21 @@ private val ivcf20Form = listOf(
                     "Tempo gasto no teste de velocidade de marcha (4 m) > 5 segundos"
                 )
             ),
-            Pergunta("Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?", QuestionType.RADIO, listOf("Sim", "Não")),
-            Pergunta("Você caiu no último ano? Quantas vezes?", QuestionType.RADIO, listOf("Não", "1 vez", "2 vezes", "3 vezes ou mais")),
-            Pergunta("Você perde urina ou fezes, sem querer, em algum momento?", QuestionType.RADIO, listOf("Sim", "Não"))
+            Pergunta(
+                "Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            ),
+            Pergunta(
+                "Você caiu no último ano? Quantas vezes?",
+                QuestionType.RADIO,
+                listOf("Não", "1 vez", "2 vezes", "3 vezes ou mais")
+            ),
+            Pergunta(
+                "Você perde urina ou fezes, sem querer, em algum momento?",
+                QuestionType.RADIO,
+                listOf("Sim", "Não")
+            )
         )
     ),
     Etapa(
@@ -180,6 +227,7 @@ class ResponseState(
 
 @Composable
 fun IVCF20FormScreen(
+    navController: NavController,
     onSubmit: (List<ResponseState>) -> Unit = {}
 ) {
     val etapas = remember { ivcf20Form }
@@ -188,8 +236,11 @@ fun IVCF20FormScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Índice de Vulnerabilidade Clínico‑Funcional (IVCF‑20)") }
+            TopAppBar(
+                title = { Text("IVCF‑20") },
+                navigationIcon = {
+                    ArrowLeftComponent(navController = navController)
+                }
             )
         },
         bottomBar = {
@@ -233,7 +284,10 @@ fun IVCF20FormScreen(
             itemsIndexed(etapa.perguntas) { idx, pergunta ->
                 val respState = stepResponses[idx]
                 Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                    Text("${idx + 1}. ${pergunta.texto}", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "${idx + 1}. ${pergunta.texto}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Spacer(Modifier.height(4.dp))
                     if (pergunta.tipo == QuestionType.RADIO) {
                         Column {
@@ -272,13 +326,5 @@ fun IVCF20FormScreen(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewIVCF20Form() {
-    MaterialTheme {
-        IVCF20FormScreen()
     }
 }

@@ -1,14 +1,11 @@
 package com.tecno.aging.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -21,8 +18,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.tecno.aging.ui.components.cards.DashboardCard
 
 @Composable
 fun HomeScreen(
@@ -123,37 +119,35 @@ fun MainContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Primeira linha: Forms e Ver Resultados
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FeatureCard(
+            DashboardCard(
                 icon = Icons.Filled.AccountBox,
                 title = "Formulários",
                 modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("forms/ivcf20") }
+                onClick = { navController.navigate("forms") }
             )
-            FeatureCard(
+            DashboardCard(
                 icon = Icons.Filled.Create,
                 title = "Ver Resultados",
                 modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("forms/pittsburgh") }
+                onClick = { }
             )
         }
 
-        // Segunda linha: Contato e Ajuda
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FeatureCard(
+            DashboardCard(
                 icon = Icons.Filled.Email,
                 title = "Contato",
                 modifier = Modifier.weight(1f),
                 onClick = { navController.navigate("profile") }
             )
-            FeatureCard(
+            DashboardCard(
                 icon = Icons.Filled.Info,
                 title = "Ajuda",
                 modifier = Modifier.weight(1f),
@@ -161,51 +155,15 @@ fun MainContent(
             )
         }
 
-        // Linha de cadastro
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FeatureCard(
+            DashboardCard(
                 icon = Icons.Filled.Add,
                 title = "Novo Cadastro",
                 modifier = Modifier.weight(1f),
                 onClick = { navController.navigate("cadastro") }
-            )
-        }
-    }
-}
-
-@Composable
-fun FeatureCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Card(
-        modifier = modifier
-            .height(120.dp)
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium
             )
         }
     }
