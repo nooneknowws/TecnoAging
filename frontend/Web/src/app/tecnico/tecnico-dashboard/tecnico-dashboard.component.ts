@@ -206,7 +206,14 @@ export class TecnicoDashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout(); 
-    this.router.navigate(['/login']);
+    const token = localStorage.getItem('token');
+    if (this.authService.logout(token)) {
+      console.log(`token: ${token} apagado com sucesso`);
+      this.router.navigate(['/login']);
+    }
+    else {
+      console.log('erro ao realizar o logout')
+    }
+
   }
 }
