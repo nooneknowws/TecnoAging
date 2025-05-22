@@ -102,7 +102,7 @@ fun AppNavGraph() {
 
         // Perfil e Configurações
         composable("profile") {
-            ProfileScreen()
+            ProfileScreen(profileType = "tecnico")
         }
         composable("settings") {
             SettingsScreen()

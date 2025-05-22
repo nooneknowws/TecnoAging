@@ -75,7 +75,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 )
             }
             composable("settings") { SettingsScreen() }
-            composable("profile") { ProfileScreen() }
+            composable("profile") { ProfileScreen(profileType = "tecnico") }
             composable("cadastro") {
                 CadastroScreen(
                     navController = navController,
