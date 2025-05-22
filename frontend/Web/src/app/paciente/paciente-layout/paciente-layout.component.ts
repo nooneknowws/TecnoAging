@@ -38,7 +38,8 @@ export class PacienteLayoutComponent {
   }
 
   logout(): void {
-    this.authService.logout();
+    const token = localStorage.getItem('token');
+    this.authService.logout(token);
     this.router.navigate(['/login']);
   }
 }
