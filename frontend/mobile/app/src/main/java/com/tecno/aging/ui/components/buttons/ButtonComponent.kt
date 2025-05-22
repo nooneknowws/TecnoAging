@@ -22,7 +22,7 @@ fun ButtonComponent(
     variant: ButtonVariant = ButtonVariant.Primary,
     loading: Boolean = false,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val (bg, content) = when (variant) {
         ButtonVariant.Primary   -> ColorPair(Color(0xFF594FBF), Color.White)

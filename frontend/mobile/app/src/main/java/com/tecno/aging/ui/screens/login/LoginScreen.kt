@@ -136,8 +136,9 @@ private fun LoginContent(
             ButtonComponent(
                 title = "Login",
                 loading = state.isLoading,
+                modifier = componentWidthModifier,
                 onClick = { onEvent(LoginViewModel.LoginEvent.Submit) },
-                modifier = componentWidthModifier
+
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -145,8 +146,9 @@ private fun LoginContent(
             ButtonComponent(
                 title = "Cadastro",
                 variant = ButtonVariant.Secondary,
+                modifier = componentWidthModifier,
                 onClick = onSignUpClick,
-                modifier = componentWidthModifier
+                
             )
         }
     }
