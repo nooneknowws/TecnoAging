@@ -7,7 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.CadastroScreen
+import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
+import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
@@ -20,7 +22,8 @@ fun AppNavGraph() {
     SessionManager.init(context)
 
     val navController = rememberNavController()
-    val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
+    //val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
+    val startRoute = "home"
 
     NavHost(
         navController = navController,
@@ -55,13 +58,21 @@ fun AppNavGraph() {
             )
         }
 
+        composable("test") {
+            TestScreen(navController = navController)
+        }
+
         // Formulários
+        composable("forms") {
+            FormScreen(navController = navController)
+        }
+
         composable("forms/ivcf20") {
             IVCF20FormScreen(onSubmit = {
                 navController.navigate("home") {
                     popUpTo("home") { inclusive = true }
                 }
-            })
+            }, navController = navController)
         }
         composable("forms/pittsburgh") {
             pittsburghFatigabilityScreen(onSubmit = {
