@@ -148,7 +148,7 @@ private fun LoginContent(
                 variant = ButtonVariant.Secondary,
                 modifier = componentWidthModifier,
                 onClick = onSignUpClick,
-                
+
             )
         }
     }

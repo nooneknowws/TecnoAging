@@ -9,6 +9,7 @@ import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
+import com.tecno.aging.ui.screens.forms.MeemFormScreen
 import com.tecno.aging.ui.screens.forms.SedentarismoFormScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
@@ -85,6 +86,14 @@ fun AppNavGraph() {
 
         composable("forms/sedentarismo") {
             SedentarismoFormScreen(onSubmit = {
+                navController.navigate("home") {
+                    popUpTo("home") { inclusive = true }
+                }
+            }, navController = navController)
+        }
+
+        composable("forms/meem") {
+            MeemFormScreen(onSubmit = {
                 navController.navigate("home") {
                     popUpTo("home") { inclusive = true }
                 }
