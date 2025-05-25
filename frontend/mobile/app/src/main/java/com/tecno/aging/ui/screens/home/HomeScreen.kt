@@ -16,9 +16,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,14 +46,17 @@ fun HomeScreen(
     ID: String,
     Perfil: String,
     navController: NavController,
+    onProfileClick: () -> Unit,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
             CenteredTopAppBar(
                 name = name,
-                onMenuClick = { /* TODO: abrir menu */ },
-                onProfileClick = { navController.navigate("profile") }
+                onProfileClick = onProfileClick,
+                onLogoutClick = onLogout,
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -65,10 +73,14 @@ fun HomeScreen(
 @Composable
 fun CenteredTopAppBar(
     name: String,
-    onMenuClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    var expanded by remember { mutableStateOf(false) }
+    val name = "aaaa"
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -77,32 +89,48 @@ fun CenteredTopAppBar(
         ),
         title = {
             Text(
-                text = "Olá, $name",
+                text = "Bem-vindo(a), $name",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        },
         actions = {
-            IconButton(onClick = onProfileClick) {
+            IconButton(onClick = { expanded = true }) {
                 Icon(
                     imageVector = Icons.Filled.Person,
-                    contentDescription = "Profile",
+                    contentDescription = "Menu de Perfil",
                     modifier = Modifier.size(32.dp),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Editar Perfil") },
+                    onClick = {
+                        expanded = false
+                        onProfileClick()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Contato") },
+                    onClick = {}
+                )
+                DropdownMenuItem(
+                    text = { Text("Ajuda") },
+                    onClick = {}
+                )
+                DropdownMenuItem(
+                    text = { Text("Sair") },
+                    onClick = {}
+                )
+            }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        modifier = modifier
     )
 }
 
@@ -133,7 +161,7 @@ fun MainContent(
                 icon = Icons.Filled.Create,
                 title = "Ver Resultados",
                 modifier = Modifier.weight(1f),
-                onClick = { }
+                onClick = {  }
             )
         }
 
@@ -145,7 +173,7 @@ fun MainContent(
                 icon = Icons.Filled.Email,
                 title = "Contato",
                 modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("profile") }
+                onClick = {  }
             )
             DashboardCard(
                 icon = Icons.Filled.Info,

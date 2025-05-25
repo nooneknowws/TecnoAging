@@ -56,7 +56,9 @@ fun AppNavGraph() {
                 name = name,
                 ID = id,
                 Perfil = perfil,
-                navController = navController
+                navController = navController,
+                onLogout = {},
+                onProfileClick = {}
             )
         }
 
