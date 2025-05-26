@@ -71,11 +71,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     name = userName,
                     ID = userId,
                     Perfil = userProfile,
-                    navController = navController
+                    navController = navController,
+                    onLogout = {},
+                    onProfileClick = {}
                 )
             }
             composable("settings") { SettingsScreen() }
-            composable("profile") { ProfileScreen() }
+            composable("profile") { ProfileScreen(profileType = "tecnico") }
             composable("cadastro") {
                 CadastroScreen(
                     navController = navController,

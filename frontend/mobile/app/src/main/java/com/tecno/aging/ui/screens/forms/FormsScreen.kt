@@ -35,10 +35,10 @@ fun FormScreen(navController: NavController) {
     val forms = listOf(
         FormItem("IVCF-20", Icons.Default.Send, "forms/ivcf20"),
         FormItem("Fatigabilidade de Pittsburgh", Icons.Default.Place, "forms/pittsburgh"),
-        FormItem("Sedentarismo", Icons.Default.AccountBox, "settings"), // ajuste temporário
-        FormItem("Mini-Mental", Icons.Default.Menu, "profile"), // ajuste temporário
-        FormItem("Ver Resultados", Icons.Default.Create, "profile"), // nova funcionalidade
-        FormItem("Comparar Resultados", Icons.Default.Info, "profile") // nova funcionalidade
+        FormItem("Sedentarismo", Icons.Default.AccountBox, "forms/sedentarismo"),
+        FormItem("Mini-Mental", Icons.Default.Menu, "forms/meem"),
+        FormItem("Ver Resultados", Icons.Default.Create, "profile"),
+        FormItem("Comparar Resultados", Icons.Default.Info, "profile")
     )
 
     Column(

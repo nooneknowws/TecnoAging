@@ -140,8 +140,8 @@ fun CadastroScreen(
 
                 ButtonComponent(
                     title = "Próximo",
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = { currentStep++ },
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -163,8 +163,8 @@ fun CadastroScreen(
 
                 ButtonComponent(
                     title = "Próximo",
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = { currentStep++ },
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -194,13 +194,18 @@ fun CadastroScreen(
                 ButtonComponent(
                     title = "Cadastrar",
                     loading = uiState.loading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
                     onClick = { viewModel.submitForm() },
-                    modifier = Modifier.fillMaxWidth().height(50.dp)
-                )
+
+                    )
 
                 TextButton(
                     onClick = { navController.navigate("login") },
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
                 ) {
                     Text(
                         text = "Já tem uma conta? Faça Login",

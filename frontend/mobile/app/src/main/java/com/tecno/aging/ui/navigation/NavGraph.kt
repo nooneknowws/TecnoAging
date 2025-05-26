@@ -9,6 +9,8 @@ import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
+import com.tecno.aging.ui.screens.forms.MeemFormScreen
+import com.tecno.aging.ui.screens.forms.SedentarismoFormScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
@@ -54,7 +56,9 @@ fun AppNavGraph() {
                 name = name,
                 ID = id,
                 Perfil = perfil,
-                navController = navController
+                navController = navController,
+                onLogout = {},
+                onProfileClick = {}
             )
         }
 
@@ -82,9 +86,25 @@ fun AppNavGraph() {
             })
         }
 
+        composable("forms/sedentarismo") {
+            SedentarismoFormScreen(onSubmit = {
+                navController.navigate("home") {
+                    popUpTo("home") { inclusive = true }
+                }
+            }, navController = navController)
+        }
+
+        composable("forms/meem") {
+            MeemFormScreen(onSubmit = {
+                navController.navigate("home") {
+                    popUpTo("home") { inclusive = true }
+                }
+            }, navController = navController)
+        }
+
         // Perfil e Configurações
         composable("profile") {
-            ProfileScreen()
+            ProfileScreen(profileType = "tecnico")
         }
         composable("settings") {
             SettingsScreen()
