@@ -22,6 +22,7 @@ import br.ufpr.tcc.MSForms.repositories.FormularioRepository;
 import br.ufpr.tcc.MSForms.repositories.PerguntaRepository;
 import br.ufpr.tcc.MSForms.service.AvaliacaoService;
 import br.ufpr.tcc.MSForms.service.FormsService;
+import br.ufpr.tcc.MSForms.service.ScoringService;
 
 @RestController
 @RequestMapping("/api/avaliacoes")
@@ -42,8 +43,7 @@ public class AvaliacaoController {
     private PerguntaRepository perguntaRepository;
     
     @Autowired
-    private AvaliacaoService avaliacaoService;
-
+    private ScoringService scoringService;
    
     @PostMapping("/forms")
     public ResponseEntity<Map<String, String>> salvarAvaliacao(@RequestBody AvaliacaoDTO avaliacaoDTO) throws InterruptedException, ExecutionException, TimeoutException {
@@ -120,6 +120,8 @@ public class AvaliacaoController {
             System.out.println("pergunta: " + resposta.getPergunta().getId());
             System.out.println("valor: " + resposta.getValor());
         }
+
+        scoringService.calculateAndUpdateScore(avaliacao);
 
         avaliacaoRepository.save(avaliacao);
 
