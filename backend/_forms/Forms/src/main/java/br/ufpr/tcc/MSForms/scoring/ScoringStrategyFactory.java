@@ -8,6 +8,8 @@ public class ScoringStrategyFactory {
                 return new FactFScoringStrategy();
             case "minimental":
                 return new MiniMentalScoringStrategy();
+            case "ivcf20":
+            	return new IVCF20ScoringStrategy();
             default:
                 throw new IllegalArgumentException("Tipo de formulário não suportado: " + formType);
         }
