@@ -1,0 +1,284 @@
+<div class="form-container d-flex justify-content-center">
+    <div class="form-wrapper">
+        <div *ngIf="isRegistered" class="alert alert-success">
+            Cadastro realizado com sucesso. <a [routerLink]="['/login']">Login</a>
+        </div>
+
+        <form *ngIf="!isRegistered" (ngSubmit)="onSubmit(form)" #form="ngForm">
+            <h1 class="h3 mb-3 fw-normal text-center title">Cadastro de Paciente</h1>
+            
+            <!-- Dados Pessoais Básicos -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-100">
+                    <input type="text" class="form-control" id="floatingNome" placeholder="Nome" name="nome" [(ngModel)]="paciente.nome" required #nomeInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && nomeInput.errors }">
+                    <label for="floatingNome">Nome Completo</label>
+                    <div *ngIf="nomeInput.errors && form.submitted" class="invalid-feedback">
+                        O nome é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingCpf" placeholder="CPF" name="cpf" [(ngModel)]="paciente.cpf" mask="000.000.000-00" required #cpfInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && cpfInput.errors }">
+                    <label for="floatingCpf">CPF</label>
+                    <div *ngIf="cpfInput.errors && form.submitted" class="invalid-feedback">
+                        O CPF é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingRg" placeholder="RG" name="rg" [(ngModel)]="paciente.rg" required #rgInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && rgInput.errors }">
+                    <label for="floatingRg">RG</label>
+                    <div *ngIf="rgInput.errors && form.submitted" class="invalid-feedback">
+                        O RG é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="date" class="form-control" id="floatingDataExpedicao" placeholder="Data de Expedição" name="dataExpedicao" [(ngModel)]="paciente.dataExpedicao" required #dataExpedicaoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && dataExpedicaoInput.errors }">
+                    <label for="floatingDataExpedicao">Data de Expedição do RG</label>
+                    <div *ngIf="dataExpedicaoInput.errors && form.submitted" class="invalid-feedback">
+                        A data de expedição é obrigatória!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingOrgaoEmissor" placeholder="Órgão Emissor" name="orgaoEmissor" [(ngModel)]="paciente.orgaoEmissor" required #orgaoEmissorInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && orgaoEmissorInput.errors }">
+                    <label for="floatingOrgaoEmissor">Órgão Emissor</label>
+                    <div *ngIf="orgaoEmissorInput.errors && form.submitted" class="invalid-feedback">
+                        O órgão emissor é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <select class="form-select" id="floatingUfEmissor" name="ufEmissor" [(ngModel)]="paciente.ufEmissor" required #ufEmissorInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && ufEmissorInput.errors }">
+                        <option value="">Selecione UF Emissor</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUfEmissor">UF Emissor</label>
+                    <div *ngIf="ufEmissorInput.errors && form.submitted" class="invalid-feedback">
+                        A UF emissor é obrigatória!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="tel" class="form-control" id="floatingTelefone" placeholder="Telefone" name="telefone" [(ngModel)]="paciente.telefone" mask="(00) 00000-0000" required #telefoneInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && telefoneInput.errors }">
+                    <label for="floatingTelefone">Telefone</label>
+                    <div *ngIf="telefoneInput.errors && form.submitted" class="invalid-feedback">
+                        O telefone é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <select class="form-select" id="floatingSexo" name="sexo" [(ngModel)]="paciente.sexo" required #sexoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && sexoInput.errors }">
+                        <option value="">Selecione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                    <label for="floatingSexo">Sexo</label>
+                    <div *ngIf="sexoInput.errors && form.submitted" class="invalid-feedback">
+                        O sexo é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="date" class="form-control" id="floatingDataNasc" placeholder="Data de Nascimento" name="dataNasc" [(ngModel)]="paciente.dataNasc" required #dataNascInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && dataNascInput.errors }">
+                    <label for="floatingDataNasc">Data de Nascimento</label>
+                    <div *ngIf="dataNascInput.errors && form.submitted" class="invalid-feedback">
+                        A data de nascimento é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <select class="form-select" id="floatingEstadoCivil" name="estadoCivil" [(ngModel)]="paciente.estadoCivil" required #estadoCivilInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && estadoCivilInput.errors }">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let estado of estadosCivis" [value]="estado">{{ getEstadoCivilLabel(estado) }}</option>
+                    </select>
+                    <label for="floatingEstadoCivil">Estado Civil</label>
+                    <div *ngIf="estadoCivilInput.errors && form.submitted" class="invalid-feedback">
+                        O estado civil é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingNacionalidade" placeholder="Nacionalidade" name="nacionalidade" [(ngModel)]="paciente.nacionalidade" required #nacionalidadeInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && nacionalidadeInput.errors }">
+                    <label for="floatingNacionalidade">Nacionalidade</label>
+                    <div *ngIf="nacionalidadeInput.errors && form.submitted" class="invalid-feedback">
+                        A nacionalidade é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingMunicipioNasc" placeholder="Município de Nascimento" name="municipioNasc" [(ngModel)]="paciente.municipioNasc" required #municipioNascInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && municipioNascInput.errors }">
+                    <label for="floatingMunicipioNasc">Município de Nascimento</label>
+                    <div *ngIf="municipioNascInput.errors && form.submitted" class="invalid-feedback">
+                        O município de nascimento é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <select class="form-select" id="floatingUfNasc" name="ufNasc" [(ngModel)]="paciente.ufNasc" required #ufNascInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && ufNascInput.errors }">
+                        <option value="">Selecione UF Nascimento</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUfNasc">UF de Nascimento</label>
+                    <div *ngIf="ufNascInput.errors && form.submitted" class="invalid-feedback">
+                        A UF de nascimento é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingCorRaca" placeholder="Cor/Raça" name="corRaca" [(ngModel)]="paciente.corRaca" required #corRacaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && corRacaInput.errors }">
+                    <label for="floatingCorRaca">Cor/Raça</label>
+                    <div *ngIf="corRacaInput.errors && form.submitted" class="invalid-feedback">
+                        A cor/raça é obrigatória!
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingEscolaridade" placeholder="Escolaridade" name="escolaridade" [(ngModel)]="paciente.escolaridade" required #escolaridadeInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && escolaridadeInput.errors }">
+                    <label for="floatingEscolaridade">Escolaridade</label>
+                    <div *ngIf="escolaridadeInput.errors && form.submitted" class="invalid-feedback">
+                        A escolaridade é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados Físicos -->
+            <h5 class="mt-3 mb-2">Dados Físicos</h5>
+            <div class="input-group mb-2">
+                <div class="form-floating w-33">
+                    <input type="number" step="0.01" class="form-control" id="floatingPeso" placeholder="Peso" name="peso" [(ngModel)]="paciente.peso" required #pesoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && pesoInput.errors }">
+                    <label for="floatingPeso">Peso (kg)</label>
+                    <div *ngIf="pesoInput.errors && form.submitted" class="invalid-feedback">
+                        O peso é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="number" step="0.01" class="form-control" id="floatingAltura" placeholder="Altura" name="altura" [(ngModel)]="paciente.altura" required #alturaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && alturaInput.errors }">
+                    <label for="floatingAltura">Altura (m)</label>
+                    <div *ngIf="alturaInput.errors && form.submitted" class="invalid-feedback">
+                        A altura é obrigatória!
+                    </div>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="text" class="form-control" id="floatingSocioeconomico" placeholder="Situação Socioeconômica" name="socioeconomico" [(ngModel)]="paciente.socioeconomico" required #socioeconomicoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && socioeconomicoInput.errors }">
+                    <label for="floatingSocioeconomico">Situação Socioeconômica</label>
+                    <div *ngIf="socioeconomicoInput.errors && form.submitted" class="invalid-feedback">
+                        A situação socioeconômica é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Senha -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-100">
+                    <input type="password" class="form-control" id="floatingSenha" placeholder="Senha" name="senha" [(ngModel)]="paciente.senha" required #senhaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && senhaInput.errors }">
+                    <label for="floatingSenha">Senha</label>
+                    <div *ngIf="senhaInput.errors && form.submitted" class="invalid-feedback">
+                        A senha é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-100">
+                    <input type="password" class="form-control" id="floatingRepetirSenha" placeholder="Repetir Senha" name="repetirSenha" [(ngModel)]="repetirSenha" required #repetirSenhaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && (repetirSenhaInput.errors || paciente.senha !== repetirSenha) }">
+                    <label for="floatingRepetirSenha">Repetir Senha</label>
+                    <div *ngIf="repetirSenhaInput.errors && form.submitted" class="invalid-feedback">
+                        Digite a senha novamente.
+                    </div>
+                    <div *ngIf="paciente.senha !== repetirSenha && form.submitted" class="invalid-feedback">
+                        As senhas não coincidem!
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Endereço -->
+            <h5 class="mb-2">Endereço</h5>
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" class="form-control" id="floatingCep" placeholder="CEP" name="cep" [(ngModel)]="endereco.cep" mask="00000-000" required #cepInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && (cepInput.errors || cepInvalido || erroTimeout) }">
+                    <label for="floatingCep">CEP</label>
+                    <div *ngIf="cepInput.errors && form.submitted" class="invalid-feedback">
+                        O CEP é obrigatório!
+                    </div>
+                    <div *ngIf="cepInvalido && form.submitted" class="invalid-feedback">
+                        CEP inválido ou não encontrado!
+                    </div>
+                    <div *ngIf="erroTimeout && form.submitted" class="invalid-feedback">
+                        Tempo esgotado ao buscar o CEP. Tente novamente mais tarde!
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary w-25" (click)="buscarCep()">Buscar</button>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" class="form-control" id="floatingLogradouro" placeholder="Logradouro" name="logradouro" [(ngModel)]="endereco.logradouro" required #logradouroInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && logradouroInput.errors }">
+                    <label for="floatingLogradouro">Logradouro</label>
+                    <div *ngIf="logradouroInput.errors && form.submitted" class="invalid-feedback">
+                        O Logradouro é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-25">
+                    <input type="number" class="form-control" id="floatingNumero" placeholder="Número" name="numero" [(ngModel)]="endereco.numero" required #numeroInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && numeroInput.errors }">
+                    <label for="floatingNumero">Número</label>
+                    <div *ngIf="numeroInput.errors && form.submitted" class="invalid-feedback">
+                        O número é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingComplemento" placeholder="Complemento" name="complemento" [(ngModel)]="endereco.complemento">
+                    <label for="floatingComplemento">Complemento</label>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control" id="floatingBairro" placeholder="Bairro" name="bairro" [(ngModel)]="endereco.bairro" required #bairroInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && bairroInput.errors }">
+                    <label for="floatingBairro">Bairro</label>
+                    <div *ngIf="bairroInput.errors && form.submitted" class="invalid-feedback">
+                        O bairro é obrigatório!
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" class="form-control" id="floatingMunicipio" placeholder="Município" name="municipio" [(ngModel)]="endereco.municipio" required #municipioInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && municipioInput.errors }">
+                    <label for="floatingMunicipio">Município</label>
+                    <div *ngIf="municipioInput.errors && form.submitted" class="invalid-feedback">
+                        O município é obrigatório!
+                    </div>
+                </div>
+                <div class="form-floating w-25">
+                    <select class="form-select" id="floatingUF" name="UF" [(ngModel)]="endereco.uf" required #ufInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && ufInput.errors }">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUF">UF</label>
+                    <div *ngIf="ufInput.errors && form.submitted" class="invalid-feedback">
+                        A UF é obrigatória!
+                    </div>
+                </div>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary mb-2 login-button" type="submit" [disabled]="form.submitted">
+                Cadastrar
+                <i class="fas fa-spinner fa-spin" *ngIf="form.submitted"></i>
+            </button>
+            <div class="form-group text-center">
+                <a>Já possui uma conta? </a> <a [routerLink]="['/login']" class="text-decoration-none">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
