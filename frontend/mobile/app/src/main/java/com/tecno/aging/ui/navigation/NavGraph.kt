@@ -15,6 +15,7 @@ import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
+import com.tecno.aging.ui.screens.profile.ProfileEditScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
 import com.tecno.aging.ui.screens.settings.SettingsScreen
 
@@ -24,8 +25,8 @@ fun AppNavGraph() {
     SessionManager.init(context)
 
     val navController = rememberNavController()
-    //val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
-    val startRoute = "home"
+    val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
+    //val startRoute = "home"
 
     NavHost(
         navController = navController,
@@ -104,8 +105,15 @@ fun AppNavGraph() {
 
         // Perfil e Configurações
         composable("profile") {
-            ProfileScreen(profileType = "tecnico")
+            ProfileScreen(profileType = "tecnico", navController = navController)
         }
+
+        composable("profile_edit") {
+            ProfileEditScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
         composable("settings") {
             SettingsScreen()
         }

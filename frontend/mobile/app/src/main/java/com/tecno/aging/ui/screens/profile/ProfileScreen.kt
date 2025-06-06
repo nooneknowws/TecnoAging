@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.tecno.aging.R
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
@@ -38,7 +39,7 @@ import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 @Composable
 fun ProfileScreen(
     profileType: String,
-    onEditClick: () -> Unit = {}
+    navController: NavController
 ) {
     // Mock de dados
     val profile = remember {
@@ -93,7 +94,7 @@ fun ProfileScreen(
             // Botão Editar para técnico
             if (profileType == "tecnico") {
                 Button(
-                    onClick = onEditClick,
+                    onClick = { navController.navigate("profile_edit") },
                     modifier = Modifier.align(Alignment.End)
                 ) {
                     Text("Editar Perfil")

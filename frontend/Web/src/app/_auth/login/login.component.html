@@ -4,7 +4,7 @@
         <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
             <div class="form-group">
                 <input type="text" placeholder="CPF" class="form-control" [(ngModel)]="loginRequest.cpf" name="cpf"
-                    required #cpfInput="ngModel" mask="000.000.000-00" />
+                    required #cpfInput="ngModel" />
                 <div *ngIf="cpfInput.invalid && (cpfInput.dirty || cpfInput.touched)" class="text-danger">
                     <small *ngIf="cpfInput.errors?.['required']">CPF é obrigatório</small>
                 </div>
