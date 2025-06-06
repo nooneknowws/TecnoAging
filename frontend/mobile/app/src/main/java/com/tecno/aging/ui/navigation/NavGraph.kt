@@ -15,6 +15,7 @@ import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
+import com.tecno.aging.ui.screens.pacientes.PacienteListScreen
 import com.tecno.aging.ui.screens.profile.ProfileEditScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
 import com.tecno.aging.ui.screens.settings.SettingsScreen
@@ -111,6 +112,19 @@ fun AppNavGraph() {
         composable("profile_edit") {
             ProfileEditScreen(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("pacientes_list") {
+            PacienteListScreen(
+                onNavigateToProfile = { pacienteId ->
+                    // Navega para a tela de detalhes do perfil
+                    // navController.navigate("profile_detail/$pacienteId")
+                },
+                onNavigateToEditProfile = { pacienteId ->
+                    // Navega para a tela de edição do perfil
+                    // navController.navigate("profile_edit/$pacienteId")
+                }
             )
         }
 

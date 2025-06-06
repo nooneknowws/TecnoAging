@@ -211,7 +211,7 @@ fun MainContent(
                 icon = Icons.Filled.Email,
                 title = "Lista de Pacientes",
                 modifier = Modifier.weight(1f),
-                onClick = { }
+                onClick = { navController.navigate("pacientes_list") }
             )
 
         }

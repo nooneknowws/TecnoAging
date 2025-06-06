@@ -4,6 +4,7 @@ import com.tecno.aging.domain.models.DTO.CepResponse
 import com.tecno.aging.domain.models.auth.LoginRequest
 import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
+import com.tecno.aging.domain.models.paciente.Paciente
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import retrofit2.Response
@@ -18,4 +19,7 @@ interface ApiService {
 
     @GET("https://viacep.com.br/ws/{cep}/json/")
     suspend fun buscarCep(@Path("cep") cep: String): Response<CepResponse>
+
+    @GET("api/pacientes")
+    suspend fun getPacientes(): Response<List<Paciente>>
 }
