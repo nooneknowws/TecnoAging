@@ -12,10 +12,15 @@ interface ApiService {
     @POST("api/tecnicos")
     suspend fun registrarTecnico(@Body request: TecnicoRequest): Response<Unit>
 
+    @POST("/api/auth/logout")
+    suspend fun logout(): Response<Unit>
 
     @POST("/api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
     @GET("https://viacep.com.br/ws/{cep}/json/")
     suspend fun buscarCep(@Path("cep") cep: String): Response<CepResponse>
+
+    @GET("/api/tecnicos/{id}")
+    suspend fun buscarTecnico(@Path("id") id: String): Tecnico
 }

@@ -76,13 +76,13 @@ class LoginViewModel : ViewModel() {
                     when {
                         response.isSuccessful -> {
                             response.body()?.let { loginResponse ->
-                                Log.d("LoginFlow", "Raw login response: $loginResponse")
-                                Log.d("LoginFlow", "Success: ${loginResponse.success}")
-                                Log.d("LoginFlow", "Token: ${loginResponse.token}")
-                                Log.d("LoginFlow", "User ID: ${loginResponse.ID}")
-                                Log.d("LoginFlow", "Profile: ${loginResponse.Perfil}")
-                                Log.d("LoginFlow", "Name: ${loginResponse.Nome}")
-                                Log.d("LoginFlow", "Message: ${loginResponse.message ?: "No message"}")
+                                Log.i("LoginFlow", "Raw login response: $loginResponse")
+                                Log.i("LoginFlow", "Success: ${loginResponse.success}")
+                                Log.i("LoginFlow", "Token: ${loginResponse.token}")
+                                Log.i("LoginFlow", "User ID: ${loginResponse.ID}")
+                                Log.i("LoginFlow", "Profile: ${loginResponse.Perfil}")
+                                Log.i("LoginFlow", "Name: ${loginResponse.Nome}")
+                                Log.i("LoginFlow", "Message: ${loginResponse.message ?: "No message"}")
 
 
                                 if (loginResponse.success) {
@@ -124,6 +124,7 @@ class LoginViewModel : ViewModel() {
                     }
                 } catch (e: IOException) {
                     _uiState.value = _uiState.value.copy(
+                        Log.i("Erro", e.toString()).toString(),
                         loginError = "Erro de conexão. Verifique sua internet.",
                         isLoading = false
                     )

@@ -29,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,37 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.data.remote.RetrofitInstance
 import com.tecno.aging.ui.components.cards.DashboardCard
-
-@Composable
-fun HomeScreen(
-    name: String,
-    ID: String,
-    Perfil: String,
-    navController: NavController,
-    onProfileClick: () -> Unit,
-    onLogout: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Scaffold(
-        topBar = {
-            CenteredTopAppBar(
-                name = name,
-                onProfileClick = onProfileClick,
-                onLogoutClick = onLogout,
-                navController = navController
-            )
-        }
-    ) { innerPadding ->
-        MainContent(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            navController = navController
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,11 +52,12 @@ fun CenteredTopAppBar(
     onProfileClick: () -> Unit,
     onLogoutClick: () -> Unit,
     navController: NavController,
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier
+)
+{
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var expanded by remember { mutableStateOf(false) }
-    val name = "aaaa"
+
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -125,7 +102,7 @@ fun CenteredTopAppBar(
                 )
                 DropdownMenuItem(
                     text = { Text("Sair") },
-                    onClick = {}
+                    onClick = {onLogoutClick()}
                 )
             }
         },
@@ -135,10 +112,7 @@ fun CenteredTopAppBar(
 }
 
 @Composable
-fun MainContent(
-    modifier: Modifier = Modifier,
-    navController: NavController
-) {
+fun MainContent(modifier: Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
@@ -196,3 +170,47 @@ fun MainContent(
         }
     }
 }
+
+@Composable
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is HomeViewModel.HomeUiState.LogoutSuccess -> {
+                navController.navigate("login") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            CenteredTopAppBar(
+                modifier = Modifier,
+                name = SessionManager.getUserName().toString(),
+                onProfileClick = { /* handle profile click */ },
+                onLogoutClick = { viewModel.handleEvent(HomeViewModel.HomeEvent.Logout) },
+                navController = navController
+            )
+        }
+    ) { innerPadding ->
+        MainContent(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            navController = navController
+        )
+    }
+}
+
+
+
+

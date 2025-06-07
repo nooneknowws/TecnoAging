@@ -1,12 +1,12 @@
 package com.tecno.aging.domain.models.pessoa
 
-data class Pessoa (
-    val nome: String = "",
-    val cpf: String = "",
-    val telefone: String = "",
-    val sexo: String = "",
-    val dataNasc: String = "",
-    val senha: String = "",
-    val endereco: Endereco = Endereco(),
-    val idade: String = ""
+open class Pessoa(
+    open val nome: String = "",
+    open val cpf: String = "",
+    open val telefone: String = "",
+    open val sexo: String = "",
+    open val dataNasc: String = "",
+    open val senha: String = "",
+    open val endereco: Endereco = Endereco(),
+    open val idade: Int
 )

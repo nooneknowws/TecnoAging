@@ -173,7 +173,10 @@ open class CadastroViewModel : ViewModel() {
 
 
 data class CadastroState(
-    val tecnico: Tecnico = Tecnico(),
+
+    val ativo: Boolean = true,
+    val idade: Int = 0,
+    val tecnico: Tecnico = Tecnico(idade,ativo),
     val senha: String = "",
     val confirmarSenha: String = "",
     val loading: Boolean = false,

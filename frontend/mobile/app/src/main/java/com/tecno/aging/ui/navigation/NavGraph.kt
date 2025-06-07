@@ -2,6 +2,7 @@ package com.tecno.aging.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,6 +17,7 @@ import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
+import com.tecno.aging.ui.screens.profile.ProfileViewModel
 import com.tecno.aging.ui.screens.settings.SettingsScreen
 
 @Composable
@@ -24,8 +26,7 @@ fun AppNavGraph() {
     SessionManager.init(context)
 
     val navController = rememberNavController()
-    //val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
-    val startRoute = "home"
+    val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
 
     NavHost(
         navController = navController,
@@ -46,19 +47,14 @@ fun AppNavGraph() {
             )
         }
 
-        // Fluxo principal
         composable("home") {
             val name = SessionManager.getUserName().orEmpty()
             val id = SessionManager.getUserId().orEmpty()
             val perfil = SessionManager.getUserProfile().orEmpty()
 
             HomeScreen(
-                name = name,
-                ID = id,
-                Perfil = perfil,
+
                 navController = navController,
-                onLogout = {},
-                onProfileClick = {}
             )
         }
 
@@ -104,7 +100,14 @@ fun AppNavGraph() {
 
         // Perfil e Configurações
         composable("profile") {
-            ProfileScreen(profileType = "tecnico")
+
+            val profileViewModel: ProfileViewModel = viewModel()
+            ProfileScreen(
+                viewModel = profileViewModel,
+                profileType = "tecnico",
+                onEditClick = { navController.navigate("editProfile") },
+                onBackClick = { navController.popBackStack() }
+            )
         }
         composable("settings") {
             SettingsScreen()

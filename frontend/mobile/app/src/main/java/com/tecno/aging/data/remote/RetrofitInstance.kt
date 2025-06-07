@@ -8,7 +8,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://10.0.2.2:3000/"
+  //pra emulador  private const val BASE_URL = "http://10.0.2.2:3000/"
+  //pra espelhamento
+  private const val BASE_URL = "http://172.20.149.231:3000/"
 
     private val okHttpClient by lazy {
         OkHttpClient.Builder()

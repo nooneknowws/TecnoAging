@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,10 +26,12 @@ import com.tecno.aging.ui.screens.cadastro.CadastroScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
+import com.tecno.aging.ui.screens.profile.ProfileViewModel
 import com.tecno.aging.ui.screens.settings.SettingsScreen
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
+    val profileViewModel: ProfileViewModel = viewModel()
     val navController = rememberNavController()
     val context = LocalContext.current
     SessionManager.init(context)
@@ -68,16 +71,16 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ) {
             composable("home") {
                 HomeScreen(
-                    name = userName,
-                    ID = userId,
-                    Perfil = userProfile,
                     navController = navController,
-                    onLogout = {},
-                    onProfileClick = {}
                 )
             }
             composable("settings") { SettingsScreen() }
-            composable("profile") { ProfileScreen(profileType = "tecnico") }
+            composable("profile") { ProfileScreen(
+                viewModel = profileViewModel,
+                profileType = "tecnico",
+                onEditClick = { navController.navigate("editProfile") },
+                onBackClick = { navController.popBackStack() }
+            ) }
             composable("cadastro") {
                 CadastroScreen(
                     navController = navController,
