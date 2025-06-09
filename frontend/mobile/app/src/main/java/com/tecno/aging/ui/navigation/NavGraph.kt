@@ -1,10 +1,13 @@
 package com.tecno.aging.ui.navigation
 
+import android.window.SplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
@@ -16,9 +19,11 @@ import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.pacientes.PacienteListScreen
+import com.tecno.aging.ui.screens.pacientes.PacienteProfileScreen
 import com.tecno.aging.ui.screens.profile.ProfileEditScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
 import com.tecno.aging.ui.screens.settings.SettingsScreen
+import com.tecno.aging.ui.screens.splash.SplashScreen
 
 @Composable
 fun AppNavGraph() {
@@ -26,13 +31,16 @@ fun AppNavGraph() {
     SessionManager.init(context)
 
     val navController = rememberNavController()
-    val startRoute = if (SessionManager.getAuthToken().isNullOrEmpty()) "login" else "home"
-    //val startRoute = "home"
+    val startRoute = "splash"
 
     NavHost(
         navController = navController,
         startDestination = startRoute
     ) {
+        composable("splash") {
+            SplashScreen(navController = navController)
+        }
+
         // Autenticação
         composable("login") {
             LoginScreen(navController)
@@ -118,14 +126,17 @@ fun AppNavGraph() {
         composable("pacientes_list") {
             PacienteListScreen(
                 onNavigateToProfile = { pacienteId ->
-                    // Navega para a tela de detalhes do perfil
-                    // navController.navigate("profile_detail/$pacienteId")
+                    navController.navigate("patient_profile/$pacienteId")
                 },
-                onNavigateToEditProfile = { pacienteId ->
-                    // Navega para a tela de edição do perfil
-                    // navController.navigate("profile_edit/$pacienteId")
-                }
+                onNavigateToEditProfile = { /* ... */ }
             )
+        }
+
+        composable(
+            route = "patient_profile/{pacienteId}",
+            arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
+        ) {
+            PacienteProfileScreen(navController = navController)
         }
 
         composable("settings") {

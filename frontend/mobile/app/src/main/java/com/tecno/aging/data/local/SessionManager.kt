@@ -43,11 +43,12 @@ object SessionManager {
 
     fun getUserProfile(): String? = prefs.getString(KEY_USER_PROFILE, null)
 
-    fun clearSession() {
-        prefs.edit {
-            remove(KEY_TOKEN)
-            remove(KEY_USER_ID)
-            remove(KEY_USER_PROFILE)
-        }
+    fun clearAuthToken() {
+        val editor = prefs.edit()
+        editor.remove(KEY_TOKEN)
+        editor.remove(KEY_USER_NAME)
+        editor.remove(KEY_USER_ID)
+        editor.remove(KEY_USER_PROFILE)
+        editor.apply()
     }
 }

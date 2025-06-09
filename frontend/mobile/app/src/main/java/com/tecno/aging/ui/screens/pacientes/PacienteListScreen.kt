@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecno.aging.domain.models.paciente.Paciente
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +51,7 @@ fun PacienteListScreen(
                         PacienteCard(
                             paciente = paciente,
                             onViewClick = { onNavigateToProfile(paciente.id) },
-                            onEditClick = { onNavigateToEditProfile(paciente.id) }
+                            onEditClick = { /* onNavigateToEditProfile(paciente.id) */ }
                         )
                     }
                 }
@@ -84,7 +84,10 @@ fun PacienteCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "CPF: ${paciente.cpf}", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "Idade: ${paciente.idade} anos", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = "Idade: ${paciente.idade} anos",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
             Box {

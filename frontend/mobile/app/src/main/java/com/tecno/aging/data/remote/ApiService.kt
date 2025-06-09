@@ -1,6 +1,7 @@
 package com.tecno.aging.data.remote
 
 import com.tecno.aging.domain.models.DTO.CepResponse
+import com.tecno.aging.domain.models.DTO.VerifyJwtResponse
 import com.tecno.aging.domain.models.auth.LoginRequest
 import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
@@ -22,4 +23,13 @@ interface ApiService {
 
     @GET("api/pacientes")
     suspend fun getPacientes(): Response<List<Paciente>>
+
+    @GET("api/pacientes/{id}")
+    suspend fun getPacienteById(@Path("id") pacienteId: Int): Response<Paciente>
+
+    @POST("api/auth/logout")
+    suspend fun logout(): Response<Unit>
+
+    @POST("api/auth/verify-jwt")
+    suspend fun verifyJwt(): Response<VerifyJwtResponse>
 }

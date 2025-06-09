@@ -51,6 +51,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.data.repository.AuthRepository
 import com.tecno.aging.ui.components.cards.DashboardCard
 import kotlinx.coroutines.launch
 
@@ -91,7 +93,15 @@ fun HomeScreen(
                         drawerState.close()
                     }
                     when (item.route) {
-                        "logout" -> onLogout()
+                        "logout" -> {
+                            scope.launch {
+                                AuthRepository().logout()
+                                SessionManager.clearAuthToken()
+                                navController.navigate("login") {
+                                    popUpTo(0)
+                                }
+                            }
+                        }
                         "profile" -> navController.navigate("profile")
                         "dashboard" -> navController.navigate("home")
                         //"results" -> navController.navigate("results")
