@@ -22,6 +22,7 @@ class AuthRepository(private val apiService: ApiService = RetrofitInstance.api) 
     suspend fun verifyJwt(): Result<Boolean> {
         return try {
             val response = apiService.verifyJwt()
+
             if (response.isSuccessful && response.body()?.valid == true) {
                 Result.success(true)
             } else {
