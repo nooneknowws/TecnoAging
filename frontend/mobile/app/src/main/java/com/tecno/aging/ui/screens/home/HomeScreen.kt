@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.home
 
+import android.R.attr.name
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -68,20 +69,26 @@ fun HomeScreen(
     ID: String,
     Perfil: String,
     navController: NavController,
-    onProfileClick: () -> Unit,
-    onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val drawerItems = listOf(
-        NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
-        NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
-        NavigationItem("Resultados", Icons.Outlined.Star, "results"),
-        NavigationItem("Histórico", Icons.Outlined.Face, "history"),
-        NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
-    )
+    val drawerItems = if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+        listOf(
+            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
+            NavigationItem("Meu Histórico", Icons.Outlined.Face, "history"),
+            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+        )
+    } else {
+        listOf(
+            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
+            NavigationItem("Lista de Pacientes", Icons.Outlined.Face, "history"),
+            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -104,10 +111,12 @@ fun HomeScreen(
                         }
                         "profile" -> navController.navigate("profile")
                         "dashboard" -> navController.navigate("home")
-                        //"results" -> navController.navigate("results")
-                        //"history" -> navController.navigate("history")
-                        else -> {
-                            // Implemente a navegação para outras telas
+                        "history" -> {
+                            if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+                                navController.navigate("historico_avaliacoes/$ID")
+                            } else {
+                                navController.navigate("pacientes_list")
+                            }
                         }
                     }
                 }

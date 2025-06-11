@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes
+package com.tecno.aging.ui.screens.pacientes.listaDePacientes
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

@@ -1,6 +1,5 @@
 package com.tecno.aging.ui.navigation
 
-import android.window.SplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -18,8 +17,9 @@ import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
-import com.tecno.aging.ui.screens.pacientes.PacienteListScreen
-import com.tecno.aging.ui.screens.pacientes.PacienteProfileScreen
+import com.tecno.aging.ui.screens.pacientes.historico.HistoricoScreen
+import com.tecno.aging.ui.screens.pacientes.listaDePacientes.PacienteListScreen
+import com.tecno.aging.ui.screens.pacientes.perfilPaciente.PacienteProfileScreen
 import com.tecno.aging.ui.screens.profile.ProfileEditScreen
 import com.tecno.aging.ui.screens.profile.ProfileScreen
 import com.tecno.aging.ui.screens.settings.SettingsScreen
@@ -67,8 +67,6 @@ fun AppNavGraph() {
                 ID = id,
                 Perfil = perfil,
                 navController = navController,
-                onLogout = {},
-                onProfileClick = {}
             )
         }
 
@@ -141,6 +139,13 @@ fun AppNavGraph() {
 
         composable("settings") {
             SettingsScreen()
+        }
+
+        composable(
+            route = "historico_avaliacoes/{pacienteId}",
+            arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
+        ) {
+            HistoricoScreen(navController = navController)
         }
     }
 }

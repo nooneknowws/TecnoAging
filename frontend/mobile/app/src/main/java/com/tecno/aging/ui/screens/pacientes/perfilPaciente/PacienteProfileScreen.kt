@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes
+package com.tecno.aging.ui.screens.pacientes.perfilPaciente
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,7 +23,7 @@ import com.tecno.aging.R
 @Composable
 fun PacienteProfileScreen(
     navController: NavController,
-    viewModel: PacienteProfileViewModel = viewModel(factory = PacienteProfileViewModel.Factory)
+    viewModel: PacienteProfileViewModel = viewModel(factory = PacienteProfileViewModel.Companion.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

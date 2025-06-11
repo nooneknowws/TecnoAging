@@ -5,6 +5,7 @@ import com.tecno.aging.domain.models.DTO.VerifyJwtResponse
 import com.tecno.aging.domain.models.auth.LoginRequest
 import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
+import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
 import com.tecno.aging.domain.models.paciente.Paciente
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
@@ -41,7 +42,7 @@ interface ApiService {
 
     // Avaliações
     @GET("api/avaliacoes/respostas/paciente/{id}")
-    suspend fun getRespostasByPaciente(@Path("id") pacienteId: Int): Response<Unit>
+    suspend fun getRespostasByPaciente(@Path("id") pacienteId: Int): Response<List<HistoricoAvaliacao>>
 
     @GET("api/avaliacoes/respostas/tecnico/{id}")
     suspend fun getRespostasByTecnico(@Path("id") tecnicoId: Int): Response<Unit>
