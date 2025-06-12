@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -72,4 +74,5 @@ dependencies {
     implementation(libs.lottie)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

@@ -87,6 +87,10 @@ app.post('/api/auth/logout', (req, res, next) => {
     authServiceProxy(req, res, next);
 })
 
+app.post('/api/auth/verify-jwt', (req, res, next) => {
+    authServiceProxy(req, res, next);
+})
+
 // PACIENTES
 
 // cadastro

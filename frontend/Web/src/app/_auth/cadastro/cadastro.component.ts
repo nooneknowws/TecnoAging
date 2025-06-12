@@ -7,8 +7,8 @@ import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 
 @Component({
   selector: 'app-cadastro',
-  templateUrl: './cadastro.component.html',
-  styleUrls: ['./cadastro.component.css']
+  templateUrl: './cadastro-tecnico/cadastro-tecnico.component.html',
+  styleUrls: ['./cadastro-paciente/cadastro-paciente.component.css']
 })
 export class CadastroComponent implements OnInit {
   tecnico = new Tecnico();

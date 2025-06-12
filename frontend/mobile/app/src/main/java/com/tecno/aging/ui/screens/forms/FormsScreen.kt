@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.tecno.aging.ui.components.buttons.ArrowLeftComponent
@@ -50,9 +51,19 @@ fun FormScreen(navController: NavController) {
         ArrowLeftComponent(navController = navController)
 
         Text(
-            text = "Formulários disponíveis",
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(top = 8.dp)
+            text = "Formulários de Avaliação",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Selecione um formulário abaixo para iniciar a avaliação com o idoso. Cada teste auxilia na identificação de diferentes aspectos da saúde e bem-estar.",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))

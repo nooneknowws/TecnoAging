@@ -1,11 +1,14 @@
 package com.tecno.aging.ui.screens.home
 
+import android.R.attr.name
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -16,29 +19,49 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.data.repository.AuthRepository
 import com.tecno.aging.ui.components.cards.DashboardCard
+import kotlinx.coroutines.launch
+
+data class NavigationItem(
+    val title: String,
+    val icon: ImageVector,
+    val route: String
+)
 
 @Composable
 fun HomeScreen(
@@ -46,41 +69,116 @@ fun HomeScreen(
     ID: String,
     Perfil: String,
     navController: NavController,
-    onProfileClick: () -> Unit,
-    onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            CenteredTopAppBar(
-                name = name,
-                onProfileClick = onProfileClick,
-                onLogoutClick = onLogout,
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    val drawerItems = if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+        listOf(
+            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
+            NavigationItem("Meu Histórico", Icons.Outlined.Face, "history"),
+            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+        )
+    } else {
+        listOf(
+            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
+            NavigationItem("Lista de Pacientes", Icons.Outlined.Face, "history"),
+            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+        )
+    }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawerContent(
+                drawerItems = drawerItems,
+                onItemClick = { item ->
+                    scope.launch {
+                        drawerState.close()
+                    }
+                    when (item.route) {
+                        "logout" -> {
+                            scope.launch {
+                                AuthRepository().logout()
+                                SessionManager.clearAuthToken()
+                                navController.navigate("login") {
+                                    popUpTo(0)
+                                }
+                            }
+                        }
+                        "profile" -> navController.navigate("profile")
+                        "dashboard" -> navController.navigate("home")
+                        "history" -> {
+                            if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+                                navController.navigate("historico_avaliacoes/$ID")
+                            } else {
+                                navController.navigate("pacientes_list")
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                CenteredTopAppBar(
+                    name = name,
+                    onMenuClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            MainContent(
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
                 navController = navController
             )
         }
-    ) { innerPadding ->
-        MainContent(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            navController = navController
-        )
     }
 }
+
+@Composable
+fun AppDrawerContent(
+    drawerItems: List<NavigationItem>,
+    onItemClick: (NavigationItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var selectedItem by remember { mutableStateOf<NavigationItem?>(null) }
+
+    ModalDrawerSheet(modifier = modifier) {
+        Spacer(Modifier.height(12.dp))
+        drawerItems.forEach { item ->
+            NavigationDrawerItem(
+                icon = { Icon(item.icon, contentDescription = null) },
+                label = { Text(item.title) },
+                selected = item == selectedItem,
+                onClick = {
+                    selectedItem = item
+                    onItemClick(item)
+                },
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            )
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CenteredTopAppBar(
     name: String,
-    onProfileClick: () -> Unit,
-    onLogoutClick: () -> Unit,
-    navController: NavController,
+    onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var expanded by remember { mutableStateOf(false) }
-    val name = "aaaa"
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -95,37 +193,13 @@ fun CenteredTopAppBar(
                 style = MaterialTheme.typography.titleLarge
             )
         },
-        actions = {
-            IconButton(onClick = { expanded = true }) {
+        navigationIcon = {
+            IconButton(onClick = onMenuClick) {
                 Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "Menu de Perfil",
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Abrir menu de navegação",
                     modifier = Modifier.size(32.dp),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Editar Perfil") },
-                    onClick = {
-                        expanded = false
-                        onProfileClick()
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Contato") },
-                    onClick = {}
-                )
-                DropdownMenuItem(
-                    text = { Text("Ajuda") },
-                    onClick = {}
-                )
-                DropdownMenuItem(
-                    text = { Text("Sair") },
-                    onClick = {}
                 )
             }
         },
@@ -133,6 +207,7 @@ fun CenteredTopAppBar(
         modifier = modifier
     )
 }
+
 
 @Composable
 fun MainContent(
@@ -152,37 +227,36 @@ fun MainContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             DashboardCard(
-                icon = Icons.Filled.AccountBox,
-                title = "Formulários",
+                icon = Icons.Filled.Email,
+                title = "Lista de Pacientes",
                 modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("forms") }
+                onClick = { navController.navigate("pacientes_list") }
             )
-            DashboardCard(
-                icon = Icons.Filled.Create,
-                title = "Ver Resultados",
-                modifier = Modifier.weight(1f),
-                onClick = {  }
-            )
-        }
 
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             DashboardCard(
-                icon = Icons.Filled.Email,
-                title = "Contato",
+                icon = Icons.Filled.AccountBox,
+                title = "Formulários Disponíveis",
                 modifier = Modifier.weight(1f),
-                onClick = {  }
-            )
-            DashboardCard(
-                icon = Icons.Filled.Info,
-                title = "Ajuda",
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("settings") }
+                onClick = { navController.navigate("forms") }
             )
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            DashboardCard(
+                icon = Icons.Filled.Create,
+                title = "Ver Resultados",
+                modifier = Modifier.weight(1f),
+                onClick = { }
+            )
 
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
