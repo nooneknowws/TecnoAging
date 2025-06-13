@@ -152,6 +152,9 @@ app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
 app.get('/api/avaliacoes/respostas/paciente/:id', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);
 })
+app.get('/api/avaliacoes/respostas/paciente/cpf/:cpf', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req, res, next);
+});
 // avaliações por tecnico ID
 app.get('/api/avaliacoes/respostas/tecnico/:id', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);

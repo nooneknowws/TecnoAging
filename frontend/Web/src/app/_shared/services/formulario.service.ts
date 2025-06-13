@@ -17,6 +17,10 @@ export class FormularioService {
     return this.http.get<Formulario>(`${this.apiUrl}/${this.mapTipoToId(tipo)}`);
   }
 
+  listarFormularios(): Observable<Formulario[]> {
+    return this.http.get<Formulario[]>(`${this.apiUrl}`);
+  }
+
   private mapTipoToId(tipo: TipoFormulario): number {
     switch (tipo) {
       case TipoFormulario.PFS:

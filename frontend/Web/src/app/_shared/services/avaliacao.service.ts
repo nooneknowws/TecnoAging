@@ -45,6 +45,12 @@ export class AvaliacaoService {
     );
   }
 
+  buscarPorPaciente(idPaciente: number): Observable<Avaliacao[]> {
+    return this.http.get<Avaliacao[]>(`${this.API_URL}/respostas/paciente/${idPaciente}`).pipe(
+      map(avaliacoes => avaliacoes.map(avaliacao => this.deserializeAvaliacao(avaliacao)))
+    );
+  }
+
   createAvaliacao(avaliacao: Avaliacao, pacienteId?: number): Observable<Avaliacao> {
     const tecnico = this.authService.getCurrentUser() as Tecnico;
     avaliacao.tecnico = tecnico;
@@ -143,7 +149,7 @@ export class AvaliacaoService {
     }) || [];
 
     return new Avaliacao(
-      avaliacaoData.id,
+      avaliacaoData.avaliacaoId,
       tecnico,
       paciente,
       formulario,
