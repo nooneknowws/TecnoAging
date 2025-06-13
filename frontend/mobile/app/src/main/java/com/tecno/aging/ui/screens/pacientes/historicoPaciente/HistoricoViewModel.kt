@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes.historico
+package com.tecno.aging.ui.screens.pacientes.historicoPaciente
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
-import com.tecno.aging.ui.screens.cadastro.CadastroScreen
+import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
 import com.tecno.aging.ui.screens.forms.MeemFormScreen
@@ -17,12 +17,11 @@ import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
-import com.tecno.aging.ui.screens.pacientes.historico.HistoricoScreen
-import com.tecno.aging.ui.screens.pacientes.listaDePacientes.PacienteListScreen
-import com.tecno.aging.ui.screens.pacientes.perfilPaciente.PacienteProfileScreen
-import com.tecno.aging.ui.screens.profile.ProfileEditScreen
-import com.tecno.aging.ui.screens.profile.ProfileScreen
-import com.tecno.aging.ui.screens.settings.SettingsScreen
+import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
+import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
+import com.tecno.aging.ui.screens.pacientes.perfilPaciente.view.PacienteProfileScreen
+import com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit.ProfileEditScreen
+import com.tecno.aging.ui.screens.tecnico.perfilTecnico.view.ProfileScreen
 import com.tecno.aging.ui.screens.splash.SplashScreen
 
 @Composable
@@ -65,7 +64,7 @@ fun AppNavGraph() {
             HomeScreen(
                 name = name,
                 ID = id,
-                Perfil = perfil,
+                perfil = perfil,
                 navController = navController,
             )
         }
@@ -135,10 +134,6 @@ fun AppNavGraph() {
             arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
         ) {
             PacienteProfileScreen(navController = navController)
-        }
-
-        composable("settings") {
-            SettingsScreen()
         }
 
         composable(

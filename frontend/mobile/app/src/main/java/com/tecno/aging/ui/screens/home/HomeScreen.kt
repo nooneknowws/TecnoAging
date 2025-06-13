@@ -1,6 +1,7 @@
 package com.tecno.aging.ui.screens.home
 
 import android.R.attr.name
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -56,6 +58,8 @@ import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.repository.AuthRepository
 import com.tecno.aging.ui.components.cards.DashboardCard
 import kotlinx.coroutines.launch
+import com.tecno.aging.R
+import com.tecno.aging.ui.theme.AppColors
 
 data class NavigationItem(
     val title: String,
@@ -67,18 +71,19 @@ data class NavigationItem(
 fun HomeScreen(
     name: String,
     ID: String,
-    Perfil: String,
+    perfil: String,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val drawerItems = if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+    val drawerItems = if (perfil.equals("PACIENTE", ignoreCase = true)) {
         listOf(
             NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
             NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
             NavigationItem("Meu Histórico", Icons.Outlined.Face, "history"),
+            NavigationItem("Nov teste", Icons.Outlined.Face, "history"),
             NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
         )
     } else {
@@ -112,7 +117,7 @@ fun HomeScreen(
                         "profile" -> navController.navigate("profile")
                         "dashboard" -> navController.navigate("home")
                         "history" -> {
-                            if (Perfil.equals("PACIENTE", ignoreCase = true)) {
+                            if (perfil.equals("PACIENTE", ignoreCase = true)) {
                                 navController.navigate("historico_avaliacoes/$ID")
                             } else {
                                 navController.navigate("pacientes_list")
@@ -136,6 +141,7 @@ fun HomeScreen(
             }
         ) { innerPadding ->
             MainContent(
+                perfil = perfil,
                 modifier = modifier
                     .padding(innerPadding)
                     .fillMaxSize(),
@@ -154,7 +160,7 @@ fun AppDrawerContent(
     var selectedItem by remember { mutableStateOf<NavigationItem?>(null) }
 
     ModalDrawerSheet(modifier = modifier) {
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         drawerItems.forEach { item ->
             NavigationDrawerItem(
                 icon = { Icon(item.icon, contentDescription = null) },
@@ -212,6 +218,7 @@ fun CenteredTopAppBar(
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
+    perfil: String,
     navController: NavController
 ) {
     Column(
@@ -222,50 +229,123 @@ fun MainContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            DashboardCard(
-                icon = Icons.Filled.Email,
-                title = "Lista de Pacientes",
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("pacientes_list") }
-            )
-
+        if (perfil.equals("TECNICO", ignoreCase = true)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.list_pacientes),
+                            contentDescription = "Lista de Pacientes",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Lista de Pacientes",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { navController.navigate("pacientes_list") }
+                )
+                DashboardCard(
+                    icon = { Icon(Icons.Filled.AccountBox, contentDescription = "Formulários Disponíveis", modifier = Modifier.size(48.dp), tint = AppColors.blueDash) },
+                    title = "Formulários Disponíveis",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { navController.navigate("forms") }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.resultados),
+                            contentDescription = "Resultados",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Ver Resultados",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { /* TODO */ }
+                )
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "Cadastrar Tecnico",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Cadastrar Tecnico",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { navController.navigate("cadastro") }
+                )
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             DashboardCard(
-                icon = Icons.Filled.AccountBox,
-                title = "Formulários Disponíveis",
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("forms") }
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            DashboardCard(
-                icon = Icons.Filled.Create,
-                title = "Ver Resultados",
-                modifier = Modifier.weight(1f),
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.tarefa_concluida),
+                        contentDescription = "Tarefas Concluídas",
+                        modifier = Modifier.size(48.dp),
+                        tint = AppColors.blueDash
+                    )
+                },
+                title = "Tarefas Concluídas",
+                modifier = Modifier.weight(0.5f),
                 onClick = { }
             )
-
+            DashboardCard(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ult_aval),
+                        contentDescription = "Últimas Avaliações",
+                        modifier = Modifier.size(48.dp),
+                        tint = AppColors.blueDash
+                    )
+                },
+                title = "Últimas Avaliações",
+                modifier = Modifier.weight(0.5f),
+                onClick = { }
+            )
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             DashboardCard(
-                icon = Icons.Filled.Add,
-                title = "Novo Cadastro",
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate("cadastro") }
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.play),
+                        contentDescription = "Iniciar Novo Teste",
+                        modifier = Modifier.size(48.dp),
+                        tint = AppColors.blueDash
+                    )
+                },
+                title = "Iniciar Novo Teste",
+                modifier = Modifier.weight(0.5f),
+                onClick = { }
+            )
+            DashboardCard(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.edit_perfil),
+                        contentDescription = "Atualizar Perfil",
+                        modifier = Modifier.size(48.dp),
+                        tint = AppColors.blueDash
+                    )
+                },
+                title = "Atualizar Perfil",
+                modifier = Modifier.weight(0.5f),
+                onClick = { }
             )
         }
     }

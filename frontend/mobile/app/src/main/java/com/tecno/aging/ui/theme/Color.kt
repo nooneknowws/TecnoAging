@@ -34,6 +34,7 @@ object AppColors {
     val Blue700 = Color(0xFF1D4ED8)
     val Blue800 = Color(0xFF005BAA)
     val Blue900 = Color(0xFF1E3A8A)
+    val blueDash = Color(0xFF007bff)
     // Cinza
     val Gray50  = Color(0xFFF9FAFB)
     val Gray100 = Color(0xFFF3F4F6)

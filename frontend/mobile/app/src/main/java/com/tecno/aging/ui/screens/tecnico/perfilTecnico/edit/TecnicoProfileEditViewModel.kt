@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.profile
+package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

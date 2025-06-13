@@ -1,8 +1,7 @@
-package com.tecno.aging.ui.screens.cadastro
+package com.tecno.aging.ui.screens.cadastro.tecnicoCadastro
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tecno.aging.data.remote.ApiService
 import com.tecno.aging.data.remote.RetrofitInstance
 import com.tecno.aging.domain.models.auth.TecnicoRequest
 import com.tecno.aging.domain.models.pessoa.Endereco

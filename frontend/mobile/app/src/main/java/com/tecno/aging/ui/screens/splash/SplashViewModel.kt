@@ -28,7 +28,7 @@ class SplashViewModel(
 
     private fun checkTokenValidity() {
         viewModelScope.launch {
-            delay(5000)
+            delay(2000)
 
             val token = SessionManager.getAuthToken()
             if (token.isNullOrEmpty()) {

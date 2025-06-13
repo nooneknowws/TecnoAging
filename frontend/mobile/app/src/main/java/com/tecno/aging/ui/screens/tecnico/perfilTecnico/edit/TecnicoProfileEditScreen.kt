@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.profile
+package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes.listaDePacientes
+package com.tecno.aging.ui.screens.tecnico.listaDePacientes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

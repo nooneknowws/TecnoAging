@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.cadastro
+package com.tecno.aging.ui.screens.cadastro.tecnicoCadastro
 
 import DatePickerInput
 import GenderDropdown

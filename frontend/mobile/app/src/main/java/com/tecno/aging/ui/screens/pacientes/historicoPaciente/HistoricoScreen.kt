@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes.historico
+package com.tecno.aging.ui.screens.pacientes.historicoPaciente
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

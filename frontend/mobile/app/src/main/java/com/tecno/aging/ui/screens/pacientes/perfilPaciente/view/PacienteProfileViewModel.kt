@@ -1,4 +1,4 @@
-package com.tecno.aging.ui.screens.pacientes.perfilPaciente
+package com.tecno.aging.ui.screens.pacientes.perfilPaciente.view
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
