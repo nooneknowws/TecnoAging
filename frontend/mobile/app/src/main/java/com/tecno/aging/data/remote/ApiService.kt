@@ -31,7 +31,7 @@ interface ApiService {
     suspend fun registrarTecnico(@Body request: TecnicoRequest): Response<Unit>
 
     @GET("api/tecnicos/{id}")
-    suspend fun getTecnicoById(@Path("id") tecnicoId: Int): Response<Paciente>
+    suspend fun getTecnicoById(@Path("id") tecnicoId: Int): Response<Tecnico>
 
     // Pacientes
     @GET("api/pacientes")

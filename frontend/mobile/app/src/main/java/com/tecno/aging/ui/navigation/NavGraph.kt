@@ -21,8 +21,8 @@ import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
 import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
 import com.tecno.aging.ui.screens.pacientes.perfilPaciente.view.PacienteProfileScreen
 import com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit.ProfileEditScreen
-import com.tecno.aging.ui.screens.tecnico.perfilTecnico.view.ProfileScreen
 import com.tecno.aging.ui.screens.splash.SplashScreen
+import com.tecno.aging.ui.screens.tecnico.perfilTecnico.view.TecnicoProfileScreen
 
 @Composable
 fun AppNavGraph() {
@@ -44,7 +44,7 @@ fun AppNavGraph() {
         composable("login") {
             LoginScreen(navController)
         }
-        composable("cadastro") {
+        composable("cadastro_tecnico") {
             CadastroScreen(
                 navController = navController,
                 onSuccess = {
@@ -110,11 +110,11 @@ fun AppNavGraph() {
         }
 
         // Perfil e Configurações
-        composable("profile") {
-            ProfileScreen(profileType = "tecnico", navController = navController)
+        composable("tecnico_profile") {
+            TecnicoProfileScreen(navController = navController)
         }
 
-        composable("profile_edit") {
+        composable("tecnico_profile_edit") {
             ProfileEditScreen(
                 onNavigateBack = { navController.popBackStack() }
             )

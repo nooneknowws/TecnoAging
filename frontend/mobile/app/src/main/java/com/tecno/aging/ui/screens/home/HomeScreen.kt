@@ -21,8 +21,11 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Star
@@ -80,17 +83,17 @@ fun HomeScreen(
 
     val drawerItems = if (perfil.equals("PACIENTE", ignoreCase = true)) {
         listOf(
-            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
-            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
-            NavigationItem("Meu Histórico", Icons.Outlined.Face, "history"),
-            NavigationItem("Nov teste", Icons.Outlined.Face, "history"),
+            NavigationItem("Dashboard", Icons.Outlined.Home, "home"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "paciente_profile"),
+            NavigationItem("Meu Histórico", Icons.Outlined.History, "historico_avaliacoes"),
             NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
         )
     } else {
         listOf(
-            NavigationItem("Dashboard", Icons.Outlined.Home, "dashboard"),
-            NavigationItem("Meu Perfil", Icons.Outlined.Person, "profile"),
-            NavigationItem("Lista de Pacientes", Icons.Outlined.Face, "history"),
+            NavigationItem("Dashboard", Icons.Outlined.Home, "home"),
+            NavigationItem("Meu Perfil", Icons.Outlined.Person, "tecnico_profile"),
+            NavigationItem("Lista de Pacientes", Icons.Outlined.Groups, "pacientes_list"),
+            NavigationItem("Formulários", Icons.Outlined.Description, "forms"),
             NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
         )
     }
@@ -101,28 +104,22 @@ fun HomeScreen(
             AppDrawerContent(
                 drawerItems = drawerItems,
                 onItemClick = { item ->
-                    scope.launch {
-                        drawerState.close()
-                    }
+                    scope.launch { drawerState.close() }
+
                     when (item.route) {
+                        "home" -> navController.navigate("home")
                         "logout" -> {
                             scope.launch {
                                 AuthRepository().logout()
                                 SessionManager.clearAuthToken()
-                                navController.navigate("login") {
-                                    popUpTo(0)
-                                }
+                                navController.navigate("login") { popUpTo(0) }
                             }
                         }
-                        "profile" -> navController.navigate("profile")
-                        "dashboard" -> navController.navigate("home")
-                        "history" -> {
-                            if (perfil.equals("PACIENTE", ignoreCase = true)) {
-                                navController.navigate("historico_avaliacoes/$ID")
-                            } else {
-                                navController.navigate("pacientes_list")
-                            }
-                        }
+                        "tecnico_profile" -> navController.navigate("tecnico_profile")
+                        "pacientes_list" -> navController.navigate("pacientes_list")
+                        "forms" -> navController.navigate("forms")
+                        "paciente_profile" -> navController.navigate("patient_profile/$ID")
+                        "historico_avaliacoes" -> navController.navigate("historico_avaliacoes/$ID")
                     }
                 }
             )
@@ -130,21 +127,12 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                CenteredTopAppBar(
-                    name = name,
-                    onMenuClick = {
-                        scope.launch {
-                            drawerState.open()
-                        }
-                    }
-                )
+                CenteredTopAppBar(name = name, onMenuClick = { scope.launch { drawerState.open() } })
             }
         ) { innerPadding ->
             MainContent(
                 perfil = perfil,
-                modifier = modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+                modifier = modifier.padding(innerPadding).fillMaxSize(),
                 navController = navController
             )
         }
@@ -282,7 +270,7 @@ fun MainContent(
                     },
                     title = "Cadastrar Tecnico",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { navController.navigate("cadastro") }
+                    onClick = { navController.navigate("cadastro_tecnico") }
                 )
             }
         }

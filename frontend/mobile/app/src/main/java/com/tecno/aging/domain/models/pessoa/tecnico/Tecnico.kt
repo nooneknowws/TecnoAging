@@ -1,13 +1,16 @@
 package com.tecno.aging.domain.models.pessoa.tecnico
 
+import com.google.gson.annotations.SerializedName
 import com.tecno.aging.domain.models.pessoa.Endereco
 
 data class Tecnico(
-    var matricula: String = "",
-    var nome: String = "",
-    var cpf: String = "",
-    var telefone: String = "",
-    var sexo: String = "",
-    var dataNasc: String = "",
-    var endereco: Endereco = Endereco()
+    val id: Long = 0L,
+    val cpf: String = "",
+    val nome: String = "",
+    val sexo: String = "",
+    val dataNascimento: String = "",
+    val telefone: String = "",
+    val matricula: String = "",
+    val ativo: Boolean = false,
+    val endereco: Endereco = Endereco()
 )
