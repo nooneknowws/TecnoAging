@@ -1,0 +1,116 @@
+{
+    "tipo": "pfs",
+    "titulo": "Formulário PFS",
+    "descricao": "Avaliação do nível de fadiga física e mental após diferentes atividades",
+    "etapas": [
+        {
+            "titulo": "Escala de Fatigabilidade de Pittsburgh",
+            "descricao": "Instruções: Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde '0' é igual a nenhuma fadiga e '5' é igual a fadiga extrema.",
+            "perguntas": []
+        },
+        {
+            "titulo": "Atividade 1",
+            "descricao": "Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.",
+            "perguntas": [
+                {
+                    "texto": "Fadiga Física",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                },
+                {
+                    "texto": "Fadiga Mental",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                }
+            ]
+        },
+        {
+            "titulo": "Atividade 2",
+            "descricao": "Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)",
+            "perguntas": [
+                {
+                    "texto": "Fadiga Física",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                },
+                {
+                    "texto": "Fadiga Mental",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                }
+            ]
+        },
+        {
+            "titulo": "Atividade 3",
+            "descricao": "Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)",
+            "perguntas": [
+                {
+                    "texto": "Fadiga Física",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                },
+                {
+                    "texto": "Fadiga Mental",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                }
+            ]
+        },
+        {
+            "titulo": "Atividade 4",
+            "descricao": "Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)",
+            "perguntas": [
+                {
+                    "texto": "Fadiga Física",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                },
+                {
+                    "texto": "Fadiga Mental",
+                    "tipo": "range",
+                      
+                    "validacao": {
+                        "min": 0,
+                        "max": 5,
+                        "required": true
+                    }
+                }
+            ]
+        }
+    ]
+}

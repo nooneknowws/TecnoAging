@@ -1,0 +1,61 @@
+{
+        "tipo": "sedentarismo",
+        "titulo": "Nível de Atividade Física e Comportamento Sedentário",
+        "descricao": "Nível de Atividade Física e Comportamento Sedentário",
+        "etapas": [
+        {
+            "titulo": "Atividade Moderada",
+            "descricao": "Você consegue realizá-la conversando com dificuldade enquanto se movimenta e não vai conseguir cantar.",
+            "perguntas": [
+                {
+                    "texto": "Quanto tempo por dia você realiza atividades moderadas? (HH:MM)",
+                    "tipo": "tempo",
+                    "opcoes": [],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Quantos dias por semana?",
+                    "tipo": "numero",
+                    "opcoes": [],
+                    "validacao": { "required": true, "min": 0, "max": 7 }
+                }
+            ]
+        },
+        {
+            "titulo": "Atividade Vigorosa",
+            "descricao": "Você não vai conseguir nem conversar. A sua respiração vai ser muito mais rápida que o normal e os batimentos do seu coração vão aumentar muito.",
+            "perguntas": [
+                {
+                    "texto": "Quanto tempo por dia você realiza atividades vigorosas? (HH:MM)",
+                    "tipo": "tempo",
+                    "opcoes": [],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Quantos dias por semana?",
+                    "tipo": "numero",
+                    "opcoes": [],
+                    "validacao": { "required": true, "min": 0, "max": 7 }
+                }
+            ]
+        },
+        {
+            "titulo": "Comportamento Sedentário",
+            "descricao": "Quanto tempo do seu dia, enquanto você está acordado, você gasta sentado, reclinado ou deitado, assistindo televisão, no celular, em frente ao computador, realizando trabalhos manuais, dirigindo ou lendo?",
+            "perguntas": [
+                {
+                    "texto": "Quanto tempo por dia? (HH:MM)",
+                    "tipo": "tempo",
+                    "opcoes": [],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Quantos dias por semana?",
+                    "tipo": "numero",
+                    "opcoes": [],
+                    "validacao": { "required": true, "min": 0, "max": 7 }
+                }
+            ]
+        }
+    ]
+}

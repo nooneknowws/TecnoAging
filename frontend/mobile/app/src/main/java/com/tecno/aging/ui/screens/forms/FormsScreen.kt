@@ -35,8 +35,8 @@ data class FormItem(
 fun FormScreen(navController: NavController) {
     val forms = listOf(
         FormItem("IVCF-20", Icons.Default.Send, "forms/ivcf20"),
-        FormItem("Fatigabilidade de Pittsburgh", Icons.Default.Place, "forms/pittsburgh"),
-        FormItem("Sedentarismo", Icons.Default.AccountBox, "forms/sedentarismo"),
+        FormItem("Fatigabilidade de Pittsburgh", Icons.Default.Place, "forms/pfs.json"),
+        FormItem("Sedentarismo", Icons.Default.AccountBox, "forms/sedentarismo.json"),
         FormItem("Mini-Mental", Icons.Default.Menu, "forms/meem"),
         FormItem("Ver Resultados", Icons.Default.Create, "profile"),
         FormItem("Comparar Resultados", Icons.Default.Info, "profile")

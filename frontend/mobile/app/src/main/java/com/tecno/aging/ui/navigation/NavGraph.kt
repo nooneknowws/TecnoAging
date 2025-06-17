@@ -12,9 +12,7 @@ import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
 import com.tecno.aging.ui.screens.forms.MeemFormScreen
-import com.tecno.aging.ui.screens.forms.SedentarismoFormScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
-import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
@@ -78,23 +76,21 @@ fun AppNavGraph() {
             FormScreen(navController = navController)
         }
 
-        composable("forms/ivcf20") {
-            IVCF20FormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
-        }
-        composable("forms/pittsburgh") {
-            pittsburghFatigabilityScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            })
+        composable(
+            route = "forms/{formFileName}",
+            arguments = listOf(navArgument("formFileName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val formFileName = backStackEntry.arguments?.getString("formFileName")
+            if (formFileName != null) {
+                FormScreen(
+                    formFileName = formFileName,
+                    navController = navController
+                )
+            }
         }
 
-        composable("forms/sedentarismo") {
-            SedentarismoFormScreen(onSubmit = {
+        composable("forms/ivcf20") {
+            IVCF20FormScreen(onSubmit = {
                 navController.navigate("home") {
                     popUpTo("home") { inclusive = true }
                 }

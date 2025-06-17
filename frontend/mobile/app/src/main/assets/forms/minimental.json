@@ -1,0 +1,210 @@
+{
+    "tipo": "minimental",
+    "titulo": "Mini Exame do Estado Mental (MEEM)",
+    "descricao": "Avaliação cognitiva para identificar possíveis déficits cognitivos.",
+    "etapas": [
+      {
+        "titulo": "Orientação Temporal",
+        "descricao": "Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.",
+        "perguntas": [
+          {
+            "texto": "Que dia é hoje?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que mês estamos?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que ano estamos?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que dia da semana estamos?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Qual a hora atual aproximada (considere variação de mais ou menos 1 hora)",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      },
+      {
+        "titulo": "Orientação Espacial",
+        "descricao": "Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.",
+        "perguntas": [
+          {
+            "texto": "Em que local nós estamos? (consultório, sala, dormitório...)",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Que local é este aqui? (apontando ao redor num sentido mais amplo.... hospital, casa de repouso, própria casa...)",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que bairro nós estamos ou qual o nome de uma rua próxima?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que cidade nós estamos?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          },
+          {
+            "texto": "Em que estado nós estamos?",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      },
+      {
+        "titulo": "Memória Imediata",
+        "descricao": "Eu vou dizer 3 palavras e você irá repeti-las a seguir: CARRO – VASO – TIJOLO. Pode repeti-las até três vezes para o aprendizado, se houver erros.",
+        "perguntas": [
+          {
+            "texto": "Marque cada palavra repetida corretamente na 1ª vez.",
+            "tipo": "checkbox",
+            "opcoes": ["CARRO", "VASO", "TIJOLO"],
+             
+            "validacao": { "required": false }
+          }
+        ]
+      },
+      {
+        "titulo": "Cálculo",
+        "descricao": "Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Se houver erro, corrija-o e prossiga. Considere correto se o avaliado espontaneamente se autocorrigir.",
+        "perguntas": [
+          {
+            "texto": "Considere 1 ponto para cada resultado correto.",
+            "tipo": "range",
+             
+            "validacao": { "required": true, "min": 0, "max": 6 }
+          }
+        ]
+      },
+      {
+        "titulo": "Evocação das palavras",
+        "descricao": "Pergunte quais as palavras que o indivíduo acabara de repetir (CARRO-VASO-TIJOLO).",
+        "perguntas": [
+          {
+            "texto": "Marque cada palavra repetida corretamente.",
+            "tipo": "checkbox",
+            "opcoes": ["CARRO", "VASO", "TIJOLO"],
+             
+            "validacao": { "required": false }
+          }
+        ]
+      },
+      {
+        "titulo": "Nomeação",
+        "descricao": "Peça para o indivíduo nomear os objetos mostrados (relógio, caneta).",
+        "perguntas": [
+          {
+            "texto": "Marque cada objeto nomeado corretamente.",
+            "tipo": "checkbox",
+            "opcoes": ["Relógio", "Caneta"],
+             
+            "validacao": { "required": false }
+          }
+        ]
+      },
+      {
+        "titulo": "Repetição",
+        "descricao": "Preste atenção: Vou lhe dizer uma frase e quero que você repita depois de mim: “NEM AQUI, NEM ALI, NEM LÁ”.",
+        "perguntas": [
+          {
+            "texto": "Considere somente se a repetição for perfeita",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      },
+      {
+        "titulo": "Comando",
+        "descricao": "Pegue este papel com a mão direita (1 ponto), dobre-o ao meio (1 ponto) e coloque-o no chão (1 ponto).  Se o indivíduo pedir ajuda no meio da tarefa não dê dicas.",
+        "perguntas": [
+          {
+            "texto": "Avalie cada critério.",
+            "tipo": "checkbox",
+            "opcoes": [
+              "Pegou o papel com a mão direita.",
+              "Dobrou o papel ao meio.",
+              "Colocou o papel no chão."
+            ],
+             
+            "validacao": { "required": false }
+          }
+        ]
+      },
+      {
+        "titulo": "Leitura e Obediência",
+        "descricao": "Mostre a frase escrita: “FECHE OS OLHOS” e peça para o indivíduo fazer o que está sendo mandado. Não auxilie se pedir ajuda ou se só ler a frase sem realizar o comando.",
+        "perguntas": [
+          {
+            "texto": "Avalie o resultado.",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      },
+      {
+        "titulo": "Escrita",
+        "descricao": "Peça ao indivíduo para escrever uma frase. Se não compreender o significado, ajude com: alguma frase que tenha começo, meio e fim, alguma coisa que aconteceu hoje; alguma coisa que queira dizer. Para a correção não são considerados erros gramaticais ou de ortografia. (1 ponto).",
+        "perguntas": [
+          {
+            "texto": "Avalie o resultado.",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      },
+      {
+        "titulo": "Cópia do Desenho",
+        "descricao": "Mostre o modelo e peça para fazer o melhor possível. Considere apenas se houver 2 pentágonos intersecionados (10 ângulos) formando uma figura de quatro lados ou com dois ângulos (1 ponto).",
+        "perguntas": [
+          {
+            "texto": "Avalie o desenho.",
+            "tipo": "radio",
+            "opcoes": ["O paciente respondeu corretamente", "Respondeu incorretamente"],
+             
+            "validacao": { "required": true }
+          }
+        ]
+      }
+    ]
+  }
+  
