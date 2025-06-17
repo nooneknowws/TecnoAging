@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
@@ -86,6 +87,7 @@ fun HomeScreen(
             NavigationItem("Dashboard", Icons.Outlined.Home, "home"),
             NavigationItem("Meu Perfil", Icons.Outlined.Person, "paciente_profile"),
             NavigationItem("Meu Histórico", Icons.Outlined.History, "historico_avaliacoes"),
+            NavigationItem("Iniciar Novo Teste", Icons.Outlined.PlayCircleOutline, "forms"),
             NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
         )
     } else {
@@ -236,8 +238,8 @@ fun MainContent(
                     onClick = { navController.navigate("pacientes_list") }
                 )
                 DashboardCard(
-                    icon = { Icon(Icons.Filled.AccountBox, contentDescription = "Formulários Disponíveis", modifier = Modifier.size(48.dp), tint = AppColors.blueDash) },
-                    title = "Formulários Disponíveis",
+                    icon = { Icon(Icons.Filled.AccountBox, contentDescription = "Formulários", modifier = Modifier.size(48.dp), tint = AppColors.blueDash) },
+                    title = "Formulários",
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("forms") }
                 )
@@ -249,15 +251,15 @@ fun MainContent(
                 DashboardCard(
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.resultados),
-                            contentDescription = "Resultados",
+                            painter = painterResource(id = R.drawable.edit_perfil),
+                            contentDescription = "Atualizar Perfil",
                             modifier = Modifier.size(48.dp),
                             tint = AppColors.blueDash
                         )
                     },
-                    title = "Ver Resultados",
+                    title = "Atualizar Perfil",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { /* TODO */ }
+                    onClick = { navController.navigate("tecnico_profile_edit") }
                 )
                 DashboardCard(
                     icon = {
@@ -273,68 +275,89 @@ fun MainContent(
                     onClick = { navController.navigate("cadastro_tecnico") }
                 )
             }
+        } else if (perfil.equals("PACIENTE", ignoreCase = true)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.play),
+                            contentDescription = "Iniciar Novo Teste",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Iniciar Novo Teste",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { navController.navigate("forms") }
+                )
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.resultados),
+                            contentDescription = "Resultados",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Ver Resultados",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { /* TODO */ }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ult_aval),
+                            contentDescription = "Últimas Avaliações",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Últimas Avaliações",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { }
+                )
+
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.tarefa_concluida),
+                            contentDescription = "Tarefas Concluídas",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Tarefas Concluídas",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.edit_perfil),
+                            contentDescription = "Atualizar Perfil",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
+                    title = "Atualizar Perfil",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { }
+                )
+            }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            DashboardCard(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.tarefa_concluida),
-                        contentDescription = "Tarefas Concluídas",
-                        modifier = Modifier.size(48.dp),
-                        tint = AppColors.blueDash
-                    )
-                },
-                title = "Tarefas Concluídas",
-                modifier = Modifier.weight(0.5f),
-                onClick = { }
-            )
-            DashboardCard(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ult_aval),
-                        contentDescription = "Últimas Avaliações",
-                        modifier = Modifier.size(48.dp),
-                        tint = AppColors.blueDash
-                    )
-                },
-                title = "Últimas Avaliações",
-                modifier = Modifier.weight(0.5f),
-                onClick = { }
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            DashboardCard(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.play),
-                        contentDescription = "Iniciar Novo Teste",
-                        modifier = Modifier.size(48.dp),
-                        tint = AppColors.blueDash
-                    )
-                },
-                title = "Iniciar Novo Teste",
-                modifier = Modifier.weight(0.5f),
-                onClick = { }
-            )
-            DashboardCard(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.edit_perfil),
-                        contentDescription = "Atualizar Perfil",
-                        modifier = Modifier.size(48.dp),
-                        tint = AppColors.blueDash
-                    )
-                },
-                title = "Atualizar Perfil",
-                modifier = Modifier.weight(0.5f),
-                onClick = { }
-            )
-        }
+
     }
 }
