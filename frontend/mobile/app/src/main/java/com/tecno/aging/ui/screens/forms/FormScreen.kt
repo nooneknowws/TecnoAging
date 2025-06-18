@@ -14,6 +14,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -165,6 +166,20 @@ fun EtapaPage(
                         onRespostaChanged(texto, etapaIndex, novaResposta)
                     }
                 )
+                "radio" -> RadioQuestion(
+                    pergunta = pergunta,
+                    respostaAtual = respostaAtual,
+                    onRespostaChanged = { texto, novaResposta ->
+                        onRespostaChanged(texto, etapaIndex, novaResposta)
+                    }
+                )
+                "checkbox" -> CheckboxQuestion(
+                    pergunta = pergunta,
+                    respostaAtual = respostaAtual,
+                    onRespostaChanged = { texto, novaResposta ->
+                        onRespostaChanged(texto, etapaIndex, novaResposta)
+                    }
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -308,6 +323,85 @@ fun BottomNavigationBar(
             if (!isUltimaEtapa) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Próxima Etapa")
+            }
+        }
+    }
+}
+
+@Composable
+fun RadioQuestion(
+    pergunta: FormQuestion,
+    respostaAtual: String,
+    onRespostaChanged: (String, String) -> Unit
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = pergunta.texto, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            pergunta.opcoes?.forEach { opcao ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (respostaAtual == opcao),
+                            onClick = { onRespostaChanged(pergunta.texto, opcao) }
+                        )
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (respostaAtual == opcao),
+                        onClick = null
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = opcao)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CheckboxQuestion(
+    pergunta: FormQuestion,
+    respostaAtual: String,
+    onRespostaChanged: (String, String) -> Unit
+) {
+    val respostasSelecionadas = remember(respostaAtual) {
+        if (respostaAtual.isBlank()) emptySet() else respostaAtual.split(',').toSet()
+    }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = pergunta.texto, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            pergunta.opcoes?.forEach { opcao ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (opcao in respostasSelecionadas),
+                            onClick = {
+                                val novasRespostas = respostasSelecionadas.toMutableSet()
+                                if (opcao in novasRespostas) {
+                                    novasRespostas.remove(opcao)
+                                } else {
+                                    novasRespostas.add(opcao)
+                                }
+                                onRespostaChanged(pergunta.texto, novasRespostas.joinToString(","))
+                            }
+                        )
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = (opcao in respostasSelecionadas),
+                        onCheckedChange = null
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = opcao)
+                }
             }
         }
     }

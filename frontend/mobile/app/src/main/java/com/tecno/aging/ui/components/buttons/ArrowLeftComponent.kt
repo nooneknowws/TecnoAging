@@ -22,7 +22,7 @@ fun ArrowLeftComponent(
         contentDescription = "Voltar",
         tint = Black,
         modifier = modifier
-            .padding(start = 12.dp)
+            .padding(start = 0.dp)
             .size(28.dp)
             .clickable { navController.popBackStack() }
     )

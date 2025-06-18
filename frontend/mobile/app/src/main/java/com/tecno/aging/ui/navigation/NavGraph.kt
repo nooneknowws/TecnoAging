@@ -10,8 +10,7 @@ import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
-import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
-import com.tecno.aging.ui.screens.forms.MeemFormScreen
+import com.tecno.aging.ui.screens.forms.FormsScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
@@ -73,7 +72,7 @@ fun AppNavGraph() {
 
         // Formulários
         composable("forms") {
-            FormScreen(navController = navController)
+            FormsScreen(navController = navController)
         }
 
         composable(
@@ -87,22 +86,6 @@ fun AppNavGraph() {
                     navController = navController
                 )
             }
-        }
-
-        composable("forms/ivcf20") {
-            IVCF20FormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
-        }
-
-        composable("forms/meem") {
-            MeemFormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
         }
 
         // Perfil e Configurações
