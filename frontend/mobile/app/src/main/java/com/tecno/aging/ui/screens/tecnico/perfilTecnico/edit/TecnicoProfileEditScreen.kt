@@ -1,5 +1,7 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
+import android.content.Context
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +20,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,12 +57,26 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SelectableDates
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import java.io.File
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
+fun createImageFile(context: Context): File {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val imageDir = File(context.cacheDir, "images")
+    if (!imageDir.exists()) imageDir.mkdirs()
+    return File.createTempFile("JPEG_${timeStamp}_", ".jpg", imageDir)
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileEditScreen(
     viewModel: ProfileEditViewModel = viewModel(),
@@ -66,13 +84,35 @@ fun ProfileEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    var showDatePicker by remember { mutableStateOf(false) }
+    var showImageSourceSheet by remember { mutableStateOf(false) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+
+
+    // 3. --- LAUNCHER PARA A GALERIA (EXISTENTE) ---
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> viewModel.onFotoChange(uri) }
+        onResult = { uri ->
+            if (uri != null) {
+                viewModel.onFotoChange(uri)
+            }
+        }
     )
+
+    // 4. --- LAUNCHER PARA A CÂMERA (NOVO) ---
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                imageUri?.let { viewModel.onFotoChange(it) }
+            }
+        }
+    )
+
+    var showDatePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.cepErrorMessage) {
         uiState.cepErrorMessage?.let { message ->
@@ -124,12 +164,8 @@ fun ProfileEditScreen(
                         .clip(CircleShape)
                 )
 
-                TextButton(onClick = {
-                    singlePhotoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }) {
-                    Text("Escolher arquivo")
+                TextButton(onClick = { showImageSourceSheet = true }) {
+                    Text("Alterar foto")
                 }
                 Spacer(Modifier.height(16.dp))
 
@@ -247,6 +283,42 @@ fun ProfileEditScreen(
                     Spacer(Modifier.height(16.dp))
                 }
                 Spacer(Modifier.height(24.dp))
+            }
+        }
+    }
+
+    if (showImageSourceSheet) {
+        ModalBottomSheet(onDismissRequest = { showImageSourceSheet = false }) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Escolher fonte da imagem", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(16.dp))
+
+                ListItem(
+                    headlineContent = { Text("Tirar foto") },
+                    leadingContent = { Icon(Icons.Default.CameraAlt, null) },
+                    modifier = Modifier.clickable {
+                        showImageSourceSheet = false
+                        if (cameraPermissionState.status.isGranted) {
+                            val file = createImageFile(context)
+                            imageUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+                            takePictureLauncher.launch(imageUri!!)
+                        } else {
+                            cameraPermissionState.launchPermissionRequest()
+                        }
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { Text("Escolher uma da Galeria") },
+                    leadingContent = { Icon(Icons.Default.PhotoLibrary, null) },
+                    modifier = Modifier.clickable {
+                        showImageSourceSheet = false
+                        singlePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
