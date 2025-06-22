@@ -1,5 +1,7 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
+import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecno.aging.data.remote.RetrofitInstance
@@ -8,8 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.tecno.aging.data.repository.TecnicoRepository
 
 data class ProfileEditUiState(
+    val fotoUri: Uri? = null,
     val matricula: String = "",
     val nome: String = "",
     val cpf: String = "",
@@ -29,45 +33,82 @@ data class ProfileEditUiState(
     val cepErrorMessage: String? = null
 )
 
-class ProfileEditViewModel : ViewModel() {
+class ProfileEditViewModel(
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
+    private val repository: TecnicoRepository = TecnicoRepository()
     private val _uiState = MutableStateFlow(ProfileEditUiState())
     val uiState: StateFlow<ProfileEditUiState> = _uiState.asStateFlow()
 
+    private val tecnicoId: Int = checkNotNull(savedStateHandle["tecnicoId"])
+
     init {
-        loadInitialProfile()
+        loadProfile()
     }
 
-    private fun loadInitialProfile() {
+    private fun loadProfile() {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    matricula = "12345",
-                    nome = "aaaaaaaaa",
-                    cpf = "111.222.333-42",
-                    telefone = "(41) 98888-8888",
-                    sexo = "Masculino",
-                    dataNasc = "10/01/1995",
-                    cep = "83408-280",
-                    logradouro = "Rua das Palmeiras",
-                    numero = "0",
-                    complemento = "Casa",
-                    bairro = "Centro",
-                    municipio = "Curitiba",
-                    uf = "PR"
-                )
-            }
+            _uiState.update { it.copy(isLoading = true) }
+            repository.getTecnicoById(tecnicoId)
+                .onSuccess { tecnico ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            matricula = tecnico.matricula,
+                            nome = tecnico.nome,
+                            cpf = tecnico.cpf,
+                            telefone = tecnico.telefone,
+                            sexo = tecnico.sexo,
+                            dataNasc = tecnico.dataNascimento,
+                            cep = tecnico.endereco?.cep ?: "",
+                            logradouro = tecnico.endereco?.logradouro ?: "",
+                            numero = tecnico.endereco?.numero?.toString() ?: "",
+                            complemento = tecnico.endereco?.complemento ?: "",
+                            bairro = tecnico.endereco?.bairro ?: "",
+                            municipio = tecnico.endereco?.municipio ?: "",
+                            uf = tecnico.endereco?.uf ?: ""
+                            // fotoUri precisaria ser carregado separadamente se vier de uma URL
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, cepErrorMessage = error.message) }
+                }
         }
     }
 
-    fun onNomeChange(newValue: String) { _uiState.update { it.copy(nome = newValue) } }
-    fun onTelefoneChange(newValue: String) { _uiState.update { it.copy(telefone = newValue) } }
-    fun onSexoChange(newValue: String) { _uiState.update { it.copy(sexo = newValue) } }
-    fun onDataNascChange(newValue: String) { _uiState.update { it.copy(dataNasc = newValue) } }
-    fun onNumeroChange(newValue: String) { _uiState.update { it.copy(numero = newValue) } }
-    fun onComplementoChange(newValue: String) { _uiState.update { it.copy(complemento = newValue) } }
-    fun onUfChange(newValue: String) { _uiState.update { it.copy(uf = newValue) } }
+    fun onFotoChange(newUri: Uri?) {
+        _uiState.update { it.copy(fotoUri = newUri) }
+    }
+
+    fun onNomeChange(newValue: String) {
+        _uiState.update { it.copy(nome = newValue) }
+    }
+
+    fun onTelefoneChange(newValue: String) {
+        _uiState.update { it.copy(telefone = newValue) }
+    }
+
+    fun onSexoChange(newValue: String) {
+        _uiState.update { it.copy(sexo = newValue) }
+    }
+
+    fun onDataNascChange(newValue: String) {
+        _uiState.update { it.copy(dataNasc = newValue) }
+    }
+
+    fun onNumeroChange(newValue: String) {
+        _uiState.update { it.copy(numero = newValue) }
+    }
+
+    fun onComplementoChange(newValue: String) {
+        _uiState.update { it.copy(complemento = newValue) }
+    }
+
+    fun onUfChange(newValue: String) {
+        _uiState.update { it.copy(uf = newValue) }
+    }
 
     fun onCepChanged(newCep: String) {
         val rawCep = newCep.filter { it.isDigit() }

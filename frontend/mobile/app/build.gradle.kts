@@ -77,4 +77,5 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

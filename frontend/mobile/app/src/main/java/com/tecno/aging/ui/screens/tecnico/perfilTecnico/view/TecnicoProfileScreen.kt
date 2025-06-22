@@ -49,11 +49,14 @@ fun TecnicoProfileScreen(
             CenterAlignedTopAppBar(title = { Text("Meu Perfil") })
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
+        Box(modifier = Modifier
+            .padding(padding)
+            .fillMaxSize()) {
             when {
                 uiState.isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
+
                 uiState.error != null -> {
                     Text(
                         text = "Erro: ${uiState.error}",
@@ -61,6 +64,7 @@ fun TecnicoProfileScreen(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
+
                 uiState.tecnico != null -> {
                     val profile = uiState.tecnico!!
                     Column(
@@ -84,7 +88,10 @@ fun TecnicoProfileScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
-                            onClick = { navController.navigate("tecnico_profile_edit") },
+                            onClick = {
+                                val tecnicoId = profile.id
+                                navController.navigate("tecnico_profile_edit/$tecnicoId")
+                            },
                             modifier = Modifier.align(Alignment.End)
                         ) {
                             Text("Editar Perfil")
@@ -93,14 +100,21 @@ fun TecnicoProfileScreen(
 
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Dados Pessoais", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "Dados Pessoais",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DataRow(label = "Matrícula", value = profile.matricula)
                                 DataRow(label = "Nome", value = profile.nome)
                                 DataRow(label = "CPF", value = profile.cpf)
                                 DataRow(label = "Telefone", value = profile.telefone)
                                 DataRow(label = "Sexo", value = profile.sexo)
-                                DataRow(label = "Data de Nascimento", value = profile.dataNascimento)
+                                DataRow(
+                                    label = "Data de Nascimento",
+                                    value = profile.dataNascimento
+                                )
                             }
                         }
 
@@ -108,12 +122,22 @@ fun TecnicoProfileScreen(
 
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Endereço", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "Endereço",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 DataRow(label = "CEP", value = profile.endereco?.cep)
                                 DataRow(label = "Logradouro", value = profile.endereco?.logradouro)
-                                DataRow(label = "Número", value = profile.endereco?.numero?.toString())
-                                DataRow(label = "Complemento", value = profile.endereco?.complemento)
+                                DataRow(
+                                    label = "Número",
+                                    value = profile.endereco?.numero?.toString()
+                                )
+                                DataRow(
+                                    label = "Complemento",
+                                    value = profile.endereco?.complemento
+                                )
                                 DataRow(label = "Bairro", value = profile.endereco?.bairro)
                                 DataRow(label = "Município", value = profile.endereco?.municipio)
                                 DataRow(label = "UF", value = profile.endereco?.uf)

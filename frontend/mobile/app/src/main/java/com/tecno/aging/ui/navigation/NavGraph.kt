@@ -93,7 +93,10 @@ fun AppNavGraph() {
             TecnicoProfileScreen(navController = navController)
         }
 
-        composable("tecnico_profile_edit") {
+        composable(
+            route = "tecnico_profile_edit/{tecnicoId}",
+            arguments = listOf(navArgument("tecnicoId") { type = NavType.IntType })
+        ) {
             ProfileEditScreen(
                 onNavigateBack = { navController.popBackStack() }
             )

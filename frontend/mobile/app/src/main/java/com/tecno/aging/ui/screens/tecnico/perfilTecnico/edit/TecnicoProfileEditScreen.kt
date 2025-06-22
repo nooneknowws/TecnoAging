@@ -1,22 +1,62 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.tecno.aging.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.SelectableDates
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +66,13 @@ fun ProfileEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> viewModel.onFotoChange(uri) }
+    )
 
     LaunchedEffect(uiState.cepErrorMessage) {
         uiState.cepErrorMessage?.let { message ->
@@ -66,16 +113,22 @@ fun ProfileEditScreen(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // --- SEÇÃO FOTO DE PERFIL ---
+
                 Spacer(Modifier.height(24.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.ic_person), // Placeholder
+
+                AsyncImage(
+                    model = uiState.fotoUri ?: R.drawable.ic_person,
                     contentDescription = "Foto de perfil",
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape)
                 )
-                TextButton(onClick = { /* TODO: Lógica para abrir galeria */ }) {
+
+                TextButton(onClick = {
+                    singlePhotoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }) {
                     Text("Escolher arquivo")
                 }
                 Spacer(Modifier.height(16.dp))
@@ -106,18 +159,27 @@ fun ProfileEditScreen(
                 }
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth()) {
-                    // TODO: Substituir por um DropdownMenu real se necessário
                     OutlinedTextField(
                         value = uiState.sexo, onValueChange = viewModel::onSexoChange,
-                        label = { Text("Sexo") }, modifier = Modifier.weight(1f)
+                        label = { Text("Sexo") }, modifier = Modifier.weight(0.5f)
                     )
                     Spacer(Modifier.width(8.dp))
-                    // TODO: Substituir por um DatePickerDialog real se necessário
-                    OutlinedTextField(
-                        value = uiState.dataNasc, onValueChange = viewModel::onDataNascChange,
-                        label = { Text("Data de Nascimento") }, modifier = Modifier.weight(1f),
-                        trailingIcon = { Icon(Icons.Default.DateRange, null) }
-                    )
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        OutlinedTextField(
+                            value = uiState.dataNasc,
+                            onValueChange = {},
+                            label = { Text("Data de Nascimento") },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            trailingIcon = { Icon(Icons.Default.DateRange, "Calendário") }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable(onClick = { showDatePicker = true })
+                        )
+                    }
                 }
                 Spacer(Modifier.height(16.dp))
                 Divider()
@@ -136,8 +198,14 @@ fun ProfileEditScreen(
                         enabled = !uiState.isSearchingCep
                     ) {
                         if (uiState.isSearchingCep) {
-                            CircularProgressIndicator(Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
-                        } else { Text("Buscar") }
+                            CircularProgressIndicator(
+                                Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text("Buscar")
+                        }
                     }
                 }
                 Spacer(Modifier.height(8.dp))
@@ -172,15 +240,82 @@ fun ProfileEditScreen(
                         readOnly = true
                     )
                     Spacer(Modifier.width(8.dp))
-                    // TODO: Substituir por um DropdownMenu real
                     OutlinedTextField(
                         value = uiState.uf, onValueChange = viewModel::onUfChange,
-                        label = { Text("UF") }, modifier = Modifier.weight(1f)
+                        label = { Text("UF") }, modifier = Modifier.weight(1f), readOnly = true,
                     )
                     Spacer(Modifier.height(16.dp))
                 }
                 Spacer(Modifier.height(24.dp))
             }
+        }
+    }
+
+    if (showDatePicker) {
+        val calendar = Calendar.getInstance()
+
+        calendar.set(1900, 0, 1)
+        val minDateMillis = calendar.timeInMillis
+
+        val maxDateMillis = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+        }.timeInMillis
+
+        val datePickerState = rememberDatePickerState(
+            yearRange = 1900..Calendar.getInstance().get(Calendar.YEAR),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    return utcTimeMillis >= minDateMillis && utcTimeMillis <= maxDateMillis
+                }
+            }
+        )
+
+        DatePickerDialog(
+            onDismissRequest = {
+                showDatePicker = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDatePicker = false
+
+                        val selectedDateMillis = datePickerState.selectedDateMillis
+                        if (selectedDateMillis != null) {
+                            val brasilTimeZone = TimeZone.getTimeZone("America/Sao_Paulo")
+
+                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).apply {
+                                timeZone = brasilTimeZone
+                            }
+                            val formattedDate = sdf.format(Date(selectedDateMillis))
+                            viewModel.onDataNascChange(formattedDate)
+                        }
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = null,
+                headline = {
+                    Text(
+                        text = "Selecione uma data",
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 12.dp)
+                    )
+                }
+            )
         }
     }
 }
