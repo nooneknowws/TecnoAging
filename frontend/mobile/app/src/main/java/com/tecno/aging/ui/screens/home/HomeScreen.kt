@@ -1,7 +1,5 @@
 package com.tecno.aging.ui.screens.home
 
-import android.R.attr.name
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,21 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlayCircleOutline
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,12 +50,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.tecno.aging.R
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.repository.AuthRepository
 import com.tecno.aging.ui.components.cards.DashboardCard
-import kotlinx.coroutines.launch
-import com.tecno.aging.R
 import com.tecno.aging.ui.theme.AppColors
+import kotlinx.coroutines.launch
 
 data class NavigationItem(
     val title: String,
@@ -74,7 +66,7 @@ data class NavigationItem(
 @Composable
 fun HomeScreen(
     name: String,
-    ID: String,
+    id: String,
     perfil: String,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -88,7 +80,7 @@ fun HomeScreen(
             NavigationItem("Meu Perfil", Icons.Outlined.Person, "paciente_profile"),
             NavigationItem("Meu Histórico", Icons.Outlined.History, "historico_avaliacoes"),
             NavigationItem("Iniciar Novo Teste", Icons.Outlined.PlayCircleOutline, "forms"),
-            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+            NavigationItem("Sair", Icons.AutoMirrored.Outlined.ExitToApp, "logout")
         )
     } else {
         listOf(
@@ -96,7 +88,7 @@ fun HomeScreen(
             NavigationItem("Meu Perfil", Icons.Outlined.Person, "tecnico_profile"),
             NavigationItem("Lista de Pacientes", Icons.Outlined.Groups, "pacientes_list"),
             NavigationItem("Formulários", Icons.Outlined.Description, "forms"),
-            NavigationItem("Sair", Icons.Outlined.ExitToApp, "logout")
+            NavigationItem("Sair", Icons.AutoMirrored.Outlined.ExitToApp, "logout")
         )
     }
 
@@ -117,11 +109,12 @@ fun HomeScreen(
                                 navController.navigate("login") { popUpTo(0) }
                             }
                         }
+
                         "tecnico_profile" -> navController.navigate("tecnico_profile")
                         "pacientes_list" -> navController.navigate("pacientes_list")
                         "forms" -> navController.navigate("forms")
-                        "paciente_profile" -> navController.navigate("patient_profile/$ID")
-                        "historico_avaliacoes" -> navController.navigate("historico_avaliacoes/$ID")
+                        "paciente_profile" -> navController.navigate("patient_profile/$id")
+                        "historico_avaliacoes" -> navController.navigate("historico_avaliacoes/$id")
                     }
                 }
             )
@@ -129,13 +122,18 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                CenteredTopAppBar(name = name, onMenuClick = { scope.launch { drawerState.open() } })
+                CenteredTopAppBar(
+                    name = name,
+                    onMenuClick = { scope.launch { drawerState.open() } })
             }
         ) { innerPadding ->
             MainContent(
                 perfil = perfil,
-                modifier = modifier.padding(innerPadding).fillMaxSize(),
-                navController = navController
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                navController = navController,
+                id = id
             )
         }
     }
@@ -209,7 +207,8 @@ fun CenteredTopAppBar(
 fun MainContent(
     modifier: Modifier = Modifier,
     perfil: String,
-    navController: NavController
+    navController: NavController,
+    id: String
 ) {
     Column(
         modifier = modifier
@@ -238,7 +237,14 @@ fun MainContent(
                     onClick = { navController.navigate("pacientes_list") }
                 )
                 DashboardCard(
-                    icon = { Icon(Icons.Filled.AccountBox, contentDescription = "Formulários", modifier = Modifier.size(48.dp), tint = AppColors.blueDash) },
+                    icon = {
+                        Icon(
+                            Icons.Filled.AccountBox,
+                            contentDescription = "Formulários",
+                            modifier = Modifier.size(48.dp),
+                            tint = AppColors.blueDash
+                        )
+                    },
                     title = "Formulários",
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("forms") }
@@ -259,7 +265,9 @@ fun MainContent(
                     },
                     title = "Atualizar Perfil",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { navController.navigate("tecnico_profile_edit") }
+                    onClick = {
+                        navController.navigate("tecnico_profile_edit/$id")
+                    }
                 )
                 DashboardCard(
                     icon = {
@@ -354,7 +362,7 @@ fun MainContent(
                     },
                     title = "Atualizar Perfil",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { }
+                    onClick = { navController.navigate("patient_profile_edit/$id") }
                 )
             }
         }

@@ -2,6 +2,7 @@ package com.tecno.aging.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
+import com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit.PacienteEditScreen
 import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
 import com.tecno.aging.ui.screens.pacientes.perfilPaciente.view.PacienteProfileScreen
 import com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit.ProfileEditScreen
@@ -60,7 +62,7 @@ fun AppNavGraph() {
 
             HomeScreen(
                 name = name,
-                ID = id,
+                id = id,
                 perfil = perfil,
                 navController = navController,
             )
@@ -98,16 +100,19 @@ fun AppNavGraph() {
             arguments = listOf(navArgument("tecnicoId") { type = NavType.IntType })
         ) {
             ProfileEditScreen(
-                onNavigateBack = { navController.popBackStack() }
+                navController = navController
             )
         }
 
         composable("pacientes_list") {
             PacienteListScreen(
+                navController = navController,
                 onNavigateToProfile = { pacienteId ->
                     navController.navigate("patient_profile/$pacienteId")
                 },
-                onNavigateToEditProfile = { /* ... */ }
+                onNavigateToEditProfile = { pacienteId ->
+                    navController.navigate("patient_profile_edit/$pacienteId")
+                }
             )
         }
 
@@ -116,6 +121,13 @@ fun AppNavGraph() {
             arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
         ) {
             PacienteProfileScreen(navController = navController)
+        }
+
+        composable(
+            route = "patient_profile_edit/{pacienteId}",
+            arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
+        ) {
+            PacienteEditScreen(navController = navController)
         }
 
         composable(

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,8 +31,28 @@ fun PacienteProfileScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(title = { Text("Perfil do Paciente") })
-        }
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Meu Perfil",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
+        },
     ) { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
             when {
@@ -64,7 +86,7 @@ fun PacienteProfileScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
-                            onClick = { navController.navigate("patient_edit/${paciente.id}") },
+                            onClick = { navController.navigate("patient_profile_edit/${paciente.id}") },
                             modifier = Modifier.align(Alignment.End)
                         ) {
                             Text("Editar Perfil")
