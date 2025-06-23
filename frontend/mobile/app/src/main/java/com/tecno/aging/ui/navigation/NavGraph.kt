@@ -78,16 +78,13 @@ fun AppNavGraph() {
         }
 
         composable(
-            route = "forms/{formFileName}",
-            arguments = listOf(navArgument("formFileName") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val formFileName = backStackEntry.arguments?.getString("formFileName")
-            if (formFileName != null) {
-                FormScreen(
-                    formFileName = formFileName,
-                    navController = navController
-                )
-            }
+            route = "form/{formId}/{pacienteId}",
+            arguments = listOf(
+                navArgument("formId") { type = NavType.LongType },
+                navArgument("pacienteId") { type = NavType.LongType }
+            )
+        ) {
+            FormScreen(navController = navController)
         }
 
         // Perfil e Configurações

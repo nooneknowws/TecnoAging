@@ -3,9 +3,10 @@ package com.tecno.aging.domain.models.forms
 import com.google.gson.annotations.SerializedName
 
 data class GenericForm(
-    val tipo: String,
+    val id: Long,
     val titulo: String,
     val descricao: String,
+    val tipo: String,
     val etapas: List<FormStep>
 )
 
@@ -16,14 +17,19 @@ data class FormStep(
 )
 
 data class FormQuestion(
+    val id: Long,
     val texto: String,
     val tipo: String,
-    val opcoes: List<String>?,
-    val validacao: Validation
+    val validacao: FormValidation,
+    val opcoes: List<FormOption>?
 )
 
-data class Validation(
+data class FormOption(
+    val texto: String,
+    val valor: Int
+)
+
+data class FormValidation(
     val min: Int?,
-    val max: Int?,
-    val required: Boolean
+    val max: Int?
 )
