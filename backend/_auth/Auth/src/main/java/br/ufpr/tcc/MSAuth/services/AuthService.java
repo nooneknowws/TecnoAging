@@ -21,6 +21,8 @@ import br.ufpr.tcc.MSAuth.models.AuthenticatedUser;
 import br.ufpr.tcc.MSAuth.repositories.AuthenticatedUserRepository;
 import br.ufpr.tcc.MSAuth.security.JwtTokenProvider;
 
+import br.ufpr.tcc.MSAuth.exceptions.InvalidCredentialsException;
+
 @Service
 public class AuthService {
 
@@ -100,7 +102,7 @@ public class AuthService {
 
                 return authUser;
             } else {
-                throw new RuntimeException(response.getErrorMessage());
+                throw new InvalidCredentialsException("CPF ou senha estão incorretos");
             }
 
         } catch (TimeoutException e) {
