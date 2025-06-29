@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.tecno.aging.R
+import com.tecno.aging.ui.theme.AppColors
 
 @Composable
 fun PasswordTextField(
@@ -62,8 +63,8 @@ fun PasswordTextField(
             focusedIndicatorColor = Transparent,
             unfocusedIndicatorColor = Transparent,
             disabledIndicatorColor = Transparent,
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = AppColors.Gray200,
+            unfocusedContainerColor = AppColors.Gray200
         )
     )
 }

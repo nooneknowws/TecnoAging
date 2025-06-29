@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.unit.dp
+import com.tecno.aging.ui.theme.AppColors
 
 @Composable
 fun CpfTextField(
@@ -38,8 +39,8 @@ fun CpfTextField(
             focusedIndicatorColor = Transparent,
             unfocusedIndicatorColor = Transparent,
             disabledIndicatorColor = Transparent,
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedContainerColor = AppColors.Gray200,
+            unfocusedContainerColor = AppColors.Gray200
         )
     )
 }

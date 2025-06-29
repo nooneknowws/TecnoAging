@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecno.aging.ui.theme.AppColors
 
 enum class ButtonVariant { Primary, Secondary, Danger }
 
@@ -25,8 +26,8 @@ fun ButtonComponent(
     onClick: () -> Unit,
 ) {
     val (bg, content) = when (variant) {
-        ButtonVariant.Primary   -> ColorPair(Color(0xFF594FBF), Color.White)
-        ButtonVariant.Secondary -> ColorPair(Color(0xFF484374), Color.White)
+        ButtonVariant.Primary   -> ColorPair(AppColors.Primary, Color.White)
+        ButtonVariant.Secondary -> ColorPair(AppColors.Blue100, AppColors.Primary)
         ButtonVariant.Danger    -> ColorPair(Color(0xFFDC3545), Color.White)
     }
 

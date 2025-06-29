@@ -1,7 +1,7 @@
-// LoginScreen.kt
 package com.tecno.aging.ui.screens.login
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,16 +21,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.tecno.aging.R
 import com.tecno.aging.ui.components.buttons.ButtonComponent
 import com.tecno.aging.ui.components.buttons.ButtonVariant
 import com.tecno.aging.ui.components.fields.CpfTextField
 import com.tecno.aging.ui.components.fields.PasswordTextField
+import com.tecno.aging.ui.theme.AppColors
 
 @Composable
 fun LoginScreen(
@@ -48,7 +55,7 @@ fun LoginScreen(
     LoginContent(
         state = state,
         onEvent = viewModel::handleEvent,
-        onSignUpClick = { navController.navigate("cadastro") },
+        onSignUpClick = { navController.navigate("cadastro_tecnico") },
         onForgotPasswordClick = { /* Handle forgot password */ }
     )
 }
@@ -68,108 +75,78 @@ private fun LoginContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFE4E9FC)),
+            .background(Color.White)
+            .padding(horizontal = 6.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.icntecno),
+            contentDescription = "Logo TecnoAging",
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+                .fillMaxWidth(0.6f)
+                .height(150.dp)
+        )
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        CpfTextField(
+            value = state.cpf,
+            error = state.cpfError,
+            onValueChange = { onEvent(LoginViewModel.LoginEvent.CpfChanged(it)) },
+            modifier = componentWidthModifier
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PasswordTextField(
+            value = state.password,
+            error = state.passwordError,
+            passwordVisible = state.passwordVisible,
+            onValueChange = { onEvent(LoginViewModel.LoginEvent.PasswordChanged(it)) },
+            onToggleVisibility = { onEvent(LoginViewModel.LoginEvent.ToggleVisibility) },
+            modifier = componentWidthModifier
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        ButtonComponent(
+            title = "Entrar",
+            loading = state.isLoading,
+            modifier = componentWidthModifier,
+            onClick = { onEvent(LoginViewModel.LoginEvent.Submit) },
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Recuperar senha",
+            color = AppColors.Blue700,
+            fontSize = 16.sp,
+            modifier = Modifier.clickable { onForgotPasswordClick() }
+        )
+
+        if (state.loginError.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "TecnoAging",
-                fontSize = 32.sp,
-                color = Color(0xFF3C3C3C),
-                fontWeight = FontWeight.Bold
+                text = state.loginError,
+                color = Color.Red,
+                fontSize = 14.sp
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            CpfTextField(
-                value = state.cpf,
-                error = state.cpfError,
-                onValueChange = { onEvent(LoginViewModel.LoginEvent.CpfChanged(it)) },
-                modifier = componentWidthModifier
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            PasswordTextField(
-                value = state.password,
-                error = state.passwordError,
-                passwordVisible = state.passwordVisible,
-                onValueChange = { onEvent(LoginViewModel.LoginEvent.PasswordChanged(it)) },
-                onToggleVisibility = { onEvent(LoginViewModel.LoginEvent.ToggleVisibility) },
-                modifier = componentWidthModifier
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Recuperar senha",
-                color = Color(0xFF5F6DF5),
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .clickable { onForgotPasswordClick() }
-                    .align(Alignment.End)
-            )
-
-            if (state.loginError.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = state.loginError,
-                    color = Color.Red,
-                    fontSize = 14.sp
-                )
-            }
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp)
-        ) {
-            ButtonComponent(
-                title = "Login",
-                loading = state.isLoading,
-                modifier = componentWidthModifier,
-                onClick = { onEvent(LoginViewModel.LoginEvent.Submit) },
+        Spacer(modifier = Modifier.weight(1f))
 
-            )
+        ButtonComponent(
+            title = "Criar conta",
+            variant = ButtonVariant.Secondary,
+            modifier = componentWidthModifier,
+            onClick = onSignUpClick,
+        )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            ButtonComponent(
-                title = "Cadastro",
-                variant = ButtonVariant.Secondary,
-                modifier = componentWidthModifier,
-                onClick = onSignUpClick,
-
-            )
-        }
+        Spacer(modifier = Modifier.height(32.dp))
     }
-}
-
-@Preview(showBackground = true, name = "Login Screen Preview")
-@Composable
-fun LoginScreenPreview() {
-    LoginContent(
-        state = LoginViewModel.LoginUiState(
-            cpf = "123.456.789-00",
-            password = "senha123",
-            passwordVisible = true,
-            cpfError = "",
-            passwordError = "",
-            loginError = "",
-            isLoading = false,
-            loginSuccess = false
-        ),
-        onEvent = {},
-        onSignUpClick = {},
-        onForgotPasswordClick = {}
-    )
 }
