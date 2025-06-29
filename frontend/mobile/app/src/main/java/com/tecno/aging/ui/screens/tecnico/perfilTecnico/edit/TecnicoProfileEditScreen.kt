@@ -6,16 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -24,55 +15,27 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.PhotoLibrary
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.tecno.aging.R
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.tecno.aging.R
+import com.tecno.aging.ui.components.buttons.ButtonComponent
 import java.io.File
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun createImageFile(context: Context): File {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -84,230 +47,99 @@ fun createImageFile(context: Context): File {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileEditScreen(
-    viewModel: ProfileEditViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    viewModel: ProfileEditViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
+    var currentStep by remember { mutableIntStateOf(0) }
     var showImageSourceSheet by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-
-
-    // 3. --- LAUNCHER PARA A GALERIA (EXISTENTE) ---
-    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                viewModel.onFotoChange(uri)
-            }
-        }
-    )
-
-    // 4. --- LAUNCHER PARA A CÂMERA (NOVO) ---
-    val takePictureLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { success ->
-            if (success) {
-                imageUri?.let { viewModel.onFotoChange(it) }
-            }
-        }
-    )
-
     var showDatePicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.cepErrorMessage) {
-        uiState.cepErrorMessage?.let { message ->
+    val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> if (uri != null) viewModel.onFotoChange(uri) }
+    )
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success -> if (success) imageUri?.let { viewModel.onFotoChange(it) } }
+    )
+
+    LaunchedEffect(uiState.saveSuccess) {
+        if (uiState.saveSuccess) {
+            navController.popBackStack()
+        }
+    }
+    LaunchedEffect(uiState.userMessage) {
+        uiState.userMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
+            viewModel.userMessageShown()
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "Editar Perfil",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
+                title = { Text("Editar Perfil") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
+                    IconButton(onClick = {
+                        if (currentStep == 0) {
+                            navController.popBackStack()
+                        } else {
+                            currentStep--
+                        }
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                }
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = {
-            Surface(shadowElevation = 8.dp) {
-                Button(
-                    onClick = viewModel::onSaveProfile,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .height(50.dp),
-                    enabled = !uiState.isSaving
-                ) {
-                    Text("SALVAR ALTERAÇÕES")
-                }
-            }
-        }
-    ) { padding ->
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Spacer(Modifier.height(24.dp))
-
-                AsyncImage(
-                    model = uiState.fotoUri ?: R.drawable.ic_person,
-                    contentDescription = "Foto de perfil",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                )
-
-                TextButton(onClick = { showImageSourceSheet = true }) {
-                    Text("Alterar foto")
-                }
-                Spacer(Modifier.height(16.dp))
-
-                // --- DADOS PESSOAIS ---
-                OutlinedTextField(
-                    value = uiState.matricula, onValueChange = {},
-                    label = { Text("Matrícula") },
-                    modifier = Modifier.fillMaxWidth(), readOnly = true
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = uiState.nome, onValueChange = viewModel::onNomeChange,
-                    label = { Text("Nome") }, modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(8.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = uiState.cpf, onValueChange = {},
-                        label = { Text("CPF") },
-                        modifier = Modifier.weight(1f), readOnly = true
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    OutlinedTextField(
-                        value = uiState.telefone, onValueChange = viewModel::onTelefoneChange,
-                        label = { Text("Telefone") }, modifier = Modifier.weight(1f)
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            when {
+                uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                uiState.userMessage != null && uiState.matricula.isEmpty() -> {
+                    Text(
+                        text = "Erro ao carregar perfil:\n${uiState.userMessage}",
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp),
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
                     )
                 }
-                Spacer(Modifier.height(8.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = uiState.sexo, onValueChange = viewModel::onSexoChange,
-                        label = { Text("Sexo") }, modifier = Modifier.weight(0.5f)
-                    )
-                    Spacer(Modifier.width(8.dp))
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        OutlinedTextField(
-                            value = uiState.dataNasc,
-                            onValueChange = {},
-                            label = { Text("Data de Nascimento") },
-                            modifier = Modifier.fillMaxWidth(),
-                            readOnly = true,
-                            trailingIcon = { Icon(Icons.Default.DateRange, "Calendário") }
-                        )
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .clickable(onClick = { showDatePicker = true })
-                        )
-                    }
-                }
-                Spacer(Modifier.height(16.dp))
-                Divider()
-                Spacer(Modifier.height(16.dp))
-
-                // --- SEÇÃO ENDEREÇO ---
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = uiState.cep, onValueChange = viewModel::onCepChanged,
-                        label = { Text("CEP") }, modifier = Modifier.weight(1f),
-                        isError = uiState.cepErrorMessage != null
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Button(
-                        onClick = { viewModel.onCepChanged(uiState.cep) },
-                        enabled = !uiState.isSearchingCep
+                else -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (uiState.isSearchingCep) {
-                            CircularProgressIndicator(
-                                Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 2.dp
+                        Text(
+                            text = "Etapa ${currentStep + 1} de 2",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                        )
+
+                        when (currentStep) {
+                            0 -> StepPersonalData(
+                                uiState = uiState,
+                                viewModel = viewModel,
+                                onNextClick = { currentStep++ },
+                                onChangePictureClick = { showImageSourceSheet = true },
+                                onShowDatePicker = { showDatePicker = true }
                             )
-                        } else {
-                            Text("Buscar")
+                            1 -> StepAddress(
+                                uiState = uiState,
+                                viewModel = viewModel
+                            )
                         }
                     }
                 }
-                Spacer(Modifier.height(8.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = uiState.logradouro, onValueChange = {},
-                        label = { Text("Logradouro") }, modifier = Modifier.weight(2f),
-                        readOnly = true
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    OutlinedTextField(
-                        value = uiState.numero, onValueChange = viewModel::onNumeroChange,
-                        label = { Text("Número") }, modifier = Modifier.weight(1f)
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = uiState.complemento, onValueChange = viewModel::onComplementoChange,
-                    label = { Text("Complemento") }, modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = uiState.bairro, onValueChange = {},
-                    label = { Text("Bairro") }, modifier = Modifier.fillMaxWidth(),
-                    readOnly = true
-                )
-                Spacer(Modifier.height(8.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = uiState.municipio, onValueChange = {},
-                        label = { Text("Município") }, modifier = Modifier.weight(2f),
-                        readOnly = true
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    OutlinedTextField(
-                        value = uiState.uf, onValueChange = viewModel::onUfChange,
-                        label = { Text("UF") }, modifier = Modifier.weight(1f), readOnly = true,
-                    )
-                    Spacer(Modifier.height(16.dp))
-                }
-                Spacer(Modifier.height(24.dp))
             }
         }
     }
@@ -315,9 +147,6 @@ fun ProfileEditScreen(
     if (showImageSourceSheet) {
         ModalBottomSheet(onDismissRequest = { showImageSourceSheet = false }) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Escolher fonte da imagem", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(16.dp))
-
                 ListItem(
                     headlineContent = { Text("Tirar foto") },
                     leadingContent = { Icon(Icons.Default.CameraAlt, null) },
@@ -332,87 +161,132 @@ fun ProfileEditScreen(
                         }
                     }
                 )
-
                 ListItem(
-                    headlineContent = { Text("Escolher uma da Galeria") },
+                    headlineContent = { Text("Escolher da Galeria") },
                     leadingContent = { Icon(Icons.Default.PhotoLibrary, null) },
                     modifier = Modifier.clickable {
                         showImageSourceSheet = false
-                        singlePhotoPickerLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        singlePhotoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }
                 )
-                Spacer(Modifier.height(16.dp))
             }
         }
     }
 
     if (showDatePicker) {
-        val calendar = Calendar.getInstance()
-
-        calendar.set(1900, 0, 1)
-        val minDateMillis = calendar.timeInMillis
-
-        val maxDateMillis = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 23)
-            set(Calendar.MINUTE, 59)
-            set(Calendar.SECOND, 59)
-        }.timeInMillis
-
-        val datePickerState = rememberDatePickerState(
-            yearRange = 1900..Calendar.getInstance().get(Calendar.YEAR),
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                    return utcTimeMillis >= minDateMillis && utcTimeMillis <= maxDateMillis
-                }
+        val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis <= System.currentTimeMillis()
             }
-        )
-
+        })
         DatePickerDialog(
-            onDismissRequest = {
-                showDatePicker = false
-            },
+            onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = false
-
-                        val selectedDateMillis = datePickerState.selectedDateMillis
-                        if (selectedDateMillis != null) {
-                            val brasilTimeZone = TimeZone.getTimeZone("America/Sao_Paulo")
-
-                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).apply {
-                                timeZone = brasilTimeZone
-                            }
-                            val formattedDate = sdf.format(Date(selectedDateMillis))
-                            viewModel.onDataNascChange(formattedDate)
-                        }
+                TextButton(onClick = {
+                    showDatePicker = false
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        viewModel.onDataNascChange(sdf.format(Date(millis)))
                     }
-                ) {
-                    Text("OK")
-                }
+                }) { Text("OK") }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = false
-                    }
-                ) {
-                    Text("Cancelar")
-                }
+                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
             }
         ) {
-            DatePicker(
-                state = datePickerState,
-                title = null,
-                headline = {
-                    Text(
-                        text = "Selecione uma data",
-                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 12.dp)
-                    )
-                }
-            )
+            DatePicker(state = datePickerState)
         }
+    }
+}
+
+@Composable
+private fun StepPersonalData(
+    uiState: ProfileEditUiState,
+    viewModel: ProfileEditViewModel,
+    onNextClick: () -> Unit,
+    onChangePictureClick: () -> Unit,
+    onShowDatePicker: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AsyncImage(
+            model = uiState.fotoUri ?: R.drawable.ic_person,
+            contentDescription = "Foto de perfil",
+            modifier = Modifier.size(120.dp).clip(CircleShape)
+        )
+        TextButton(onClick = onChangePictureClick) { Text("Alterar foto") }
+        Spacer(Modifier.height(8.dp))
+
+        OutlinedTextField(value = uiState.matricula, onValueChange = {}, label = { Text("Matrícula") }, modifier = Modifier.fillMaxWidth(), readOnly = true)
+        OutlinedTextField(value = uiState.nome, onValueChange = viewModel::onNomeChange, label = { Text("Nome") }, modifier = Modifier.fillMaxWidth())
+
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(value = uiState.cpf, onValueChange = {}, label = { Text("CPF") }, modifier = Modifier.weight(1f), readOnly = true)
+            OutlinedTextField(value = uiState.telefone, onValueChange = viewModel::onTelefoneChange, label = { Text("Telefone") }, modifier = Modifier.weight(1f))
+        }
+
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(value = uiState.sexo, onValueChange = viewModel::onSexoChange, label = { Text("Sexo") }, modifier = Modifier.weight(0.5f))
+
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = uiState.dataNasc,
+                    onValueChange = {},
+                    label = { Text("Data de Nascimento") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    trailingIcon = { Icon(Icons.Default.DateRange, "Calendário") }
+                )
+                Box(
+                    modifier = Modifier.matchParentSize().clickable(onClick = onShowDatePicker)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f, fill = true))
+        ButtonComponent(
+            title = "Próximo: Endereço",
+            onClick = onNextClick,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun StepAddress(uiState: ProfileEditUiState, viewModel: ProfileEditViewModel) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Endereço", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.Start))
+
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(value = uiState.endereco.cep, onValueChange = viewModel::onCepChanged, label = { Text("CEP") }, modifier = Modifier.weight(1f), isError = uiState.cepErrorMessage != null)
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = { viewModel.buscarCep(uiState.endereco.cep) }, enabled = !uiState.isSearchingCep) {
+                if (uiState.isSearchingCep) {
+                    CircularProgressIndicator(Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
+                } else { Text("Buscar") }
+            }
+        }
+
+        Row(Modifier.fillMaxWidth()) {
+            OutlinedTextField(value = uiState.endereco.logradouro, onValueChange = {}, label = { Text("Logradouro") }, modifier = Modifier.weight(2f), readOnly = true)
+            Spacer(Modifier.width(8.dp))
+            OutlinedTextField(value = uiState.endereco.numero, onValueChange = viewModel::onNumeroChange, label = { Text("Número") }, modifier = Modifier.weight(1f))
+        }
+
+        OutlinedTextField(value = uiState.endereco.complemento, onValueChange = viewModel::onComplementoChange, label = { Text("Complemento") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = uiState.endereco.bairro, onValueChange = {}, label = { Text("Bairro") }, modifier = Modifier.fillMaxWidth(), readOnly = true)
+
+        Row(Modifier.fillMaxWidth()) {
+            OutlinedTextField(value = uiState.endereco.municipio, onValueChange = {}, label = { Text("Município") }, modifier = Modifier.weight(2f), readOnly = true)
+            Spacer(Modifier.width(8.dp))
+            OutlinedTextField(value = uiState.endereco.uf, onValueChange = {}, label = { Text("UF") }, modifier = Modifier.weight(1f), readOnly = true)
+        }
+
+        Spacer(modifier = Modifier.weight(1f, fill = true))
+        ButtonComponent(
+            title = "Salvar Alterações",
+            loading = uiState.isSaving,
+            onClick = viewModel::onSaveProfile,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+        )
     }
 }

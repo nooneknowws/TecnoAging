@@ -1,16 +1,19 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.remote.RetrofitInstance
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import com.tecno.aging.data.repository.TecnicoRepository
+import com.tecno.aging.domain.models.DTO.TecnicoUpdateRequest
+import com.tecno.aging.domain.models.pessoa.Endereco
+import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class ProfileEditUiState(
     val fotoUri: Uri? = null,
@@ -20,38 +23,37 @@ data class ProfileEditUiState(
     val telefone: String = "",
     val sexo: String = "",
     val dataNasc: String = "",
-    val cep: String = "",
-    val logradouro: String = "",
-    val numero: String = "",
-    val complemento: String = "",
-    val bairro: String = "",
-    val municipio: String = "",
-    val uf: String = "",
+    val endereco: Endereco = Endereco(),
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val saveSuccess: Boolean = false,
+    val userMessage: String? = null,
     val isSearchingCep: Boolean = false,
     val cepErrorMessage: String? = null
 )
 
-class ProfileEditViewModel(
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
+class ProfileEditViewModel() : ViewModel() {
 
     private val repository: TecnicoRepository = TecnicoRepository()
     private val _uiState = MutableStateFlow(ProfileEditUiState())
     val uiState: StateFlow<ProfileEditUiState> = _uiState.asStateFlow()
-
-    private val tecnicoId: Int = checkNotNull(savedStateHandle["tecnicoId"])
+    private val tecnicoId: Int? = SessionManager.getUserId()?.toIntOrNull()
+    private var originalTecnico: Tecnico? = null
 
     init {
         loadProfile()
     }
 
     private fun loadProfile() {
+        if (tecnicoId == null) {
+            _uiState.update { it.copy(isLoading = false, userMessage = "ID de usuário inválido.") }
+            return
+        }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             repository.getTecnicoById(tecnicoId)
                 .onSuccess { tecnico ->
+                    originalTecnico = tecnico
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -61,19 +63,25 @@ class ProfileEditViewModel(
                             telefone = tecnico.telefone,
                             sexo = tecnico.sexo,
                             dataNasc = tecnico.dataNascimento,
-                            cep = tecnico.endereco?.cep ?: "",
-                            logradouro = tecnico.endereco?.logradouro ?: "",
-                            numero = tecnico.endereco?.numero?.toString() ?: "",
-                            complemento = tecnico.endereco?.complemento ?: "",
-                            bairro = tecnico.endereco?.bairro ?: "",
-                            municipio = tecnico.endereco?.municipio ?: "",
-                            uf = tecnico.endereco?.uf ?: ""
-                            // fotoUri precisaria ser carregado separadamente se vier de uma URL
+                            endereco = Endereco(
+                                cep = tecnico.endereco?.cep ?: "",
+                                logradouro = tecnico.endereco?.logradouro ?: "",
+                                numero = tecnico.endereco?.numero?.toString() ?: "",
+                                complemento = tecnico.endereco?.complemento ?: "",
+                                bairro = tecnico.endereco?.bairro ?: "",
+                                municipio = tecnico.endereco?.municipio ?: "",
+                                uf = tecnico.endereco?.uf ?: ""
+                            )
                         )
                     }
                 }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, cepErrorMessage = error.message) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            userMessage = error.message
+                        )
+                    }
                 }
         }
     }
@@ -98,58 +106,43 @@ class ProfileEditViewModel(
         _uiState.update { it.copy(dataNasc = newValue) }
     }
 
+    fun onCepChanged(newCep: String) {
+        _uiState.update {
+            it.copy(endereco = it.endereco.copy(cep = newCep), cepErrorMessage = null)
+        }
+        if (newCep.filter { it.isDigit() }.length == 8) {
+            buscarCep(newCep)
+        }
+    }
+
     fun onNumeroChange(newValue: String) {
-        _uiState.update { it.copy(numero = newValue) }
+        _uiState.update { it.copy(endereco = it.endereco.copy(numero = newValue)) }
     }
 
     fun onComplementoChange(newValue: String) {
-        _uiState.update { it.copy(complemento = newValue) }
+        _uiState.update { it.copy(endereco = it.endereco.copy(complemento = newValue)) }
     }
 
-    fun onUfChange(newValue: String) {
-        _uiState.update { it.copy(uf = newValue) }
-    }
-
-    fun onCepChanged(newCep: String) {
-        val rawCep = newCep.filter { it.isDigit() }
-        _uiState.update {
-            it.copy(
-                cep = newCep,
-                cepErrorMessage = null,
-                logradouro = "",
-                bairro = "",
-                municipio = "",
-                uf = ""
-            )
-        }
-
-        if (rawCep.length == 8) {
-            buscarCep(rawCep)
-        }
-    }
-
-    private fun buscarCep(cep: String) {
+    fun buscarCep(cep: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isSearchingCep = true, cepErrorMessage = null) }
+            _uiState.update { it.copy(isSearchingCep = true) }
             try {
                 val response = RetrofitInstance.api.buscarCep(cep)
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body()?.erro != true) {
                     response.body()?.let { apiEndereco ->
-                        if (apiEndereco.erro == true) {
-                            _uiState.update { it.copy(cepErrorMessage = "CEP não encontrado.") }
-                        } else {
-                            _uiState.update {
-                                it.copy(
+                        _uiState.update {
+                            it.copy(
+                                endereco = it.endereco.copy(
                                     logradouro = apiEndereco.logradouro ?: "",
                                     bairro = apiEndereco.bairro ?: "",
                                     municipio = apiEndereco.localidade ?: "",
                                     uf = apiEndereco.uf ?: ""
                                 )
-                            }
+                            )
                         }
                     }
                 } else {
-                    _uiState.update { it.copy(cepErrorMessage = "Erro: ${response.code()}") }
+                    _uiState.update { it.copy(cepErrorMessage = "CEP não encontrado.") }
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(cepErrorMessage = "Falha na conexão.") }
@@ -160,7 +153,46 @@ class ProfileEditViewModel(
     }
 
     fun onSaveProfile() {
-        // TODO: Implementar a lógica para salvar as alterações
-        println("Salvando perfil: ${_uiState.value}")
+        if (tecnicoId == null || originalTecnico == null) {
+            _uiState.update { it.copy(userMessage = "Não foi possível salvar. Dados originais não carregados.") }
+            return
+        }
+        _uiState.update { it.copy(isSaving = true) }
+
+        val formattedDate = try {
+            val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            inputFormat.parse(uiState.value.dataNasc)?.let { outputFormat.format(it) } ?: originalTecnico!!.dataNascimento
+        } catch (e: Exception) {
+            originalTecnico!!.dataNascimento
+        }
+
+        val request = TecnicoUpdateRequest(
+            nome = uiState.value.nome,
+            telefone = uiState.value.telefone,
+            sexo = uiState.value.sexo,
+            dataNasc = formattedDate,
+            endereco = uiState.value.endereco,
+            matricula = originalTecnico!!.matricula,
+            cpf = originalTecnico!!.cpf,
+            idade = originalTecnico!!.idade,
+            ativo = originalTecnico!!.ativo
+        )
+
+        viewModelScope.launch {
+            repository.updateTecnico(tecnicoId, request)
+                .onSuccess {
+                    _uiState.update { it.copy(isSaving = false, userMessage = "Perfil atualizado com sucesso!") }
+                    delay(1500)
+                    _uiState.update { it.copy(saveSuccess = true) }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isSaving = false, userMessage = error.message) }
+                }
+        }
+    }
+
+    fun userMessageShown() {
+        _uiState.update { it.copy(userMessage = null) }
     }
 }
