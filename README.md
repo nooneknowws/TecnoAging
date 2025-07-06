@@ -24,7 +24,7 @@ TelasTCC/
 └── README.md           # Documentação do projeto.
 ```
 ## Arquitetura do sistema
-![Arquitetura](imgs/Arquitetura/TCC-TecnoAging.png)
+![Arquitetura](imgs/Arquitetura/TCC-Tecnoaging.png)
 
 ## Funcionalidades Principais
 
