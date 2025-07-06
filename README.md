@@ -3,7 +3,7 @@
 Este projeto apresenta o desenvolvimento do TecnoAging, um sistema integrado composto por uma plataforma web e um aplicativo móvel, voltado para profissionais de saúde e idosos. O sistema visa otimizar a avaliação e o cuidado da saúde da população idosa no Brasil, um tema de crescente relevância devido ao envelhecimento populacional.
 
 ## Estrutura do Projeto
-
+```plaintext
 TelasTCC/
 ├── frontend/
 │   ├── mobile/  # Aplicação móvel desenvolvida em Kotlin para Android.
@@ -22,9 +22,9 @@ TelasTCC/
         ├── Mobile/     # Prints das telas mobile
         └── Web/        # Prints das telas web
 └── README.md           # Documentação do projeto.
-
+```
 ## Arquitetura do sistema
-![Arquitetura](imgs/Arquitetura/TecnoAging.png)
+![Arquitetura](imgs/Arquitetura/TCC_TecnoAging.png)
 
 ## Funcionalidades Principais
 
