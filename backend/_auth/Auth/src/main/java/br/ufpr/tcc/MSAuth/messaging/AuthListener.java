@@ -2,8 +2,6 @@ package br.ufpr.tcc.MSAuth.messaging;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import br.ufpr.tcc.MSAuth.services.CorrelationService;
 @Component
 public class AuthListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthListener.class);
-	
 	@Autowired
 	private CorrelationService correlationService;
 

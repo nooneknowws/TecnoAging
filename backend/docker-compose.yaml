@@ -1,11 +1,11 @@
-version: '3.8'
+
 
 services:
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"   
-      - "15672:15672"  
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
@@ -25,7 +25,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=db-tecnicos 
+      - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -73,8 +73,8 @@ services:
 
   saga-service:
     build:
-      context: ./_SAGA/SAGA
-      dockerfile: Dockerfile
+      context: . # Changed context to the root of the project
+      dockerfile: _SAGA/SAGA/Dockerfile # Specify Dockerfile path relative to new context
     ports:
       - "5010:5010"
     environment:
@@ -91,10 +91,10 @@ services:
 
   paciente-service:
     build:
-      context: ./_pacientes/Pacientes
-      dockerfile: Dockerfile
+      context: . # Changed context to the root of the project
+      dockerfile: _pacientes/Pacientes/Dockerfile # Specify Dockerfile path relative to new context
     ports:
-      - "5001:5001"
+      - "5006:5006"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-pacientes
@@ -114,10 +114,10 @@ services:
 
   tecnico-service:
     build:
-      context: ./_tecnicos/Tecnicos
-      dockerfile: Dockerfile
+      context: . # Changed context to the root of the project
+      dockerfile: _tecnicos/Tecnicos/Dockerfile # Specify Dockerfile path relative to new context
     ports:
-      - "5002:5002"
+      - "5005:5005"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-tecnicos
@@ -137,10 +137,10 @@ services:
 
   forms-service:
     build:
-      context: ./_forms/Forms
-      dockerfile: Dockerfile
+      context: . # Changed context to the root of the project
+      dockerfile: _forms/Forms/Dockerfile # Specify Dockerfile path relative to new context
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-forms
@@ -160,10 +160,10 @@ services:
 
   auth-service:
     build:
-      context: ./_auth/Auth
-      dockerfile: Dockerfile
+      context: . # Changed context to the root of the project
+      dockerfile: _auth/Auth/Dockerfile # Specify Dockerfile path relative to new context
     ports:
-      - "5003:5003"
+      - "5000:5000"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATA_MONGODB_URI=mongodb://admin:admin@mongodb:27017/auth_db?authSource=admin
@@ -179,10 +179,79 @@ services:
       - postgres-network
     restart: unless-stopped
 
+  avaliacoes-service:
+    build:
+      context: . # Changed context to the root of the project
+      dockerfile: _avaliacoes/Avaliacoes/Dockerfile # Specify Dockerfile path relative to new context
+    ports:
+      - "5002:5002"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-avaliacoes
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      saga-service:
+        condition: service_started
+    networks:
+      - postgres-network
+    restart: unless-stopped
+
+  analises-service:
+    build:
+      context: . # Changed context to the root of the project
+      dockerfile: _analises/Analises/Dockerfile # Specify Dockerfile path relative to new context
+    ports:
+      - "5003:5003"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-analises
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      saga-service:
+        condition: service_started
+    networks:
+      - postgres-network
+    restart: unless-stopped
+
+  testes-service:
+    build:
+      context: . # Changed context to the root of the project
+      dockerfile: _testes/Testes/Dockerfile # Specify Dockerfile path relative to new context
+    ports:
+      - "5004:5004"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db-testes
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      saga-service:
+        condition: service_started
+    networks:
+      - postgres-network
+    restart: unless-stopped
+
   gateway:
     build:
-      context: ./_gateway
-      dockerfile: Dockerfile
+      context: ./_gateway # Reverted context
+      dockerfile: Dockerfile # Reverted Dockerfile path
     ports:
       - "3000:3000"
     env_file:
@@ -192,6 +261,9 @@ services:
       - tecnico-service
       - forms-service
       - auth-service
+      - avaliacoes-service
+      - analises-service
+      - testes-service
     networks:
       - postgres-network
     restart: unless-stopped

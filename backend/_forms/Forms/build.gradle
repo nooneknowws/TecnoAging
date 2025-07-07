@@ -1,10 +1,10 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
+	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example'
+group = 'br.ufpr'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -18,7 +18,9 @@ repositories {
 }
 
 dependencies {
-
+	
+	implementation project(':common-dtos') 
+    implementation project(':common-events')
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	implementation 'org.springframework.amqp:spring-rabbit-stream'

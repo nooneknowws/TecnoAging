@@ -7,12 +7,10 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,20 +26,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class JwtTokenProvider {
 
-	private static final long VALIDITY_IN_MILLISECONDS = 3600000;
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-	@Value("${security.jwt.token.secret-key:e9dea54074f73ae6f665a3b1724a5e5cf2db88d5405f03fa3fc3acf468961a86faebf7872be220b27266676ab85a9c4eba8cfa3f9947c85edc022f4dc8f2f2cf}")
-	private String secretKeyString;
+    private static final long VALIDITY_IN_MILLISECONDS = 3600000;
 
-	private SecretKey secretKey;
+    private SecretKey secretKey;
 
-	@PostConstruct
-	protected void init() {
-		secretKey = Keys.hmacShaKeyFor(Base64.getEncoder().encode(secretKeyString.getBytes()));
-	}
+    @PostConstruct
+    protected void init() {
+        String envSecret = System.getenv("JWT_SECRET");
+        if (envSecret != null && !envSecret.isEmpty()) {
+            secretKey = Keys.hmacShaKeyFor(Base64.getEncoder().encode(envSecret.getBytes()));
+        } else {
+            logger.warn("JWT_SECRET environment variable not found! Generating a random secret key for this session. Tokens will not be valid across restarts.");
+            secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        }
+    }
 
 
 	public String createToken(String username, List<String> roles, Long userId, String name, String microservice) {
@@ -58,7 +64,7 @@ public class JwtTokenProvider {
 	        .setClaims(claims)
 	        .setIssuedAt(now)
 	        .setExpiration(validity)
-	        .signWith(SignatureAlgorithm.HS256, secretKey)
+			.signWith(secretKey, SignatureAlgorithm.HS256)
 	        .compact();
 	}
 	public static class JwtTokenFilter extends OncePerRequestFilter {
@@ -69,11 +75,11 @@ public class JwtTokenProvider {
 	        this.jwtTokenProvider = jwtTokenProvider;
 	    }
 
-	    @Override
-	    protected void doFilterInternal(HttpServletRequest request,
-	                                    HttpServletResponse response,
-	                                    FilterChain filterChain)
-	            throws ServletException, IOException, java.io.IOException {
+		@Override
+		protected void doFilterInternal(@org.springframework.lang.NonNull HttpServletRequest request,
+										@org.springframework.lang.NonNull HttpServletResponse response,
+										@org.springframework.lang.NonNull FilterChain filterChain)
+				throws ServletException, IOException, java.io.IOException {
 	        
 	        String token = resolveToken(request);
 	        
@@ -100,19 +106,28 @@ public class JwtTokenProvider {
 	}
 
 	public Authentication getAuthentication(String token) {
-	    String username = getUsername(token);
-	    List<SimpleGrantedAuthority> authorities = getRolesFromToken(token);
-	    
-	    return new UsernamePasswordAuthenticationToken(
-	        username,
-	        null,
-	        authorities
-	    );
+		String username = getUsername(token);
+		List<SimpleGrantedAuthority> authorities = getRolesFromToken(token);
+		
+		return new UsernamePasswordAuthenticationToken(
+			username,
+			null,
+			authorities
+		);
+	}
+
+	public String getUsername(String token) {
+		Claims claims = Jwts.parserBuilder()
+			.setSigningKey(secretKey)
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
+		return claims.getSubject();
 	}
 
 	public boolean validateToken(String token) {
 	    try {
-	        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 	        return true;
 	    } catch (JwtException | IllegalArgumentException e) {
 	        return false;
@@ -121,23 +136,16 @@ public class JwtTokenProvider {
 
 	@SuppressWarnings("unchecked")
 	public List<SimpleGrantedAuthority> getRolesFromToken(String token) {
-	    Claims claims = Jwts.parser()
-	        .setSigningKey(secretKey)
-	        .parseClaimsJws(token)
-	        .getBody();
+		Claims claims = Jwts.parserBuilder()
+			.setSigningKey(secretKey)
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
 	    
 	    return ((List<String>) claims.get("roles"))
 	        .stream()
 	        .map(SimpleGrantedAuthority::new)
 	        .collect(Collectors.toList());
-	}
-
-	public String getUsername(String token) {
-	    return Jwts.parser()
-	        .setSigningKey(secretKey)
-	        .parseClaimsJws(token)
-	        .getBody()
-	        .getSubject();
 	}
 
 }

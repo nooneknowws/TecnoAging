@@ -1,0 +1,48 @@
+
+*.class
+
+*.jar
+*.war
+*.ear
+*.nar
+*.sar
+
+*.log
+logs/
+*.log.*
+output.log
+
+.project
+.classpath
+.settings/
+.idea/ # IntelliJ IDEA
+.vscode/ # VS Code
+*.iml # IntelliJ IDEA module files
+
+bin/
+build/
+target/ # Maven build directory
+out/ # IntelliJ IDEA's default output directory
+
+.gradle/
+build/
+!/build/classes
+!/build/generated
+!/build/libs
+!/build/resources
+!/build/tmp
+*.zip
+*.tar
+*.tar.gz
+
+node_modules/
+
+.DS_Store # macOS
+Thumbs.db # Windows
+ehthumbs.db # Windows
+.directory # Linux
+
+
+common-modules/build/
+common-modules/bin/
+common-modules/target/

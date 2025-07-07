@@ -1,0 +1,35 @@
+rootProject.name = 'TecnoAging-Backend'
+
+// Inclua todos os seus microsserviços existentes como módulos
+// And map them to their correct physical directory
+include ':SAGA'
+project(':SAGA').projectDir = file('_SAGA/SAGA')
+
+include ':Auth'
+project(':Auth').projectDir = file('_auth/Auth')
+
+include ':Forms'
+project(':Forms').projectDir = file('_forms/Forms')
+
+include ':Pacientes'
+project(':Pacientes').projectDir = file('_pacientes/Pacientes')
+
+include ':Tecnicos'
+project(':Tecnicos').projectDir = file('_tecnicos/Tecnicos')
+
+include ':Avaliacoes'
+project(':Avaliacoes').projectDir = file('_avaliacoes/Avaliacoes')
+
+include ':Analises'
+project(':Analises').projectDir = file('_analises/Analises')
+
+include ':Testes'
+project(':Testes').projectDir = file('_testes/Testes')
+
+
+// Inclua a pasta 'common-modules' e seus submódulos
+include ':common-dtos'
+project(':common-dtos').projectDir = file('common-modules/common-dtos')
+
+include ':common-events'
+project(':common-events').projectDir = file('common-modules/common-events')

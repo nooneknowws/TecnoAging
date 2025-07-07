@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.ufpr.tcc.MSForms.models.Avaliacao;
 import br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository;
 
 @Service

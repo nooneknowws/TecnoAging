@@ -7,8 +7,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.ufpr.tcc.SAGA.queues.SAGAExchange;
-
 @Service
 public class SagaOrquestrador {
     private static final Logger logger = LoggerFactory.getLogger(SagaOrquestrador.class);

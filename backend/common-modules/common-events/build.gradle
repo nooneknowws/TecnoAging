@@ -1,0 +1,4 @@
+
+plugins {
+    id 'java-library' // Usa 'java-library' para indicar que é uma biblioteca Java
+}
