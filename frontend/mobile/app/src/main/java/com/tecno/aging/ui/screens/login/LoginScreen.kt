@@ -70,7 +70,6 @@ private fun LoginContent(
 ) {
     val componentWidthModifier = Modifier
         .fillMaxWidth(0.9f)
-        .height(52.dp)
 
     Column(
         modifier = modifier
