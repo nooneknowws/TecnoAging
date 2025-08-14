@@ -1,21 +1,30 @@
 package com.tecno.aging.ui.screens.forms
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,13 +47,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.domain.models.paciente.Paciente
-import com.tecno.aging.ui.components.cards.FormCard
+import com.tecno.aging.ui.components.cards.FormularioCard
 import com.tecno.aging.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +92,8 @@ fun FormsScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
-        }
+        },
+        containerColor = AppColors.Gray50
     ) { innerPadding ->
         when {
             uiState.isLoading -> {
@@ -93,38 +107,34 @@ fun FormsScreen(
                 }
             }
             else -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(horizontal = 16.dp)
+                LazyColumn(
+                    modifier = Modifier.padding(innerPadding),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Selecione um formulário abaixo para iniciar a avaliação. Cada teste auxilia na identificação de diferentes aspectos da saúde e bem-estar.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = AppColors.Black,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(uiState.forms) { form ->
-                            FormCard(
-                                title = form.titulo,
-                                icon = Icons.Default.MedicalServices, // Ícone genérico
-                                onClick = {
-                                    val perfil = SessionManager.getUserProfile()
-                                    if (perfil.equals("TECNICO", ignoreCase = true)) {
-                                        selectedFormId = form.id
-                                        showPatientDialog = true
-                                    } else {
-                                        val pacienteId = SessionManager.getUserId()?.toLong()
-                                        if (pacienteId != null) {
-                                            navController.navigate("form/${form.id}/$pacienteId")
-                                        }
+                    item {
+                        Text(
+                            text = "Selecione um formulário abaixo para iniciar a avaliação.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                    items(uiState.forms) { form ->
+                        FormularioCard(
+                            form = form,
+                            onClick = {
+                                val perfil = SessionManager.getUserProfile()
+                                if (perfil.equals("TECNICO", ignoreCase = true)) {
+                                    selectedFormId = form.id
+                                    showPatientDialog = true
+                                } else {
+                                    val pacienteId = SessionManager.getUserId()?.toLong()
+                                    if (pacienteId != null) {
+                                        navController.navigate("form/${form.id}/$pacienteId")
                                     }
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
                 }
             }
@@ -153,7 +163,8 @@ fun PatientSelectionDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 500.dp)
+                .heightIn(max = 500.dp),
+            colors = CardDefaults.cardColors(containerColor = AppColors.White)
         ) {
             Column {
                 Text(
@@ -163,28 +174,78 @@ fun PatientSelectionDialog(
                 )
                 Divider()
                 if (patients.isEmpty()) {
-                    Box(Modifier.padding(16.dp).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text("Nenhum paciente encontrado.")
                     }
                 } else {
-                    LazyColumn(modifier = Modifier.weight(1f)) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         items(patients) { patient ->
-                            ListItem(
-                                headlineContent = { Text(patient.nome) },
-                                supportingContent = { Text("CPF: ${patient.cpf}") },
-                                modifier = Modifier.clickable { onPatientSelected(patient.id.toLong()) }
+                            PatientSelectorCard(
+                                patient = patient,
+                                onClick = { onPatientSelected(patient.id.toLong()) }
                             )
                         }
                     }
                 }
-                TextButton(
-                    onClick = onDismiss,
+                Row(
                     modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text("CANCELAR")
+                    TextButton(onClick = onDismiss) {
+                        Text("CANCELAR")
+                    }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun PatientSelectorCard(
+    patient: Paciente,
+    onClick: () -> Unit
+) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        border = BorderStroke(1.dp, AppColors.Gray200)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Ícone de Paciente",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(AppColors.Gray100)
+                    .padding(8.dp),
+                tint = AppColors.Gray700
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = patient.nome,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "CPF: ${patient.cpf}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppColors.Gray500
+                )
             }
         }
     }

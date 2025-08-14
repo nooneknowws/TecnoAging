@@ -8,6 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +33,7 @@ import androidx.navigation.NavController
 import com.tecno.aging.domain.models.forms.FormQuestion
 import com.tecno.aging.domain.models.forms.FormStep
 import com.tecno.aging.domain.models.forms.GenericForm
+import com.tecno.aging.ui.theme.AppColors
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,28 +131,56 @@ fun EtapaPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(AppColors.Gray50)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Text(text = etapa.titulo, style = MaterialTheme.typography.headlineSmall)
-        if (etapa.descricao.isNotBlank()) {
-            Text(text = etapa.descricao, style = MaterialTheme.typography.bodyMedium)
+        Column {
+            Text(text = etapa.titulo, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            if (etapa.descricao.isNotBlank()) {
+                Text(text = etapa.descricao, style = MaterialTheme.typography.bodyLarge, color = AppColors.Gray700)
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Divider()
 
         etapa.perguntas.forEach { pergunta ->
             val respostaAtual = respostas[pergunta.id] ?: ""
-
-            when (pergunta.tipo) {
-                "range" -> RangeQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                "numero" -> NumeroQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                "tempo" -> TempoQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                "radio" -> RadioQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                "checkbox" -> CheckboxQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+            QuestionCard(pergunta = pergunta) {
+                when (pergunta.tipo) {
+                    "range" -> RangeQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+                    "numero" -> NumeroQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+                    "tempo" -> TempoQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+                    "radio" -> RadioQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+                    "checkbox" -> CheckboxQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun QuestionCard(
+    pergunta: FormQuestion,
+    content: @Composable () -> Unit
+) {
+    if (pergunta.tipo == "numero" || pergunta.tipo == "tempo") {
+        Column {
+            Text(text = pergunta.texto, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
+            content()
+        }
+    } else {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = AppColors.White),
+            border = BorderStroke(1.dp, AppColors.Gray200)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = pergunta.texto, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(12.dp))
+                content()
+            }
         }
     }
 }
