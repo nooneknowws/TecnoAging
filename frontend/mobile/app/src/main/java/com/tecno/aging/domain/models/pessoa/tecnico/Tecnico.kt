@@ -7,7 +7,7 @@ data class Tecnico(
     val cpf: String = "",
     val nome: String = "",
     val sexo: String = "",
-    val dataNascimento: String = "",
+    val dataNasc: String = "",
     val telefone: String = "",
     val matricula: String = "",
     val ativo: Boolean = false,

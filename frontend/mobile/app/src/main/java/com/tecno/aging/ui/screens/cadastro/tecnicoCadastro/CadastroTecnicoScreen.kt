@@ -146,7 +146,7 @@ fun CadastroScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     DatePickerInput(
-                        selectedDate = uiState.tecnico.dataNascimento,
+                        selectedDate = uiState.tecnico.dataNasc,
                         onDateSelected = viewModel::onDataNascChanged,
                         error = uiState.erros["dataNasc"],
                         modifier = Modifier.fillMaxWidth()

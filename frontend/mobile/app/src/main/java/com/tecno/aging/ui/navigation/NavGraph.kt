@@ -56,17 +56,11 @@ fun AppNavGraph() {
 
         // Fluxo principal
         composable("home") {
-            val name = SessionManager.getUserName().orEmpty()
-            val id = SessionManager.getUserId().orEmpty()
-            val perfil = SessionManager.getUserProfile().orEmpty()
-
             HomeScreen(
-                name = name,
-                id = id,
-                perfil = perfil,
                 navController = navController,
             )
         }
+
 
         composable("test") {
             TestScreen(navController = navController)

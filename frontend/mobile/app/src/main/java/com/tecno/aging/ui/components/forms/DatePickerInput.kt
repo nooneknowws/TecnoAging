@@ -38,7 +38,7 @@ fun DatePickerInput(
     OutlinedTextField(
         value = selectedDate,
         onValueChange = {},
-        label = { Text("Data Nascimento", color = Color.Black) },
+        label = { Text("Data Nasc.", color = Color.Black) },
         readOnly = true,
         trailingIcon = {
             IconButton(onClick = { showDatePicker = true }) {

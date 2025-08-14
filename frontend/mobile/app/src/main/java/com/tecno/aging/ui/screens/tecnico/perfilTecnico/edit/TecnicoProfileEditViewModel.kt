@@ -62,7 +62,7 @@ class ProfileEditViewModel() : ViewModel() {
                             cpf = tecnico.cpf,
                             telefone = tecnico.telefone,
                             sexo = tecnico.sexo,
-                            dataNasc = tecnico.dataNascimento,
+                            dataNasc = tecnico.dataNasc,
                             endereco = Endereco(
                                 cep = tecnico.endereco?.cep ?: "",
                                 logradouro = tecnico.endereco?.logradouro ?: "",
@@ -162,9 +162,9 @@ class ProfileEditViewModel() : ViewModel() {
         val formattedDate = try {
             val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            inputFormat.parse(uiState.value.dataNasc)?.let { outputFormat.format(it) } ?: originalTecnico!!.dataNascimento
+            inputFormat.parse(uiState.value.dataNasc)?.let { outputFormat.format(it) } ?: originalTecnico!!.dataNasc
         } catch (e: Exception) {
-            originalTecnico!!.dataNascimento
+            originalTecnico!!.dataNasc
         }
 
         val request = TecnicoUpdateRequest(

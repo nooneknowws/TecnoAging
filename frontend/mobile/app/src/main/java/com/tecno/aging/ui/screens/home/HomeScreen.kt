@@ -35,6 +35,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -49,6 +50,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.R
 import com.tecno.aging.data.local.SessionManager
@@ -63,18 +66,18 @@ data class NavigationItem(
     val route: String
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    name: String,
-    id: String,
-    perfil: String,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val drawerItems = if (perfil.equals("PACIENTE", ignoreCase = true)) {
+    val drawerItems = if (uiState.userProfile.equals("PACIENTE", ignoreCase = true)) {
         listOf(
             NavigationItem("Dashboard", Icons.Outlined.Home, "home"),
             NavigationItem("Meu Perfil", Icons.Outlined.Person, "paciente_profile"),
@@ -109,12 +112,11 @@ fun HomeScreen(
                                 navController.navigate("login") { popUpTo(0) }
                             }
                         }
-
                         "tecnico_profile" -> navController.navigate("tecnico_profile")
                         "pacientes_list" -> navController.navigate("pacientes_list")
                         "forms" -> navController.navigate("forms")
-                        "paciente_profile" -> navController.navigate("patient_profile/$id")
-                        "historico_avaliacoes" -> navController.navigate("historico_avaliacoes/$id")
+                        "paciente_profile" -> navController.navigate("patient_profile/${uiState.userId}")
+                        "historico_avaliacoes" -> navController.navigate("historico_avaliacoes/${uiState.userId}")
                     }
                 }
             )
@@ -123,27 +125,34 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 CenteredTopAppBar(
-                    name = name,
+                    name = uiState.userName,
                     onMenuClick = { scope.launch { drawerState.open() } })
-            }
+            },
+            modifier = modifier
         ) { innerPadding ->
-            MainContent(
-                perfil = perfil,
-                modifier = modifier
+            PullToRefreshBox(
+                isRefreshing = uiState.isLoading,
+                onRefresh = viewModel::refresh,
+                modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxSize(),
-                navController = navController,
-                id = id
-            )
+                    .fillMaxSize()
+            ) {
+                MainContent(
+                    perfil = uiState.userProfile,
+                    navController = navController,
+                    id = uiState.userId
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun AppDrawerContent(
     drawerItems: List<NavigationItem>,
     onItemClick: (NavigationItem) -> Unit,
-modifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     var selectedItem by remember { mutableStateOf<NavigationItem?>(null) }
 
@@ -162,7 +171,6 @@ modifier: Modifier = Modifier
                     onItemClick(item)
                 },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-
                 colors = NavigationDrawerItemDefaults.colors(
                     unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     unselectedTextColor = AppColors.Black,
@@ -215,13 +223,14 @@ fun CenteredTopAppBar(
 
 @Composable
 fun MainContent(
-    modifier: Modifier = Modifier,
     perfil: String,
     navController: NavController,
-    id: String
+    id: String,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),

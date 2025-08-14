@@ -70,9 +70,11 @@ fun TecnicoProfileScreen(
             )
         },
         floatingActionButton = {
-            if (uiState.tecnico != null) {
+            uiState.tecnico?.let { profile ->
                 FloatingActionButton(
-                    onClick = { navController.navigate("tecnico_profile_edit") },
+                    onClick = {
+                        navController.navigate("tecnico_profile_edit/${profile.id}")
+                    },
                     containerColor = AppColors.Primary
                 ) {
                     Icon(Icons.Default.Edit, "Editar Perfil", tint = Color.White)
@@ -130,7 +132,7 @@ fun TecnicoProfileScreen(
                         ) {
                             DataRow("CPF", profile.cpf)
                             DataRow("Sexo", profile.sexo)
-                            DataRow("Data de Nasc.", profile.dataNascimento)
+                            DataRow("Data de Nasc.", profile.dataNasc)
                             DataRow("Telefone", profile.telefone)
                         }
 

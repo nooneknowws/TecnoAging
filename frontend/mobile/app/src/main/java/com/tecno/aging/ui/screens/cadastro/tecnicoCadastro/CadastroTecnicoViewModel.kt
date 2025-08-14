@@ -53,7 +53,7 @@ class CadastroTecnicoViewModel(
         _uiState.update { it.copy(tecnico = it.tecnico.copy(sexo = sexo), erros = it.erros - "sexo") }
     }
     fun onDataNascChanged(dataNasc: String) {
-        _uiState.update { it.copy(tecnico = it.tecnico.copy(dataNascimento = dataNasc), erros = it.erros - "dataNasc") }
+        _uiState.update { it.copy(tecnico = it.tecnico.copy(dataNasc = dataNasc), erros = it.erros - "dataNasc") }
     }
     fun onEnderecoChanged(endereco: Endereco) {
         _uiState.update { it.copy(tecnico = it.tecnico.copy(endereco = endereco), erros = it.erros - "cep") }
@@ -127,7 +127,7 @@ class CadastroTecnicoViewModel(
         val formattedDate = try {
             val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            inputFormat.parse(state.tecnico.dataNascimento)?.let { outputFormat.format(it) }
+            inputFormat.parse(state.tecnico.dataNasc)?.let { outputFormat.format(it) }
         } catch (e: Exception) { null }
 
         if (formattedDate == null) return null
@@ -152,7 +152,7 @@ class CadastroTecnicoViewModel(
             if (tecnico.cpf.filter { it.isDigit() }.length != 11) erros["cpf"] = "CPF inválido"
             if (tecnico.telefone.filter { it.isDigit() }.length < 10) erros["telefone"] = "Telefone inválido"
             if (tecnico.sexo.isBlank()) erros["sexo"] = "Selecione o sexo"
-            if (tecnico.dataNascimento.isBlank()) erros["dataNasc"] = "Data obrigatória"
+            if (tecnico.dataNasc.isBlank()) erros["dataNasc"] = "Data obrigatória"
             if (senha.length < 6) erros["senha"] = "Senha deve ter no mínimo 6 caracteres"
             if (confirmarSenha != senha) erros["confirmarSenha"] = "As senhas não coincidem"
             if (tecnico.endereco?.cep?.filter { it.isDigit() }?.length != 8) erros["cep"] = "CEP inválido"
