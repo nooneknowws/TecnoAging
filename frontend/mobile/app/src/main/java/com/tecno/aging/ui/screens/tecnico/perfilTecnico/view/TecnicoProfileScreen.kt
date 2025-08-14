@@ -1,13 +1,16 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,23 +19,28 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,7 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.R
-
+import com.tecno.aging.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,42 +61,38 @@ fun TecnicoProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "Meu Perfil",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
+                title = { Text("Meu Perfil") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                }
             )
         },
+        floatingActionButton = {
+            if (uiState.tecnico != null) {
+                FloatingActionButton(
+                    onClick = { navController.navigate("tecnico_profile_edit") },
+                    containerColor = AppColors.Primary
+                ) {
+                    Icon(Icons.Default.Edit, "Editar Perfil", tint = Color.White)
+                }
+            }
+        }
     ) { padding ->
-        Box(modifier = Modifier
-            .padding(padding)
-            .fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(AppColors.Gray50)
+        ) {
             when {
                 uiState.isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
                 uiState.error != null -> {
-                    Text(
-                        text = "Erro: ${uiState.error}",
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.error
-                    )
+                    Text("Erro: ${uiState.error}", modifier = Modifier.align(Alignment.Center))
                 }
 
                 uiState.tecnico != null -> {
@@ -97,77 +101,49 @@ fun TecnicoProfileScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Box(
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_person),
+                            contentDescription = "Foto de perfil",
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(120.dp)
                                 .clip(CircleShape)
-                                .align(Alignment.CenterHorizontally)
+                                .background(AppColors.Gray200)
+                        )
+                        Text(
+                            text = profile.nome,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Matrícula: ${profile.matricula}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = AppColors.Gray700
+                        )
+
+                        InfoCard(
+                            title = "Dados Pessoais",
+                            icon = Icons.Default.Person
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_person), // Placeholder
-                                contentDescription = "Foto de perfil",
-                                modifier = Modifier.fillMaxSize()
-                            )
+                            DataRow("CPF", profile.cpf)
+                            DataRow("Sexo", profile.sexo)
+                            DataRow("Data de Nasc.", profile.dataNascimento)
+                            DataRow("Telefone", profile.telefone)
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Button(
-                            onClick = {
-                                val tecnicoId = profile.id
-                                navController.navigate("tecnico_profile_edit/$tecnicoId")
-                            },
-                            modifier = Modifier.align(Alignment.End)
+                        InfoCard(
+                            title = "Endereço",
+                            icon = Icons.Default.Home
                         ) {
-                            Text("Editar Perfil")
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    "Dados Pessoais",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                DataRow(label = "Matrícula", value = profile.matricula)
-                                DataRow(label = "Nome", value = profile.nome)
-                                DataRow(label = "CPF", value = profile.cpf)
-                                DataRow(label = "Telefone", value = profile.telefone)
-                                DataRow(label = "Sexo", value = profile.sexo)
-                                DataRow(
-                                    label = "Data de Nascimento",
-                                    value = profile.dataNascimento
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    "Endereço",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                DataRow(label = "CEP", value = profile.endereco?.cep)
-                                DataRow(label = "Logradouro", value = profile.endereco?.logradouro)
-                                DataRow(
-                                    label = "Número",
-                                    value = profile.endereco?.numero?.toString()
-                                )
-                                DataRow(
-                                    label = "Complemento",
-                                    value = profile.endereco?.complemento
-                                )
-                                DataRow(label = "Bairro", value = profile.endereco?.bairro)
-                                DataRow(label = "Município", value = profile.endereco?.municipio)
-                                DataRow(label = "UF", value = profile.endereco?.uf)
-                            }
+                            DataRow("CEP", profile.endereco?.cep)
+                            DataRow("Logradouro", profile.endereco?.logradouro)
+                            DataRow("Número", profile.endereco?.numero?.toString())
+                            DataRow("Bairro", profile.endereco?.bairro)
+                            DataRow("Município", profile.endereco?.municipio)
+                            DataRow("UF", profile.endereco?.uf)
                         }
                     }
                 }
@@ -177,22 +153,53 @@ fun TecnicoProfileScreen(
 }
 
 @Composable
+private fun InfoCard(
+    title: String,
+    icon: ImageVector,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = AppColors.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, AppColors.Gray200)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, contentDescription = title, tint = AppColors.Primary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Column(content = content)
+        }
+    }
+}
+
+@Composable
 private fun DataRow(label: String, value: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$label:",
-            modifier = Modifier.width(140.dp),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
+            text = label,
+            modifier = Modifier.weight(0.4f),
+            style = MaterialTheme.typography.bodyMedium,
+            color = AppColors.Gray700
         )
         Text(
             text = value ?: "Não informado",
-            style = MaterialTheme.typography.bodyLarge
+            modifier = Modifier.weight(0.6f),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = AppColors.Dark
         )
     }
 }
