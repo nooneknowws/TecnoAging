@@ -143,22 +143,32 @@ fun HomeScreen(
 fun AppDrawerContent(
     drawerItems: List<NavigationItem>,
     onItemClick: (NavigationItem) -> Unit,
-    modifier: Modifier = Modifier
+modifier: Modifier = Modifier
 ) {
     var selectedItem by remember { mutableStateOf<NavigationItem?>(null) }
 
-    ModalDrawerSheet(modifier = modifier) {
-        Spacer(Modifier.height(8.dp))
+    ModalDrawerSheet(
+        modifier = modifier,
+        drawerContainerColor = AppColors.Gray50
+    ) {
+        Spacer(Modifier.height(16.dp))
         drawerItems.forEach { item ->
             NavigationDrawerItem(
-                icon = { Icon(item.icon, contentDescription = null) },
+                icon = { Icon(item.icon, contentDescription = item.title) },
                 label = { Text(item.title) },
                 selected = item == selectedItem,
                 onClick = {
                     selectedItem = item
                     onItemClick(item)
                 },
-                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedTextColor = AppColors.Black,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedTextColor = AppColors.Black,
+                )
             )
         }
     }
@@ -184,7 +194,7 @@ fun CenteredTopAppBar(
                 text = "Bem-vindo(a), $name",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
         },
         navigationIcon = {
@@ -229,7 +239,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.list_pacientes),
                             contentDescription = "Lista de Pacientes",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Lista de Pacientes",
@@ -242,7 +252,7 @@ fun MainContent(
                             Icons.Filled.AccountBox,
                             contentDescription = "Formulários",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Formulários",
@@ -260,7 +270,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.edit_perfil),
                             contentDescription = "Atualizar Perfil",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Atualizar Perfil",
@@ -275,12 +285,43 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.plus),
                             contentDescription = "Cadastrar Tecnico",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Cadastrar Tecnico",
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("cadastro_tecnico") }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "Cadastrar Paciente",
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    title = "Cadastrar Paciente",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { /* TODO */ }
+                )
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus),
+                            contentDescription = "Histórico",
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    title = "Histórico",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { /* TODO */ }
                 )
             }
         } else if (perfil.equals("PACIENTE", ignoreCase = true)) {
@@ -294,7 +335,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.play),
                             contentDescription = "Iniciar Novo Teste",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Iniciar Novo Teste",
@@ -307,7 +348,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.resultados),
                             contentDescription = "Resultados",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Ver Resultados",
@@ -325,7 +366,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.ult_aval),
                             contentDescription = "Últimas Avaliações",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Últimas Avaliações",
@@ -339,7 +380,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.tarefa_concluida),
                             contentDescription = "Tarefas Concluídas",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Tarefas Concluídas",
@@ -357,7 +398,7 @@ fun MainContent(
                             painter = painterResource(id = R.drawable.edit_perfil),
                             contentDescription = "Atualizar Perfil",
                             modifier = Modifier.size(48.dp),
-                            tint = AppColors.blueDash
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     title = "Atualizar Perfil",
