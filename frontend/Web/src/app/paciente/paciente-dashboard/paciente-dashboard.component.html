@@ -1,24 +1,280 @@
-<div class="container my-5">
-  <h1 class="text-center mb-4">Bem-vindo ao Painel do Paciente</h1>
-  <div class="row justify-content-center">
-    <div class="col-6 col-md-3">
-      <div class="action-card" routerLink="/paciente/visualizar-perfil">
-        <i class="fas fa-user-circle"></i>
-        <p>Visualizar Perfil</p>
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="header">
+    <h1><i class="fas fa-user-circle me-3"></i>Meu Painel</h1>
+    <div class="user-info" *ngIf="currentPaciente">
+      <span>Bem-vindo(a), <a [routerLink]="['/paciente/visualizar-perfil']">{{currentPaciente.nome}}</a></span>
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Sair
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs">
+    <button 
+      [class.active]="activeSection === 'dashboard'"
+      (click)="switchSection('dashboard')">
+      <i class="fas fa-home me-2"></i>Início
+    </button>
+    <button 
+      [class.active]="activeSection === 'perfil'"
+      (click)="switchSection('perfil')">
+      <i class="fas fa-user me-2"></i>Meu Perfil
+    </button>
+    <button 
+      [class.active]="activeSection === 'testes'"
+      (click)="switchSection('testes')">
+      <i class="fas fa-clipboard-list me-2"></i>Meus Testes
+    </button>
+    <button 
+      [class.active]="activeSection === 'resultados'"
+      (click)="switchSection('resultados')">
+      <i class="fas fa-chart-line me-2"></i>Resultados
+    </button>
+  </nav>
+
+  <!-- Dashboard Section -->
+  <section id="dashboard" class="section" [class.active]="activeSection === 'dashboard'">
+    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+    <p class="text-muted">Visão geral das suas informações de saúde e atividades recentes.</p>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-clipboard-check"></i>
+        <h3>{{estatisticas?.testesRealizados || 0}}</h3>
+        <span>Testes Realizados</span>
+      </div>
+      <div class="stat-card success">
+        <i class="fas fa-chart-line"></i>
+        <h3>{{estatisticas?.ultimaAvaliacao || 'N/A'}}</h3>
+        <span>Última Avaliação</span>
+      </div>
+      <div class="stat-card warning">
+        <i class="fas fa-clock"></i>
+        <h3>{{estatisticas?.diasUltimoTeste || 0}}</h3>
+        <span>Dias desde último teste</span>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="action-card" routerLink="/paciente/historico-testes">
-        <i class="fas fa-history"></i>
-        <p>Histórico de Testes</p>
+
+    <!-- Quick Actions -->
+    <h4 class="mb-3">Ações Rápidas</h4>
+    <div class="quick-actions">
+      <div class="action-card" (click)="switchSection('testes')">
+        <i class="fas fa-play-circle"></i>
+        <h4>Iniciar Novo Teste</h4>
+        <p class="text-muted">Realize uma nova avaliação cognitiva</p>
+      </div>
+      <div class="action-card" (click)="switchSection('resultados')">
+        <i class="fas fa-chart-bar"></i>
+        <h4>Ver Resultados</h4>
+        <p class="text-muted">Consulte seus resultados anteriores</p>
+      </div>
+      <div class="action-card" (click)="switchSection('perfil')">
+        <i class="fas fa-user-edit"></i>
+        <h4>Atualizar Perfil</h4>
+        <p class="text-muted">Mantenha suas informações atualizadas</p>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="action-card" routerLink="/formularios/preencher">
-        <i class="fas fa-file-alt"></i>
-        <p>Preencher Formulário</p>
+
+    <!-- Recent Tests -->
+    <div class="recent-tests">
+      <h4 class="mb-3"><i class="fas fa-history me-2"></i>Atividades Recentes</h4>
+      <div *ngIf="atividadesRecentes && atividadesRecentes.length > 0; else noActivities">
+        <div class="test-item" *ngFor="let atividade of atividadesRecentes">
+          <div class="test-info">
+            <h5>{{atividade.formulario}}</h5>
+            <span><i class="fas fa-calendar me-1"></i>{{atividade.data | date:'dd/MM/yyyy'}} - {{atividade.tecnico}}</span>
+          </div>
+          <span class="test-status" [ngClass]="atividade.status === 'Concluído' ? 'status-completed' : 'status-pending'">
+            {{atividade.status}}
+          </span>
+        </div>
+      </div>
+      <ng-template #noActivities>
+        <div class="alert alert-info">
+          <p class="text-muted">Nenhuma atividade recente encontrada.</p>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+
+  <!-- Profile Section -->
+  <section id="perfil" class="section" [class.active]="activeSection === 'perfil'">
+    <h2><i class="fas fa-user me-2"></i>Meu Perfil</h2>
+    <p class="text-muted">Visualize e edite suas informações pessoais.</p>
+
+    <div class="profile-card" *ngIf="currentPaciente">
+      <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="profile-info">
+        <h3>{{currentPaciente.nome}}</h3>
+        <p>Paciente desde <!-- {{currentPaciente.dataCadastro | date:'MMMM yyyy'}} --></p>
+        <div class="profile-details">
+          <div class="profile-detail">
+            <strong>CPF</strong>
+            {{currentPaciente.cpf}}
+          </div>
+          <div class="profile-detail">
+            <strong>Data de Nascimento</strong>
+            {{currentPaciente.dataNasc | date:'dd/MM/yyyy'}}
+          </div>
+          <div class="profile-detail">
+            <strong>Idade</strong>
+            {{currentPaciente.idade}} anos
+          </div>
+          <div class="profile-detail">
+            <strong>Telefone</strong>
+            {{currentPaciente.telefone}}
+          </div>
+          <div class="profile-detail" *ngIf="currentPaciente.endereco">
+            <strong>Endereço</strong>
+            {{currentPaciente.endereco.logradouro}}, {{currentPaciente.endereco.numero}} - {{currentPaciente.endereco.bairro}}
+          </div>
+          <div class="profile-detail" *ngIf="currentPaciente.endereco">
+            <strong>Cidade/UF</strong>
+            {{currentPaciente.endereco.municipio}} - {{currentPaciente.endereco.uf}}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <!-- Contatos de Emergência -->
+    <div class="emergency-contacts" *ngIf="currentPaciente?.contatos && currentPaciente!.contatos?.length! > 0">
+      <h4 class="mb-3"><i class="fas fa-phone me-2"></i>Contatos de Emergência</h4>
+      <div class="contacts-grid">
+        <div class="contact-card" *ngFor="let contato of currentPaciente!.contatos">
+          <div class="contact-info">
+            <h5>{{contato.nome}}</h5>
+            <p class="contact-relation">{{contato.parentesco}}</p>
+            <p class="contact-phone"><i class="fas fa-phone me-1"></i>{{contato.telefone}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tests Section -->
+  <section id="testes" class="section" [class.active]="activeSection === 'testes'">
+    <h2><i class="fas fa-clipboard-list me-2"></i>Meus Testes</h2>
+    <p class="text-muted">Histórico completo dos seus testes e avaliações.</p>
+
+    <div *ngIf="historicoTestes && historicoTestes.length > 0; else noTests">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Formulário</th>
+              <th>Data</th>
+              <th>Técnico</th>
+              <th>Pontuação</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let teste of historicoTestes">
+              <td>{{teste.formulario}}</td>
+              <td>{{teste.dataCriacao | date:'dd/MM/yyyy'}}</td>
+              <td>{{teste.tecnico}}</td>
+              <td>
+                <span class="badge" [ngClass]="getBadgeClass(teste.pontuacaoTotal)">
+                  {{teste.pontuacaoTotal}}%
+                </span>
+              </td>
+              <td>
+                <span class="test-status status-completed">Concluído</span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-primary" (click)="visualizarTeste(teste.id!)">
+                  <i class="fas fa-eye me-1"></i>Visualizar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #noTests>
+      <div class="alert alert-info">
+        <p class="text-muted">Nenhum teste realizado ainda.</p>
+      </div>
+    </ng-template>
+
+    <!-- Formulários Disponíveis -->
+    <div class="available-forms mt-4">
+      <h4 class="mb-3"><i class="fas fa-plus-circle me-2"></i>Formulários Disponíveis</h4>
+      <div class="forms-grid" *ngIf="formulariosDisponiveis && formulariosDisponiveis.length > 0">
+        <div class="form-card" *ngFor="let form of formulariosDisponiveis">
+          <i class="fas fa-clipboard-list"></i>
+          <h5>{{form.titulo}}</h5>
+          <p class="text-muted">{{form.descricao}}</p>
+          <button class="btn-action" (click)="iniciarFormulario(form.tipo!)">
+            <i class="fas fa-play me-1"></i>Iniciar Teste
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section id="resultados" class="section" [class.active]="activeSection === 'resultados'">
+    <h2><i class="fas fa-chart-line me-2"></i>Resultados</h2>
+    <p class="text-muted">Análise detalhada dos seus resultados e métricas de saúde.</p>
+
+    <!-- Health Metrics -->
+    <div class="health-metrics" *ngIf="metricas">
+      <div class="metric-card">
+        <div class="metric-label">Desempenho Cognitivo</div>
+        <div class="metric-value">{{metricas.desempenhoCognitivo || 'N/A'}}</div>
+        <div class="metric-status" [ngClass]="getMetricStatusClass(metricas.desempenhoCognitivo)">
+          {{getMetricStatus(metricas.desempenhoCognitivo)}}
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Nível de Fadiga</div>
+        <div class="metric-value">{{metricas.nivelFadiga || 'N/A'}}</div>
+        <div class="metric-status" [ngClass]="getMetricStatusClass(metricas.nivelFadiga)">
+          {{getMetricStatus(metricas.nivelFadiga)}}
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Vulnerabilidade Clínica</div>
+        <div class="metric-value">{{metricas.vulnerabilidadeClinica || 'N/A'}}</div>
+        <div class="metric-status" [ngClass]="getMetricStatusClass(metricas.vulnerabilidadeClinica)">
+          {{getMetricStatus(metricas.vulnerabilidadeClinica)}}
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Qualidade de Vida</div>
+        <div class="metric-value">{{metricas.qualidadeVida || 'N/A'}}</div>
+        <div class="metric-status" [ngClass]="getMetricStatusClass(metricas.qualidadeVida)">
+          {{getMetricStatus(metricas.qualidadeVida)}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Results -->
+    <div class="detailed-results mt-4" *ngIf="resultadosDetalhados && resultadosDetalhados.length > 0">
+      <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Resultados Detalhados</h4>
+      <div class="results-timeline">
+        <div class="result-item" *ngFor="let resultado of resultadosDetalhados">
+          <div class="result-date">
+            <span>{{resultado.data | date:'dd/MM/yyyy'}}</span>
+          </div>
+          <div class="result-content">
+            <h5>{{resultado.formulario}}</h5>
+            <p class="result-score">Pontuação: {{resultado.pontuacao}}%</p>
+            <p class="result-description">{{resultado.observacoes}}</p>
+            <button class="btn btn-sm btn-outline-primary" (click)="verDetalhes(resultado.id!)">
+              Ver Detalhes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 <router-outlet></router-outlet>

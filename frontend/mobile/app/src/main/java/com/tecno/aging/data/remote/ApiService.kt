@@ -1,13 +1,15 @@
 package com.tecno.aging.data.remote
 
+import com.tecno.aging.domain.models.DTO.AvaliacaoPostDTO
 import com.tecno.aging.domain.models.DTO.CepResponse
+import com.tecno.aging.domain.models.DTO.TecnicoUpdateRequest
 import com.tecno.aging.domain.models.DTO.VerifyJwtResponse
 import com.tecno.aging.domain.models.auth.LoginRequest
 import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
+import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
 import com.tecno.aging.domain.models.paciente.Paciente
-import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import retrofit2.Response
 import retrofit2.http.*
@@ -31,7 +33,13 @@ interface ApiService {
     suspend fun registrarTecnico(@Body request: TecnicoRequest): Response<Unit>
 
     @GET("api/tecnicos/{id}")
-    suspend fun getTecnicoById(@Path("id") tecnicoId: Int): Response<Paciente>
+    suspend fun getTecnicoById(@Path("id") tecnicoId: Int): Response<Tecnico>
+
+    @PUT("api/tecnicos/{id}")
+    suspend fun updateTecnico(
+        @Path("id") tecnicoId: Int,
+        @Body request: TecnicoUpdateRequest
+    ): Response<Tecnico>
 
     // Pacientes
     @GET("api/pacientes")
@@ -49,5 +57,16 @@ interface ApiService {
 
     @GET("api/avaliacoes/avalicao/{id}")
     suspend fun getAvaliacoes(@Path("id") avalicaoId: Int): Response<Unit>
+
+    // Formulários
+    @GET("api/formularios/")
+    suspend fun getTodosFormularios(): Response<List<GenericForm>>
+
+    @GET("api/formularios/{id}")
+    suspend fun getFormularioById(@Path("id") formularioId: Long): Response<GenericForm>
+
+    // Avaliações
+    @POST("api/avaliacoes/forms")
+    suspend fun salvarAvaliacao(@Body avaliacao: AvaliacaoPostDTO): Response<Map<String, String>>
 
 }

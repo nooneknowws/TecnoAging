@@ -2,28 +2,26 @@ package com.tecno.aging.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
-import com.tecno.aging.ui.screens.cadastro.CadastroScreen
+import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
-import com.tecno.aging.ui.screens.forms.IVCF20FormScreen
-import com.tecno.aging.ui.screens.forms.MeemFormScreen
-import com.tecno.aging.ui.screens.forms.SedentarismoFormScreen
+import com.tecno.aging.ui.screens.forms.FormsScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
-import com.tecno.aging.ui.screens.forms.pittsburghFatigabilityScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
-import com.tecno.aging.ui.screens.pacientes.historico.HistoricoScreen
-import com.tecno.aging.ui.screens.pacientes.listaDePacientes.PacienteListScreen
-import com.tecno.aging.ui.screens.pacientes.perfilPaciente.PacienteProfileScreen
-import com.tecno.aging.ui.screens.profile.ProfileEditScreen
-import com.tecno.aging.ui.screens.profile.ProfileScreen
-import com.tecno.aging.ui.screens.settings.SettingsScreen
+import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
+import com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit.PacienteEditScreen
+import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
+import com.tecno.aging.ui.screens.pacientes.perfilPaciente.view.PacienteProfileScreen
+import com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit.ProfileEditScreen
 import com.tecno.aging.ui.screens.splash.SplashScreen
+import com.tecno.aging.ui.screens.tecnico.perfilTecnico.view.TecnicoProfileScreen
 
 @Composable
 fun AppNavGraph() {
@@ -45,7 +43,7 @@ fun AppNavGraph() {
         composable("login") {
             LoginScreen(navController)
         }
-        composable("cadastro") {
+        composable("cadastro_tecnico") {
             CadastroScreen(
                 navController = navController,
                 onSuccess = {
@@ -58,17 +56,11 @@ fun AppNavGraph() {
 
         // Fluxo principal
         composable("home") {
-            val name = SessionManager.getUserName().orEmpty()
-            val id = SessionManager.getUserId().orEmpty()
-            val perfil = SessionManager.getUserProfile().orEmpty()
-
             HomeScreen(
-                name = name,
-                ID = id,
-                Perfil = perfil,
                 navController = navController,
             )
         }
+
 
         composable("test") {
             TestScreen(navController = navController)
@@ -76,57 +68,42 @@ fun AppNavGraph() {
 
         // Formulários
         composable("forms") {
+            FormsScreen(navController = navController)
+        }
+
+        composable(
+            route = "form/{formId}/{pacienteId}",
+            arguments = listOf(
+                navArgument("formId") { type = NavType.LongType },
+                navArgument("pacienteId") { type = NavType.LongType }
+            )
+        ) {
             FormScreen(navController = navController)
         }
 
-        composable("forms/ivcf20") {
-            IVCF20FormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
-        }
-        composable("forms/pittsburgh") {
-            pittsburghFatigabilityScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            })
-        }
-
-        composable("forms/sedentarismo") {
-            SedentarismoFormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
-        }
-
-        composable("forms/meem") {
-            MeemFormScreen(onSubmit = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
-            }, navController = navController)
-        }
-
         // Perfil e Configurações
-        composable("profile") {
-            ProfileScreen(profileType = "tecnico", navController = navController)
+        composable("tecnico_profile") {
+            TecnicoProfileScreen(navController = navController)
         }
 
-        composable("profile_edit") {
+        composable(
+            route = "tecnico_profile_edit/{tecnicoId}",
+            arguments = listOf(navArgument("tecnicoId") { type = NavType.IntType })
+        ) {
             ProfileEditScreen(
-                onNavigateBack = { navController.popBackStack() }
+                navController = navController
             )
         }
 
         composable("pacientes_list") {
             PacienteListScreen(
+                navController = navController,
                 onNavigateToProfile = { pacienteId ->
                     navController.navigate("patient_profile/$pacienteId")
                 },
-                onNavigateToEditProfile = { /* ... */ }
+                onNavigateToEditProfile = { pacienteId ->
+                    navController.navigate("patient_profile_edit/$pacienteId")
+                }
             )
         }
 
@@ -137,8 +114,11 @@ fun AppNavGraph() {
             PacienteProfileScreen(navController = navController)
         }
 
-        composable("settings") {
-            SettingsScreen()
+        composable(
+            route = "patient_profile_edit/{pacienteId}",
+            arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
+        ) {
+            PacienteEditScreen(navController = navController)
         }
 
         composable(

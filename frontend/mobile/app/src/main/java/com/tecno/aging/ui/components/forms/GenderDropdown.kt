@@ -1,18 +1,12 @@
-
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.tecno.aging.ui.theme.cleanTextFieldColors
+import androidx.compose.ui.unit.dp
+import com.tecno.aging.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,39 +16,56 @@ fun GenderDropdown(
     modifier: Modifier = Modifier,
     error: String? = null
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val options = listOf("Masculino", "Feminino")
+    val options = listOf("Masculino", "Feminino", "Outro")
+    var isExpanded by remember { mutableStateOf(false) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            readOnly = true,
-            value = selectedGender,
-            onValueChange = {},
-            label = { Text("Sexo", color = Color.Black) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor(),
-            isError = error != null,
-            supportingText = { error?.let { Text(it, color = Color.Red) } },
-            colors = cleanTextFieldColors()
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+    Column(modifier = modifier) {
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = !isExpanded }
         ) {
-            options.forEach { gender ->
-                DropdownMenuItem(
-                    text = { Text(gender) },
-                    onClick = {
-                        onGenderSelected(gender)
-                        expanded = false
-                    }
+            OutlinedTextField(
+                value = selectedGender,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Sexo") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(),
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                },
+                isError = !error.isNullOrBlank(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = AppColors.White,
+                    unfocusedContainerColor = AppColors.White,
+                    errorContainerColor = AppColors.Red50
                 )
+            )
+
+            ExposedDropdownMenu(
+                expanded = isExpanded,
+                onDismissRequest = { isExpanded = false }
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            onGenderSelected(option)
+                            isExpanded = false
+                        }
+                    )
+                }
             }
+        }
+
+        if (!error.isNullOrBlank()) {
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
         }
     }
 }

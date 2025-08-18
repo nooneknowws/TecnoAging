@@ -20,6 +20,10 @@ export class PacienteService {
     return this.http.get<Paciente>(`${this.API_URL}/pacientes/${id}`);
   }
 
+  buscarPorCpf(cpf: string): Observable<Paciente> {
+    return this.http.get<Paciente>(`${this.API_URL}/pacientes/cpf/${cpf}`);
+  }
+
   createPaciente(paciente: Paciente): Observable<Paciente> {
     return this.http.post<Paciente>(`${this.API_URL}/pacientes`, paciente);
   }

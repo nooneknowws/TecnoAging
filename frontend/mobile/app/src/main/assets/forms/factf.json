@@ -1,0 +1,317 @@
+{
+    "tipo": "factf",
+    "titulo": "Functional Assessment of Cancer Therapy - Fatigue (FACT-F)",
+    "descricao": "Avaliação da qualidade de vida e fadiga em pacientes com câncer",
+    "etapas": [
+        {
+            "titulo": "Bem-estar Físico",
+            "descricao": "Avaliação do seu estado físico durante os últimos 7 dias",
+            "perguntas": [
+                {
+                    "texto": "Estou sem energia",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Fico enjoado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Por causa do meu estado físico, tenho dificuldade em atender às necessidades da minha família",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho dores",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me incomodado(a) pelos efeitos secundários do tratamento",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me doente",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho que me deitar durante o dia",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                }
+            ]
+        },
+        {
+            "titulo": "Bem-estar Social/Familiar",
+            "descricao": "Avaliação do seu relacionamento com família e amigos durante os últimos 7 dias",
+            "perguntas": [
+                {
+                    "texto": "Sinto que tenho uma boa relação com os meus amigos",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Recebo apoio emocional da minha família",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Recebo apoio dos meus amigos",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "A minha família aceita a minha doença",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou satisfeito(a) com a maneira como a minha família fala sobre a minha doença",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me próximo(a) do(a) meu (minha) parceiro(a) (ou da pessoa que me dá maior apoio)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou satisfeito(a) com a minha vida sexual",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": false }
+                }
+            ]
+        },
+        {
+            "titulo": "Bem-estar Emocional",
+            "descricao": "Avaliação do seu estado emocional durante os últimos 7 dias",
+            "perguntas": [
+                {
+                    "texto": "Sinto-me triste",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou satisfeito(a) com a maneira como enfrento a minha doença",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou perdendo a esperança na luta contra a minha doença",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me nervoso(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou preocupado(a) com a idéia de morrer",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou preocupado(a) que o meu estado venha a piorar",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                }
+            ]
+        },
+        {
+            "titulo": "Bem-estar Funcional",
+            "descricao": "Avaliação da sua capacidade funcional durante os últimos 7 dias",
+            "perguntas": [
+                {
+                    "texto": "Sou capaz de trabalhar (inclusive em casa)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me realizado(a) com o meu trabalho (inclusive em casa)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sou capaz de sentir prazer em viver",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Aceito a minha doença",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Durmo bem",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Gosto das coisas que normalmente faço para me divertir",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou satisfeito(a) com a qualidade da minha vida neste momento",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                }
+            ]
+        },
+        {
+            "titulo": "Preocupações Adicionais",
+            "descricao": "Avaliação de preocupações específicas durante os últimos 7 dias",
+            "perguntas": [
+                {
+                    "texto": "Sinto-me fatigado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto fraqueza generalizada",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me sem forças",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sinto-me cansado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho dificuldade em começar as coisas porque estou cansado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho dificuldade em acabar as coisas porque estou cansado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho energia",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Sou capaz de fazer as minhas atividades normais",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Preciso (de) dormir durante o dia",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou cansado(a) demais para comer",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Preciso de ajuda para fazer as minhas atividades normais",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Estou frustrado(a) por estar cansado(a) demais para fazer as coisas que quero",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                },
+                {
+                    "texto": "Tenho que limitar as minhas atividades sociais por estar cansado(a)",
+                    "tipo": "radio",
+                     
+                    "opcoes": ["Nem um pouco", "Um pouco", "Mais ou menos", "Muito", "Muitíssimo"],
+                    "validacao": { "required": true }
+                }
+            ]
+        }
+    ]
+}
