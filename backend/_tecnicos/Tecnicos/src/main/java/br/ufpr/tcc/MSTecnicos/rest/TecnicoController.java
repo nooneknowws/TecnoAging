@@ -10,8 +10,10 @@ import br.ufpr.tcc.MSTecnicos.exceptions.ResourceNotFoundException;
 
 import br.ufpr.tcc.MSTecnicos.models.Tecnico;
 import br.ufpr.tcc.MSTecnicos.repository.TecnicoRepository;
+import br.ufpr.tcc.MSTecnicos.service.ImageService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,6 +22,9 @@ public class TecnicoController {
 
 	@Autowired
 	private TecnicoRepository tecnicoRepository;
+
+	@Autowired
+	private ImageService imageService;
 
 	@PostMapping("/tecnicos")
 	public ResponseEntity<Tecnico> createTecnico(@RequestBody Tecnico tecnico) {
@@ -80,5 +85,41 @@ public class TecnicoController {
 		tecnico.setAtivo(true);
 		tecnicoRepository.save(tecnico);
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/tecnicos/{id}/foto")
+	public ResponseEntity<?> uploadFotoTecnico(@PathVariable("id") Long tecnicoId, @RequestBody Map<String, String> request) {
+		try {
+			Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+				.orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado"));
+
+			String base64Image = request.get("image");
+			byte[] compressedImage = imageService.compressImage(base64Image);
+			
+			tecnico.setFotoPerfil(compressedImage);
+			tecnicoRepository.save(tecnico);
+
+			return ResponseEntity.ok(Map.of("message", "Foto atualizada com sucesso"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+		}
+	}
+
+	@GetMapping("/tecnicos/{id}/foto")
+	public ResponseEntity<?> getFotoTecnico(@PathVariable("id") Long tecnicoId) {
+		try {
+			Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+				.orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado"));
+
+			byte[] fotoPerfil = tecnico.getFotoPerfil();
+			if (fotoPerfil == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			String base64Image = imageService.convertToBase64(fotoPerfil);
+			return ResponseEntity.ok(Map.of("image", base64Image));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+		}
 	}
 }

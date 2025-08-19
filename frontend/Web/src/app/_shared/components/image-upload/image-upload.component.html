@@ -1,0 +1,32 @@
+<div class="image-upload-container">
+  <div class="image-preview" [class.has-image]="previewUrl" (click)="triggerFileInput()">
+    <div *ngIf="!previewUrl && !isUploading" class="placeholder">
+      <i class="fas fa-camera"></i>
+      <p>{{ placeholderText }}</p>
+    </div>
+    
+    <div *ngIf="isUploading" class="loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Processando imagem...</p>
+    </div>
+    
+    <div *ngIf="previewUrl && !isUploading" class="image-container">
+      <img [src]="previewUrl" alt="Preview da imagem" class="preview-image">
+      <div class="image-overlay">
+        <button type="button" class="btn-change" (click)="triggerFileInput(); $event.stopPropagation()">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button type="button" class="btn-remove" (click)="removeImage(); $event.stopPropagation()">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <input 
+    type="file" 
+    id="imageInput" 
+    [accept]="acceptedTypes"
+    (change)="onFileSelected($event)"
+    style="display: none;">
+</div>

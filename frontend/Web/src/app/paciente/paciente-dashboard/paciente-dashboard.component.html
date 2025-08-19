@@ -107,7 +107,10 @@
 
     <div class="profile-card" *ngIf="currentPaciente">
       <div class="profile-avatar">
-        <i class="fas fa-user"></i>
+        <img *ngIf="currentPhotoUrl; else defaultAvatar" [src]="currentPhotoUrl" alt="Foto do perfil" class="profile-image">
+        <ng-template #defaultAvatar>
+          <i class="fas fa-user"></i>
+        </ng-template>
       </div>
       <div class="profile-info">
         <h3>{{currentPaciente.nome}}</h3>

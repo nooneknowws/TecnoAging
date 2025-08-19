@@ -13,15 +13,17 @@
 
             <!-- Profile Photo Section -->
             <div class="text-center mb-3">
-                <div class="profile-photo-container">
-                    <img [src]="previewUrl || '/assets/default-profile.jpg'" 
-                         alt="Profile Photo" 
-                         class="profile-photo mb-2">
-                    <input type="file" 
-                           class="form-control" 
-                           accept="image/*" 
-                           (change)="onFileSelected($event)"
-                           id="profilePhoto">
+                <app-image-upload
+                    [currentImageUrl]="currentPhotoUrl"
+                    [placeholderText]="'Clique para adicionar foto do perfil'"
+                    (imageSelected)="onImageSelected($event)"
+                    (imageError)="onImageError($event)">
+                </app-image-upload>
+                <div *ngIf="uploadError" class="alert alert-danger mt-2">
+                    {{ uploadError }}
+                </div>
+                <div *ngIf="uploadSuccess" class="alert alert-success mt-2">
+                    {{ uploadSuccess }}
                 </div>
             </div>
 

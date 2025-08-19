@@ -6,6 +6,7 @@ import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { TipoFormulario } from '../../_shared/models/tipos.formulario.enum';
 import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
+import { ImageService } from '../../_shared/services/image.service';
 
 type ViewMode = 'grid' | 'table';
 type Section = 'pacientes' | 'formularios' | 'resultados';
@@ -55,7 +56,8 @@ export class TecnicoDashboardComponent implements OnInit {
   constructor(
     private pacienteService: PacienteService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
@@ -110,6 +112,7 @@ export class TecnicoDashboardComponent implements OnInit {
     this.pacienteService.getPacientes().subscribe({
       next: (pacientes) => {
         this.pacientes = pacientes;
+        this.loadPacientesPhotos();
         this.pacienteSubject.next(pacientes);
       },
       error: (error) => {
@@ -117,6 +120,23 @@ export class TecnicoDashboardComponent implements OnInit {
       },
       complete: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  private loadPacientesPhotos(): void {
+    this.pacientes.forEach(paciente => {
+      if (paciente.id) {
+        this.imageService.getPacientePhoto(paciente.id).subscribe({
+          next: (response) => {
+            if (response && response.image) {
+              paciente.fotoUrl = response.image;
+            }
+          },
+          error: (error) => {
+            console.log(`Foto não encontrada para paciente ${paciente.id}`);
+          }
+        });
       }
     });
   }
@@ -203,6 +223,12 @@ export class TecnicoDashboardComponent implements OnInit {
     };
 
     return statusMap[status.toLowerCase()] || 'bg-primary';
+  }
+
+  onImageError(event: any) {
+    if (event.target) {
+      event.target.src = 'https://place-hold.it/192x256';
+    }
   }
 
   logout(): void {

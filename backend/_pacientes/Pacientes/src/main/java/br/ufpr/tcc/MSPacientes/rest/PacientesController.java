@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import br.ufpr.tcc.MSPacientes.models.Paciente;
 import br.ufpr.tcc.MSPacientes.repository.PacienteRepository;
+import br.ufpr.tcc.MSPacientes.service.ImageService;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +23,9 @@ public class PacientesController {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private ImageService imageService;
 	
     @PostMapping("/pacientes")
     @Transactional
@@ -79,6 +84,41 @@ public class PacientesController {
         Paciente updated = pacienteRepository.save(paciente);
         return ResponseEntity.ok(updated);
     }
-    
+
+    @PostMapping("/pacientes/{id}/foto")
+    public ResponseEntity<?> uploadFotoPaciente(@PathVariable(name = "id") Long pacienteId, @RequestBody Map<String, String> request) {
+        try {
+            Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado"));
+
+            String base64Image = request.get("image");
+            byte[] compressedImage = imageService.compressImage(base64Image);
+            
+            paciente.setFotoPerfil(compressedImage);
+            pacienteRepository.save(paciente);
+
+            return ResponseEntity.ok(Map.of("message", "Foto atualizada com sucesso"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/pacientes/{id}/foto")
+    public ResponseEntity<?> getFotoPaciente(@PathVariable(name = "id") Long pacienteId) {
+        try {
+            Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado"));
+
+            byte[] fotoPerfil = paciente.getFotoPerfil();
+            if (fotoPerfil == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String base64Image = imageService.convertToBase64(fotoPerfil);
+            return ResponseEntity.ok(Map.of("image", base64Image));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 
 }

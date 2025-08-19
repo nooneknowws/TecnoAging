@@ -7,6 +7,7 @@ import { Endereco } from '../../_shared/models/pessoa/endereco';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { AuthService } from '../../_shared/services/auth.service';
 import { TecnicoService } from '../../_shared/services/tecnico.service';
+import { ImageService } from '../../_shared/services/image.service';
 import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 
 @Component({
@@ -20,6 +21,9 @@ export class EditarPerfilComponent implements OnInit {
   isUpdateSuccess = false;
   isUpdateFailed = false;
   errorMessage = '';
+  currentPhotoUrl: string | null = null;
+  uploadError: string = '';
+  uploadSuccess: string = '';
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   
@@ -31,6 +35,7 @@ export class EditarPerfilComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private tecnicoService: TecnicoService,
+    private imageService: ImageService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef
   ) {
@@ -42,7 +47,43 @@ export class EditarPerfilComponent implements OnInit {
     if (currentUser && currentUser instanceof Tecnico) {
       this.form = { ...currentUser };
       this.endereco = { ...currentUser.endereco! };
+      this.loadCurrentPhoto(currentUser.id!);
     }
+  }
+
+  loadCurrentPhoto(tecnicoId: number): void {
+    this.imageService.getTecnicoPhoto(tecnicoId).subscribe({
+      next: (response) => {
+        this.currentPhotoUrl = response.image;
+      },
+      error: () => {
+        this.currentPhotoUrl = null;
+      }
+    });
+  }
+
+  onImageSelected(base64Image: string): void {
+    if (!this.form?.id || !base64Image) return;
+
+    this.uploadError = '';
+    this.uploadSuccess = '';
+
+    this.imageService.uploadTecnicoPhoto(this.form.id, base64Image).subscribe({
+      next: () => {
+        this.uploadSuccess = 'Foto atualizada com sucesso!';
+        this.currentPhotoUrl = base64Image;
+        setTimeout(() => this.uploadSuccess = '', 3000);
+      },
+      error: (error) => {
+        this.uploadError = error.error?.error || 'Erro ao fazer upload da imagem.';
+        setTimeout(() => this.uploadError = '', 5000);
+      }
+    });
+  }
+
+  onImageError(error: string): void {
+    this.uploadError = error;
+    setTimeout(() => this.uploadError = '', 5000);
   }
 
   calcularIdade(dataNasc: Date): number {

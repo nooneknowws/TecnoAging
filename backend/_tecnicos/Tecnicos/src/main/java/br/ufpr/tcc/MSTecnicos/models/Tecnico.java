@@ -15,6 +15,10 @@ public class Tecnico extends Pessoa {
     @JsonProperty("ativo")
     private boolean ativo;
 
+    @Lob
+    @Column(name = "foto_perfil")
+    private byte[] fotoPerfil;
+
 	public Tecnico() {
 		super();
 	}
@@ -48,5 +52,13 @@ public class Tecnico extends Pessoa {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(byte[] fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
 }

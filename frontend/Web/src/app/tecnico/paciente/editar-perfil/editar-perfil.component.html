@@ -92,7 +92,28 @@
            </div>
            <div class="card-body row">
              <div class="col-md-4">
-               <img [src]="paciente?.fotoUrl || 'https://place-hold.it/192x256'" class="img-fluid w-100" alt="Foto do Paciente">
+               <img [src]="paciente?.fotoUrl || 'https://place-hold.it/192x256'" 
+                    class="img-fluid w-100" 
+                    alt="Foto do Paciente"
+                    (error)="onImageError($event)">
+               <div class="mt-2">
+                 <input type="file" 
+                        #fileInput 
+                        accept="image/*" 
+                        (change)="onImageSelected($event)"
+                        style="display: none;">
+                 <button type="button" 
+                         class="btn btn-sm btn-primary w-100" 
+                         (click)="fileInput.click()">
+                   <i class="fas fa-camera"></i> Alterar Foto
+                 </button>
+                 <button type="button" 
+                         *ngIf="paciente?.fotoUrl" 
+                         class="btn btn-sm btn-danger w-100 mt-1" 
+                         (click)="removerFoto()">
+                   <i class="fas fa-trash"></i> Remover Foto
+                 </button>
+               </div>
              </div>
              <div class="col-md-8" formGroupName="documentacao">
                <table class="table table-bordered">

@@ -10,8 +10,10 @@ import { TecnicoDashboardComponent } from './tecnico-dashboard/tecnico-dashboard
 import { FormularioService } from '../_shared/services/formulario.service';
 import { TecnicoLayoutComponent } from './tecnico-layout/tecnico-layout.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { ConsultarAvaliacaoComponent } from './paciente/consultar-avaliacao/consultar-avaliacao.component';
 import { EditarAvaliacaoComponent } from './paciente/editar-avaliacao/editar-avaliacao.component';
+import { SharedModule } from '../_shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,10 @@ import { EditarAvaliacaoComponent } from './paciente/editar-avaliacao/editar-ava
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule,
+    NgxMaskDirective,
+    NgxMaskPipe
   ],
   providers: [
     FormularioService

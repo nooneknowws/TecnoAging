@@ -7,6 +7,7 @@ import { Contato } from '../../../_shared/models/pessoa/paciente/contato';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
+import { ImageService } from '../../../_shared/services/image.service';
 import { finalize, of, switchMap } from 'rxjs';
 import { EnumParentesco } from '../../../_shared/models/parentesco.enum';
 
@@ -29,7 +30,8 @@ export class EditarPerfilPacienteComponent implements OnInit {
     private authService: AuthService,
     private pacienteService: PacienteService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private imageService: ImageService
   ) {
     this.pacienteForm = this.inicializarFormulario();
   }
@@ -238,9 +240,23 @@ export class EditarPerfilPacienteComponent implements OnInit {
     this.pacienteService.getPacienteById(id).subscribe({
       next: (paciente) => {
         this.paciente = paciente;
+        this.carregarFotoPaciente(id);
         this.preencherFormulario(paciente);
       },
       error: (error) => console.error('Erro ao carregar paciente:', error)
+    });
+  }
+
+  private carregarFotoPaciente(pacienteId: number) {
+    this.imageService.getPacientePhoto(pacienteId).subscribe({
+      next: (response) => {
+        if (response && response.image && this.paciente) {
+          this.paciente.fotoUrl = response.image;
+        }
+      },
+      error: (error) => {
+        console.log(`Foto não encontrada para paciente ${pacienteId}`);
+      }
     });
   }
   
@@ -413,6 +429,68 @@ export class EditarPerfilPacienteComponent implements OnInit {
     this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
       queryParams: { id: this.paciente?.id } 
     });
+  }
+
+  onImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const base64Image = e.target.result;
+        this.uploadProfileImage(base64Image);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  private uploadProfileImage(base64Image: string) {
+    if (!this.paciente?.id) return;
+
+    this.loading = true;
+    this.imageService.uploadPacientePhoto(this.paciente.id, base64Image).subscribe({
+      next: (response) => {
+        if (this.paciente) {
+          this.paciente.fotoUrl = base64Image;
+        }
+        alert('Foto atualizada com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao fazer upload da foto:', error);
+        alert('Erro ao fazer upload da foto. Tente novamente.');
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  removerFoto() {
+    if (!this.paciente?.id) return;
+
+    if (confirm('Tem certeza que deseja remover a foto do perfil?')) {
+      this.loading = true;
+      this.imageService.uploadPacientePhoto(this.paciente.id, '').subscribe({
+        next: (response) => {
+          if (this.paciente) {
+            this.paciente.fotoUrl = undefined;
+          }
+          alert('Foto removida com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao remover foto:', error);
+          alert('Erro ao remover foto. Tente novamente.');
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  onImageError(event: any) {
+    if (event.target) {
+      event.target.src = 'https://place-hold.it/192x256';
+    }
   }
 
   private validarData(control: FormControl): { [s: string]: boolean } | null {
