@@ -1,11 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-image-upload',
   templateUrl: './image-upload.component.html',
   styleUrls: ['./image-upload.component.css']
 })
-export class ImageUploadComponent {
+export class ImageUploadComponent implements OnChanges{
+
+  constructor(private sanitizer: DomSanitizer){}
+
   @Input() currentImageUrl: string | null = null;
   @Input() placeholderText: string = 'Clique para selecionar uma imagem';
   @Input() acceptedTypes: string = 'image/*';
@@ -17,7 +21,13 @@ export class ImageUploadComponent {
   isUploading = false;
 
   ngOnInit() {
-    this.previewUrl = this.currentImageUrl;
+    this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(this.currentImageUrl!).toString();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['currentImageUrl']) {
+      this.previewUrl = this.currentImageUrl;
+    }
   }
 
   onFileSelected(event: any) {
