@@ -15,12 +15,16 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 import { FormularioComponent } from './formulario/formulario.component';
 import { AuthInterceptor } from './_auth/auth.interceptor';
+import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cadastro-tecnico.component';
+import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     CadastroComponent,
+    CadastroTecnicoComponent,
+    CadastroPacienteComponent,
     FormularioComponent
   ],
   imports: [

@@ -18,11 +18,18 @@ import { PacienteLayoutComponent } from './paciente/paciente-layout/paciente-lay
 import { ConsultarAvaliacaoComponent } from './tecnico/paciente/consultar-avaliacao/consultar-avaliacao.component';
 import { EditarAvaliacaoComponent } from './tecnico/paciente/editar-avaliacao/editar-avaliacao.component';
 import { HomeComponent } from './_auth/home.component';
+import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cadastro-tecnico.component';
+import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
   { path: 'login', component: LoginComponent },
-  { path: 'cadastro', component: CadastroComponent },
+  { path: 'cadastro', 
+    children: [
+      { path: 'tecnico', component: CadastroTecnicoComponent },
+      { path: 'paciente', component: CadastroPacienteComponent }
+    ]
+  },
   {
     path: 'paciente',
     component: PacienteLayoutComponent,
