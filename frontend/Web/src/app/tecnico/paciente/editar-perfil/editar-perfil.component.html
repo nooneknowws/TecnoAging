@@ -1,267 +1,260 @@
 <header class="header">
-   <div class="container">
-     <h1>Editar Perfil do Paciente</h1>
-   </div>
- </header>
- 
- <div class="my-4">
-   <form [formGroup]="pacienteForm">
-     <div class="row">
-       <!-- Dados do Paciente -->
-       <div class="col-md-6">
-         <div class="card mb-4">
-           <div class="card-header">
-             <h4><i class="fas fa-pencil"></i><i class="fas fa-user"></i> Editar dados do Paciente</h4>
-           </div>
-           <div class="card-body" formGroupName="dadosPessoais">
-             <table class="table table-bordered">
-               <tbody>
-                 <tr>
-                   <th scope="row">Nome</th>
-                   <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Data de Nascimento</th>
-                   <td><input type="date" class="form-control form-control-sm" formControlName="dataNasc"></td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Sexo</th>
-                   <td>
-                     <select class="form-select form-select-sm" formControlName="sexo">
-                       <option value="Masculino">Masculino</option>
-                       <option value="Feminino">Feminino</option>
-                     </select>
-                   </td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Estado Civil</th>
-                   <td>
-                     <select class="form-select form-select-sm" formControlName="estadoCivil">
-                       <option value="">Selecione...</option>
-                       <option *ngFor="let estado of estadosCivis" [value]="estado">{{estado}}</option>
-                     </select>
-                   </td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Nacionalidade</th>
-                   <td>
-                     <select class="form-select form-select-sm" formControlName="nacionalidade">
-                       <option value="Brasileiro">Brasileiro</option>
-                     </select>
-                   </td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Município/UF de Nascimento</th>
-                   <td>
-                     <div class="row">
-                       <div class="col-8">
-                         <input type="text" class="form-control form-control-sm" formControlName="municipioNasc">
-                       </div>
-                       <div class="col-4">
-                         <select class="form-select form-select-sm" formControlName="ufNasc">
-                           <option value="" disabled>UF</option>
-                           <option *ngFor="let uf of ufs" [value]="uf">{{uf}}</option>
-                         </select>
-                       </div>
-                     </div>
-                   </td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Cor/Raça</th>
-                   <td>
-                     <select class="form-select form-select-sm" formControlName="corRaca">
-                       <option value="Branca">Branca</option>
-                       <option value="Preta">Preta</option>
-                       <option value="Parda">Parda</option>
-                       <option value="Amarela">Amarela</option>
-                       <option value="Indígena">Indígena</option>
-                     </select>
-                   </td>
-                 </tr>
-               </tbody>
-             </table>
-           </div>
-         </div>
-       </div>
- 
-       <!-- Documentação -->
-       <div class="col-md-6">
-         <div class="card mb-4">
-           <div class="card-header">
-             <h4><i class="fas fa-id-card"></i> Documentação</h4>
-           </div>
-           <div class="card-body row">
-             <div class="col-md-4">
-               <img [src]="paciente?.fotoUrl || 'https://place-hold.it/192x256'" 
-                    class="img-fluid w-100" 
-                    alt="Foto do Paciente"
-                    (error)="onImageError($event)">
-               <div class="mt-2">
-                 <input type="file" 
-                        #fileInput 
-                        accept="image/*" 
-                        (change)="onImageSelected($event)"
-                        style="display: none;">
-                 <button type="button" 
-                         class="btn btn-sm btn-primary w-100" 
-                         (click)="fileInput.click()">
-                   <i class="fas fa-camera"></i> Alterar Foto
-                 </button>
-                 <button type="button" 
-                         *ngIf="paciente?.fotoUrl" 
-                         class="btn btn-sm btn-danger w-100 mt-1" 
-                         (click)="removerFoto()">
-                   <i class="fas fa-trash"></i> Remover Foto
-                 </button>
-               </div>
-             </div>
-             <div class="col-md-8" formGroupName="documentacao">
-               <table class="table table-bordered">
-                 <tbody>
-                   <tr>
-                     <th scope="row">RG</th>
-                     <td><input type="text" class="form-control form-control-sm" formControlName="rg"></td>
-                   </tr>
-                   <tr>
-                     <th scope="row">CPF</th>
-                     <td><input type="text" class="form-control form-control-sm" formControlName="cpf"></td>
-                   </tr>
-                   <tr>
-                     <th scope="row">Data de Expedição</th>
-                     <td><input type="date" class="form-control form-control-sm" formControlName="dataExpedicao"></td>
-                   </tr>
-                   <tr>
-                     <th scope="row">Órgão Emissor/UF</th>
-                     <td>
-                       <div class="row">
-                         <div class="col-8">
-                           <input type="text" class="form-control form-control-sm me-0" formControlName="orgaoEmissor">
-                         </div>
-                         <div class="col-4">
-                           <select class="form-select form-select-sm ms-0" formControlName="ufEmissor">
-                             <option value="" disabled>UF</option>
-                             <option *ngFor="let uf of ufs" [value]="uf">{{uf}}</option>
-                           </select>
-                         </div>
-                       </div>
-                     </td>
-                   </tr>
-                 </tbody>
-               </table>
-             </div>
-           </div>
-         </div>
-       </div>
- 
-       <!-- Endereço -->
-       <div class="col-md-6">
-         <div class="card mb-4">
-           <div class="card-header">
-             <h4><i class="fas fa-pencil"></i> <i class="fas fa-map-marker-alt"></i> Editar endereço</h4>
-           </div>
-           <div class="card-body" formGroupName="endereco">
-             <table class="table table-bordered">
-               <tbody>
-                 <tr>
-                   <th scope="row">CEP</th>
-                   <td>
-                     <div class="input-group">
-                       <input class="form-control form-control-sm"
-                              type="text"
-                              formControlName="cep"
-                              #cepInput
-                              (blur)="buscarCep(cepInput.value)"
-                              placeholder="00000-000">
-                       <button type="button" class="btn btn-primary btn-sm" (click)="buscarCep(cepInput.value)">
-                         <i class="fas fa-search"></i>
-                       </button>
-                     </div>
-                   </td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Endereço</th>
-                   <td><input type="text" class="form-control form-control-sm" formControlName="logradouro"></td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Número</th>
-                   <td><input type="text" class="form-control form-control-sm" formControlName="numero"></td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Bairro</th>
-                   <td><input type="text" class="form-control form-control-sm" formControlName="bairro"></td>
-                 </tr>
-                 <tr>
-                   <th scope="row">Município/UF</th>
-                   <td>
-                     <div class="row">
-                       <div class="col-8">
-                         <input type="text" class="form-control form-control-sm" formControlName="municipio">
-                       </div>
-                       <div class="col-4">
-                         <select class="form-select form-select-sm" formControlName="uf">
-                           <option value="" disabled>UF</option>
-                           <option *ngFor="let uf of ufs" [value]="uf">{{uf}}</option>
-                         </select>
-                       </div>
-                     </div>
-                   </td>
-                 </tr>
-               </tbody>
-             </table>
-           </div>
-         </div>
-       </div>
- 
-       <!-- Contatos -->
-       <div class="col-md-6">
+  <div class="container">
+    <h1>Editar Perfil do Paciente</h1>
+  </div>
+</header>
+
+<div class="my-4">
+  <form [formGroup]="pacienteForm">
+    <div class="row">
+      <!-- Dados do Paciente -->
+      <div class="col-md-6">
         <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between">
-            <h4><i class="fas fa-pencil"></i> <i class="fas fa-phone"></i> Editar contatos</h4>
-            <button type="button" class="btn btn-sm btn-success" (click)="adicionarContato()">
-              <i class="fas fa-plus"></i> Adicionar
-            </button>
+          <div class="card-header">
+            <h4><i class="fas fa-pencil"></i><i class="fas fa-user"></i> Editar dados do Paciente</h4>
           </div>
-          <div class="card-body">
-            <div formArrayName="contatos">
-              <ng-container *ngFor="let contato of contatosFormArray.controls; let i=index; let last=last">
-                <div [formGroupName]="i">
-                  <table class="table table-bordered mb-2">
-                    <tbody>
-                      <tr>
-                        <th scope="row">Nome</th>
-                        <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Telefone</th>
-                        <td><input type="text" class="form-control form-control-sm" formControlName="telefone"></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Parentesco</th>
-                        <td>
-                          <select class="form-select form-select-sm" formControlName="parentesco">
-                            <option value="">Selecione...</option>
-                            <option *ngFor="let parentesco of parentescos" [value]="parentesco">
-                              {{parentesco}}
+          <div class="card-body" formGroupName="dadosPessoais">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <th scope="row">Nome</th>
+                  <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Data de Nascimento</th>
+                  <td><input type="date" class="form-control form-control-sm" formControlName="dataNasc"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Sexo</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="sexo">
+                      <option value="">Selecione...</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Estado Civil</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="estadoCivil">
+                      <option value="">Selecione...</option>
+                      <option *ngFor="let estado of getEstadoCivilOptions()" [value]="estado.value">
+                        {{estado.label}}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Nacionalidade</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="nacionalidade">
+                      <option value="Brasileiro">Brasileiro</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Município/UF de Nascimento</th>
+                  <td>
+                    <div class="row">
+                      <div class="col-8">
+                        <input type="text" class="form-control form-control-sm" formControlName="municipioNasc">
+                      </div>
+                      <div class="col-4">
+                        <select class="form-select form-select-sm" formControlName="ufNasc">
+                          <option value="" disabled>UF</option>
+                          <option *ngFor="let uf of getEstadosOptions()" [value]="uf.value">
+                            {{uf.label}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Cor/Raça</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="corRaca">
+                      <option value="">Selecione...</option>
+                      <option value="Branca">Branca</option>
+                      <option value="Preta">Preta</option>
+                      <option value="Parda">Parda</option>
+                      <option value="Amarela">Amarela</option>
+                      <option value="Indígena">Indígena</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documentação -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4><i class="fas fa-id-card"></i> Documentação</h4>
+          </div>
+          <div class="card-body row">
+            <div class="col-md-4">
+              <img [src]="paciente?.fotoUrl || 'https://place-hold.it/192x256'" class="img-fluid w-100" alt="Foto do Paciente" (error)="onImageError($event)">
+              <div class="mt-2">
+                <input type="file" #fileInput accept="image/*" (change)="onImageSelected($event)" style="display: none;">
+                <button type="button" class="btn btn-sm btn-primary w-100" (click)="fileInput.click()">
+                  <i class="fas fa-camera"></i> Alterar Foto
+                </button>
+                <button type="button" *ngIf="paciente?.fotoUrl" class="btn btn-sm btn-danger w-100 mt-1" (click)="removerFoto()">
+                  <i class="fas fa-trash"></i> Remover Foto
+                </button>
+              </div>
+            </div>
+            <div class="col-md-8" formGroupName="documentacao">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th scope="row">RG</th>
+                    <td><input type="text" class="form-control form-control-sm" formControlName="rg"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">CPF</th>
+                    <td><input type="text" class="form-control form-control-sm" formControlName="cpf"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Data de Expedição</th>
+                    <td><input type="date" class="form-control form-control-sm" formControlName="dataExpedicao"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Órgão Emissor/UF</th>
+                    <td>
+                      <div class="row">
+                        <div class="col-8">
+                          <input type="text" class="form-control form-control-sm me-0" formControlName="orgaoEmissor">
+                        </div>
+                        <div class="col-4">
+                          <select class="form-select form-select-sm ms-0" formControlName="ufEmissor">
+                            <option value="" disabled>UF</option>
+                            <option *ngFor="let uf of getEstadosOptions()" [value]="uf.value">
+                              {{uf.label}}
                             </option>
                           </select>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div class="mb-3">
-                    <button type="button" class="btn btn-sm btn-danger" (click)="removerContato(i)">
-                      <i class="fas fa-trash"></i> Remover
-                    </button>
-                  </div>
-                  <hr *ngIf="!last" class="my-4" />
-                </div>
-              </ng-container>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
- 
+
+    <!-- Endereço -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4><i class="fas fa-pencil"></i> <i class="fas fa-map-marker-alt"></i> Editar endereço</h4>
+        </div>
+        <div class="card-body" formGroupName="endereco">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th scope="row">CEP</th>
+                <td>
+                  <div class="input-group">
+                    <input class="form-control form-control-sm" type="text" formControlName="cep" #cepInput (blur)="buscarCep(cepInput.value)" placeholder="00000-000">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="buscarCep(cepInput.value)">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Endereço</th>
+                <td><input type="text" class="form-control form-control-sm" formControlName="logradouro"></td>
+              </tr>
+              <tr>
+                <th scope="row">Número</th>
+                <td><input type="text" class="form-control form-control-sm" formControlName="numero"></td>
+              </tr>
+              <tr>
+                <th scope="row">Bairro</th>
+                <td><input type="text" class="form-control form-control-sm" formControlName="bairro"></td>
+              </tr>
+              <tr>
+                <th scope="row">Município/UF</th>
+                <td>
+                  <div class="row">
+                    <div class="col-8">
+                      <input type="text" class="form-control form-control-sm" formControlName="municipio">
+                    </div>
+                    <div class="col-4">
+                      <select class="form-select form-select-sm" formControlName="uf">
+                        <option value="" disabled>UF</option>
+                        <option *ngFor="let uf of getEstadosOptions()" [value]="uf.value">
+                          {{uf.label}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contatos -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h4><i class="fas fa-pencil"></i> <i class="fas fa-phone"></i> Editar contatos</h4>
+          <button type="button" class="btn btn-sm btn-success" (click)="adicionarContato()">
+            <i class="fas fa-plus"></i> Adicionar
+          </button>
+        </div>
+        <div class="card-body">
+          <div formArrayName="contatos">
+            <ng-container *ngFor="let contato of contatosFormArray.controls; let i=index; let last=last">
+              <div [formGroupName]="i">
+                <table class="table table-bordered mb-2">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Nome</th>
+                      <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Telefone</th>
+                      <td><input type="text" class="form-control form-control-sm" formControlName="telefone"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Parentesco</th>
+                      <td>
+                        <select class="form-select form-select-sm" formControlName="parentesco">
+                          <option value="">Selecione...</option>
+                          <option *ngFor="let parentesco of getParentescoOptions()" [value]="parentesco.value">
+                            {{parentesco.label}}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="mb-3">
+                  <button type="button" class="btn btn-sm btn-danger" (click)="removerContato(i)">
+                    <i class="fas fa-trash"></i> Remover
+                  </button>
+                </div>
+                <hr *ngIf="!last" class="my-4" />
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="!pacienteForm.valid" class="alert alert-danger" role="alert">
       <i class="fas fa-exclamation-circle"></i> Formulario inválido
       <ul>
@@ -298,14 +291,14 @@
       </ul>
     </div>
 
-     <!-- Ações -->
-     <div class="text-center">
-       <button type="submit" class="btn btn-success me-2" (click)="salvar()" [disabled]="!pacienteForm.valid">
-         <i class="fas fa-save"></i> Salvar
-       </button>
-       <button type="button" class="btn btn-secondary" (click)="voltar()">
-         <i class="fas fa-arrow-left"></i> Voltar
-       </button>
-     </div>
-   </form>
- </div>
+    <!-- Ações -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-success me-2" (click)="salvar()" [disabled]="!pacienteForm.valid">
+        <i class="fas fa-save"></i> Salvar
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="voltar()">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </button>
+    </div>
+  </form>
+</div>

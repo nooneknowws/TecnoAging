@@ -76,8 +76,8 @@
                 <div class="form-floating w-50">
                     <select class="form-select" id="floatingSexo" name="sexo" [(ngModel)]="paciente.sexo" required #sexoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && sexoInput.errors }">
                         <option value="">Selecione</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Feminino</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
                     </select>
                     <label for="floatingSexo">Sexo</label>
                     <div *ngIf="sexoInput.errors && form.submitted" class="invalid-feedback">
@@ -97,7 +97,9 @@
                 <div class="form-floating w-50">
                     <select class="form-select" id="floatingEstadoCivil" name="estadoCivil" [(ngModel)]="paciente.estadoCivil" required #estadoCivilInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && estadoCivilInput.errors }">
                         <option value="">Selecione</option>
-                        <option *ngFor="let estado of estadosCivis" [value]="estado">{{ getEstadoCivilLabel(estado) }}</option>
+                        <option *ngFor="let estado of getEstadoCivilOptions()" [value]="estado.value">
+                            {{estado.label}}
+                        </option>
                     </select>
                     <label for="floatingEstadoCivil">Estado Civil</label>
                     <div *ngIf="estadoCivilInput.errors && form.submitted" class="invalid-feedback">
@@ -135,7 +137,12 @@
 
             <div class="input-group mb-2">
                 <div class="form-floating w-50">
-                    <input type="text" class="form-control" id="floatingCorRaca" placeholder="Cor/Raça" name="corRaca" [(ngModel)]="paciente.corRaca" required #corRacaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && corRacaInput.errors }">
+                    <select class="form-select" id="floatingCorRaca" name="corRaca" [(ngModel)]="paciente.corRaca" required #corRacaInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && corRacaInput.errors }">
+                        <option value="">Selecione...</option>
+                        <option *ngFor="let cor of getCorRacaOptions()" [value]="cor.value">
+                            {{cor.label}}
+                        </option>
+                    </select>
                     <label for="floatingCorRaca">Cor/Raça</label>
                     <div *ngIf="corRacaInput.errors && form.submitted" class="invalid-feedback">
                         A cor/raça é obrigatória!

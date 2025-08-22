@@ -26,8 +26,8 @@ export class AuthService {
   }
 
   private initializeFromSession(): void {
-    const userData =  localStorage.getItem(this.SESSION_USER_DATA_KEY);
-    const userType =  localStorage.getItem(this.SESSION_USER_TYPE_KEY);
+    const userData = localStorage.getItem(this.SESSION_USER_DATA_KEY);
+    const userType = localStorage.getItem(this.SESSION_USER_TYPE_KEY);
     
     if (userData && userType) {
       const parsedUser = JSON.parse(userData);
@@ -49,12 +49,21 @@ export class AuthService {
         return this.http.get<any>(endpoint, {
           headers: { Authorization: `Bearer ${loginResponse.token}` }
         }).pipe(
+          // Aumentar timeout para 30 segundos para usuários com foto
+          timeout(30000),
           map(userData => {
             this.storeUserData(userData, loginResponse.Perfil!);
             return loginResponse;
           }),
           catchError(error => {
             console.error('Erro ao buscar dados do usuário:', error);
+            
+            // Se falhar ao buscar dados completos, ainda permite login
+            // mas sem dados detalhados do usuário
+            if (error.name === 'TimeoutError') {
+              console.warn('Timeout ao buscar dados do usuário - continuando login sem dados completos');
+            }
+            
             return of(loginResponse);
           })
         );
@@ -84,7 +93,6 @@ export class AuthService {
     localStorage.setItem(this.SESSION_USER_ID_KEY, ID);
   }
   
-
   logout(token: string | null): boolean {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
     if(this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
@@ -113,7 +121,7 @@ export class AuthService {
   }
   
   isLoggedIn(): boolean {
-    return !! localStorage.getItem(this.SESSION_TOKEN_KEY);
+    return !!localStorage.getItem(this.SESSION_TOKEN_KEY);
   }
 
   buscarCep(cep: string): Observable<Endereco | null> {

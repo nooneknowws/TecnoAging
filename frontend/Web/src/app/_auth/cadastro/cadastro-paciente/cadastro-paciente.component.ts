@@ -29,16 +29,11 @@ export class CadastroPacienteComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  getEstadoCivilLabel(estadoCivil: EnumEstadoCivil): string {
-    const labels: { [key in EnumEstadoCivil]: string } = {
-      [EnumEstadoCivil.SOLTEIRO]: 'Solteiro(a)',
-      [EnumEstadoCivil.CASADO]: 'Casado(a)',
-      [EnumEstadoCivil.DIVORCIADO]: 'Divorciado(a)',
-      [EnumEstadoCivil.VIUVO]: 'Viúvo(a)',
-      [EnumEstadoCivil.SEPARADO]: 'Separado(a)',
-      [EnumEstadoCivil.UNIAO_ESTAVEL]: 'União Estável'
-    };
-    return labels[estadoCivil] || estadoCivil;
+  getEstadoCivilOptions() {
+    return Object.entries(EnumEstadoCivil).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
   }
 
   calcularIdade(dataNasc: Date): number {
@@ -110,5 +105,15 @@ export class CadastroPacienteComponent implements OnInit {
     } else if (this.paciente.senha !== this.repetirSenha) {
       console.error('As senhas não coincidem!');
     }
+  }
+
+  getCorRacaOptions() {
+    return [
+      { value: 'Branca', label: 'Branca' },
+      { value: 'Preta', label: 'Preta' },
+      { value: 'Parda', label: 'Parda' },
+      { value: 'Amarela', label: 'Amarela' },
+      { value: 'Indígena', label: 'Indígena' }
+    ];
   }
 }

@@ -21,10 +21,6 @@ export class EditarPerfilPacienteComponent implements OnInit {
   paciente?: Paciente;
   loading = false;
 
-  estadosCivis = Object.values(EnumEstadoCivil);
-  parentescos = Object.values(EnumParentesco);
-  ufs = Object.values(EnumEstadosBrasil);
-
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -63,6 +59,28 @@ export class EditarPerfilPacienteComponent implements OnInit {
     });
   }
 
+  // Métodos para obter opções dos enums
+  getEstadoCivilOptions() {
+    return Object.entries(EnumEstadoCivil).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getEstadosOptions() {
+    return Object.entries(EnumEstadosBrasil).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getParentescoOptions() {
+    return Object.entries(EnumParentesco).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
   private inicializarFormulario(): FormGroup {
     return this.fb.group({
       dadosPessoais: this.fb.group({
@@ -97,56 +115,57 @@ export class EditarPerfilPacienteComponent implements OnInit {
   }
 
   private preencherFormulario(paciente: Paciente) {
-    if (!paciente) return;
-  
-    const dadosPessoais = this.pacienteForm.get('dadosPessoais');
-    const documentacao = this.pacienteForm.get('documentacao');
-    const endereco = this.pacienteForm.get('endereco');
-  
-    if (dadosPessoais && documentacao && endereco) {
-      dadosPessoais.patchValue({
-        nome: paciente.nome || '',
-        dataNasc: paciente.dataNasc || '',  // Já vem como string
-        sexo: paciente.sexo || '',
-        estadoCivil: paciente.estadoCivil || '',  // Tratar como string
-        nacionalidade: paciente.nacionalidade || 'Brasileiro',
-        municipioNasc: paciente.municipioNasc || '',
-        ufNasc: paciente.ufNasc || '',  // Tratar como string
-        corRaca: paciente.corRaca || ''
-      });
-  
-      documentacao.patchValue({
-        rg: paciente.rg || '',
-        cpf: this.formatarCpfSeNecessario(paciente.cpf),
-        dataExpedicao: paciente.dataExpedicao || '',  // Já vem como string
-        orgaoEmissor: paciente.orgaoEmissor || '',
-        ufEmissor: paciente.ufEmissor || ''  // Tratar como string
-      });
-  
-      if (paciente.endereco) {
-        endereco.patchValue({
-          cep: this.formatarCepSeNecessario(paciente.endereco.cep),
-          logradouro: paciente.endereco.logradouro || '',
-          numero: paciente.endereco.numero || '',
-          complemento: paciente.endereco.complemento || '',
-          bairro: paciente.endereco.bairro || '',
-          municipio: paciente.endereco.municipio || '',
-          uf: paciente.endereco.uf || ''  // Tratar como string
-        });
-      }
-  
-      // Limpa e recria os contatos
-      this.contatosFormArray.clear();
-      paciente.contatos?.forEach(contato => {
-        this.adicionarContato({
-          nome: contato.nome,
-          telefone: this.formatarTelefoneSeNecessario(contato.telefone),
-          parentesco: contato.parentesco
-        });
+  if (!paciente) return;
+
+  const dadosPessoais = this.pacienteForm.get('dadosPessoais');
+  const documentacao = this.pacienteForm.get('documentacao');
+  const endereco = this.pacienteForm.get('endereco');
+
+  if (dadosPessoais && documentacao && endereco) {
+    dadosPessoais.patchValue({
+      nome: paciente.nome || '',
+      dataNasc: paciente.dataNasc || '',
+      sexo: paciente.sexo || '',
+      estadoCivil: paciente.estadoCivil || '',
+      nacionalidade: paciente.nacionalidade || 'Brasileiro',
+      municipioNasc: paciente.municipioNasc || '',
+      ufNasc: paciente.ufNasc || '',
+      corRaca: paciente.corRaca || ''
+    });
+
+    documentacao.patchValue({
+      rg: paciente.rg || '',
+      cpf: this.formatarCpfSeNecessario(paciente.cpf),
+      dataExpedicao: paciente.dataExpedicao || '',
+      orgaoEmissor: paciente.orgaoEmissor || '',
+      ufEmissor: paciente.ufEmissor || ''
+    });
+
+    if (paciente.endereco) {
+      endereco.patchValue({
+        cep: this.formatarCepSeNecessario(paciente.endereco.cep),
+        logradouro: paciente.endereco.logradouro || '',
+        numero: paciente.endereco.numero || '',
+        complemento: paciente.endereco.complemento || '',
+        bairro: paciente.endereco.bairro || '',
+        municipio: paciente.endereco.municipio || '',
+        uf: paciente.endereco.uf || ''
       });
     }
+
+    // Limpa e recria os contatos
+    this.contatosFormArray.clear();
+    paciente.contatos?.forEach(contato => {
+      this.adicionarContato({
+        nome: contato.nome,
+        telefone: this.formatarTelefoneSeNecessario(contato.telefone),
+        // CORREÇÃO: Usar EnumParentesco[chave] para converter PAI -> Pai
+        parentesco: EnumParentesco[contato.parentesco as unknown as keyof typeof EnumParentesco] || contato.parentesco
+      });
+    });
   }
-  
+}
+
   // Métodos auxiliares para formatação
   private formatarCpfSeNecessario(cpf: string | undefined): string {
     if (!cpf) return '';
@@ -158,28 +177,23 @@ export class EditarPerfilPacienteComponent implements OnInit {
     }
     return cpf;
   }
-  
+
   private formatarCepSeNecessario(cep: string | number | undefined): string {
     if (!cep) return '';
-    
-    const cepStr = cep.toString().trim(); // Convert to string and trim whitespace
+    const cepStr = cep.toString().trim();
     const hasHyphen = cepStr.includes('-');
-  
-    // Check if already formatted (has hyphen and 8 total digits)
+    
     if (hasHyphen) {
       return cepStr;
     }
-  
-    // Clean to only digits
+    
     const cleaned = cepStr.replace(/\D/g, '');
-  
     if (cleaned.length === 8) {
       return `${cleaned.slice(0, 5)}-${cleaned.slice(5)}`;
     }
-  
     return cepStr;
   }
-  
+
   private formatarTelefoneSeNecessario(telefone: string | undefined): string {
     if (!telefone) return '';
     // Se já estiver formatado com parênteses e hífen
@@ -259,10 +273,9 @@ export class EditarPerfilPacienteComponent implements OnInit {
       }
     });
   }
-  
+
   private marcarCamposInvalidos() {
     const form = this.pacienteForm;
-    
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       if (control instanceof FormGroup) {
@@ -286,7 +299,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
       }
     });
   }
-  
+
   adicionarContato(contato?: Contato) {
     // Format phone number if it exists
     let telefoneFormatado = '';
@@ -319,7 +332,6 @@ export class EditarPerfilPacienteComponent implements OnInit {
 
   formatarTelefone(event: any, index: number) {
     let telefone = event.target.value.replace(/\D/g, '');
-    
     if (telefone.length === 11) {
       telefone = `(${telefone.slice(0,2)}) ${telefone.slice(2,7)}-${telefone.slice(7)}`;
       const contatoControl = this.contatosFormArray.at(index);
@@ -333,101 +345,100 @@ export class EditarPerfilPacienteComponent implements OnInit {
   }
 
   async salvar() {
-    if (this.pacienteForm.valid) {
-      try {
-        this.loading = true;
-        
-        const dadosPessoais = this.pacienteForm.get('dadosPessoais')?.value;
-        const documentacao = this.pacienteForm.get('documentacao')?.value;
-        const endereco = this.pacienteForm.get('endereco')?.value;
-        const contatos = this.contatosFormArray.value.map((contato: any) => ({
-          nome: contato.nome.trim(),
-          telefone: contato.telefone.replace(/\D/g, ''), // Remove formatação
-          parentesco: contato.parentesco // Vai como string, não enum
-        }));
-    
-        const pacienteAtualizado: any = { // Use `any` para evitar problemas de tipo
-          ...this.paciente,
-          nome: dadosPessoais.nome,
-          dataNasc: dadosPessoais.dataNasc, // Já está no formato correto como string
-          sexo: dadosPessoais.sexo,
-          estadoCivil: dadosPessoais.estadoCivil, // Enviar como string, não enum
-          nacionalidade: dadosPessoais.nacionalidade,
-          municipioNasc: dadosPessoais.municipioNasc,
-          ufNasc: dadosPessoais.ufNasc, // Enviar como string, não enum
-          corRaca: dadosPessoais.corRaca,
-          
-          rg: documentacao.rg,
-          cpf: documentacao.cpf, // Manter formatação ou remover conforme necessário
-          dataExpedicao: documentacao.dataExpedicao, // Já está no formato correto
-          orgaoEmissor: documentacao.orgaoEmissor,
-          ufEmissor: documentacao.ufEmissor, // Enviar como string, não enum
-          
-          endereco: {
-            cep: endereco.cep.replace(/\D/g, ''), // Remover formatação
-            logradouro: endereco.logradouro,
-            numero: endereco.numero,
-            complemento: endereco.complemento || '',
-            bairro: endereco.bairro,
-            municipio: endereco.municipio,
-            uf: endereco.uf // Enviar como string, não enum
-          },
-          
-          contatos
-        };
-        
-        // Remover undefined ou null para não sobrescrever valores existentes
-        Object.keys(pacienteAtualizado).forEach(key => {
-          if (pacienteAtualizado[key] === undefined || pacienteAtualizado[key] === null) {
-            delete pacienteAtualizado[key];
-          }
-        });
-    
-        // Garantir que o ID existe e está correto
-        if (!pacienteAtualizado.id && this.paciente?.id) {
-          pacienteAtualizado.id = this.paciente.id;
-        }
-        
-        console.log('Enviando paciente:', pacienteAtualizado);
-        
-        const resultado = await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
-        console.log('Resposta da API:', resultado);
-        
-        this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
-          queryParams: { id: this.paciente?.id } 
-        });
-      } catch (error) {
-        console.error('Erro ao salvar paciente:', error);
-        alert('Erro ao salvar as alterações. Por favor, tente novamente.');
-      } finally {
-        this.loading = false;
-      }
-    } else {
-      this.marcarCamposInvalidos();
+  if (this.pacienteForm.valid) {
+    try {
+      this.loading = true;
+      const dadosPessoais = this.pacienteForm.get('dadosPessoais')?.value;
+      const documentacao = this.pacienteForm.get('documentacao')?.value;
+      const endereco = this.pacienteForm.get('endereco')?.value;
       
-      // Debug information for contact validation
-      const contatos = this.contatosFormArray.controls;
-      contatos.forEach((contato, index) => {
-        if (contato.invalid) {
-          console.log(`Contato ${index + 1} inválido:`, {
-            nome: contato.get('nome')?.errors,
-            telefone: contato.get('telefone')?.errors,
-            parentesco: contato.get('parentesco')?.errors
-          });
+      const contatos = this.contatosFormArray.value.map((contato: any) => ({
+        nome: contato.nome.trim(),
+        telefone: contato.telefone.replace(/\D/g, ''),
+        // CORREÇÃO: Encontrar a chave do enum que corresponde ao valor
+        parentesco: Object.keys(EnumParentesco).find(key => 
+          EnumParentesco[key as keyof typeof EnumParentesco] === contato.parentesco
+        ) || contato.parentesco
+      }));
+
+      const pacienteAtualizado: any = {
+        ...this.paciente,
+        nome: dadosPessoais.nome,
+        dataNasc: dadosPessoais.dataNasc,
+        sexo: dadosPessoais.sexo,
+        estadoCivil: dadosPessoais.estadoCivil,
+        nacionalidade: dadosPessoais.nacionalidade,
+        municipioNasc: dadosPessoais.municipioNasc,
+        ufNasc: dadosPessoais.ufNasc,
+        corRaca: dadosPessoais.corRaca,
+        rg: documentacao.rg,
+        cpf: documentacao.cpf,
+        dataExpedicao: documentacao.dataExpedicao,
+        orgaoEmissor: documentacao.orgaoEmissor,
+        ufEmissor: documentacao.ufEmissor,
+        endereco: {
+          cep: endereco.cep.replace(/\D/g, ''),
+          logradouro: endereco.logradouro,
+          numero: endereco.numero,
+          complemento: endereco.complemento || '',
+          bairro: endereco.bairro,
+          municipio: endereco.municipio,
+          uf: endereco.uf
+        },
+        contatos
+      };
+
+      // Remover undefined ou null para não sobrescrever valores existentes
+      Object.keys(pacienteAtualizado).forEach(key => {
+        delete pacienteAtualizado.fotoUrl;
+        delete pacienteAtualizado.fotoPerfil;
+        if (pacienteAtualizado[key] === undefined || pacienteAtualizado[key] === null) {
+          delete pacienteAtualizado[key];
         }
       });
-      
-      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+
+      // Garantir que o ID existe e está correto
+      if (!pacienteAtualizado.id && this.paciente?.id) {
+        pacienteAtualizado.id = this.paciente.id;
+      }
+
+      console.log('Enviando paciente:', pacienteAtualizado);
+      const resultado = await this.pacienteService.updatePaciente(pacienteAtualizado).toPromise();
+      console.log('Resposta da API:', resultado);
+
+      this.router.navigate(['/tecnico/paciente/ver-perfil'], {
+        queryParams: { id: this.paciente?.id }
+      });
+    } catch (error) {
+      console.error('Erro ao salvar paciente:', error);
+      alert('Erro ao salvar as alterações. Por favor, tente novamente.');
+    } finally {
+      this.loading = false;
     }
+  } else {
+    this.marcarCamposInvalidos();
+    // Debug information for contact validation
+    const contatos = this.contatosFormArray.controls;
+    contatos.forEach((contato, index) => {
+      if (contato.invalid) {
+        console.log(`Contato ${index + 1} inválido:`, {
+          nome: contato.get('nome')?.errors,
+          telefone: contato.get('telefone')?.errors,
+          parentesco: contato.get('parentesco')?.errors
+        });
+      }
+    });
+    alert('Por favor, preencha todos os campos obrigatórios corretamente.');
   }
-  
+}
+
   removerContato(index: number) {
     this.contatosFormArray.removeAt(index);
   }
 
   voltar() {
-    this.router.navigate(['/tecnico/paciente/ver-perfil'], { 
-      queryParams: { id: this.paciente?.id } 
+    this.router.navigate(['/tecnico/paciente/ver-perfil'], {
+      queryParams: { id: this.paciente?.id }
     });
   }
 
@@ -495,17 +506,17 @@ export class EditarPerfilPacienteComponent implements OnInit {
 
   private validarData(control: FormControl): { [s: string]: boolean } | null {
     if (!control.value) return null;
-    
+
     const data = control.value.split('-');
     if (data.length !== 3) return { dataInvalida: true };
-    
+
     const dia = parseInt(data[2], 10);
     const mes = parseInt(data[1], 10);
     const ano = parseInt(data[0], 10);
-    
+
     const dataValida = new Date(ano, mes - 1, dia).getTime() === new Date(ano, mes - 1, dia).getTime();
     if (!dataValida) return { dataInvalida: true };
-    
+
     return null;
   }
 }
