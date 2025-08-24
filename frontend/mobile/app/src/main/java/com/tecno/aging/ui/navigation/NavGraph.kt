@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
+import com.tecno.aging.ui.screens.cadastro.pacienteCadastro.CadastroPacienteScreen
 import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.FormsScreen
@@ -49,6 +50,18 @@ fun AppNavGraph() {
                 onSuccess = {
                     navController.navigate("login") {
                         popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable("cadastro_paciente") {
+            CadastroPacienteScreen(
+                navController = navController,
+                onSuccess = {
+                    // Decide para onde ir após o sucesso, ex: lista de pacientes ou login
+                    navController.navigate("pacientes_list") {
+                        popUpTo("home") // Volta para a home para não empilhar telas de cadastro
                     }
                 }
             )

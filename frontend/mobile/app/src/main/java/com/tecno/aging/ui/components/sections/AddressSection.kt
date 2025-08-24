@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.ui.theme.cleanTextFieldColors
+import com.tecno.aging.ui.components.forms.TextFieldWithError
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,36 +51,26 @@ fun AddressSection(
         "RS", "RO", "RR", "SC", "SP", "SE", "TO"
     )
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "Endereço",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // CEP Row with auto-search
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MaskedInput(
+            TextFieldWithError(
                 value = address.cep,
-                onValueChange = { newCep ->
-                    val filtered = newCep.filter { it.isDigit() }
-                    onAddressChange(address.copy(cep = filtered))
-                    if (filtered.length == 8) {
-                        onCepSearch()
-                    }
-                },
-                mask = "#####-###",
+                onValueChange = { onAddressChange(address.copy(cep = it.filter { c -> c.isDigit() })) },
                 label = "CEP",
                 error = cepError,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
             Button(
                 onClick = onCepSearch,
                 modifier = Modifier.padding(start = 8.dp),
-                enabled = !loadingCep && address.cep.filter { it.isDigit() }.length == 8
+                enabled = !loadingCep && address.cep.length == 8
             ) {
                 if (loadingCep) {
                     CircularProgressIndicator(
@@ -93,51 +85,32 @@ fun AddressSection(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
-            value = address.logradouro ?: "",
+        OutlinedTextField(
+            value = address.logradouro,
             onValueChange = { onAddressChange(address.copy(logradouro = it)) },
             label = { Text("Logradouro") },
-            modifier = Modifier.fillMaxWidth(),
-            colors = cleanTextFieldColors()
+            modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            TextField(
-                value = address.numero?.toString() ?: "",
-                onValueChange = {
-                    val number = it.filter { c -> c.isDigit() }
-                    onAddressChange(address.copy(numero = number.toIntOrNull().toString()))
-                },
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(
+                value = address.numero,
+                onValueChange = { onAddressChange(address.copy(numero = it)) },
                 label = { Text("Número") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                colors = cleanTextFieldColors()
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-
-            TextField(
-                value = address.complemento ?: "",
+            OutlinedTextField(
+                value = address.complemento,
                 onValueChange = { onAddressChange(address.copy(complemento = it)) },
                 label = { Text("Complemento") },
-                modifier = Modifier.weight(1f),
-                colors = cleanTextFieldColors()
+                modifier = Modifier.weight(1f)
             )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = address.bairro ?: "",
+        OutlinedTextField(
+            value = address.bairro,
             onValueChange = { onAddressChange(address.copy(bairro = it)) },
             label = { Text("Bairro") },
-            modifier = Modifier.fillMaxWidth(),
-            colors = cleanTextFieldColors()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))

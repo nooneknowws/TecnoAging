@@ -4,6 +4,7 @@ import android.util.Log
 import com.tecno.aging.data.remote.ApiService
 import com.tecno.aging.data.remote.RetrofitInstance
 import com.tecno.aging.domain.models.paciente.Paciente
+import com.tecno.aging.domain.models.pessoa.paciente.PacienteRequest
 import kotlin.Result
 
 class PacienteRepository(
@@ -37,6 +38,20 @@ class PacienteRepository(
         } catch (e: Exception) {
             Log.d("PROFILE_DEBUG", "REPO: EXCEÇÃO! ${e.javaClass.simpleName}: ${e.message}")
             Result.failure(Exception("Erro de conexão: ${e.message}"))
+        }
+    }
+
+    suspend fun registrarPaciente(request: PacienteRequest): Result<Unit> {
+        return try {
+            val response = apiService.registrarPaciente(request)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Erro desconhecido"
+                Result.failure(Exception("Falha no cadastro: ${response.code()} - $errorBody"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

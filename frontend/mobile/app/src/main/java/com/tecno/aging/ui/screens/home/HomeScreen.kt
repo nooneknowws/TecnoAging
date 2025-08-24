@@ -317,7 +317,7 @@ fun MainContent(
                     },
                     title = "Cadastrar Paciente",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { /* TODO */ }
+                    onClick = { navController.navigate("cadastro_paciente") }
                 )
                 DashboardCard(
                     icon = {

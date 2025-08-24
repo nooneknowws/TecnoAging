@@ -250,6 +250,7 @@ private fun StepPersonalData(
                     DatePickerInput(
                         selectedDate = uiState.dataNasc,
                         onDateSelected = viewModel::onDataNascChange,
+                        label = "Data de Nasc",
                         modifier = Modifier.weight(0.6f)
                     )
                 }
