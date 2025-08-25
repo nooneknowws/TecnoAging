@@ -149,6 +149,7 @@ fun CadastroScreen(
                         selectedDate = uiState.tecnico.dataNasc,
                         onDateSelected = viewModel::onDataNascChanged,
                         error = uiState.erros["dataNasc"],
+                        label = "Data de Nasc",
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.weight(1f))

@@ -16,7 +16,7 @@ fun GenderDropdown(
     modifier: Modifier = Modifier,
     error: String? = null
 ) {
-    val options = listOf("Masculino", "Feminino", "Outro")
+    val options = listOf("Masc", "Fem", "Outro")
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
