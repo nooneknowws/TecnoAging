@@ -10,6 +10,7 @@ import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
 import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../_shared/models/estadocivil.enum';
+import { EnumClasseSocioeconomica } from '../../_shared/models/classe-socioeconomica.enum';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -38,6 +39,7 @@ export class EditarPerfilComponent implements OnInit {
   formattedDataExpedicao: string = '';
   estados = Object.values(EnumEstadosBrasil);
   estadosCivil = Object.values(EnumEstadoCivil);
+  classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
   
   cepInvalido = false;
   erroTimeout = false;

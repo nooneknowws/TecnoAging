@@ -196,13 +196,14 @@
                     <label for="floatingEscolaridade">Escolaridade</label>
                 </div>
                 <div class="form-floating w-50">
-                    <input type="text" 
-                           class="form-control" 
-                           id="floatingSocioeconomico" 
-                           placeholder="Classe Socioeconômica" 
-                           name="socioeconomico" 
-                           [(ngModel)]="form.socioeconomico"
-                           [disabled]="isSaving">
+                    <select class="form-select" 
+                            id="floatingSocioeconomico" 
+                            name="socioeconomico" 
+                            [(ngModel)]="form.socioeconomico"
+                            [disabled]="isSaving">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let classe of classesSocioeconomicas" [value]="classe">{{ classe }}</option>
+                    </select>
                     <label for="floatingSocioeconomico">Classe Socioeconômica</label>
                 </div>
             </div>

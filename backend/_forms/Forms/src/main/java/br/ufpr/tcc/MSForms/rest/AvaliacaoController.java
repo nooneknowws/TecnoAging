@@ -141,7 +141,10 @@ public class AvaliacaoController {
                 List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
                     .map(resposta -> new PerguntaValorDTO(
                         resposta.getPergunta().getTexto(), 
-                        resposta.getValor()
+                        resposta.getValor(),
+                        resposta.getPergunta().getTipo(),
+                        resposta.getPergunta().getValidacao(),
+                        resposta.getPergunta().getOpcoes()
                     ))
                     .collect(Collectors.toList());
 
@@ -178,7 +181,10 @@ public class AvaliacaoController {
                 List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
                     .map(resposta -> new PerguntaValorDTO(
                         resposta.getPergunta().getTexto(), 
-                        resposta.getValor()
+                        resposta.getValor(),
+                        resposta.getPergunta().getTipo(),
+                        resposta.getPergunta().getValidacao(),
+                        resposta.getPergunta().getOpcoes()
                     ))
                     .collect(Collectors.toList());
 
@@ -205,7 +211,10 @@ public class AvaliacaoController {
         List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
             .map(resposta -> new PerguntaValorDTO(
                 resposta.getPergunta().getTexto(), 
-                resposta.getValor()
+                resposta.getValor(),
+                resposta.getPergunta().getTipo(),
+                resposta.getPergunta().getValidacao(),
+                resposta.getPergunta().getOpcoes()
             ))
             .collect(Collectors.toList());
 

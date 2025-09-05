@@ -4,6 +4,7 @@ import { Paciente } from '../../../_shared/models/pessoa/paciente/paciente';
 import { Endereco } from '../../../_shared/models/pessoa/endereco';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
+import { EnumClasseSocioeconomica } from '../../../_shared/models/classe-socioeconomica.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
 
 @Component({
@@ -19,6 +20,7 @@ export class CadastroPacienteComponent implements OnInit {
   errorMessage = '';
   estados = Object.values(EnumEstadosBrasil);
   estadosCivis = Object.values(EnumEstadoCivil);
+  classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
   cepInvalido = false;
   erroTimeout = false;
   repetirSenha = '';

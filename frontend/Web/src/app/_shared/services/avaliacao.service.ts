@@ -123,7 +123,9 @@ export class AvaliacaoService {
 
     const paciente = {
       id: avaliacaoData.pacienteId,
-      nome: avaliacaoData.paciente
+      nome: avaliacaoData.paciente,
+      idade: avaliacaoData.pacienteIDADE,
+      imc: avaliacaoData.pacienteIMC
     };
 
     const formulario = {
@@ -138,8 +140,9 @@ export class AvaliacaoService {
       const pergunta = {
         id: item.perguntaId,
         texto: item.pergunta,
-        tipo: undefined, 
-        resposta: item.valor
+        tipo: item.tipo,
+        validacao: item.validacao,
+        opcoes: item.opcoes
       };
 
       return new Resposta(

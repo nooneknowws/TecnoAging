@@ -175,7 +175,10 @@
                     </div>
                 </div>
                 <div class="form-floating w-33">
-                    <input type="text" class="form-control" id="floatingSocioeconomico" placeholder="Situação Socioeconômica" name="socioeconomico" [(ngModel)]="paciente.socioeconomico" required #socioeconomicoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && socioeconomicoInput.errors }">
+                    <select class="form-select" id="floatingSocioeconomico" name="socioeconomico" [(ngModel)]="paciente.socioeconomico" required #socioeconomicoInput="ngModel" [ngClass]="{ 'is-invalid': form.submitted && socioeconomicoInput.errors }">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let classe of classesSocioeconomicas" [value]="classe">{{ classe }}</option>
+                    </select>
                     <label for="floatingSocioeconomico">Situação Socioeconômica</label>
                     <div *ngIf="socioeconomicoInput.errors && form.submitted" class="invalid-feedback">
                         A situação socioeconômica é obrigatória!
