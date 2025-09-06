@@ -59,6 +59,7 @@ public class Paciente extends Pessoa {
 
     @Lob
     @Column(name = "foto_perfil")
+    @Basic(fetch = FetchType.LAZY)
     private byte[] fotoPerfil;
 
     public Paciente() {

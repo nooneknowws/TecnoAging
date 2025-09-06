@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
+import { AuthService } from '../../_shared/services/auth.service';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Contato } from '../../_shared/models/pessoa/paciente/contato';
 import { EnumParentesco } from '../../_shared/models/parentesco.enum';
@@ -28,15 +29,21 @@ export class VisualizarPerfilComponent implements OnInit {
 
   constructor(
     private pacienteService: PacienteService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    const pacienteId = 1;
-    this.pacienteService.getPacienteById(pacienteId).subscribe((data) => {
-      this.paciente = data;
-      this.loadCurrentPhoto(pacienteId);
-    });
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && currentUser instanceof Paciente && currentUser.id) {
+      const pacienteId = currentUser.id;
+      this.pacienteService.getPacienteById(pacienteId).subscribe((data) => {
+        this.paciente = data;
+        this.loadCurrentPhoto(pacienteId);
+      });
+    } else {
+      console.error('Paciente não encontrado ou não logado');
+    }
   }
 
   loadCurrentPhoto(pacienteId: number): void {

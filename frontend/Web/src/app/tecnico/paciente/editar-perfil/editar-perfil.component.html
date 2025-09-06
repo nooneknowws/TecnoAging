@@ -76,13 +76,50 @@
                   <td>
                     <select class="form-select form-select-sm" formControlName="corRaca">
                       <option value="">Selecione...</option>
-                      <option value="Branca">Branca</option>
-                      <option value="Preta">Preta</option>
-                      <option value="Parda">Parda</option>
-                      <option value="Amarela">Amarela</option>
-                      <option value="Indígena">Indígena</option>
+                      <option *ngFor="let cor of getCorRacaOptions()" [value]="cor.value">
+                        {{cor.label}}
+                      </option>
                     </select>
                   </td>
+                </tr>
+                <tr>
+                  <th scope="row">Escolaridade</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="escolaridade">
+                      <option value="">Selecione...</option>
+                      <option *ngFor="let escolaridade of getEscolaridadeOptions()" [value]="escolaridade.value">
+                        {{escolaridade.label}}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Peso/Altura</th>
+                  <td>
+                    <div class="row">
+                      <div class="col-6">
+                        <input type="number" step="0.01" class="form-control form-control-sm" formControlName="peso" placeholder="Peso (kg)">
+                      </div>
+                      <div class="col-6">
+                        <input type="number" step="0.01" class="form-control form-control-sm" formControlName="altura" placeholder="Altura (m)">
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Situação Socioeconômica</th>
+                  <td>
+                    <select class="form-select form-select-sm" formControlName="socioeconomico">
+                      <option value="">Selecione...</option>
+                      <option *ngFor="let classe of getClasseSocioeconomicaOptions()" [value]="classe.value">
+                        {{classe.label}}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Telefone</th>
+                  <td><input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 00000-0000" placeholder="(00) 00000-0000"></td>
                 </tr>
               </tbody>
             </table>
@@ -118,7 +155,7 @@
                   </tr>
                   <tr>
                     <th scope="row">CPF</th>
-                    <td><input type="text" class="form-control form-control-sm" formControlName="cpf"></td>
+                    <td><input type="text" class="form-control form-control-sm" formControlName="cpf" mask="000.000.000-00" placeholder="000.000.000-00"></td>
                   </tr>
                   <tr>
                     <th scope="row">Data de Expedição</th>
@@ -163,7 +200,7 @@
                 <th scope="row">CEP</th>
                 <td>
                   <div class="input-group">
-                    <input class="form-control form-control-sm" type="text" formControlName="cep" #cepInput (blur)="buscarCep(cepInput.value)" placeholder="00000-000">
+                    <input class="form-control form-control-sm" type="text" formControlName="cep" #cepInput (blur)="buscarCep(cepInput.value)" mask="00000-000" placeholder="00000-000">
                     <button type="button" class="btn btn-primary btn-sm" (click)="buscarCep(cepInput.value)">
                       <i class="fas fa-search"></i>
                     </button>
@@ -227,7 +264,7 @@
                     </tr>
                     <tr>
                       <th scope="row">Telefone</th>
-                      <td><input type="text" class="form-control form-control-sm" formControlName="telefone"></td>
+                      <td><input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 00000-0000" placeholder="(00) 00000-0000"></td>
                     </tr>
                     <tr>
                       <th scope="row">Parentesco</th>
@@ -255,7 +292,7 @@
       </div>
     </div>
 
-    <div *ngIf="!pacienteForm.valid" class="alert alert-danger" role="alert">
+    <div *ngIf="pacienteForm.invalid && pacienteForm.touched" class="alert alert-danger" role="alert">
       <i class="fas fa-exclamation-circle"></i> Formulario inválido
       <ul>
         <!-- Dados Pessoais -->
@@ -266,6 +303,11 @@
         <li *ngIf="pacienteForm.get('dadosPessoais.municipioNasc')?.invalid && pacienteForm.get('dadosPessoais.municipioNasc')?.touched">Município de Nascimento é obrigatório</li>
         <li *ngIf="pacienteForm.get('dadosPessoais.ufNasc')?.value == '' && pacienteForm.get('dadosPessoais.ufNasc')?.touched">UF de Nascimento é obrigatória</li>
         <li *ngIf="pacienteForm.get('dadosPessoais.corRaca')?.value == '' && pacienteForm.get('dadosPessoais.corRaca')?.touched">Cor/Raça é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.escolaridade')?.value == '' && pacienteForm.get('dadosPessoais.escolaridade')?.touched">Escolaridade é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.peso')?.invalid && pacienteForm.get('dadosPessoais.peso')?.touched">Peso é obrigatório</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.altura')?.invalid && pacienteForm.get('dadosPessoais.altura')?.touched">Altura é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.socioeconomico')?.value == '' && pacienteForm.get('dadosPessoais.socioeconomico')?.touched">Situação Socioeconômica é obrigatória</li>
+        <li *ngIf="pacienteForm.get('dadosPessoais.telefone')?.invalid && pacienteForm.get('dadosPessoais.telefone')?.touched">Telefone é obrigatório</li>
 
         <!-- Documentação -->
         <li *ngIf="pacienteForm.get('documentacao.rg')?.invalid && pacienteForm.get('documentacao.rg')?.touched">RG é obrigatório</li>

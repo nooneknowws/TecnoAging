@@ -1,7 +1,9 @@
 package br.ufpr.tcc.MSAuth.services;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -74,15 +76,58 @@ public class AuthService {
             }
         );
 
-        CompletableFuture<Object> combinedFuture = CompletableFuture.anyOf(
-            futurePaciente,
-            futureTecnico
-        );
-
         try {
-            AuthValidationResponse response = (AuthValidationResponse) combinedFuture.get(10, TimeUnit.SECONDS);
+            logger.info("Aguardando resposta dos microsserviços...");
+            
+            // Aguarda ambas as respostas com timeout
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futurePaciente, futureTecnico);
+            
+            try {
+                // Tenta aguardar ambas as respostas por no máximo 10 segundos
+                allFutures.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                logger.warn("Timeout esperando todas as respostas, processando as que chegaram...");
+            }
+            
+            // Verifica se alguma das respostas foi bem-sucedida
+            AuthValidationResponse response = null;
+            
+            if (futurePaciente.isDone()) {
+                try {
+                    AuthValidationResponse pacienteResponse = futurePaciente.get();
+                    logger.info("Resposta PACIENTE - Success: {}, Message: {}", 
+                               pacienteResponse.isSuccess(), pacienteResponse.getErrorMessage());
+                    if (pacienteResponse.isSuccess()) {
+                        response = pacienteResponse;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao obter resposta do paciente: {}", e.getMessage());
+                }
+            }
+            
+            if (response == null && futureTecnico.isDone()) {
+                try {
+                    AuthValidationResponse tecnicoResponse = futureTecnico.get();
+                    logger.info("Resposta TECNICO - Success: {}, Message: {}", 
+                               tecnicoResponse.isSuccess(), tecnicoResponse.getErrorMessage());
+                    if (tecnicoResponse.isSuccess()) {
+                        response = tecnicoResponse;
+                    } else if (response == null) {
+                        // Se nenhuma resposta foi bem-sucedida, usa a resposta de erro do técnico
+                        response = tecnicoResponse;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao obter resposta do técnico: {}", e.getMessage());
+                }
+            }
+            
+            // Se ainda não tem resposta, significa que nenhuma chegou
+            if (response == null) {
+                throw new RuntimeException("Nenhuma resposta recebida dos microsserviços");
+            }
 
             if (response.isSuccess()) {
+                logger.info("Autenticação bem-sucedida, criando token...");
                 String token = jwtTokenProvider.createToken(
                     authDTO.getCpf(),
                     List.of("ROLE_USER", "ROLE_" + response.getMicroservice()),
@@ -100,13 +145,14 @@ public class AuthService {
 
                 authUserRepository.save(authUser);
 
+                logger.info("Token criado com sucesso para usuário: {}", response.getUserName());
                 return authUser;
             } else {
+                logger.warn("Autenticação falhada - Microservice: {}, Message: {}", 
+                           response.getMicroservice(), response.getErrorMessage());
                 throw new InvalidCredentialsException("CPF ou senha estão incorretos");
             }
 
-        } catch (TimeoutException e) {
-            throw new RuntimeException("Timeout ao autenticar");
         } catch (Exception e) {
             throw new RuntimeException("Falha na autenticação: " + e.getMessage());
         } finally {
@@ -130,6 +176,36 @@ public class AuthService {
         } catch (Exception e) {
             logger.error("JWT verification failed: " + e.getMessage());
             return false;
+        }
+    }
+
+    public Map<String, Object> verifyJwtAndExtractData(String token) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            AuthenticatedUser authUser = authUserRepository.findByToken(token);
+
+            if (authUser == null) {
+                result.put("valid", false);
+                return result;
+            }
+
+            jwtTokenProvider.validateToken(token);
+            
+            // Extract data from token
+            String username = jwtTokenProvider.getUsername(token);
+            
+            result.put("valid", true);
+            result.put("userId", authUser.getUserId());
+            result.put("username", username);
+            result.put("microservice", authUser.getPerfil());
+            
+            return result;
+
+        } catch (Exception e) {
+            logger.error("JWT verification failed: " + e.getMessage());
+            result.put("valid", false);
+            return result;
         }
     }
 }

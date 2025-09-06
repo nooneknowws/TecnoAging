@@ -32,23 +32,39 @@ public class AuthPacienteListener {
         logger.info("Auth request for CPF: {}", authDTO.getCpf());
 
         try {
-            Optional<Paciente> pacienteOpt = pacienteRepository.findByCpf(authDTO.getCpf());
+            // Remove formatting characters from CPF before searching
+            String cleanCpf = authDTO.getCpf().replaceAll("[^0-9]", "");
+            logger.info("Original CPF: {}, Clean CPF: {}", authDTO.getCpf(), cleanCpf);
+            Optional<Paciente> pacienteOpt = pacienteRepository.findByCpfForAuth(cleanCpf);
             
             AuthValidationResponse response;
             
+            if (pacienteOpt.isPresent()) {
                 Paciente paciente = pacienteOpt.get();
+                logger.info("Paciente encontrado: ID={}, Nome={}", paciente.getId(), paciente.getNome());
+                logger.info("Validando senha para paciente ID: {}", paciente.getId());
+                
                 if (paciente.verificarSenha(authDTO.getSenha())) {
+                    logger.info("Senha válida para paciente ID: {}", paciente.getId());
                     response = AuthValidationResponse.success(
                         "PACIENTE",
                         paciente.getId(),
                         paciente.getNome()
                     );
                 } else {
+                    logger.warn("Senha inválida para paciente ID: {}", paciente.getId());
                     response = AuthValidationResponse.error(
                         "Senha inválida", 
                         "PACIENTE"
                     );
                 }
+            } else {
+                logger.warn("CPF não encontrado: {}", cleanCpf);
+                response = AuthValidationResponse.error(
+                    "CPF não encontrado", 
+                    "PACIENTE"
+                );
+            }
             
 
             rabbitTemplate.convertAndSend(

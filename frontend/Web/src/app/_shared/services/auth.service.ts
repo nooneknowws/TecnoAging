@@ -95,17 +95,38 @@ export class AuthService {
   
   logout(token: string | null): boolean {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    if(this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
-      next: () => localStorage.clear(),
-      error: (err) => console.error('Logout failed:', err)
-    })){
-      console.log('logout realizado')
-      return true;
-    }
-    else {
-      console.log('erro ao realizar o logout')
-      return false;
-    }    
+    
+    // Clear all local data immediately
+    this.clearAllUserData();
+    
+    // Call backend logout (async)
+    this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
+      next: () => {
+        console.log('Backend logout successful');
+      },
+      error: (err) => {
+        console.error('Backend logout failed:', err);
+      }
+    });
+    
+    return true;
+  }
+
+  private clearAllUserData(): void {
+    // Clear localStorage
+    localStorage.removeItem(this.SESSION_TOKEN_KEY);
+    localStorage.removeItem(this.SESSION_USER_TYPE_KEY);
+    localStorage.removeItem(this.SESSION_USER_DATA_KEY);
+    localStorage.removeItem(this.SESSION_USER_ID_KEY);
+    localStorage.removeItem('userData'); // Legacy key that might exist
+    
+    // Clear sessionStorage as well
+    sessionStorage.clear();
+    
+    // Reset current user object
+    this.currentUser = null;
+    
+    console.log('All user data cleared from frontend');
   }
 
   getCurrentUser(): Tecnico | Paciente | null {

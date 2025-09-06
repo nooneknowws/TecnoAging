@@ -32,11 +32,14 @@ public class AuthTecnicoListener {
         logger.info("Auth request for CPF: {}", authDTO.getCpf());
 
         try {
-            Optional<Tecnico> tecnicoOpt = tecnicoRepository.findByCpf(authDTO.getCpf());
+            // Remove formatting characters from CPF before searching
+            String cleanCpf = authDTO.getCpf().replaceAll("[^0-9]", "");
+            logger.info("Original CPF: {}, Clean CPF: {}", authDTO.getCpf(), cleanCpf);
+            Optional<Tecnico> tecnicoOpt = tecnicoRepository.findByCpfForAuth(cleanCpf);
             
             AuthValidationResponse response;
             
-           
+            if (tecnicoOpt.isPresent()) {
                 Tecnico tecnico = tecnicoOpt.get();
                 if (tecnico.verificarSenha(authDTO.getSenha())) {
                     response = AuthValidationResponse.success(
@@ -45,11 +48,17 @@ public class AuthTecnicoListener {
                         tecnico.getNome()
                     );
                 } else {
-                	response = AuthValidationResponse.error(
-                            "Senha inválida", 
-                            "TECNICO"
-                        );
+                    response = AuthValidationResponse.error(
+                        "Senha inválida", 
+                        "TECNICO"
+                    );
                 }
+            } else {
+                response = AuthValidationResponse.error(
+                    "CPF não encontrado", 
+                    "TECNICO"
+                );
+            }
             
 
             rabbitTemplate.convertAndSend(

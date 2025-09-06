@@ -95,11 +95,14 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
 
-            boolean isValid = authService.verifyJwt(token);
+            Map<String, Object> verificationResult = authService.verifyJwtAndExtractData(token);
             
-            if (isValid) {
+            if ((Boolean) verificationResult.get("valid")) {
                 response.put("valid", true);
                 response.put("message", "Token is valid");
+                response.put("userId", verificationResult.get("userId"));
+                response.put("username", verificationResult.get("username"));
+                response.put("microservice", verificationResult.get("microservice"));
                 return ResponseEntity.ok(response);
             } else {
                 response.put("valid", false);

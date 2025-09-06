@@ -24,17 +24,33 @@ public class AuthListener {
 	@RabbitListener(queues = "auth.response.paciente.queue")
 	public void handlePacienteResponse(AuthValidationResponse response, Message message) {
 	    String correlationId = message.getMessageProperties().getCorrelationId();
+	    logger.info("Resposta PACIENTE recebida - CorrelationId: {}, Success: {}, ErrorMessage: {}", 
+	               correlationId, response.isSuccess(), response.getErrorMessage());
+	    
 	    CompletableFuture<AuthValidationResponse> future = 
 	        correlationService.removePendingRequest(correlationId);
-	    if (future != null) future.complete(response);
+	    if (future != null) {
+	        logger.info("Future encontrado, completando...");
+	        future.complete(response);
+	    } else {
+	        logger.warn("Future não encontrado para correlationId: {}", correlationId);
+	    }
 	}
 
 	@RabbitListener(queues = "auth.response.tecnico.queue")
 	public void handleTecnicoResponse(AuthValidationResponse response, Message message) {
 	    String correlationId = message.getMessageProperties().getCorrelationId();
+	    logger.info("Resposta TECNICO recebida - CorrelationId: {}, Success: {}, ErrorMessage: {}", 
+	               correlationId, response.isSuccess(), response.getErrorMessage());
+	    
 	    CompletableFuture<AuthValidationResponse> future = 
 	        correlationService.removePendingRequest(correlationId);
-	    if (future != null) future.complete(response);
+	    if (future != null) {
+	        logger.info("Future encontrado, completando...");
+	        future.complete(response);
+	    } else {
+	        logger.warn("Future não encontrado para correlationId: {}", correlationId);
+	    }
 	}
 
 

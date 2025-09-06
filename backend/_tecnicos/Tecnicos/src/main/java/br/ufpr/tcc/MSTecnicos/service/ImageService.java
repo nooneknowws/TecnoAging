@@ -16,6 +16,7 @@ public class ImageService {
     private static final int MAX_WIDTH = 300;
     private static final int MAX_HEIGHT = 300;
     private static final float COMPRESSION_QUALITY = 0.8f;
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     public byte[] compressImage(String base64Image) throws IOException {
         if (base64Image == null || base64Image.isEmpty()) {
@@ -25,6 +26,12 @@ public class ImageService {
         String base64Data = base64Image;
         if (base64Image.contains(",")) {
             base64Data = base64Image.split(",")[1];
+        }
+
+        // Validate base64 size before decoding (aproximação: base64 é ~33% maior que original)
+        long estimatedSize = (base64Data.length() * 3L) / 4L;
+        if (estimatedSize > MAX_FILE_SIZE) {
+            throw new IOException("Imagem muito grande. Tamanho máximo: 5MB");
         }
 
         byte[] imageBytes = Base64.getDecoder().decode(base64Data);

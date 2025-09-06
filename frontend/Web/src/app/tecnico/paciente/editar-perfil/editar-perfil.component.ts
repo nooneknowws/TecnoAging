@@ -6,6 +6,8 @@ import { PacienteService } from '../../../_shared/services/paciente.service';
 import { Contato } from '../../../_shared/models/pessoa/paciente/contato';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
+import { EnumEscolaridade } from '../../../_shared/models/escolaridade.enum';
+import { EnumClasseSocioeconomica } from '../../../_shared/models/classe-socioeconomica.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
 import { ImageService } from '../../../_shared/services/image.service';
 import { finalize, of, switchMap } from 'rxjs';
@@ -81,6 +83,30 @@ export class EditarPerfilPacienteComponent implements OnInit {
     }));
   }
 
+  getEscolaridadeOptions() {
+    return Object.entries(EnumEscolaridade).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getClasseSocioeconomicaOptions() {
+    return Object.entries(EnumClasseSocioeconomica).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getCorRacaOptions() {
+    return [
+      { value: 'Branca', label: 'Branca' },
+      { value: 'Preta', label: 'Preta' },
+      { value: 'Parda', label: 'Parda' },
+      { value: 'Amarela', label: 'Amarela' },
+      { value: 'Indígena', label: 'Indígena' }
+    ];
+  }
+
   private inicializarFormulario(): FormGroup {
     return this.fb.group({
       dadosPessoais: this.fb.group({
@@ -92,7 +118,13 @@ export class EditarPerfilPacienteComponent implements OnInit {
         municipioNasc: ['', Validators.required],
         ufNasc: ['', Validators.required],
         corRaca: ['', Validators.required],
-        idade: [{ value: '', disabled: true }]
+        escolaridade: ['', Validators.required],
+        peso: ['', Validators.required],
+        altura: ['', Validators.required],
+        socioeconomico: ['', Validators.required],
+        telefone: ['', Validators.required],
+        idade: [{ value: '', disabled: true }],
+        imc: [{ value: '', disabled: true }]
       }),
       documentacao: this.fb.group({
         rg: ['', Validators.required],
@@ -130,7 +162,14 @@ export class EditarPerfilPacienteComponent implements OnInit {
       nacionalidade: paciente.nacionalidade || 'Brasileiro',
       municipioNasc: paciente.municipioNasc || '',
       ufNasc: paciente.ufNasc || '',
-      corRaca: paciente.corRaca || ''
+      corRaca: paciente.corRaca || '',
+      escolaridade: paciente.escolaridade || '',
+      peso: paciente.peso || '',
+      altura: paciente.altura || '',
+      socioeconomico: paciente.socioeconomico || '',
+      telefone: paciente.telefone || '',
+      idade: paciente.idade || '',
+      imc: paciente.imc || ''
     });
 
     documentacao.patchValue({
@@ -345,6 +384,9 @@ export class EditarPerfilPacienteComponent implements OnInit {
   }
 
   async salvar() {
+  // Marca o formulário como touched para mostrar erros de validação
+  this.pacienteForm.markAllAsTouched();
+  
   if (this.pacienteForm.valid) {
     try {
       this.loading = true;
@@ -371,6 +413,11 @@ export class EditarPerfilPacienteComponent implements OnInit {
         municipioNasc: dadosPessoais.municipioNasc,
         ufNasc: dadosPessoais.ufNasc,
         corRaca: dadosPessoais.corRaca,
+        escolaridade: dadosPessoais.escolaridade,
+        peso: dadosPessoais.peso,
+        altura: dadosPessoais.altura,
+        socioeconomico: dadosPessoais.socioeconomico,
+        telefone: dadosPessoais.telefone,
         rg: documentacao.rg,
         cpf: documentacao.cpf,
         dataExpedicao: documentacao.dataExpedicao,
