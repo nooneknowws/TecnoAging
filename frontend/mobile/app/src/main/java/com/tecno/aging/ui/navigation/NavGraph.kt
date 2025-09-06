@@ -16,6 +16,7 @@ import com.tecno.aging.ui.screens.forms.FormsScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
+import com.tecno.aging.ui.screens.pacientes.avaliacoes.AvaliacaoDetailScreen
 import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
 import com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit.PacienteEditScreen
 import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
@@ -59,9 +60,8 @@ fun AppNavGraph() {
             CadastroPacienteScreen(
                 navController = navController,
                 onSuccess = {
-                    // Decide para onde ir após o sucesso, ex: lista de pacientes ou login
                     navController.navigate("pacientes_list") {
-                        popUpTo("home") // Volta para a home para não empilhar telas de cadastro
+                        popUpTo("home")
                     }
                 }
             )
@@ -73,7 +73,6 @@ fun AppNavGraph() {
                 navController = navController,
             )
         }
-
 
         composable("test") {
             TestScreen(navController = navController)
@@ -139,6 +138,13 @@ fun AppNavGraph() {
             arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
         ) {
             HistoricoScreen(navController = navController)
+        }
+
+        composable(
+            route = "avaliacao_detail/{avaliacaoId}",
+            arguments = listOf(navArgument("avaliacaoId") { type = NavType.IntType })
+        ) {
+            AvaliacaoDetailScreen(navController = navController)
         }
     }
 }

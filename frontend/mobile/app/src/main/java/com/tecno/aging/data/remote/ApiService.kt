@@ -59,8 +59,8 @@ interface ApiService {
     @GET("api/avaliacoes/respostas/tecnico/{id}")
     suspend fun getRespostasByTecnico(@Path("id") tecnicoId: Int): Response<Unit>
 
-    @GET("api/avaliacoes/avalicao/{id}")
-    suspend fun getAvaliacoes(@Path("id") avalicaoId: Int): Response<Unit>
+    @GET("api/avaliacoes/avaliacao/{id}")
+    suspend fun getAvaliacaoById(@Path("id") avaliacaoId: Long): Response<HistoricoAvaliacao>
 
     // Formulários
     @GET("api/formularios/")
@@ -72,5 +72,7 @@ interface ApiService {
     // Avaliações
     @POST("api/avaliacoes/forms")
     suspend fun salvarAvaliacao(@Body avaliacao: AvaliacaoPostDTO): Response<Map<String, String>>
+
+
 
 }
