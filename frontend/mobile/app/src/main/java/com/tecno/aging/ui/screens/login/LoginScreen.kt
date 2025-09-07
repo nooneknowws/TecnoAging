@@ -56,7 +56,7 @@ fun LoginScreen(
         state = state,
         onEvent = viewModel::handleEvent,
         onSignUpClick = { navController.navigate("cadastro_tecnico") },
-        onForgotPasswordClick = { /* Handle forgot password */ }
+        onForgotPasswordClick = { navController.navigate("forgot_password") }
     )
 }
 

@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.pacienteCadastro.CadastroPacienteScreen
 import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
+import com.tecno.aging.ui.screens.forgot_password.ForgotPasswordScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.FormsScreen
 import com.tecno.aging.ui.screens.forms.TestScreen
@@ -91,6 +92,10 @@ fun AppNavGraph() {
             )
         ) {
             FormScreen(navController = navController)
+        }
+
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController = navController)
         }
 
         // Perfil e Configurações
