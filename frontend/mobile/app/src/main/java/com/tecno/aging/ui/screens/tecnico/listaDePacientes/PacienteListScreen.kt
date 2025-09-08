@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.tecno.aging.domain.models.paciente.Paciente
+import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import com.tecno.aging.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class)

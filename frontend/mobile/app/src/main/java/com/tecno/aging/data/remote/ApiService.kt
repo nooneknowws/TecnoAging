@@ -9,7 +9,7 @@ import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
 import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
-import com.tecno.aging.domain.models.paciente.Paciente
+import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import com.tecno.aging.domain.models.pessoa.paciente.PacienteRequest
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import retrofit2.Response
