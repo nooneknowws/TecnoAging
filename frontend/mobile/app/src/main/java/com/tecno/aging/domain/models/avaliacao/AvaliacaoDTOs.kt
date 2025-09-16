@@ -2,14 +2,6 @@ package com.tecno.aging.domain.models.historico
 
 import com.google.gson.annotations.SerializedName
 
-data class PerguntaValor(
-    @SerializedName("pergunta")
-    val pergunta: String,
-
-    @SerializedName("valor")
-    val valor: String
-)
-
 data class HistoricoAvaliacao(
     @SerializedName("avaliacaoId")
     val id: Long,
@@ -45,10 +37,10 @@ data class HistoricoAvaliacao(
     val pontuacaoMaxima: Int,
 
     @SerializedName("dataCriacao")
-    val dataCriacao: String,
+    val dataCriacao: String?,
 
     @SerializedName("dataAtualizacao")
-    val dataAtualizacao: String,
+    val dataAtualizacao: String?,
 
     @SerializedName("perguntasValores")
     val perguntasValores: List<PerguntaValor>
