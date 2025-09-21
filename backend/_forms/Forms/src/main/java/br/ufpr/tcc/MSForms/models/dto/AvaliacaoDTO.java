@@ -1,11 +1,12 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AvaliacaoDTO {
 
     private Long id;

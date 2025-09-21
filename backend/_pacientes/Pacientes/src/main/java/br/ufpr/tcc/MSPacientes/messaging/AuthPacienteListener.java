@@ -1,5 +1,6 @@
 package br.ufpr.tcc.MSPacientes.messaging;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,140 @@ public class AuthPacienteListener {
             rabbitTemplate.convertAndSend(
                 "saga-exchange",
                 "auth.response.paciente.error",
-                new AuthValidationResponse(false, "Erro interno", "PACIENTE", null, correlationId),
+                AuthValidationResponse.error("Erro interno", "PACIENTE"),
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+        }
+    }
+    
+    @RabbitListener(queues = "auth.check.paciente.queue")
+    public void handleCheckCpfRequest(Map<String, String> request, Message message) {
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        String cpf = request.get("cpf");
+        logger.info("Check CPF request for: {}", cpf);
+
+        try {
+            String cleanCpf = cpf.replaceAll("[^0-9]", "");
+            Optional<Paciente> pacienteOpt = pacienteRepository.findByCpfForAuth(cleanCpf);
+            
+            AuthValidationResponse response;
+            
+            if (pacienteOpt.isPresent()) {
+                response = AuthValidationResponse.success("PACIENTE", null, null);
+            } else {
+                response = AuthValidationResponse.error("CPF não encontrado", "PACIENTE");
+            }
+
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente",
+                response,
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+
+        } catch (Exception e) {
+            logger.error("Check CPF error: {}", e.getMessage());
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente.error",
+                AuthValidationResponse.error("Erro interno", "PACIENTE"),
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+        }
+    }
+    
+    @RabbitListener(queues = "auth.telefone.paciente.queue")
+    public void handleGetTelefoneRequest(Map<String, String> request, Message message) {
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        String cpf = request.get("cpf");
+        logger.info("Get telefone request for CPF: {}", cpf);
+
+        try {
+            String cleanCpf = cpf.replaceAll("[^0-9]", "");
+            Optional<Paciente> pacienteOpt = pacienteRepository.findByCpfForAuth(cleanCpf);
+            
+            AuthValidationResponse response;
+            
+            if (pacienteOpt.isPresent()) {
+                Paciente paciente = pacienteOpt.get();
+                response = new AuthValidationResponse(true, null, "PACIENTE", null, null, paciente.getTelefone());
+            } else {
+                response = AuthValidationResponse.error("CPF não encontrado", "PACIENTE");
+            }
+
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente",
+                response,
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+
+        } catch (Exception e) {
+            logger.error("Get telefone error: {}", e.getMessage());
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente.error",
+                AuthValidationResponse.error("Erro interno", "PACIENTE"),
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+        }
+    }
+    
+    @RabbitListener(queues = "auth.reset.paciente.queue")
+    public void handleResetPasswordRequest(Map<String, String> request, Message message) {
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        String cpf = request.get("cpf");
+        String novaSenha = request.get("novaSenha");
+        logger.info("Reset password request for CPF: {}", cpf);
+
+        try {
+            String cleanCpf = cpf.replaceAll("[^0-9]", "");
+            Optional<Paciente> pacienteOpt = pacienteRepository.findByCpfForAuth(cleanCpf);
+            
+            AuthValidationResponse response;
+            
+            if (pacienteOpt.isPresent()) {
+                Paciente paciente = pacienteOpt.get();
+                paciente.redefinirSenha(novaSenha);
+                pacienteRepository.save(paciente);
+                
+                response = AuthValidationResponse.success("PACIENTE", null, null);
+                logger.info("Senha resetada com sucesso para paciente ID: {}", paciente.getId());
+            } else {
+                response = AuthValidationResponse.error("CPF não encontrado", "PACIENTE");
+            }
+
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente",
+                response,
+                m -> {
+                    m.getMessageProperties().setCorrelationId(correlationId);
+                    return m;
+                }
+            );
+
+        } catch (Exception e) {
+            logger.error("Reset password error: {}", e.getMessage());
+            rabbitTemplate.convertAndSend(
+                "saga-exchange",
+                "auth.response.paciente.error",
+                AuthValidationResponse.error("Erro interno", "PACIENTE"),
                 m -> {
                     m.getMessageProperties().setCorrelationId(correlationId);
                     return m;

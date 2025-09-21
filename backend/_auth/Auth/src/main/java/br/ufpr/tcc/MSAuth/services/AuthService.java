@@ -208,4 +208,230 @@ public class AuthService {
             return result;
         }
     }
+    
+    public boolean checkUserByCpf(String cpf) {
+        String correlationIdPaciente = UUID.randomUUID().toString();
+        String correlationIdTecnico = UUID.randomUUID().toString();
+
+        CompletableFuture<AuthValidationResponse> futurePaciente = new CompletableFuture<>();
+        CompletableFuture<AuthValidationResponse> futureTecnico = new CompletableFuture<>();
+
+        correlationService.addPendingRequest(correlationIdPaciente, futurePaciente);
+        correlationService.addPendingRequest(correlationIdTecnico, futureTecnico);
+
+        Map<String, String> cpfRequest = new HashMap<>();
+        cpfRequest.put("cpf", cpf);
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.check.paciente",
+            cpfRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdPaciente);
+                return m;
+            }
+        );
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.check.tecnico",
+            cpfRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdTecnico);
+                return m;
+            }
+        );
+
+        try {
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futurePaciente, futureTecnico);
+            
+            try {
+                allFutures.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                logger.warn("Timeout verificando CPF, processando respostas recebidas...");
+            }
+            
+            if (futurePaciente.isDone()) {
+                try {
+                    AuthValidationResponse pacienteResponse = futurePaciente.get();
+                    if (pacienteResponse.isSuccess()) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao verificar CPF no serviço de pacientes: {}", e.getMessage());
+                }
+            }
+            
+            if (futureTecnico.isDone()) {
+                try {
+                    AuthValidationResponse tecnicoResponse = futureTecnico.get();
+                    if (tecnicoResponse.isSuccess()) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao verificar CPF no serviço de técnicos: {}", e.getMessage());
+                }
+            }
+            
+            return false;
+
+        } catch (Exception e) {
+            logger.error("Erro ao verificar CPF: {}", e.getMessage());
+            return false;
+        } finally {
+            correlationService.removePendingRequest(correlationIdPaciente);
+            correlationService.removePendingRequest(correlationIdTecnico);
+        }
+    }
+    
+    public String getTelefoneByMaskedCpf(String cpf) {
+        String correlationIdPaciente = UUID.randomUUID().toString();
+        String correlationIdTecnico = UUID.randomUUID().toString();
+
+        CompletableFuture<AuthValidationResponse> futurePaciente = new CompletableFuture<>();
+        CompletableFuture<AuthValidationResponse> futureTecnico = new CompletableFuture<>();
+
+        correlationService.addPendingRequest(correlationIdPaciente, futurePaciente);
+        correlationService.addPendingRequest(correlationIdTecnico, futureTecnico);
+
+        Map<String, String> cpfRequest = new HashMap<>();
+        cpfRequest.put("cpf", cpf);
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.telefone.paciente",
+            cpfRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdPaciente);
+                return m;
+            }
+        );
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.telefone.tecnico",
+            cpfRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdTecnico);
+                return m;
+            }
+        );
+
+        try {
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futurePaciente, futureTecnico);
+            
+            try {
+                allFutures.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                logger.warn("Timeout buscando telefone, processando respostas recebidas...");
+            }
+            
+            if (futurePaciente.isDone()) {
+                try {
+                    AuthValidationResponse pacienteResponse = futurePaciente.get();
+                    if (pacienteResponse.isSuccess() && pacienteResponse.getTelefone() != null) {
+                        return pacienteResponse.getTelefone();
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao buscar telefone no serviço de pacientes: {}", e.getMessage());
+                }
+            }
+            
+            if (futureTecnico.isDone()) {
+                try {
+                    AuthValidationResponse tecnicoResponse = futureTecnico.get();
+                    if (tecnicoResponse.isSuccess() && tecnicoResponse.getTelefone() != null) {
+                        return tecnicoResponse.getTelefone();
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao buscar telefone no serviço de técnicos: {}", e.getMessage());
+                }
+            }
+            
+            return null;
+
+        } catch (Exception e) {
+            logger.error("Erro ao buscar telefone: {}", e.getMessage());
+            return null;
+        } finally {
+            correlationService.removePendingRequest(correlationIdPaciente);
+            correlationService.removePendingRequest(correlationIdTecnico);
+        }
+    }
+    
+    public boolean resetPassword(String cpf, String novaSenha) {
+        String correlationIdPaciente = UUID.randomUUID().toString();
+        String correlationIdTecnico = UUID.randomUUID().toString();
+
+        CompletableFuture<AuthValidationResponse> futurePaciente = new CompletableFuture<>();
+        CompletableFuture<AuthValidationResponse> futureTecnico = new CompletableFuture<>();
+
+        correlationService.addPendingRequest(correlationIdPaciente, futurePaciente);
+        correlationService.addPendingRequest(correlationIdTecnico, futureTecnico);
+
+        Map<String, String> resetRequest = new HashMap<>();
+        resetRequest.put("cpf", cpf);
+        resetRequest.put("novaSenha", novaSenha);
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.reset.paciente.queue",
+            resetRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdPaciente);
+                return m;
+            }
+        );
+
+        rabbitTemplate.convertAndSend(
+            "saga-exchange",
+            "auth.reset.tecnico.queue",
+            resetRequest,
+            m -> {
+                m.getMessageProperties().setCorrelationId(correlationIdTecnico);
+                return m;
+            }
+        );
+
+        try {
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(futurePaciente, futureTecnico);
+            
+            try {
+                allFutures.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                logger.warn("Timeout resetando senha, processando respostas recebidas...");
+            }
+            
+            if (futurePaciente.isDone()) {
+                try {
+                    AuthValidationResponse pacienteResponse = futurePaciente.get();
+                    if (pacienteResponse.isSuccess()) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao resetar senha no serviço de pacientes: {}", e.getMessage());
+                }
+            }
+            
+            if (futureTecnico.isDone()) {
+                try {
+                    AuthValidationResponse tecnicoResponse = futureTecnico.get();
+                    if (tecnicoResponse.isSuccess()) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    logger.error("Erro ao resetar senha no serviço de técnicos: {}", e.getMessage());
+                }
+            }
+            
+            return false;
+
+        } catch (Exception e) {
+            logger.error("Erro ao resetar senha: {}", e.getMessage());
+            return false;
+        } finally {
+            correlationService.removePendingRequest(correlationIdPaciente);
+            correlationService.removePendingRequest(correlationIdTecnico);
+        }
+    }
 }

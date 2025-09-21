@@ -145,6 +145,33 @@ export class AuthService {
     return !!localStorage.getItem(this.SESSION_TOKEN_KEY);
   }
 
+  enviarCodigo(cpf: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/enviar-codigo`, { cpf }).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Erro ao enviar código:', error);
+        throw error;
+      })
+    );
+  }
+
+  resetPassword(cpf: string, codigo: string, novaSenha: string, confirmarSenha: string): Observable<any> {
+    const payload = {
+      cpf,
+      codigo,
+      novaSenha,
+      confirmarSenha
+    };
+    
+    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Erro ao resetar senha:', error);
+        throw error;
+      })
+    );
+  }
+
   buscarCep(cep: string): Observable<Endereco | null> {
     console.log('oi');
     const sanitizedCep = cep.replace(/\D/g, '');

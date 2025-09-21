@@ -60,13 +60,20 @@ export class EditarAvaliacaoComponent implements OnInit {
   }
 
   private parseAvaliacaoData(avaliacaoData: any) {
-    this.perguntasValores = avaliacaoData.respostas?.map((resposta: any) => ({
-      pergunta: resposta.pergunta?.texto || '',
-      valor: this.parseValor(resposta.valor),
-      tipo: resposta.pergunta?.tipo || this.inferirTipo(resposta.pergunta?.texto || '', resposta.valor),
-      validacao: resposta.pergunta?.validacao || this.criarValidacao(resposta.pergunta?.texto || ''),
-      opcoes: resposta.pergunta?.opcoes || this.extrairOpcoes(resposta.pergunta?.texto || '', resposta.valor)
-    })) || [];
+    this.perguntasValores = avaliacaoData.respostas?.map((resposta: any) => {
+      const perguntaTexto = (resposta.pergunta && typeof resposta.pergunta.texto === 'string') ? resposta.pergunta.texto : '';
+      const perguntaTipo = (resposta.pergunta && typeof resposta.pergunta.tipo === 'string') ? resposta.pergunta.tipo : this.inferirTipo(perguntaTexto, resposta.valor);
+      const perguntaValidacao = (resposta.pergunta && resposta.pergunta.validacao) ? resposta.pergunta.validacao : this.criarValidacao(perguntaTexto);
+      const perguntaOpcoes = (resposta.pergunta && Array.isArray(resposta.pergunta.opcoes)) ? resposta.pergunta.opcoes : this.extrairOpcoes(perguntaTexto, resposta.valor);
+
+      return {
+        pergunta: perguntaTexto,
+        valor: this.parseValor(resposta.valor),
+        tipo: perguntaTipo,
+        validacao: perguntaValidacao,
+        opcoes: perguntaOpcoes
+      };
+    }) || [];
   }
 
   private parseValor(valor: any): string {
@@ -76,8 +83,9 @@ export class EditarAvaliacaoComponent implements OnInit {
     return String(valor || '');
   }
 
-  private inferirTipo(pergunta: string, valor: any): string {
-    const perguntaLower = pergunta.toLowerCase();
+  private inferirTipo(pergunta: any, valor: any): string {
+    const perguntaStr = String(pergunta || '');
+    const perguntaLower = perguntaStr.toLowerCase();
     
     if (perguntaLower.includes('tempo') || perguntaLower.includes('(hh:mm)')) {
       return 'tempo';
@@ -94,8 +102,9 @@ export class EditarAvaliacaoComponent implements OnInit {
     return 'texto';
   }
 
-  private criarValidacao(pergunta: string) {
-    const perguntaLower = pergunta.toLowerCase();
+  private criarValidacao(pergunta: any) {
+    const perguntaStr = String(pergunta || '');
+    const perguntaLower = perguntaStr.toLowerCase();
     
     if (perguntaLower.includes('dias')) {
       return { min: 0, max: 7, required: false };
@@ -104,7 +113,9 @@ export class EditarAvaliacaoComponent implements OnInit {
     return { required: false };
   }
 
-  private extrairOpcoes(pergunta: string, valor: any): string[] | undefined {
+  private extrairOpcoes(pergunta: any, valor: any): string[] | undefined {
+    const perguntaStr = String(pergunta || '');
+    const perguntaLower = perguntaStr.toLowerCase();
     return undefined;
   }
 
@@ -192,34 +203,35 @@ export class EditarAvaliacaoComponent implements OnInit {
 
   async salvarAvaliacao() {
     if (!this.formGroup.valid || !this.avaliacaoData) return;
-  
+
     try {
       const updatedAvaliacao = { ...this.avaliacaoData };
-      
+
+      // Update the respostas with form values while keeping the pergunta information
       updatedAvaliacao.respostas = this.avaliacaoData.respostas?.map((resposta: any, index: number) => {
         const controlName = this.getControlName(index);
         let valorResposta = this.formGroup.get(controlName)?.value;
-        
+
         const perguntaValor = this.perguntasValores[index];
         if (perguntaValor.tipo === 'checkbox' && perguntaValor.opcoes) {
           const checkboxArray = this.getCheckboxFormArray(index);
-          valorResposta = perguntaValor.opcoes.filter((_, optIndex) => 
+          valorResposta = perguntaValor.opcoes.filter((_, optIndex) =>
             checkboxArray.at(optIndex).value
           );
         }
-        
-        return new Resposta(
-          resposta.pergunta,
-          valorResposta
-        );
+
+        return {
+          pergunta: resposta.pergunta, // Keep the full pergunta object
+          valor: valorResposta
+        };
       }) || [];
-  
+
       await this.avaliacaoService.updateAvaliacao(updatedAvaliacao).toPromise();
-  
+
       this.showSuccessAlert = true;
       this.showErrorAlert = false;
       window.scrollTo(0, 0);
-  
+
     } catch (error) {
       console.error('Erro ao salvar avaliação:', error);
       this.showErrorAlert = true;

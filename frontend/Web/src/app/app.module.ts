@@ -17,6 +17,8 @@ import { FormularioComponent } from './formulario/formulario.component';
 import { AuthInterceptor } from './_auth/auth.interceptor';
 import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cadastro-tecnico.component';
 import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
+import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codigo.component';
+import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/ca
     CadastroComponent,
     CadastroTecnicoComponent,
     CadastroPacienteComponent,
+    SolicitarCodigoComponent,
+    RedefinirSenhaComponent,
     FormularioComponent
   ],
   imports: [

@@ -37,6 +37,18 @@ public class SAGAExchange {
     public static final String AUTH_PACIENTE_ERROR_QUEUE = "auth.response.paciente.error";
     public static final String AUTH_TECNICO_ERROR_QUEUE = "auth.response.tecnico.error";
 
+    // Auth Check Queues
+    public static final String AUTH_CHECK_PACIENTE_QUEUE = "auth.check.paciente.queue";
+    public static final String AUTH_CHECK_TECNICO_QUEUE = "auth.check.tecnico.queue";
+
+    // Auth Telefone Queues
+    public static final String AUTH_TELEFONE_PACIENTE_QUEUE = "auth.telefone.paciente.queue";
+    public static final String AUTH_TELEFONE_TECNICO_QUEUE = "auth.telefone.tecnico.queue";
+
+    // Auth Reset Queues
+    public static final String AUTH_RESET_PACIENTE_QUEUE = "auth.reset.paciente.queue";
+    public static final String AUTH_RESET_TECNICO_QUEUE = "auth.reset.tecnico.queue";
+
     public static final String PACIENTE_RESPONSE_QUEUE_ERROR = "response.paciente.queue.error";
     public static final String TECNICO_RESPONSE_QUEUE_ERROR = "response.tecnico.queue.error";
     
@@ -51,6 +63,18 @@ public class SAGAExchange {
     public static final String AUTH_TECNICO_RESPONSE_ROUTING_KEY = "auth.response.tecnico";
     public static final String AUTH_PACIENTE_ERROR_ROUTING_KEY = "auth.response.paciente.error";
     public static final String AUTH_TECNICO_ERROR_ROUTING_KEY = "auth.response.tecnico.error";
+
+    // Auth Check Routing Keys
+    public static final String AUTH_CHECK_PACIENTE_ROUTING_KEY = "auth.check.paciente.queue";
+    public static final String AUTH_CHECK_TECNICO_ROUTING_KEY = "auth.check.tecnico.queue";
+
+    // Auth Telefone Routing Keys
+    public static final String AUTH_TELEFONE_PACIENTE_ROUTING_KEY = "auth.telefone.paciente.queue";
+    public static final String AUTH_TELEFONE_TECNICO_ROUTING_KEY = "auth.telefone.tecnico.queue";
+
+    // Auth Reset Routing Keys
+    public static final String AUTH_RESET_PACIENTE_ROUTING_KEY = "auth.reset.paciente.queue";
+    public static final String AUTH_RESET_TECNICO_ROUTING_KEY = "auth.reset.tecnico.queue";
     
     @Bean
     public DirectExchange sagaExchange() {
@@ -91,6 +115,37 @@ public class SAGAExchange {
     public Queue authTecnicoErrorQueue() {
         return new Queue(AUTH_TECNICO_ERROR_QUEUE, true);
     }
+
+    @Bean
+    public Queue authCheckPacienteQueue() {
+        return new Queue(AUTH_CHECK_PACIENTE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authCheckTecnicoQueue() {
+        return new Queue(AUTH_CHECK_TECNICO_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authTelefonePacienteQueue() {
+        return new Queue(AUTH_TELEFONE_PACIENTE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authTelefoneTecnicoQueue() {
+        return new Queue(AUTH_TELEFONE_TECNICO_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authResetPacienteQueue() {
+        return new Queue(AUTH_RESET_PACIENTE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authResetTecnicoQueue() {
+        return new Queue(AUTH_RESET_TECNICO_QUEUE, true);
+    }
+
     @Bean
     public Queue pacienteQueryQueue() {
         logger.info("Declaring Paciente Query Queue: {}", PACIENTE_QUERY_QUEUE);
@@ -218,6 +273,49 @@ public class SAGAExchange {
                 .to(sagaExchange())
                 .with(AUTH_TECNICO_ERROR_ROUTING_KEY);
     }
+
+    @Bean
+    public Binding authCheckPacienteBinding() {
+        return BindingBuilder.bind(authCheckPacienteQueue())
+                .to(sagaExchange())
+                .with(AUTH_CHECK_PACIENTE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authCheckTecnicoBinding() {
+        return BindingBuilder.bind(authCheckTecnicoQueue())
+                .to(sagaExchange())
+                .with(AUTH_CHECK_TECNICO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authTelefonePacienteBinding() {
+        return BindingBuilder.bind(authTelefonePacienteQueue())
+                .to(sagaExchange())
+                .with(AUTH_TELEFONE_PACIENTE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authTelefoneTecnicoBinding() {
+        return BindingBuilder.bind(authTelefoneTecnicoQueue())
+                .to(sagaExchange())
+                .with(AUTH_TELEFONE_TECNICO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authResetPacienteBinding() {
+        return BindingBuilder.bind(authResetPacienteQueue())
+                .to(sagaExchange())
+                .with(AUTH_RESET_PACIENTE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding authResetTecnicoBinding() {
+        return BindingBuilder.bind(authResetTecnicoQueue())
+                .to(sagaExchange())
+                .with(AUTH_RESET_TECNICO_ROUTING_KEY);
+    }
+
     @PostConstruct
     public void logConfiguration() {
         logger.info("SAGA Exchange Configuration:");

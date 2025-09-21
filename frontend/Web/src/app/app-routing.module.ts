@@ -20,6 +20,8 @@ import { EditarAvaliacaoComponent } from './tecnico/paciente/editar-avaliacao/ed
 import { HomeComponent } from './_auth/home.component';
 import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cadastro-tecnico.component';
 import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
+import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codigo.component';
+import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
@@ -30,6 +32,8 @@ const routes: Routes = [
       { path: 'paciente', component: CadastroPacienteComponent }
     ]
   },
+  { path: 'recuperar-senha', component: SolicitarCodigoComponent },
+  { path: 'recuperar-senha/codigo', component: RedefinirSenhaComponent },
   {
     path: 'paciente',
     component: PacienteLayoutComponent,

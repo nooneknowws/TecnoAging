@@ -136,6 +136,14 @@ app.post('/api/auth/verify-jwt', (req, res, next) => {
     authServiceProxy(req, res, next);
 })
 
+app.post('/api/auth/enviar-codigo', (req, res, next) => {
+    authServiceProxy(req, res, next);
+})
+
+app.post('/api/auth/reset-password', (req, res, next) => {
+    authServiceProxy(req, res, next);
+})
+
 // PACIENTES
 
 // cadastro
@@ -236,6 +244,11 @@ app.get('/api/avaliacoes/respostas/tecnico/:id', verifyJWT, (req, res, next) => 
 // avaliações por avaliacao ID
 app.get('/api/avaliacoes/avaliacao/:id', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);
+})
+// editar avaliação por ID
+app.put('/api/avaliacoes/forms/update/:id', verifyJWT, (req, res, next) => {
+    console.log(`Atualizando avaliação ID: ${req.params.id}`);
+    formsServiceProxy(req, res, next);
 })
 
 // Middleware para tratamento de erros de upload
