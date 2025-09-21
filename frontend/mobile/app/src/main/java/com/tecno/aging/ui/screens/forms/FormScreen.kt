@@ -121,7 +121,7 @@ fun FormContent(
             onAnteriorClick = { viewModel.etapaAnterior() },
             onProximoClick = { viewModel.proximaEtapa() },
             onFinalizarClick = { viewModel.submeterAvaliacao() },
-            isSubmitting = false,
+            isSubmitting = false
         )
     }
 }
