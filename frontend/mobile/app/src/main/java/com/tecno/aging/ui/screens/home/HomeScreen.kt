@@ -319,19 +319,6 @@ fun MainContent(
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("cadastro_paciente") }
                 )
-                DashboardCard(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.plus),
-                            contentDescription = "Histórico",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    title = "Histórico",
-                    modifier = Modifier.weight(0.5f),
-                    onClick = { /* TODO */ }
-                )
             }
         } else if (perfil.equals("PACIENTE", ignoreCase = true)) {
             Row(

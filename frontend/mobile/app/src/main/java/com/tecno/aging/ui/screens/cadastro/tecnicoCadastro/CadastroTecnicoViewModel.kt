@@ -155,7 +155,7 @@ class CadastroTecnicoViewModel(
             if (tecnico.dataNasc.isBlank()) erros["dataNasc"] = "Data obrigatória"
             if (senha.length < 6) erros["senha"] = "Senha deve ter no mínimo 6 caracteres"
             if (confirmarSenha != senha) erros["confirmarSenha"] = "As senhas não coincidem"
-            if (tecnico.endereco?.cep?.filter { it.isDigit() }?.length != 8) erros["cep"] = "CEP inválido"
+            if (tecnico.endereco.cep.filter { it.isDigit() }.length != 8) erros["cep"] = "CEP inválido"
         }
         return erros
     }

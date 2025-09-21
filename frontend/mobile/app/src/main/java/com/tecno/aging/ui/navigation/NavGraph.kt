@@ -2,7 +2,6 @@ package com.tecno.aging.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,9 +10,9 @@ import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.pacienteCadastro.CadastroPacienteScreen
 import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
+import com.tecno.aging.ui.screens.forgot_password.ForgotPasswordScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.FormsScreen
-import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
 import com.tecno.aging.ui.screens.pacientes.avaliacoes.AvaliacaoDetailScreen
@@ -74,10 +73,6 @@ fun AppNavGraph() {
             )
         }
 
-        composable("test") {
-            TestScreen(navController = navController)
-        }
-
         // Formulários
         composable("forms") {
             FormsScreen(navController = navController)
@@ -91,6 +86,10 @@ fun AppNavGraph() {
             )
         ) {
             FormScreen(navController = navController)
+        }
+
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController = navController)
         }
 
         // Perfil e Configurações
