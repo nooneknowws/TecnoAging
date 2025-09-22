@@ -112,10 +112,6 @@ export class AuthService {
     return this.currentUser;
   }
 
-  updateCurrentUser(user: any): void {
-     localStorage.setItem('userData', JSON.stringify(user));
-  }
-
   getUserProfile(): string | null {
     return localStorage.getItem(this.SESSION_USER_TYPE_KEY);
   }
@@ -152,5 +148,53 @@ export class AuthService {
         return of(null);
       })
     );
+  }
+
+  updateCurrentUserCache(updatedUser: Tecnico | Paciente): void {
+    // Atualiza a instância em memória
+    this.currentUser = updatedUser;
+    
+    // Atualiza o localStorage
+    localStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(updatedUser));
+    
+    console.log('Cache do usuário atualizado com sucesso');
+  }
+
+  /**
+   * Recarrega os dados do usuário do servidor e atualiza o cache
+   */
+  refreshCurrentUserFromServer(): Observable<Tecnico | Paciente> {
+    const userId = localStorage.getItem(this.SESSION_USER_ID_KEY);
+    const userType = localStorage.getItem(this.SESSION_USER_TYPE_KEY);
+    const token = localStorage.getItem(this.SESSION_TOKEN_KEY);
+
+    if (!userId || !userType || !token) {
+      return of(null as any);
+    }
+
+    const endpoint = userType === 'paciente' 
+      ? `${this.API_URL}/pacientes/${userId}`
+      : `${this.API_URL}/tecnicos/${userId}`;
+
+    return this.http.get<any>(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(userData => {
+        this.updateCurrentUserCache(
+          userType === 'paciente' 
+            ? Object.assign(new Paciente(), userData)
+            : Object.assign(new Tecnico(), userData)
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao recarregar dados do usuário:', error);
+        return of(null as any);
+      })
+    );
+  }
+
+  // Corrigir o método existente updateCurrentUser
+  updateCurrentUser(user: any): void {
+    this.updateCurrentUserCache(user);
   }
 }

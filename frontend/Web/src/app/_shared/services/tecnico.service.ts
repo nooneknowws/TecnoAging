@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AppComponent } from '../../app.component';
 import { Tecnico } from '../models/pessoa/tecnico/tecnico';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,10 @@ import { Tecnico } from '../models/pessoa/tecnico/tecnico';
 export class TecnicoService {
   private readonly API_URL = AppComponent.API_URL;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   getTecnicos(): Observable<Tecnico[]> {
     return this.http.get<Tecnico[]>(`${this.API_URL}/tecnicos`);
@@ -43,5 +47,17 @@ export class TecnicoService {
 
   getTecnicoByMatricula(matricula: number): Observable<Tecnico> {
     return this.http.get<Tecnico>(`${this.API_URL}/tecnicos/matricula/${matricula}`);
+  }
+
+  updateTecnicoAndRefreshCache(tecnico: Tecnico): Observable<Tecnico> {
+    return this.http.put<Tecnico>(`${this.API_URL}/tecnicos/${tecnico.id}`, tecnico).pipe(
+      tap(updatedTecnico => {
+        // Se o técnico atualizado é o usuário logado, atualiza o cache
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser && currentUser.id === updatedTecnico.id) {
+          this.authService.updateCurrentUserCache(updatedTecnico);
+        }
+      })
+    );
   }
 }

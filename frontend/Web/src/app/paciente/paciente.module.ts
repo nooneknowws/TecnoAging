@@ -6,6 +6,8 @@ import { PacienteDashboardComponent } from './paciente-dashboard/paciente-dashbo
 import { PacienteLayoutComponent } from './paciente-layout/paciente-layout.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../_shared/shared.module';
+import { EditarPerfilComponent } from './editar-perfil/editar-perfil.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -14,10 +16,12 @@ import { SharedModule } from '../_shared/shared.module';
     HistoricoTestesComponent,
     VisualizarPerfilComponent,
     PacienteDashboardComponent,
-    PacienteLayoutComponent
+    PacienteLayoutComponent,
+    EditarPerfilComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     SharedModule
   ]

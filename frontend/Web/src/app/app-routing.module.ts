@@ -38,7 +38,8 @@ const routes: Routes = [
     children: [
       { path: '', component: PacienteDashboardComponent },
       { path: 'historico-testes', component: HistoricoTestesComponent },
-      { path: 'visualizar-perfil', component: VisualizarPerfilComponent }
+      { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
+      { path: 'editar-perfil', component: EditarPerfilPacienteComponent }
     ]
   },
   {
