@@ -180,6 +180,16 @@ public class Pessoa {
 
     private boolean checkPassword(String senha, String salt, String hash) {
         try {
+            System.out.println("=== DEBUG SENHA ===");
+            System.out.println("Senha recebida: '" + senha + "'");
+            System.out.println("Salt armazenado: " + salt);
+            System.out.println("Hash armazenado: " + hash);
+            
+            if (salt == null || hash == null) {
+                System.out.println("Salt ou hash é null!");
+                return false;
+            }
+            
             byte[] saltBytes = java.util.Base64.getDecoder().decode(salt);
             
             KeySpec spec = new PBEKeySpec(
@@ -193,9 +203,16 @@ public class Pessoa {
             byte[] hashCalculado = f.generateSecret(spec).getEncoded();
             
             String hashCalculadoBase64 = java.util.Base64.getEncoder().encodeToString(hashCalculado);
-            return hashCalculadoBase64.equals(hash);
+            System.out.println("Hash calculado: " + hashCalculadoBase64);
+            
+            boolean resultado = hashCalculadoBase64.equals(hash);
+            System.out.println("Resultado da validação: " + resultado);
+            System.out.println("=== FIM DEBUG ===");
+            
+            return resultado;
             
         } catch (Exception e) {
+            System.out.println("Erro na validação de senha: " + e.getMessage());
             throw new RuntimeException("Erro ao verificar senha", e);
         }
     }

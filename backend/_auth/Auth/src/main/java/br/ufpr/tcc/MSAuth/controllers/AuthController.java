@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import br.ufpr.tcc.MSAuth.dto.AuthDTO;
+import br.ufpr.tcc.MSAuth.dto.ResetPasswordDTO;
 import br.ufpr.tcc.MSAuth.models.AuthenticatedUser;
 import br.ufpr.tcc.MSAuth.services.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -95,11 +96,14 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
 
-            boolean isValid = authService.verifyJwt(token);
+            Map<String, Object> verificationResult = authService.verifyJwtAndExtractData(token);
             
-            if (isValid) {
+            if ((Boolean) verificationResult.get("valid")) {
                 response.put("valid", true);
                 response.put("message", "Token is valid");
+                response.put("userId", verificationResult.get("userId"));
+                response.put("username", verificationResult.get("username"));
+                response.put("microservice", verificationResult.get("microservice"));
                 return ResponseEntity.ok(response);
             } else {
                 response.put("valid", false);
@@ -110,6 +114,74 @@ public class AuthController {
         } catch (Exception e) {
             response.put("valid", false);
             response.put("message", "Token verification failed");
+            response.put("details", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    @PostMapping("/enviar-codigo")
+    public ResponseEntity<Map<String, Object>> enviarCodigo(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String cpf = request.get("cpf");
+
+            if (cpf == null || cpf.trim().isEmpty()) {
+                response.put("error", "CPF é obrigatório");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            // Always return 111111 without CPF validation for development
+            response.put("message", "Código enviado com sucesso");
+            response.put("codigo", "111111");
+            response.put("telefone", "***.***.***-**"); // Mock masked phone
+
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("error", "Erro interno do servidor");
+            response.put("details", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody ResetPasswordDTO resetDTO) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            if (resetDTO.getCpf() == null || resetDTO.getCpf().trim().isEmpty()) {
+                response.put("error", "CPF é obrigatório");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+            if (resetDTO.getCodigo() == null || !resetDTO.getCodigo().equals("111111")) {
+                response.put("error", "Código inválido");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+            if (resetDTO.getNovaSenha() == null || resetDTO.getNovaSenha().trim().isEmpty()) {
+                response.put("error", "Nova senha é obrigatória");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+            if (!resetDTO.getNovaSenha().equals(resetDTO.getConfirmarSenha())) {
+                response.put("error", "Senhas não coincidem");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+            boolean passwordUpdated = authService.resetPassword(resetDTO.getCpf(), resetDTO.getNovaSenha());
+
+            if (passwordUpdated) {
+                response.put("message", "Senha alterada com sucesso");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("error", "Não foi possível alterar a senha. Verifique se o CPF está correto.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("error", "Erro interno do servidor");
             response.put("details", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

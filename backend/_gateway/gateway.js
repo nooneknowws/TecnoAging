@@ -27,12 +27,44 @@ const authServiceProxy = httpProxy(process.env.AUTH_SERVICE_URL);
 const pacientesServiceProxy = httpProxy(process.env.PACIENTES_SERVICE_URL, {
     // Configurações específicas para upload de imagens
     limit: '10mb',
-    timeout: 60000 // 60 segundos
+    timeout: 90000, // Aumentado para 90 segundos
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        // Headers customizados se necessário
+        proxyReqOpts.headers = proxyReqOpts.headers || {};
+        return proxyReqOpts;
+    },
+    proxyErrorHandler: function(err, res, next) {
+        console.error('Proxy error for pacientes:', err.message);
+        if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+            res.status(408).json({ 
+                error: 'Request timeout', 
+                message: 'O servidor demorou muito para responder' 
+            });
+        } else {
+            next(err);
+        }
+    }
 });
 const tecnicosServiceProxy = httpProxy(process.env.TECNICOS_SERVICE_URL, {
     // Configurações específicas para upload de imagens
     limit: '10mb',
-    timeout: 60000 // 60 segundos
+    timeout: 90000, // Aumentado para 90 segundos
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        // Headers customizados se necessário
+        proxyReqOpts.headers = proxyReqOpts.headers || {};
+        return proxyReqOpts;
+    },
+    proxyErrorHandler: function(err, res, next) {
+        console.error('Proxy error for tecnicos:', err.message);
+        if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+            res.status(408).json({ 
+                error: 'Request timeout', 
+                message: 'O servidor demorou muito para responder' 
+            });
+        } else {
+            next(err);
+        }
+    }
 });
 const formsServiceProxy = httpProxy(process.env.FORMS_SERVICE_URL);
 
@@ -61,13 +93,16 @@ async function verifyJWT(req, res, next) {
             { 
                 headers: { 
                     'Authorization': `Bearer ${token}` 
-                } 
+                },
+                timeout: 30000 // Timeout para verificação de JWT
             }
         );
         console.log(response.data)
 
         if (response.data.valid) {
             req.userId = response.data.userId;
+            // Add userId to headers for downstream services
+            req.headers['x-user-id'] = response.data.userId;
             next();
         } else {
             res.status(401).json({ 
@@ -101,6 +136,14 @@ app.post('/api/auth/verify-jwt', (req, res, next) => {
     authServiceProxy(req, res, next);
 })
 
+app.post('/api/auth/enviar-codigo', (req, res, next) => {
+    authServiceProxy(req, res, next);
+})
+
+app.post('/api/auth/reset-password', (req, res, next) => {
+    authServiceProxy(req, res, next);
+})
+
 // PACIENTES
 
 // cadastro
@@ -109,6 +152,7 @@ app.post('/api/pacientes', (req, res, next) => {
 })
 //busca por ID
 app.get('/api/pacientes/:id', verifyJWT, (req, res, next) => {
+    console.log(`Buscando dados do paciente ${req.params.id}`);
     pacientesServiceProxy(req,res,next);
 })
 //listagem geral
@@ -144,6 +188,7 @@ app.get('/api/tecnicos', verifyJWT, (req, res, next) => {
 })
 // busca por id
 app.get('/api/tecnicos/:id', verifyJWT, (req, res, next) => {
+    console.log(`Buscando dados do técnico ${req.params.id}`);
     tecnicosServiceProxy(req, res, next);
 })
 // alterar tecnico
@@ -200,6 +245,11 @@ app.get('/api/avaliacoes/respostas/tecnico/:id', verifyJWT, (req, res, next) => 
 app.get('/api/avaliacoes/avaliacao/:id', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);
 })
+// editar avaliação por ID
+app.put('/api/avaliacoes/forms/update/:id', verifyJWT, (req, res, next) => {
+    console.log(`Atualizando avaliação ID: ${req.params.id}`);
+    formsServiceProxy(req, res, next);
+})
 
 // Middleware para tratamento de erros de upload
 app.use((error, req, res, next) => {
@@ -210,6 +260,16 @@ app.use((error, req, res, next) => {
             message: 'Verifique o formato da imagem e o tamanho do arquivo'
         });
     }
+    
+    // Tratamento específico para timeouts
+    if (error.code === 'ETIMEDOUT' || error.code === 'ECONNRESET') {
+        console.error('Timeout error:', error.message);
+        return res.status(408).json({
+            error: 'Request timeout',
+            message: 'O servidor demorou muito para responder'
+        });
+    }
+    
     next();
 });
 

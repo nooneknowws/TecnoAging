@@ -17,6 +17,7 @@ public class Tecnico extends Pessoa {
 
     @Lob
     @Column(name = "foto_perfil")
+    @Basic(fetch = FetchType.LAZY)
     private byte[] fotoPerfil;
 
 	public Tecnico() {

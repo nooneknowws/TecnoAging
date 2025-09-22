@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/logout").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/verify-jwt").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/enviar-codigo").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(
                     new JwtTokenProvider.JwtTokenFilter(jwtTokenProvider),

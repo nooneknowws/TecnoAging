@@ -81,6 +81,11 @@ public class PacientesController {
         paciente.setTelefone(pacienteAtualizado.getTelefone());
         paciente.setContatos(pacienteAtualizado.getContatos());
         
+        // Manter foto de perfil existente se não for fornecida nova foto
+        if (pacienteAtualizado.getFotoPerfil() != null) {
+            paciente.setFotoPerfil(pacienteAtualizado.getFotoPerfil());
+        }
+        
         Paciente updated = pacienteRepository.save(paciente);
         return ResponseEntity.ok(updated);
     }

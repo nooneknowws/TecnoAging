@@ -1,4 +1,4 @@
-package com.tecno.aging.domain.models.paciente
+package com.tecno.aging.domain.models.pessoa.paciente
 
 data class PacienteEndereco(
     val logradouro: String?,

@@ -10,6 +10,8 @@ import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
 import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../_shared/models/estadocivil.enum';
+import { EnumClasseSocioeconomica } from '../../_shared/models/classe-socioeconomica.enum';
+import { EnumEscolaridade } from '../../_shared/models/escolaridade.enum';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -38,6 +40,8 @@ export class EditarPerfilComponent implements OnInit {
   formattedDataExpedicao: string = '';
   estados = Object.values(EnumEstadosBrasil);
   estadosCivil = Object.values(EnumEstadoCivil);
+  classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
+  escolaridades = Object.values(EnumEscolaridade);
   
   cepInvalido = false;
   erroTimeout = false;
@@ -52,6 +56,23 @@ export class EditarPerfilComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserData();
+  }
+
+  getEscolaridadeOptions() {
+    return Object.entries(EnumEscolaridade).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getCorRacaOptions() {
+    return [
+      { value: 'Branca', label: 'Branca' },
+      { value: 'Preta', label: 'Preta' },
+      { value: 'Parda', label: 'Parda' },
+      { value: 'Amarela', label: 'Amarela' },
+      { value: 'Indígena', label: 'Indígena' }
+    ];
   }
 
   loadUserData(): void {

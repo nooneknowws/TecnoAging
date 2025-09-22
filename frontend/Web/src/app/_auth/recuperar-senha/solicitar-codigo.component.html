@@ -1,0 +1,49 @@
+<div class="login-container">
+  <h1 class="title fw-bold">TecnoAging</h1>
+  <div class="login-form">
+    <h2 class="form-title">Recuperar Senha</h2>
+    <p class="form-subtitle">Informe seu CPF para receber o código de verificação via SMS</p>
+
+    <form (ngSubmit)="onSubmit()" #recoveryForm="ngForm">
+      <div class="form-group">
+        <input 
+          type="text" 
+          id="cpf" 
+          name="cpf"
+          [(ngModel)]="cpf" 
+          required 
+          class="form-control"
+          placeholder="Digite seu CPF"
+          [disabled]="isLoading"
+          mask="000.000.000-00"
+        >
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="isLoading || recoveryForm.invalid"
+      >
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Enviando...' : 'Enviar Código' }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="login-button mt-1 secondary-button"
+        (click)="voltarLogin()"
+        [disabled]="isLoading"
+      >
+        Voltar ao Login
+      </button>
+    </form>
+  </div>
+</div>

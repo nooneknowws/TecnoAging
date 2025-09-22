@@ -1,10 +1,10 @@
 package br.ufpr.tcc.MSForms.rest;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,6 @@ import br.ufpr.tcc.MSForms.models.dto.*;
 import br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository;
 import br.ufpr.tcc.MSForms.repositories.FormularioRepository;
 import br.ufpr.tcc.MSForms.repositories.PerguntaRepository;
-import br.ufpr.tcc.MSForms.service.AvaliacaoService;
 import br.ufpr.tcc.MSForms.service.FormsService;
 import br.ufpr.tcc.MSForms.service.ScoringService;
 
@@ -139,10 +138,17 @@ public class AvaliacaoController {
                 Formulario formulario = avaliacao.getFormulario();
                 
                 List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
-                    .map(resposta -> new PerguntaValorDTO(
-                        resposta.getPergunta().getTexto(), 
-                        resposta.getValor()
-                    ))
+                    .map(resposta -> {
+                        Pergunta pergunta = resposta.getPergunta();
+                        PerguntaDTO perguntaDTO = new PerguntaDTO(
+                            pergunta.getId(),
+                            pergunta.getTexto(),
+                            pergunta.getTipo(),
+                            pergunta.getValidacao(),
+                            pergunta.getOpcoes()
+                        );
+                        return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
+                    })
                     .collect(Collectors.toList());
 
                 return new RespostaAvaliacaoPaciente(
@@ -176,10 +182,17 @@ public class AvaliacaoController {
                 PacienteDTO paciente = avaliacao.getPacienteDTO();
                 
                 List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
-                    .map(resposta -> new PerguntaValorDTO(
-                        resposta.getPergunta().getTexto(), 
-                        resposta.getValor()
-                    ))
+                    .map(resposta -> {
+                        Pergunta pergunta = resposta.getPergunta();
+                        PerguntaDTO perguntaDTO = new PerguntaDTO(
+                            pergunta.getId(),
+                            pergunta.getTexto(),
+                            pergunta.getTipo(),
+                            pergunta.getValidacao(),
+                            pergunta.getOpcoes()
+                        );
+                        return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
+                    })
                     .collect(Collectors.toList());
 
                 return new RespostaAvaliacaoTecnico(
@@ -203,10 +216,17 @@ public class AvaliacaoController {
         Formulario formulario = avaliacao.getFormulario();
         
         List<PerguntaValorDTO> perguntaValorList = avaliacao.getRespostas().stream()
-            .map(resposta -> new PerguntaValorDTO(
-                resposta.getPergunta().getTexto(), 
-                resposta.getValor()
-            ))
+            .map(resposta -> {
+                Pergunta pergunta = resposta.getPergunta();
+                PerguntaDTO perguntaDTO = new PerguntaDTO(
+                    pergunta.getId(),
+                    pergunta.getTexto(),
+                    pergunta.getTipo(),
+                    pergunta.getValidacao(),
+                    pergunta.getOpcoes()
+                );
+                return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
+            })
             .collect(Collectors.toList());
 
         RespostaAvaliacaoPaciente response = new RespostaAvaliacaoPaciente(
@@ -227,5 +247,83 @@ public class AvaliacaoController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/forms/update/{id}")
+    public ResponseEntity<Map<String, Object>> atualizarAvaliacao(
+            @PathVariable("id") Long avaliacaoId, 
+            @RequestBody AvaliacaoDTO avaliacaoDTO) {
+        
+        System.out.println("=== ATUALIZANDO AVALIAÇÃO ID: " + avaliacaoId + " ===");
+        System.out.println("AvaliacaoDTO recebido:");
+        System.out.println("avaliacaoId: " + avaliacaoDTO.getId());
+        System.out.println("pacienteId: " + avaliacaoDTO.getPacienteId());
+        System.out.println("tecnicoId: " + avaliacaoDTO.getTecnicoId());
+        System.out.println("pontuacaoTotal: " + avaliacaoDTO.getPontuacaoTotal());
+        
+        try {
+            // Buscar avaliação existente
+            Optional<Avaliacao> avaliacaoOpt = avaliacaoRepository.findById(avaliacaoId);
+            if (!avaliacaoOpt.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            Avaliacao avaliacaoExistente = avaliacaoOpt.get();
+            System.out.println("Avaliação encontrada: " + avaliacaoExistente.getId());
+            
+            // Mapear respostas existentes por ID da pergunta para fácil acesso
+            Map<Long, Resposta> respostasExistentesMap = avaliacaoExistente.getRespostas().stream()
+                .collect(Collectors.toMap(r -> r.getPergunta().getId(), r -> r));
+
+            // Atualizar ou adicionar novas respostas
+            if (avaliacaoDTO.getRespostas() != null) {
+                for (RespostaDTO respostaDTO : avaliacaoDTO.getRespostas()) {
+                    if (respostaDTO.getPerguntaId() == null) {
+                        return ResponseEntity.badRequest().body(Map.of("error", "ID da pergunta não pode ser nulo em uma das respostas."));
+                    }
+
+                    Resposta respostaExistente = respostasExistentesMap.get(respostaDTO.getPerguntaId());
+
+                    if (respostaExistente != null) {
+                        // Atualiza o valor da resposta existente
+                        respostaExistente.setValor(respostaDTO.getValor());
+                        System.out.println("Atualizando resposta para pergunta ID: " + respostaDTO.getPerguntaId());
+                    } else {
+                        // Cria uma nova resposta se não existir
+                        Pergunta pergunta = perguntaRepository.findById(respostaDTO.getPerguntaId())
+                            .orElseThrow(() -> new RuntimeException("Pergunta não encontrada com ID: " + respostaDTO.getPerguntaId()));
+                        
+                        Resposta novaResposta = new Resposta(pergunta, avaliacaoExistente, respostaDTO.getValor());
+                        avaliacaoExistente.getRespostas().add(novaResposta);
+                        System.out.println("Adicionando nova resposta para pergunta ID: " + respostaDTO.getPerguntaId());
+                    }
+                }
+            }
+            
+            // Recalcular pontuação
+            scoringService.calculateAndUpdateScore(avaliacaoExistente);
+            
+            // Salvar alterações
+            Avaliacao avaliacaoAtualizada = avaliacaoRepository.save(avaliacaoExistente);
+            
+            System.out.println("Avaliação atualizada com sucesso. ID: " + avaliacaoAtualizada.getId());
+            System.out.println("Nova pontuação total: " + avaliacaoAtualizada.getPontuacaoTotal());
+            System.out.println("Número de respostas: " + avaliacaoAtualizada.getRespostas().size());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Avaliação atualizada com sucesso",
+                "avaliacaoId", avaliacaoAtualizada.getId(),
+                "pontuacaoTotal", avaliacaoAtualizada.getPontuacaoTotal(),
+                "pontuacaoMaxima", avaliacaoAtualizada.getPontuacaoMaxima(),
+                "dataAtualizacao", avaliacaoAtualizada.getDataAtualizacao()
+            ));
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar avaliação: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of(
+                "error", "Erro interno do servidor: " + e.getMessage()
+            ));
+        }
     }
 }

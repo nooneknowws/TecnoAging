@@ -1,21 +1,21 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
 public class PerguntaValorDTO {
-    private String pergunta;
+    private PerguntaDTO pergunta;
     private String valor;
 
-    // Constructor
-    public PerguntaValorDTO(String pergunta, String valor) {
+    public PerguntaValorDTO() {}
+
+    public PerguntaValorDTO(PerguntaDTO pergunta, String valor) {
         this.pergunta = pergunta;
         this.valor = valor;
     }
 
-    // Getters and Setters
-    public String getPergunta() {
+    public PerguntaDTO getPergunta() {
         return pergunta;
     }
 
-    public void setPergunta(String pergunta) {
+    public void setPergunta(PerguntaDTO pergunta) {
         this.pergunta = pergunta;
     }
 

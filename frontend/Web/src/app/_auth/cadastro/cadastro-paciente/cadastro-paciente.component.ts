@@ -4,6 +4,8 @@ import { Paciente } from '../../../_shared/models/pessoa/paciente/paciente';
 import { Endereco } from '../../../_shared/models/pessoa/endereco';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
+import { EnumClasseSocioeconomica } from '../../../_shared/models/classe-socioeconomica.enum';
+import { EnumEscolaridade } from '../../../_shared/models/escolaridade.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
 
 @Component({
@@ -19,6 +21,8 @@ export class CadastroPacienteComponent implements OnInit {
   errorMessage = '';
   estados = Object.values(EnumEstadosBrasil);
   estadosCivis = Object.values(EnumEstadoCivil);
+  classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
+  escolaridades = Object.values(EnumEscolaridade);
   cepInvalido = false;
   erroTimeout = false;
   repetirSenha = '';
@@ -31,6 +35,13 @@ export class CadastroPacienteComponent implements OnInit {
 
   getEstadoCivilOptions() {
     return Object.entries(EnumEstadoCivil).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getEscolaridadeOptions() {
+    return Object.entries(EnumEscolaridade).map(([key, value]) => ({
       value: value,
       label: value
     }));

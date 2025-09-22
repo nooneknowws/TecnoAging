@@ -35,6 +35,13 @@ export class ConsultarAvaliacaoComponent implements OnInit {
     }
   }
 
+  formatarValorResposta(valor: any): string {
+    if (typeof valor === 'string' && valor.startsWith('"') && valor.endsWith('"')) {
+      return valor.slice(1, -1);
+    }
+    return String(valor || '');
+  }
+
   editarAvaliacao(avaliacaoId: number | undefined) {
     if (avaliacaoId) {
       this.router.navigate(['/tecnico/avaliacoes/editar', avaliacaoId]);
@@ -44,5 +51,9 @@ export class ConsultarAvaliacaoComponent implements OnInit {
   togglePerguntas(index: number) {
     const currentValue = this.expanded.get(index);
     this.expanded.set(index, !currentValue);
+  }
+
+  voltarParaLista() {
+    this.router.navigate(['/tecnico']);
   }
 }

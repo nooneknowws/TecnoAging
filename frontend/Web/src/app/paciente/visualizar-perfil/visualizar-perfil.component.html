@@ -1,219 +1,287 @@
-<div class="container my-5">
-  <h1 class="text-center mb-4">Perfil do Paciente</h1>
-  
-  <!-- Foto do Perfil -->
-  <div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">Foto do Perfil</h5>
-    </div>
-    <div class="card-body text-center">
-      <app-image-upload
-        [currentImageUrl]="currentPhotoUrl"
-        [placeholderText]="'Clique para adicionar foto do perfil'"
-        (imageSelected)="onImageSelected($event)"
-        (imageError)="onImageError($event)">
-      </app-image-upload>
-      <div *ngIf="uploadError" class="alert alert-danger mt-2">
-        {{ uploadError }}
-      </div>
-      <div *ngIf="uploadSuccess" class="alert alert-success mt-2">
-        {{ uploadSuccess }}
+<div class="container-fluid py-4">
+  <!-- Header da página -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between">
+        <h2 class="mb-0 text-primary">
+          <i class="fas fa-user-circle me-2"></i> Perfil do Paciente
+        </h2>
+        <span class="badge bg-success fs-6">ID: {{ paciente?.id }}</span>
       </div>
     </div>
   </div>
 
-  <!-- Dados Pessoais Básicos -->
-  <div class="card mb-4">
-    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Dados Pessoais</h5>
-      <button class="btn btn-sm btn-outline-secondary" (click)="toggleDadosPessoais()">
-        <i class="fas" [class.fa-chevron-down]="!showDadosPessoais" [class.fa-chevron-up]="showDadosPessoais"></i>
-      </button>
-    </div>
-    <div class="card-body" [class.collapse]="!showDadosPessoais" [class.show]="showDadosPessoais">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Nome Completo:</label>
-          <p class="mb-0">{{ paciente?.nome || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">CPF:</label>
-          <p class="mb-0">{{ paciente?.cpf || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">RG:</label>
-          <p class="mb-0">{{ paciente?.rg || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Órgão Emissor:</label>
-          <p class="mb-0">{{ paciente?.orgaoEmissor || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">UF Emissor:</label>
-          <p class="mb-0">{{ paciente?.ufEmissor || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Data de Expedição:</label>
-          <p class="mb-0">{{ paciente?.dataExpedicao | date:'dd/MM/yyyy' || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Data de Nascimento:</label>
-          <p class="mb-0">{{ paciente?.dataNasc | date:'dd/MM/yyyy' || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Idade:</label>
-          <p class="mb-0">{{ paciente?.idade ? paciente?.idade + ' anos' : 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Sexo:</label>
-          <p class="mb-0">{{ paciente?.sexo || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Estado Civil:</label>
-          <p class="mb-0">{{ paciente?.estadoCivil || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Nacionalidade:</label>
-          <p class="mb-0">{{ paciente?.nacionalidade || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Município de Nascimento:</label>
-          <p class="mb-0">{{ paciente?.municipioNasc || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">UF de Nascimento:</label>
-          <p class="mb-0">{{ paciente?.ufNasc || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Cor/Raça:</label>
-          <p class="mb-0">{{ paciente?.corRaca || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Telefone:</label>
-          <p class="mb-0">{{ paciente?.telefone || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Escolaridade:</label>
-          <p class="mb-0">{{ paciente?.escolaridade || 'Não informado' }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Endereço -->
-  <div class="card mb-4">
-    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Endereço</h5>
-      <button class="btn btn-sm btn-outline-secondary" (click)="toggleEndereco()">
-        <i class="fas" [class.fa-chevron-down]="!showEndereco" [class.fa-chevron-up]="showEndereco"></i>
-      </button>
-    </div>
-    <div class="card-body" [class.collapse]="!showEndereco" [class.show]="showEndereco">
-      <div class="row" *ngIf="paciente?.endereco; else noEndereco">
-        <div class="col-md-8 mb-3">
-          <label class="fw-bold text-muted">Logradouro:</label>
-          <p class="mb-0">{{ paciente?.endereco?.logradouro || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label class="fw-bold text-muted">Número:</label>
-          <p class="mb-0">{{ paciente?.endereco?.numero || 'S/N' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Bairro:</label>
-          <p class="mb-0">{{ paciente?.endereco?.bairro || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">Município:</label>
-          <p class="mb-0">{{ paciente?.endereco?.municipio || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">UF:</label>
-          <p class="mb-0">{{ paciente?.endereco?.uf || 'Não informado' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label class="fw-bold text-muted">CEP:</label>
-          <p class="mb-0">{{ paciente?.endereco?.cep || 'Não informado' }}</p>
-        </div>
-        <div class="col-12 mb-3">
-          <label class="fw-bold text-muted">Endereço Completo:</label>
-          <p class="mb-0 text-muted">
-            {{ getEnderecoCompleto() }}
-          </p>
-        </div>
-      </div>
-      <ng-template #noEndereco>
-        <div class="alert alert-warning">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          Nenhum endereço cadastrado para este paciente?.
-        </div>
-      </ng-template>
-    </div>
-  </div>
-
-  <!-- Dados Médicos -->
-  <div class="card mb-4">
-    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Dados Médicos</h5>
-      <button class="btn btn-sm btn-outline-secondary" (click)="toggleDadosMedicos()">
-        <i class="fas" [class.fa-chevron-down]="!showDadosMedicos" [class.fa-chevron-up]="showDadosMedicos"></i>
-      </button>
-    </div>
-    <div class="card-body" [class.collapse]="!showDadosMedicos" [class.show]="showDadosMedicos">
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label class="fw-bold text-muted">Peso:</label>
-          <p class="mb-0">{{ paciente?.peso ? paciente?.peso! + ' kg' : 'Não informado' }}</p>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label class="fw-bold text-muted">Altura:</label>
-          <p class="mb-0">{{ paciente?.altura ? paciente?.altura! + ' cm' : 'Não informado' }}</p>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label class="fw-bold text-muted">IMC:</label>
-          <p class="mb-0">
-            <span *ngIf="paciente?.imc; else calculatedIMC">{{ paciente?.imc! | number:'1.2-2' }}</span>
-            <ng-template #calculatedIMC>
-              <span *ngIf="paciente?.peso && paciente?.altura; else noIMC">
-                {{ calculateIMC() | number:'1.2-2' }}
-              </span>
-              <ng-template #noIMC>Não informado</ng-template>
-            </ng-template>
-          </p>
-        </div>
-        <div class="col-md-12 mb-3">
-          <label class="fw-bold text-muted">Nível Socioeconômico:</label>
-          <p class="mb-0">{{ paciente?.socioeconomico || 'Não informado' }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contatos de Emergência -->
-  <div class="card mb-4">
-    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Contatos de Emergência</h5>
-      <button class="btn btn-sm btn-outline-secondary" (click)="toggleContatos()">
-        <i class="fas" [class.fa-chevron-down]="!showContatos" [class.fa-chevron-up]="showContatos"></i>
-      </button>
-    </div>
-    <div class="card-body" [class.collapse]="!showContatos" [class.show]="showContatos">
-      <div *ngIf="paciente?.contatos && paciente?.contatos?.length! > 0; else noContatos">
-        <div class="row" *ngFor="let contato of paciente?.contatos; let i = index">
-          <div class="col-12">
-            <div class="card mb-3 border-start border-danger border-4">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                  <h6 class="card-title text-danger">Contato {{ i + 1 }}</h6>
-                  <span class="badge bg-secondary">{{ contato.parentesco || 'Não informado' }}</span>
+  <!-- Card principal do perfil -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <!-- Header com foto e nome -->
+        <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <app-image-upload 
+                    [currentImageUrl]="currentPhotoUrl" 
+                    [placeholderText]="'Clique para adicionar foto do perfil'" 
+                    (imageSelected)="onImageSelected($event)" 
+                    (imageError)="onImageError($event)" 
+                    class="profile-photo">
+                  </app-image-upload>
                 </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label class="fw-bold text-muted">Nome:</label>
-                    <p class="mb-1">{{ contato.nome || 'Não informado' }}</p>
+                <div>
+                  <h4 class="mb-1">{{ paciente?.nome || 'Nome não informado' }}</h4>
+                  <p class="mb-0-50">
+                    <i class="fas fa-calendar-alt me-1"></i> {{ getIdade() }} anos • {{ paciente?.sexo || 'Não informado' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <small>CPF: {{ paciente?.cpf || 'Não informado' }}</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alertas -->
+        <div class="card-body p-0">
+          <div *ngIf="uploadError" class="alert alert-danger mb-0 border-0 rounded-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ uploadError }}
+          </div>
+          <div *ngIf="uploadSuccess" class="alert alert-success mb-0 border-0 rounded-0">
+            <i class="fas fa-check-circle me-2"></i>{{ uploadSuccess }}
+          </div>
+          <div *ngIf="contatoError" class="alert alert-danger mb-0 border-0 rounded-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ contatoError }}
+          </div>
+          <div *ngIf="contatoSuccess" class="alert alert-success mb-0 border-0 rounded-0">
+            <i class="fas fa-check-circle me-2"></i>{{ contatoSuccess }}
+          </div>
+        </div>
+
+        <!-- Informações básicas em cards -->
+        <div class="card-body p-4">
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card h-100 border-0 bg-light">
+                <div class="card-body text-center">
+                  <i class="fas fa-phone text-primary fs-3 mb-2"></i>
+                  <h6 class="mb-1">Telefone</h6>
+                  <p class="mb-0 fw-bold">{{ paciente?.telefone || 'Não informado' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card h-100 border-0 bg-light">
+                <div class="card-body text-center">
+                  <i class="fas fa-birthday-cake text-primary fs-3 mb-2"></i>
+                  <h6 class="mb-1">Data de Nascimento</h6>
+                  <p class="mb-0 fw-bold">{{ formatarData(paciente?.dataNasc) }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card h-100 border-0 bg-light">
+                <div class="card-body text-center">
+                  <i class="fas fa-id-card text-primary fs-3 mb-2"></i>
+                  <h6 class="mb-1">RG</h6>
+                  <p class="mb-0 fw-bold">{{ paciente?.rg || 'Não informado' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão para mostrar dados pessoais -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <button class="btn btn-outline-primary btn-lg w-100" (click)="toggleDadosPessoais()" [attr.aria-expanded]="showDadosPessoais">
+                <i class="fas" [class.fa-chevron-down]="!showDadosPessoais" [class.fa-chevron-up]="showDadosPessoais"></i> 
+                {{ showDadosPessoais ? 'Ocultar' : 'Mostrar' }} detalhes
+              </button>
+            </div>
+          </div>
+
+          <!-- Dados pessoais detalhados -->
+          <div *ngIf="showDadosPessoais" class="row">
+            <div class="col-12">
+              <div class="card border-0 bg-light">
+                <div class="card-body">
+                  <h5 class="card-title text-primary mb-4">
+                    <i class="fas fa-user me-2"></i> Identificação
+                  </h5>
+                  <div class="row g-4">
+                    <!-- Coluna 1 -->
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label class="small mb-1">Estado Civil</label>
+                        <div class="fw-bold">{{ paciente?.estadoCivil || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="small mb-1">Nacionalidade</label>
+                        <div class="fw-bold">{{ paciente?.nacionalidade || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="small mb-1">Município de Nascimento</label>
+                        <div class="fw-bold">{{ paciente?.municipioNasc || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="small mb-1">UF de Nascimento</label>
+                        <div class="fw-bold">{{ paciente?.ufNasc || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="small mb-1">Cor/Raça</label>
+                        <div class="fw-bold">{{ paciente?.corRaca || 'Não informado' }}</div>
+                      </div>
+                    </div>
+                    <!-- Coluna 2 -->
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label class="small mb-1">Escolaridade</label>
+                        <div class="fw-bold">{{ paciente?.escolaridade || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="small mb-1">Nível Socioeconômico</label>
+                        <div class="fw-bold">{{ paciente?.socioeconomico || 'Não informado' }}</div>
+                      </div>
+                      <div class="mb-3" *ngIf="paciente?.peso">
+                        <label class="small mb-1">Peso</label>
+                        <div class="fw-bold">{{ paciente?.peso }} kg</div>
+                      </div>
+                      <div class="mb-3" *ngIf="paciente?.altura">
+                        <label class="small mb-1">Altura</label>
+                        <div class="fw-bold">{{ paciente?.altura }} m</div>
+                      </div>
+                      <div class="mb-3" *ngIf="paciente?.imc">
+                        <label class="small mb-1">IMC</label>
+                        <div class="fw-bold">{{ paciente?.imc!.toFixed(2) }}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <label class="fw-bold text-muted">Telefone:</label>
-                    <p class="mb-1">{{ contato.telefone || 'Não informado' }}</p>
+
+                  <!-- Endereço -->
+                  <div class="mt-4">
+                    <label class="small mb-1">Endereço Completo</label>
+                    <div class="fw-bold">{{ formatarEndereco() }}</div>
+                  </div>
+
+                  <!-- RG Detalhado -->
+                  <div class="row mt-4" *ngIf="paciente?.rg">
+                    <div class="col-md-4">
+                      <label class="small mb-1">Data de Expedição</label>
+                      <div class="fw-bold">{{ formatarData(paciente?.dataExpedicao) }}</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="small mb-1">Órgão Emissor</label>
+                      <div class="fw-bold">{{ paciente?.orgaoEmissor || 'Não informado' }}</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="small mb-1">UF Emissor</label>
+                      <div class="fw-bold">{{ paciente?.ufEmissor || 'Não informado' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção de Contatos -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card border-0">
+                <div class="card-header border-0" style="background: transparent;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                      <i class="fas fa-address-book me-2"></i> Contatos de Emergência
+                    </h5>
+                    <span class="badge bg-light text-dark">
+                      {{ paciente?.contatos?.length || 0 }}/1 contato
+                    </span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- Lista de contatos existentes -->
+                  <div *ngIf="hasContato()" class="mb-3">
+                    <div class="card bg-white bg-opacity-20 border-0" *ngFor="let contato of paciente?.contatos">
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                              <i class="fas fa-user-friends me-2"></i>
+                              <div>
+                                <div class="fw-bold">{{ contato.nome }}</div>
+                                <small class="text-white-50">{{ contato.parentesco }}</small>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                              <i class="fas fa-phone me-2"></i>
+                              <span class="text-white">{{ contato.telefone }}</span>
+                            </div>
+                          </div>
+                          <div class="col-md-4 text-md-end">
+                            <span class="badge bg-success bg-opacity-75">
+                              <i class="fas fa-check me-1"></i> Cadastrado
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="alert alert-info bg-white bg-opacity-20 border-0 mt-3">
+                      <i class="fas fa-info-circle me-2"></i> Você já possui um contato cadastrado. Não é possível adicionar mais contatos.
+                    </div>
+                  </div>
+
+                  <!-- Botão para adicionar contato -->
+                  <div *ngIf="!hasContato() && !showContatoForm" class="text-center">
+                    <button class="btn btn-light btn-lg" (click)="toggleContatoForm()">
+                      <i class="fas fa-plus me-2"></i> Adicionar
+                    </button>
+                  </div>
+
+                  <!-- Formulário de novo contato -->
+                  <div *ngIf="showContatoForm" class="card bg-white">
+                    <div class="card-body">
+                      <h6 class="card-title text-dark mb-3">
+                        <i class="fas fa-user-plus text-primary me-2"></i> Novo Contato de Emergência
+                      </h6>
+                      <form (ngSubmit)="salvarContato()">
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label class="form-label text-dark">Nome Completo *</label>
+                            <input type="text" class="form-control" [(ngModel)]="novoContato.nome" name="nome" placeholder="Digite o nome completo" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-dark">Telefone *</label>
+                            <input type="tel" class="form-control" [(ngModel)]="novoContato.telefone" name="telefone" placeholder="(00) 00000-0000" required>
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-dark">Parentesco *</label>
+                            <select class="form-select" [(ngModel)]="novoContato.parentesco!" name="parentesco" required>
+                              <option value="" disabled>Selecione o parentesco</option>
+                              <option *ngFor="let parentesco of parentescoOptions" [value]="parentesco">
+                                {{ parentesco }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                          <button type="button" class="btn btn-secondary" (click)="cancelarContato()">
+                            <i class="fas fa-times me-1"></i> Cancelar
+                          </button>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Salvar Contato
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <!-- Mensagem quando não há contatos -->
+                  <div *ngIf="!hasContato() && !showContatoForm" class="text-center mt-3">
+                    <div class="alert alert-warning bg-white bg-opacity-20 border-0">
+                      <i class="fas fa-exclamation-triangle me-2"></i> Nenhum contato de emergência cadastrado
+                    </div>
                   </div>
                 </div>
               </div>
@@ -221,12 +289,6 @@
           </div>
         </div>
       </div>
-      <ng-template #noContatos>
-        <div class="alert alert-warning">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          Nenhum contato de emergência cadastrado para este paciente?.
-        </div>
-      </ng-template>
     </div>
   </div>
 

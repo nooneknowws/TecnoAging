@@ -186,23 +186,33 @@
             <!-- Dados Socioeconômicos -->
             <div class="input-group mb-2">
                 <div class="form-floating w-50">
-                    <input type="text" 
-                           class="form-control" 
-                           id="floatingEscolaridade" 
-                           placeholder="Escolaridade" 
-                           name="escolaridade" 
-                           [(ngModel)]="form.escolaridade"
-                           [disabled]="isSaving">
+                    <select class="form-select" 
+                            id="floatingEscolaridade" 
+                            name="escolaridade" 
+                            [(ngModel)]="form.escolaridade" 
+                            required 
+                            [disabled]="isSaving"
+                            #escolaridade="ngModel" 
+                            [class.is-invalid]="escolaridade.invalid && (escolaridade.dirty || escolaridade.touched || f.submitted)">
+                        <option value="">Selecione...</option>
+                        <option *ngFor="let escolaridadeOpt of getEscolaridadeOptions()" [value]="escolaridadeOpt.value">
+                            {{escolaridadeOpt.label}}
+                        </option>
+                    </select>
                     <label for="floatingEscolaridade">Escolaridade</label>
+                    <div *ngIf="escolaridade.invalid && (escolaridade.dirty || escolaridade.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="escolaridade.errors?.['required']">A escolaridade é obrigatória!</div>
+                    </div>
                 </div>
                 <div class="form-floating w-50">
-                    <input type="text" 
-                           class="form-control" 
-                           id="floatingSocioeconomico" 
-                           placeholder="Classe Socioeconômica" 
-                           name="socioeconomico" 
-                           [(ngModel)]="form.socioeconomico"
-                           [disabled]="isSaving">
+                    <select class="form-select" 
+                            id="floatingSocioeconomico" 
+                            name="socioeconomico" 
+                            [(ngModel)]="form.socioeconomico"
+                            [disabled]="isSaving">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let classe of classesSocioeconomicas" [value]="classe">{{ classe }}</option>
+                    </select>
                     <label for="floatingSocioeconomico">Classe Socioeconômica</label>
                 </div>
             </div>
@@ -220,14 +230,23 @@
                     <label for="floatingNacionalidade">Nacionalidade</label>
                 </div>
                 <div class="form-floating w-50">
-                    <input type="text" 
-                           class="form-control" 
-                           id="floatingCorRaca" 
-                           placeholder="Cor/Raça" 
-                           name="corRaca" 
-                           [(ngModel)]="form.corRaca"
-                           [disabled]="isSaving">
+                    <select class="form-select" 
+                            id="floatingCorRaca" 
+                            name="corRaca" 
+                            [(ngModel)]="form.corRaca" 
+                            required 
+                            [disabled]="isSaving"
+                            #corRaca="ngModel" 
+                            [class.is-invalid]="corRaca.invalid && (corRaca.dirty || corRaca.touched || f.submitted)">
+                        <option value="">Selecione...</option>
+                        <option *ngFor="let cor of getCorRacaOptions()" [value]="cor.value">
+                            {{cor.label}}
+                        </option>
+                    </select>
                     <label for="floatingCorRaca">Cor/Raça</label>
+                    <div *ngIf="corRaca.invalid && (corRaca.dirty || corRaca.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="corRaca.errors?.['required']">A cor/raça é obrigatória!</div>
+                    </div>
                 </div>
             </div>
 
@@ -438,8 +457,8 @@
                 </div>
             </div>
 
-            <!-- Mensagem de formulário inválido -->
-            <div *ngIf="f.submitted && !f.valid" class="alert alert-warning mb-3">
+            <!-- Mensagem de formulário inválido - só mostra após tentativa de submissão -->
+            <div *ngIf="f.submitted && f.invalid" class="alert alert-warning mb-3">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 Formulário inválido. Verifique todos os campos obrigatórios.
             </div>

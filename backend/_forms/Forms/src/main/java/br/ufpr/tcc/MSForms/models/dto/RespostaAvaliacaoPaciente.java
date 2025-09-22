@@ -1,6 +1,5 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -43,12 +42,12 @@ public class RespostaAvaliacaoPaciente {
     
     private List<PerguntaValorDTO> respostas;
 
-    public List<PerguntaValorDTO> getPerguntasValores() {
+    public List<PerguntaValorDTO> getRespostas() {
         return respostas;
     }
 
-    public void setPerguntasValores(List<PerguntaValorDTO> perguntasValores) {
-        this.respostas = perguntasValores;
+    public void setRespostas(List<PerguntaValorDTO> respostas) {
+        this.respostas = respostas;
     }
 
 	public Long getPacienteId() {

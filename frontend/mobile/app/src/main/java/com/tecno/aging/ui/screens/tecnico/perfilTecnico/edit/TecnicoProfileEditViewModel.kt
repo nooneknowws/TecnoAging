@@ -64,13 +64,13 @@ class ProfileEditViewModel() : ViewModel() {
                             sexo = tecnico.sexo,
                             dataNasc = tecnico.dataNasc,
                             endereco = Endereco(
-                                cep = tecnico.endereco?.cep ?: "",
-                                logradouro = tecnico.endereco?.logradouro ?: "",
-                                numero = tecnico.endereco?.numero?.toString() ?: "",
-                                complemento = tecnico.endereco?.complemento ?: "",
-                                bairro = tecnico.endereco?.bairro ?: "",
-                                municipio = tecnico.endereco?.municipio ?: "",
-                                uf = tecnico.endereco?.uf ?: ""
+                                cep = tecnico.endereco.cep,
+                                logradouro = tecnico.endereco.logradouro,
+                                numero = tecnico.endereco.numero.toString(),
+                                complemento = tecnico.endereco.complemento,
+                                bairro = tecnico.endereco.bairro,
+                                municipio = tecnico.endereco.municipio,
+                                uf = tecnico.endereco.toString()
                             )
                         )
                     }
@@ -133,10 +133,10 @@ class ProfileEditViewModel() : ViewModel() {
                         _uiState.update {
                             it.copy(
                                 endereco = it.endereco.copy(
-                                    logradouro = apiEndereco.logradouro ?: "",
-                                    bairro = apiEndereco.bairro ?: "",
-                                    municipio = apiEndereco.localidade ?: "",
-                                    uf = apiEndereco.uf ?: ""
+                                    logradouro = apiEndereco.logradouro,
+                                    bairro = apiEndereco.bairro,
+                                    municipio = apiEndereco.localidade,
+                                    uf = apiEndereco.uf
                                 )
                             )
                         }

@@ -1,20 +1,15 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.List;
-
 public class RespostaDTO {
 
     private Long perguntaId;
-    private String valor; // Armazena o JSON serializado
+    private String valor;
 
     public RespostaDTO() {}
 
-    public RespostaDTO(Long perguntaId, List<String> valores) {
+    public RespostaDTO(Long perguntaId, String valor) {
         this.perguntaId = perguntaId;
-        this.valor = convertListToJson(valores); // Serializa a lista para JSON
+        this.valor = valor;
     }
 
     public Long getPerguntaId() {
@@ -31,31 +26,5 @@ public class RespostaDTO {
 
     public void setValor(String valor) {
         this.valor = valor;
-    }
-
-    public void setValores(List<String> valores) {
-        this.valor = convertListToJson(valores);
-    }
-
-    public List<String> getValores() {
-        return convertJsonToList(this.valor);
-    }
-
-    private String convertListToJson(List<String> valores) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(valores);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao converter lista para JSON", e);
-        }
-    }
-
-    private List<String> convertJsonToList(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao converter JSON para lista", e);
-        }
     }
 }
