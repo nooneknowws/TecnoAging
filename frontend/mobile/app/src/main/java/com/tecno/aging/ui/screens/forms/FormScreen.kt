@@ -30,8 +30,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.tecno.aging.domain.models.forms.FormQuestion
-import com.tecno.aging.domain.models.forms.FormStep
+import com.tecno.aging.domain.models.forms.Pergunta as FormQuestion
+import com.tecno.aging.domain.models.forms.Etapa as FormStep
 import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.ui.theme.AppColors
 import kotlin.math.roundToInt
@@ -48,7 +48,12 @@ fun FormScreen(
     LaunchedEffect(uiState.submissionSuccess) {
         if (uiState.submissionSuccess) {
             Toast.makeText(context, "Avaliação enviada com sucesso!", Toast.LENGTH_LONG).show()
-            navController.popBackStack()
+            navController.navigate("home") {
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
         }
     }
 
@@ -115,9 +120,8 @@ fun FormContent(
             totalEtapas = form.etapas.size,
             onAnteriorClick = { viewModel.etapaAnterior() },
             onProximoClick = { viewModel.proximaEtapa() },
-            onFinalizarClick = {
-                viewModel.submeterAvaliacao()
-            }
+            onFinalizarClick = { viewModel.submeterAvaliacao() },
+            isSubmitting = false
         )
     }
 }
@@ -146,31 +150,35 @@ fun EtapaPage(
 
         etapa.perguntas.forEach { pergunta ->
             val respostaAtual = respostas[pergunta.id] ?: ""
-            QuestionCard(pergunta = pergunta) {
-                when (pergunta.tipo) {
-                    "range" -> RangeQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                    "numero" -> NumeroQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                    "tempo" -> TempoQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                    "radio" -> RadioQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                    "checkbox" -> CheckboxQuestion(pergunta, respostaAtual) { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
-                }
-            }
+            QuestionRenderer(
+                pergunta = pergunta,
+                respostaAtual = respostaAtual,
+                onRespostaChanged = { novaResposta -> onRespostaChanged(pergunta.id, novaResposta) }
+            )
         }
     }
 }
 
 @Composable
-fun QuestionCard(
+fun QuestionRenderer(
     pergunta: FormQuestion,
-    content: @Composable () -> Unit
+    respostaAtual: String,
+    onRespostaChanged: (String) -> Unit
 ) {
-    if (pergunta.tipo == "numero" || pergunta.tipo == "tempo") {
-        Column {
-            Text(text = pergunta.texto, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            content()
+    val useCard = pergunta.tipo != "numero" && pergunta.tipo != "tempo"
+
+    val content = @Composable {
+        when (pergunta.tipo) {
+            "range" -> RangeQuestion(pergunta, respostaAtual, onRespostaChanged)
+            "numero" -> NumeroQuestion(pergunta, respostaAtual, onRespostaChanged)
+            "tempo" -> TempoQuestion(pergunta, respostaAtual, onRespostaChanged)
+            "radio" -> RadioQuestion(pergunta, respostaAtual, onRespostaChanged)
+            "checkbox" -> CheckboxQuestion(pergunta, respostaAtual, onRespostaChanged)
+            else -> Text("Tipo de pergunta '${pergunta.tipo}' não suportado.")
         }
-    } else {
+    }
+
+    if (useCard) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = AppColors.White),
@@ -182,35 +190,36 @@ fun QuestionCard(
                 content()
             }
         }
+    } else {
+        Column {
+            Text(text = pergunta.texto, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            content()
+        }
     }
 }
 
 @Composable
 fun RangeQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaChanged: (String) -> Unit) {
-    val respostaFloat = respostaAtual.toFloatOrNull() ?: (pergunta.validacao.min?.toFloat() ?: 0f)
-    val min = pergunta.validacao.min?.toFloat() ?: 0f
-    val max = pergunta.validacao.max?.toFloat() ?: 5f
+    val min = pergunta.validacao?.min?.toFloat() ?: 0f
+    val max = pergunta.validacao?.max?.toFloat() ?: 5f
+    val respostaFloat = respostaAtual.toFloatOrNull() ?: min
     val steps = (max - min - 1).coerceAtLeast(0F).toInt()
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = pergunta.texto, fontWeight = FontWeight.Bold)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = respostaFloat,
-                    onValueChange = { onRespostaChanged(it.toString()) },
-                    valueRange = min..max,
-                    steps = steps,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = respostaFloat.roundToInt().toString(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Slider(
+            value = respostaFloat,
+            onValueChange = { onRespostaChanged(it.toString()) },
+            valueRange = min..max,
+            steps = steps,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = respostaFloat.roundToInt().toString(),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -221,14 +230,14 @@ fun NumeroQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaChan
         onValueChange = { novoValor ->
             if (novoValor.isEmpty() || novoValor.all { it.isDigit() }) {
                 val valorNumerico = novoValor.toLongOrNull()
-                val max = pergunta.validacao.max?.toLong()
-                if (valorNumerico == null || max == null || valorNumerico <= max) {
+                val max = pergunta.validacao?.max?.toLong()
+                if (max == null || valorNumerico == null || valorNumerico <= max) {
                     onRespostaChanged(novoValor)
                 }
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(pergunta.texto) },
+        label = { Text("Sua resposta") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true
     )
@@ -241,29 +250,33 @@ fun TempoQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaChang
 
     if (showDialog) {
         val calendar = Calendar.getInstance()
-        val initialHour = if (respostaAtual.isNotBlank() && ":" in respostaAtual) respostaAtual.split(":")[0].toInt() else calendar.get(Calendar.HOUR_OF_DAY)
-        val initialMinute = if (respostaAtual.isNotBlank() && ":" in respostaAtual) respostaAtual.split(":")[1].toInt() else calendar.get(Calendar.MINUTE)
+        val (initialHour, initialMinute) = if (respostaAtual.isNotBlank() && ":" in respostaAtual) {
+            val parts = respostaAtual.split(":")
+            parts[0].toInt() to parts[1].toInt()
+        } else {
+            calendar.get(Calendar.HOUR_OF_DAY) to calendar.get(Calendar.MINUTE)
+        }
 
-        val timePickerDialog = TimePickerDialog(
+        TimePickerDialog(
             context,
             { _, hour: Int, minute: Int ->
-                val tempoFormatado = String.format("%02d:%02d", hour, minute)
-                onRespostaChanged(tempoFormatado)
-                showDialog = false
+                onRespostaChanged(String.format("%02d:%02d", hour, minute))
             },
             initialHour,
             initialMinute,
             true
-        )
-        timePickerDialog.setOnDismissListener { showDialog = false }
-        timePickerDialog.show()
+        ).apply {
+            setOnDismissListener { showDialog = false }
+            show()
+        }
     }
+
     Box(modifier = Modifier.clickable { showDialog = true }) {
         OutlinedTextField(
             value = respostaAtual,
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(pergunta.texto) },
+            label = { Text("HH:MM") },
             readOnly = true,
             enabled = false,
             colors = OutlinedTextFieldDefaults.colors(
@@ -278,28 +291,27 @@ fun TempoQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaChang
 
 @Composable
 fun RadioQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaChanged: (String) -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = pergunta.texto, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            pergunta.opcoes?.forEach { opcao ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = (respostaAtual == opcao.texto),
-                            onClick = { onRespostaChanged(opcao.texto) }
-                        )
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = (respostaAtual == opcao.texto),
-                        onClick = null
+    val opcoes = pergunta.opcoes ?: emptyList()
+
+    Column {
+        opcoes.forEach { opcao ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (respostaAtual == opcao),
+                        onClick = { onRespostaChanged(opcao) }
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = opcao.texto)
-                }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (respostaAtual == opcao),
+                    onClick = null
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                // CORRIGIDO: Usa 'opcao' diretamente, pois é uma String.
+                Text(text = opcao)
             }
         }
     }
@@ -310,42 +322,40 @@ fun CheckboxQuestion(pergunta: FormQuestion, respostaAtual: String, onRespostaCh
     val respostasSelecionadas = remember(respostaAtual) {
         if (respostaAtual.isBlank()) emptySet() else respostaAtual.split(',').toSet()
     }
+    val opcoes = pergunta.opcoes ?: emptyList()
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = pergunta.texto, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            pergunta.opcoes?.forEach { opcao ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = (opcao.texto in respostasSelecionadas),
-                            onClick = {
-                                val novasRespostas = respostasSelecionadas.toMutableSet()
-                                if (opcao.texto in novasRespostas) {
-                                    novasRespostas.remove(opcao.texto)
-                                } else {
-                                    novasRespostas.add(opcao.texto)
-                                }
-                                onRespostaChanged(novasRespostas.joinToString(","))
+    Column {
+        opcoes.forEach { opcao ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (opcao in respostasSelecionadas),
+                        onClick = {
+                            val novasRespostas = respostasSelecionadas.toMutableSet()
+                            if (opcao in novasRespostas) {
+                                novasRespostas.remove(opcao)
+                            } else {
+                                novasRespostas.add(opcao)
                             }
-                        )
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = (opcao.texto in respostasSelecionadas),
-                        onCheckedChange = null
+                            onRespostaChanged(novasRespostas.joinToString(","))
+                        }
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = opcao.texto)
-                }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = (opcao in respostasSelecionadas),
+                    onCheckedChange = null
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                // CORRIGIDO: Usa 'opcao' diretamente, pois é uma String.
+                Text(text = opcao)
             }
         }
     }
 }
+
 
 @Composable
 fun BottomNavigationBar(
@@ -353,7 +363,8 @@ fun BottomNavigationBar(
     totalEtapas: Int,
     onAnteriorClick: () -> Unit,
     onProximoClick: () -> Unit,
-    onFinalizarClick: () -> Unit
+    onFinalizarClick: () -> Unit,
+    isSubmitting: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -364,7 +375,7 @@ fun BottomNavigationBar(
     ) {
         Button(
             onClick = onAnteriorClick,
-            enabled = etapaAtualIndex > 0
+            enabled = etapaAtualIndex > 0 && !isSubmitting
         ) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Etapa Anterior")
             Spacer(modifier = Modifier.width(4.dp))
@@ -378,12 +389,17 @@ fun BottomNavigationBar(
 
         val isUltimaEtapa = etapaAtualIndex == totalEtapas - 1
         Button(
-            onClick = if (isUltimaEtapa) onFinalizarClick else onProximoClick
+            onClick = if (isUltimaEtapa) onFinalizarClick else onProximoClick,
+            enabled = !isSubmitting
         ) {
-            Text(if (isUltimaEtapa) "Finalizar" else "Próximo")
-            if (!isUltimaEtapa) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Próxima Etapa")
+            if (isSubmitting && isUltimaEtapa) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
+            } else {
+                Text(if (isUltimaEtapa) "Finalizar" else "Próximo")
+                if (!isUltimaEtapa) {
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Próxima Etapa")
+                }
             }
         }
     }
