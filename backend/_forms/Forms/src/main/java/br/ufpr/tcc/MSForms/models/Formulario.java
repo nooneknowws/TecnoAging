@@ -1,22 +1,13 @@
 package br.ufpr.tcc.MSForms.models;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class Formulario {
 
-    public Formulario(Long id, String tipo, String titulo, String descricao, List<Etapa> etapas) {
-		super();
-		this.id = id;
-		this.tipo = tipo;
-		this.titulo = titulo;
-		this.descricao = descricao;
-		this.etapas = etapas;
-	}
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -25,18 +16,14 @@ public class Formulario {
     private String descricao;
 
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Etapa> etapas;
-    
+
+    // Construtor padrão exigido pelo JPA
     public Formulario() {
     }
 
-    public Formulario(Long id, String tipo, String titulo, String descricao) {
-        this.id = id;
-        this.tipo = tipo;
-        this.titulo = titulo;
-        this.descricao = descricao;
-    }
-    
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -77,5 +64,3 @@ public class Formulario {
         this.etapas = etapas;
     }
 }
-
-
