@@ -4,6 +4,8 @@ import { Paciente } from '../../../_shared/models/pessoa/paciente/paciente';
 import { Endereco } from '../../../_shared/models/pessoa/endereco';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
+import { EnumClasseSocioeconomica } from '../../../_shared/models/classe-socioeconomica.enum';
+import { EnumEscolaridade } from '../../../_shared/models/escolaridade.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
 
 @Component({
@@ -19,6 +21,8 @@ export class CadastroPacienteComponent implements OnInit {
   errorMessage = '';
   estados = Object.values(EnumEstadosBrasil);
   estadosCivis = Object.values(EnumEstadoCivil);
+  classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
+  escolaridades = Object.values(EnumEscolaridade);
   cepInvalido = false;
   erroTimeout = false;
   repetirSenha = '';
@@ -29,16 +33,18 @@ export class CadastroPacienteComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  getEstadoCivilLabel(estadoCivil: EnumEstadoCivil): string {
-    const labels: { [key in EnumEstadoCivil]: string } = {
-      [EnumEstadoCivil.SOLTEIRO]: 'Solteiro(a)',
-      [EnumEstadoCivil.CASADO]: 'Casado(a)',
-      [EnumEstadoCivil.DIVORCIADO]: 'Divorciado(a)',
-      [EnumEstadoCivil.VIUVO]: 'Viúvo(a)',
-      [EnumEstadoCivil.SEPARADO]: 'Separado(a)',
-      [EnumEstadoCivil.UNIAO_ESTAVEL]: 'União Estável'
-    };
-    return labels[estadoCivil] || estadoCivil;
+  getEstadoCivilOptions() {
+    return Object.entries(EnumEstadoCivil).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
+  }
+
+  getEscolaridadeOptions() {
+    return Object.entries(EnumEscolaridade).map(([key, value]) => ({
+      value: value,
+      label: value
+    }));
   }
 
   calcularIdade(dataNasc: Date): number {
@@ -110,5 +116,15 @@ export class CadastroPacienteComponent implements OnInit {
     } else if (this.paciente.senha !== this.repetirSenha) {
       console.error('As senhas não coincidem!');
     }
+  }
+
+  getCorRacaOptions() {
+    return [
+      { value: 'Branca', label: 'Branca' },
+      { value: 'Preta', label: 'Preta' },
+      { value: 'Parda', label: 'Parda' },
+      { value: 'Amarela', label: 'Amarela' },
+      { value: 'Indígena', label: 'Indígena' }
+    ];
   }
 }

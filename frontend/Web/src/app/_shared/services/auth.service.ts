@@ -26,8 +26,8 @@ export class AuthService {
   }
 
   private initializeFromSession(): void {
-    const userData =  localStorage.getItem(this.SESSION_USER_DATA_KEY);
-    const userType =  localStorage.getItem(this.SESSION_USER_TYPE_KEY);
+    const userData = localStorage.getItem(this.SESSION_USER_DATA_KEY);
+    const userType = localStorage.getItem(this.SESSION_USER_TYPE_KEY);
     
     if (userData && userType) {
       const parsedUser = JSON.parse(userData);
@@ -49,12 +49,21 @@ export class AuthService {
         return this.http.get<any>(endpoint, {
           headers: { Authorization: `Bearer ${loginResponse.token}` }
         }).pipe(
+          // Aumentar timeout para 30 segundos para usuários com foto
+          timeout(30000),
           map(userData => {
             this.storeUserData(userData, loginResponse.Perfil!);
             return loginResponse;
           }),
           catchError(error => {
             console.error('Erro ao buscar dados do usuário:', error);
+            
+            // Se falhar ao buscar dados completos, ainda permite login
+            // mas sem dados detalhados do usuário
+            if (error.name === 'TimeoutError') {
+              console.warn('Timeout ao buscar dados do usuário - continuando login sem dados completos');
+            }
+            
             return of(loginResponse);
           })
         );
@@ -84,28 +93,44 @@ export class AuthService {
     localStorage.setItem(this.SESSION_USER_ID_KEY, ID);
   }
   
-
   logout(token: string | null): boolean {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    if(this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
-      next: () => localStorage.clear(),
-      error: (err) => console.error('Logout failed:', err)
-    })){
-      console.log('logout realizado')
-      return true;
-    }
-    else {
-      console.log('erro ao realizar o logout')
-      return false;
-    }    
+    
+    // Clear all local data immediately
+    this.clearAllUserData();
+    
+    // Call backend logout (async)
+    this.http.post(`${this.API_URL}/auth/logout`, null, {headers}).subscribe({
+      next: () => {
+        console.log('Backend logout successful');
+      },
+      error: (err) => {
+        console.error('Backend logout failed:', err);
+      }
+    });
+    
+    return true;
+  }
+
+  private clearAllUserData(): void {
+    // Clear localStorage
+    localStorage.removeItem(this.SESSION_TOKEN_KEY);
+    localStorage.removeItem(this.SESSION_USER_TYPE_KEY);
+    localStorage.removeItem(this.SESSION_USER_DATA_KEY);
+    localStorage.removeItem(this.SESSION_USER_ID_KEY);
+    localStorage.removeItem('userData'); // Legacy key that might exist
+    
+    // Clear sessionStorage as well
+    sessionStorage.clear();
+    
+    // Reset current user object
+    this.currentUser = null;
+    
+    console.log('All user data cleared from frontend');
   }
 
   getCurrentUser(): Tecnico | Paciente | null {
     return this.currentUser;
-  }
-
-  updateCurrentUser(user: any): void {
-     localStorage.setItem('userData', JSON.stringify(user));
   }
 
   getUserProfile(): string | null {
@@ -113,7 +138,34 @@ export class AuthService {
   }
   
   isLoggedIn(): boolean {
-    return !! localStorage.getItem(this.SESSION_TOKEN_KEY);
+    return !!localStorage.getItem(this.SESSION_TOKEN_KEY);
+  }
+
+  enviarCodigo(cpf: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/enviar-codigo`, { cpf }).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Erro ao enviar código:', error);
+        throw error;
+      })
+    );
+  }
+
+  resetPassword(cpf: string, codigo: string, novaSenha: string, confirmarSenha: string): Observable<any> {
+    const payload = {
+      cpf,
+      codigo,
+      novaSenha,
+      confirmarSenha
+    };
+    
+    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Erro ao resetar senha:', error);
+        throw error;
+      })
+    );
   }
 
   buscarCep(cep: string): Observable<Endereco | null> {
@@ -144,5 +196,53 @@ export class AuthService {
         return of(null);
       })
     );
+  }
+
+  updateCurrentUserCache(updatedUser: Tecnico | Paciente): void {
+    // Atualiza a instância em memória
+    this.currentUser = updatedUser;
+    
+    // Atualiza o localStorage
+    localStorage.setItem(this.SESSION_USER_DATA_KEY, JSON.stringify(updatedUser));
+    
+    console.log('Cache do usuário atualizado com sucesso');
+  }
+
+  /**
+   * Recarrega os dados do usuário do servidor e atualiza o cache
+   */
+  refreshCurrentUserFromServer(): Observable<Tecnico | Paciente> {
+    const userId = localStorage.getItem(this.SESSION_USER_ID_KEY);
+    const userType = localStorage.getItem(this.SESSION_USER_TYPE_KEY);
+    const token = localStorage.getItem(this.SESSION_TOKEN_KEY);
+
+    if (!userId || !userType || !token) {
+      return of(null as any);
+    }
+
+    const endpoint = userType === 'paciente' 
+      ? `${this.API_URL}/pacientes/${userId}`
+      : `${this.API_URL}/tecnicos/${userId}`;
+
+    return this.http.get<any>(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(userData => {
+        this.updateCurrentUserCache(
+          userType === 'paciente' 
+            ? Object.assign(new Paciente(), userData)
+            : Object.assign(new Tecnico(), userData)
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao recarregar dados do usuário:', error);
+        return of(null as any);
+      })
+    );
+  }
+
+  // Corrigir o método existente updateCurrentUser
+  updateCurrentUser(user: any): void {
+    this.updateCurrentUserCache(user);
   }
 }

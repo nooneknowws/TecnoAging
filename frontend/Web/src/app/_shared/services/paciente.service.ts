@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AppComponent } from '../../app.component';
 import { Paciente } from '../models/pessoa/paciente/paciente';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,10 @@ import { Paciente } from '../models/pessoa/paciente/paciente';
 export class PacienteService {
   private readonly API_URL = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   getPacientes(): Observable<Paciente[]> {
     return this.http.get<Paciente[]>(`${this.API_URL}/pacientes`);
@@ -30,6 +34,18 @@ export class PacienteService {
 
   updatePaciente(paciente: Paciente): Observable<Paciente> {
     return this.http.put<Paciente>(`${this.API_URL}/pacientes/${paciente.id}`, paciente);
+  }
+
+  updatePacienteAndRefreshCache(paciente: Paciente): Observable<Paciente> {
+    return this.http.put<Paciente>(`${this.API_URL}/pacientes/${paciente.id}`, paciente).pipe(
+      tap(updatedPaciente => {
+        // Se o paciente atualizado é o usuário logado, atualiza o cache
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser && currentUser.id === updatedPaciente.id) {
+          this.authService.updateCurrentUserCache(updatedPaciente);
+        }
+      })
+    );
   }
 
   deletePaciente(id: number): Observable<void> {

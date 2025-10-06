@@ -57,6 +57,11 @@ public class Paciente extends Pessoa {
     @CollectionTable(name = "paciente_contatos", joinColumns = @JoinColumn(name = "paciente_id"))
     private List<Contato> contatos;
 
+    @Lob
+    @Column(name = "foto_perfil")
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] fotoPerfil;
+
     public Paciente() {
         super();
     }
@@ -212,5 +217,13 @@ public class Paciente extends Pessoa {
 
     public void setContatos(List<Contato> contatos) {
         this.contatos = contatos;
+    }
+
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(byte[] fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
 }

@@ -18,11 +18,22 @@ import { PacienteLayoutComponent } from './paciente/paciente-layout/paciente-lay
 import { ConsultarAvaliacaoComponent } from './tecnico/paciente/consultar-avaliacao/consultar-avaliacao.component';
 import { EditarAvaliacaoComponent } from './tecnico/paciente/editar-avaliacao/editar-avaliacao.component';
 import { HomeComponent } from './_auth/home.component';
+import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cadastro-tecnico.component';
+import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
+import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codigo.component';
+import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
   { path: 'login', component: LoginComponent },
-  { path: 'cadastro', component: CadastroComponent },
+  { path: 'cadastro', 
+    children: [
+      { path: 'tecnico', component: CadastroTecnicoComponent },
+      { path: 'paciente', component: CadastroPacienteComponent }
+    ]
+  },
+  { path: 'recuperar-senha', component: SolicitarCodigoComponent },
+  { path: 'recuperar-senha/codigo', component: RedefinirSenhaComponent },
   {
     path: 'paciente',
     component: PacienteLayoutComponent,
@@ -31,7 +42,8 @@ const routes: Routes = [
     children: [
       { path: '', component: PacienteDashboardComponent },
       { path: 'historico-testes', component: HistoricoTestesComponent },
-      { path: 'visualizar-perfil', component: VisualizarPerfilComponent }
+      { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
+      { path: 'editar-perfil', component: EditarPerfilPacienteComponent }
     ]
   },
   {

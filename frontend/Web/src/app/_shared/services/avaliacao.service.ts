@@ -27,8 +27,8 @@ export class AvaliacaoService {
   }
 
   getAvaliacaoById(id: number): Observable<Avaliacao> {
-    return this.http.get<Avaliacao>(`${this.API_URL}/avaliacao/${id}`).pipe(
-      map(avaliacao => this.deserializeAvaliacao(avaliacao))
+    return this.http.get<any>(`${this.API_URL}/avaliacao/${id}`).pipe(
+      map(avaliacaoData => this.deserializeAvaliacao(avaliacaoData))
     );
   }
 
@@ -123,7 +123,9 @@ export class AvaliacaoService {
 
     const paciente = {
       id: avaliacaoData.pacienteId,
-      nome: avaliacaoData.paciente
+      nome: avaliacaoData.paciente,
+      idade: avaliacaoData.pacienteIDADE,
+      imc: avaliacaoData.pacienteIMC
     };
 
     const formulario = {
@@ -134,19 +136,11 @@ export class AvaliacaoService {
       etapas: undefined
     };
 
-    const respostas = avaliacaoData.perguntasValores?.map((item: any) => {
-      const pergunta = {
-        id: item.perguntaId,
-        texto: item.pergunta,
-        tipo: undefined, 
-        resposta: item.valor
-      };
-
-      return new Resposta(
-        pergunta,
-        item.valor
-      );
-    }) || [];
+    // Transform the new response format to the expected format
+    const respostas = (avaliacaoData.respostas || []).map((resposta: any) => ({
+      pergunta: resposta.pergunta,
+      valor: resposta.valor
+    }));
 
     return new Avaliacao(
       avaliacaoData.avaliacaoId,

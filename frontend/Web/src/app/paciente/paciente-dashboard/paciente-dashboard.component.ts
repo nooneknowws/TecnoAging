@@ -4,6 +4,7 @@ import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
 import { AvaliacaoService } from '../../_shared/services/avaliacao.service';
 import { FormularioService } from '../../_shared/services/formulario.service';
+import { ImageService } from '../../_shared/services/image.service';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Formulario } from '../../_shared/models/formulario/formulario';
 
@@ -52,6 +53,7 @@ interface ResultadoDetalhado {
 export class PacienteDashboardComponent implements OnInit {
   activeSection: string = 'dashboard';
   currentPaciente: Paciente | null = null;
+  currentPhotoUrl: string | null = null;
   estatisticas: Estatisticas | null = null;
   atividadesRecentes: AtividadeRecente[] = [];
   historicoTestes: HistoricoTeste[] = [];
@@ -64,7 +66,8 @@ export class PacienteDashboardComponent implements OnInit {
     private authService: AuthService,
     private pacienteService: PacienteService,
     private avaliacaoService: AvaliacaoService,
-    private formularioService: FormularioService
+    private formularioService: FormularioService,
+    private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +81,7 @@ export class PacienteDashboardComponent implements OnInit {
       this.pacienteService.getPacienteById(currentUser.id!).subscribe({
         next: (paciente) => {
           this.currentPaciente = paciente;
+          this.loadCurrentPhoto(paciente.id!);
           this.loadEstatisticas();
           this.loadHistoricoTestes();
           this.loadAtividadesRecentes();
@@ -205,6 +209,17 @@ export class PacienteDashboardComponent implements OnInit {
         }
       });
     }
+  }
+
+  loadCurrentPhoto(pacienteId: number): void {
+    this.imageService.getPacientePhoto(pacienteId).subscribe({
+      next: (response) => {
+        this.currentPhotoUrl = response.image;
+      },
+      error: () => {
+        this.currentPhotoUrl = null;
+      }
+    });
   }
 
   switchSection(section: string): void {

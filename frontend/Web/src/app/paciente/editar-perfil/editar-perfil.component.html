@@ -1,0 +1,495 @@
+<div class="form-container d-flex justify-content-center">
+    <div class="form-wrapper">
+        <!-- Mensagens de Feedback Aprimoradas -->
+        <div *ngIf="isUpdateSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Perfil atualizado com sucesso!
+            <button type="button" class="btn-close" (click)="isUpdateSuccess = false" aria-label="Close"></button>
+        </div>
+
+        <div *ngIf="isUpdateFailed" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            {{ errorMessage }}
+            <button type="button" class="btn-close" (click)="isUpdateFailed = false; errorMessage = ''" aria-label="Close"></button>
+        </div>
+
+        <!-- Loading Overlay para carregamento inicial -->
+        <div *ngIf="isLoading" class="loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2">Carregando dados do perfil...</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit(f)" #f="ngForm" [class.form-disabled]="isSaving">
+            <h1 class="h3 mb-3 fw-normal text-center title">Editar Perfil</h1>
+
+            <!-- Profile Photo Section -->
+            <div class="text-center mb-3">
+                <app-image-upload
+                    [currentImageUrl]="currentPhotoUrl"
+                    [placeholderText]="'Clique para adicionar foto do perfil'"
+                    (imageSelected)="onImageSelected($event)"
+                    (imageError)="onImageError($event)">
+                </app-image-upload>
+                
+                <!-- Mensagens de upload com melhor styling -->
+                <div *ngIf="uploadError" class="alert alert-danger mt-2 small">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    {{ uploadError }}
+                </div>
+                <div *ngIf="uploadSuccess" class="alert alert-success mt-2 small">
+                    <i class="fas fa-check me-1"></i>
+                    {{ uploadSuccess }}
+                </div>
+            </div>
+
+            <!-- Dados Pessoais Básicos -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingNome" 
+                           placeholder="Nome" 
+                           name="nome" 
+                           [(ngModel)]="form.nome" 
+                           required 
+                           [disabled]="isSaving"
+                           #nome="ngModel" 
+                           [class.is-invalid]="nome.invalid && (nome.dirty || nome.touched || f.submitted)">
+                    <label for="floatingNome">Nome</label>
+                    <div *ngIf="nome.invalid && (nome.dirty || nome.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="nome.errors?.['required']">O nome é obrigatório!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingCpf" 
+                           placeholder="CPF" 
+                           name="cpf" 
+                           [(ngModel)]="form.cpf" 
+                           mask="000.000.000-00" 
+                           required 
+                           readonly>
+                    <label for="floatingCpf">CPF</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="tel" 
+                           class="form-control" 
+                           id="floatingTelefone" 
+                           placeholder="Telefone" 
+                           name="telefone" 
+                           [(ngModel)]="form.telefone" 
+                           mask="(00) 00000-0000" 
+                           required 
+                           [disabled]="isSaving"
+                           #telefone="ngModel" 
+                           [class.is-invalid]="telefone.invalid && (telefone.dirty || telefone.touched || f.submitted)">
+                    <label for="floatingTelefone">Telefone</label>
+                    <div *ngIf="telefone.invalid && (telefone.dirty || telefone.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="telefone.errors?.['required']">O telefone é obrigatório!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <select class="form-select" 
+                            id="floatingSexo" 
+                            name="sexo" 
+                            [(ngModel)]="form.sexo" 
+                            required 
+                            [disabled]="isSaving"
+                            #sexo="ngModel" 
+                            [class.is-invalid]="sexo.invalid && (sexo.dirty || sexo.touched || f.submitted)">
+                        <option value="">Selecione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                    <label for="floatingSexo">Sexo</label>
+                    <div *ngIf="sexo.invalid && (sexo.dirty || sexo.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="sexo.errors?.['required']">O sexo é obrigatório!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="date" 
+                           class="form-control" 
+                           id="floatingDataNasc" 
+                           placeholder="Data de Nascimento" 
+                           name="dataNasc" 
+                           [(ngModel)]="formattedDataNasc" 
+                           (ngModelChange)="onDataNascChange($event)"
+                           required 
+                           [disabled]="isSaving"
+                           #dataNasc="ngModel" 
+                           [class.is-invalid]="dataNasc.invalid && (dataNasc.dirty || dataNasc.touched || f.submitted)">
+                    <label for="floatingDataNasc">Data de Nascimento</label>
+                    <div *ngIf="dataNasc.invalid && (dataNasc.dirty || dataNasc.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="dataNasc.errors?.['required']">A data de nascimento é obrigatória!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <select class="form-select" 
+                            id="floatingEstadoCivil" 
+                            name="estadoCivil" 
+                            [(ngModel)]="form.estadoCivil" 
+                            [disabled]="isSaving">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let estado of estadosCivil" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingEstadoCivil">Estado Civil</label>
+                </div>
+            </div>
+
+            <!-- Dados Físicos -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-33">
+                    <input type="number" 
+                           class="form-control" 
+                           id="floatingPeso" 
+                           placeholder="Peso (kg)" 
+                           name="peso" 
+                           [(ngModel)]="form.peso" 
+                           min="1" 
+                           step="0.1"
+                           [disabled]="isSaving">
+                    <label for="floatingPeso">Peso (kg)</label>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="number" 
+                           class="form-control" 
+                           id="floatingAltura" 
+                           placeholder="Altura (m)" 
+                           name="altura" 
+                           [(ngModel)]="form.altura" 
+                           min="0.1" 
+                           step="0.01"
+                           [disabled]="isSaving">
+                    <label for="floatingAltura">Altura (m)</label>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingIMC" 
+                           placeholder="IMC" 
+                           name="imc" 
+                           [value]="calcularIMC() | number:'1.1-2'"
+                           readonly>
+                    <label for="floatingIMC">IMC</label>
+                </div>
+            </div>
+
+            <!-- Dados Socioeconômicos -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <select class="form-select" 
+                            id="floatingEscolaridade" 
+                            name="escolaridade" 
+                            [(ngModel)]="form.escolaridade" 
+                            required 
+                            [disabled]="isSaving"
+                            #escolaridade="ngModel" 
+                            [class.is-invalid]="escolaridade.invalid && (escolaridade.dirty || escolaridade.touched || f.submitted)">
+                        <option value="">Selecione...</option>
+                        <option *ngFor="let escolaridadeOpt of getEscolaridadeOptions()" [value]="escolaridadeOpt.value">
+                            {{escolaridadeOpt.label}}
+                        </option>
+                    </select>
+                    <label for="floatingEscolaridade">Escolaridade</label>
+                    <div *ngIf="escolaridade.invalid && (escolaridade.dirty || escolaridade.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="escolaridade.errors?.['required']">A escolaridade é obrigatória!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-50">
+                    <select class="form-select" 
+                            id="floatingSocioeconomico" 
+                            name="socioeconomico" 
+                            [(ngModel)]="form.socioeconomico"
+                            [disabled]="isSaving">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let classe of classesSocioeconomicas" [value]="classe">{{ classe }}</option>
+                    </select>
+                    <label for="floatingSocioeconomico">Classe Socioeconômica</label>
+                </div>
+            </div>
+
+            <!-- Dados de Nascimento e Nacionalidade -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingNacionalidade" 
+                           placeholder="Nacionalidade" 
+                           name="nacionalidade" 
+                           [(ngModel)]="form.nacionalidade"
+                           [disabled]="isSaving">
+                    <label for="floatingNacionalidade">Nacionalidade</label>
+                </div>
+                <div class="form-floating w-50">
+                    <select class="form-select" 
+                            id="floatingCorRaca" 
+                            name="corRaca" 
+                            [(ngModel)]="form.corRaca" 
+                            required 
+                            [disabled]="isSaving"
+                            #corRaca="ngModel" 
+                            [class.is-invalid]="corRaca.invalid && (corRaca.dirty || corRaca.touched || f.submitted)">
+                        <option value="">Selecione...</option>
+                        <option *ngFor="let cor of getCorRacaOptions()" [value]="cor.value">
+                            {{cor.label}}
+                        </option>
+                    </select>
+                    <label for="floatingCorRaca">Cor/Raça</label>
+                    <div *ngIf="corRaca.invalid && (corRaca.dirty || corRaca.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="corRaca.errors?.['required']">A cor/raça é obrigatória!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingMunicipioNasc" 
+                           placeholder="Município de Nascimento" 
+                           name="municipioNasc" 
+                           [(ngModel)]="form.municipioNasc"
+                           [disabled]="isSaving">
+                    <label for="floatingMunicipioNasc">Município de Nascimento</label>
+                </div>
+                <div class="form-floating w-25">
+                    <select class="form-select" 
+                            id="floatingUfNasc" 
+                            name="ufNasc" 
+                            [(ngModel)]="form.ufNasc" 
+                            [disabled]="isSaving">
+                        <option value="">UF</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUfNasc">UF Nascimento</label>
+                </div>
+            </div>
+
+            <!-- Dados de RG -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-33">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingRG" 
+                           placeholder="RG" 
+                           name="rg" 
+                           [(ngModel)]="form.rg"
+                           [disabled]="isSaving">
+                    <label for="floatingRG">RG</label>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="date" 
+                           class="form-control" 
+                           id="floatingDataExpedicao" 
+                           placeholder="Data de Expedição" 
+                           name="dataExpedicao" 
+                           [(ngModel)]="formattedDataExpedicao" 
+                           (ngModelChange)="onDataExpedicaoChange($event)"
+                           [disabled]="isSaving">
+                    <label for="floatingDataExpedicao">Data de Expedição</label>
+                </div>
+                <div class="form-floating w-33">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingOrgaoEmissor" 
+                           placeholder="Órgão Emissor" 
+                           name="orgaoEmissor" 
+                           [(ngModel)]="form.orgaoEmissor"
+                           [disabled]="isSaving">
+                    <label for="floatingOrgaoEmissor">Órgão Emissor</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="form-floating w-100">
+                    <select class="form-select" 
+                            id="floatingUfEmissor" 
+                            name="ufEmissor" 
+                            [(ngModel)]="form.ufEmissor" 
+                            [disabled]="isSaving">
+                        <option value="">Selecione UF Emissor</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUfEmissor">UF Emissor</label>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Address Fields -->
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingCep" 
+                           placeholder="CEP" 
+                           name="cep" 
+                           [(ngModel)]="endereco.cep" 
+                           mask="00000-000" 
+                           required 
+                           [disabled]="isSaving"
+                           #cep="ngModel" 
+                           [class.is-invalid]="(cep.invalid && (cep.dirty || cep.touched || f.submitted)) || cepInvalido || erroTimeout">
+                    <label for="floatingCep">CEP</label>
+                    <div *ngIf="(cep.invalid && (cep.dirty || cep.touched || f.submitted)) || cepInvalido || erroTimeout" class="invalid-feedback">
+                        <div *ngIf="cep.errors?.['required'] && (cep.dirty || cep.touched || f.submitted)">O CEP é obrigatório!</div>
+                        <div *ngIf="cepInvalido">CEP inválido ou não encontrado!</div>
+                        <div *ngIf="erroTimeout">Tempo esgotado ao buscar o CEP. Tente novamente mais tarde!</div>
+                    </div>
+                </div>
+                <button type="button" 
+                        class="btn btn-primary w-25" 
+                        (click)="buscarCep()"
+                        [disabled]="!endereco.cep || isSaving">
+                    <i class="fas fa-search me-1"></i>
+                    Buscar
+                </button>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingLogradouro" 
+                           placeholder="Logradouro" 
+                           name="logradouro" 
+                           [(ngModel)]="endereco.logradouro" 
+                           required 
+                           [disabled]="isSaving"
+                           #logradouro="ngModel" 
+                           [class.is-invalid]="logradouro.invalid && (logradouro.dirty || logradouro.touched || f.submitted)">
+                    <label for="floatingLogradouro">Logradouro</label>
+                    <div *ngIf="logradouro.invalid && (logradouro.dirty || logradouro.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="logradouro.errors?.['required']">O logradouro é obrigatório!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-25">
+                    <input type="number" 
+                           class="form-control" 
+                           id="floatingNumero" 
+                           placeholder="Número" 
+                           name="numero" 
+                           [(ngModel)]="endereco.numero" 
+                           required 
+                           [disabled]="isSaving"
+                           min="1"
+                           #numero="ngModel" 
+                           [class.is-invalid]="numero.invalid && (numero.dirty || numero.touched || f.submitted)">
+                    <label for="floatingNumero">Número</label>
+                    <div *ngIf="numero.invalid && (numero.dirty || numero.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="numero.errors?.['required']">O número é obrigatório!</div>
+                        <div *ngIf="numero.errors?.['min']">O número deve ser maior que zero!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-50">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingComplemento" 
+                           placeholder="Complemento" 
+                           name="complemento" 
+                           [(ngModel)]="endereco.complemento"
+                           [disabled]="isSaving">
+                    <label for="floatingComplemento">Complemento</label>
+                </div>
+                <div class="form-floating w-50">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingBairro" 
+                           placeholder="Bairro" 
+                           name="bairro" 
+                           [(ngModel)]="endereco.bairro" 
+                           required 
+                           [disabled]="isSaving"
+                           #bairro="ngModel" 
+                           [class.is-invalid]="bairro.invalid && (bairro.dirty || bairro.touched || f.submitted)">
+                    <label for="floatingBairro">Bairro</label>
+                    <div *ngIf="bairro.invalid && (bairro.dirty || bairro.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="bairro.errors?.['required']">O bairro é obrigatório!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="form-floating w-75">
+                    <input type="text" 
+                           class="form-control" 
+                           id="floatingMunicipio" 
+                           placeholder="Município" 
+                           name="municipio" 
+                           [(ngModel)]="endereco.municipio" 
+                           required 
+                           [disabled]="isSaving"
+                           #municipio="ngModel" 
+                           [class.is-invalid]="municipio.invalid && (municipio.dirty || municipio.touched || f.submitted)">
+                    <label for="floatingMunicipio">Município</label>
+                    <div *ngIf="municipio.invalid && (municipio.dirty || municipio.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="municipio.errors?.['required']">O município é obrigatório!</div>
+                    </div>
+                </div>
+                <div class="form-floating w-25">
+                    <select class="form-select" 
+                            id="floatingUF" 
+                            name="uf" 
+                            [(ngModel)]="endereco.uf" 
+                            required 
+                            [disabled]="isSaving"
+                            #uf="ngModel" 
+                            [class.is-invalid]="uf.invalid && (uf.dirty || uf.touched || f.submitted)">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+                    </select>
+                    <label for="floatingUF">UF</label>
+                    <div *ngIf="uf.invalid && (uf.dirty || uf.touched || f.submitted)" class="invalid-feedback">
+                        <div *ngIf="uf.errors?.['required']">A UF é obrigatória!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagem de formulário inválido - só mostra após tentativa de submissão -->
+            <div *ngIf="f.submitted && f.invalid" class="alert alert-warning mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Formulário inválido. Verifique todos os campos obrigatórios.
+            </div>
+            
+            <!-- Botão com Loading Aprimorado -->
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-success flex-fill" 
+                        type="submit" 
+                        [disabled]="isSaving || (f.submitted && f.invalid)"
+                        [class.btn-loading]="isSaving">
+                    
+                    <!-- Loading spinner -->
+                    <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    
+                    <!-- Ícone normal -->
+                    <i *ngIf="!isSaving" class="fas fa-save me-2"></i>
+                    
+                    <!-- Texto do botão -->
+                    <span *ngIf="!isSaving">Salvar Alterações</span>
+                    <span *ngIf="isSaving">Salvando...</span>
+                </button>
+                
+                <!-- Botão secundário (opcional) -->
+                <button type="button" 
+                        class="btn btn-outline-secondary" 
+                        [disabled]="isSaving"
+                        (click)="loadUserData()">
+                    <i class="fas fa-undo me-2"></i>
+                    Restaurar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

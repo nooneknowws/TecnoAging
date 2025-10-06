@@ -4,6 +4,7 @@ import { Avaliacao } from '../../../_shared/models/avaliacao/avaliacao';
 import { Paciente } from '../../../_shared/models/pessoa/paciente/paciente';
 import { AvaliacaoService } from '../../../_shared/services/avaliacao.service';
 import { PacienteService } from '../../../_shared/services/paciente.service';
+import { ImageService } from '../../../_shared/services/image.service';
 
 @Component({
   selector: 'app-ver-perfil',
@@ -18,7 +19,8 @@ export class VerPerfilComponent {
     private pacienteService: PacienteService,
     private avaliacaoService: AvaliacaoService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private imageService: ImageService
   ) {}
 
   ngOnInit() {
@@ -34,9 +36,23 @@ export class VerPerfilComponent {
     this.pacienteService.getPacienteById(id).subscribe({
       next: (paciente) => {
         this.paciente = paciente;
+        this.carregarFotoPaciente(id);
         this.carregarAvaliacoes(id);
       },
       error: (error) => console.error('Erro ao carregar paciente:', error)
+    });
+  }
+
+  private carregarFotoPaciente(pacienteId: number) {
+    this.imageService.getPacientePhoto(pacienteId).subscribe({
+      next: (response) => {
+        if (response && response.image && this.paciente) {
+          this.paciente.fotoUrl = response.image;
+        }
+      },
+      error: (error) => {
+        console.log(`Foto não encontrada para paciente ${pacienteId}`);
+      }
     });
   }
 
@@ -65,5 +81,11 @@ export class VerPerfilComponent {
 
   voltar() {
     this.router.navigate(['/tecnico']);
+  }
+
+  onImageError(event: any) {
+    if (event.target) {
+      event.target.src = 'https://place-hold.it/192x256';
+    }
   }
 }

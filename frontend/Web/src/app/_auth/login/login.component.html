@@ -19,7 +19,7 @@
             </div>
 
             <div class="password-reset">
-                <a href="#">Recuperar senha</a>
+                <a routerLink="/recuperar-senha">Recuperar senha</a>
             </div>
 
             <div *ngIf="errorMessage" class="alert alert-danger">
@@ -29,7 +29,7 @@
             <button type="submit" class="login-button" [disabled]="loginForm.invalid">
                 Login
             </button>
-            <a routerLink="/cadastro">
+            <a routerLink="/cadastro/paciente">
                 <button class="login-button mt-1">Cadastro</button>
             </a>
         </form>
