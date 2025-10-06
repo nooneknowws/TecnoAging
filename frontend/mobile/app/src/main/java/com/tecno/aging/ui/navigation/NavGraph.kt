@@ -2,7 +2,6 @@ package com.tecno.aging.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,11 +10,12 @@ import androidx.navigation.navArgument
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.screens.cadastro.pacienteCadastro.CadastroPacienteScreen
 import com.tecno.aging.ui.screens.cadastro.tecnicoCadastro.CadastroScreen
+import com.tecno.aging.ui.screens.forgot_password.ForgotPasswordScreen
 import com.tecno.aging.ui.screens.forms.FormScreen
 import com.tecno.aging.ui.screens.forms.FormsScreen
-import com.tecno.aging.ui.screens.forms.TestScreen
 import com.tecno.aging.ui.screens.home.HomeScreen
 import com.tecno.aging.ui.screens.login.LoginScreen
+import com.tecno.aging.ui.screens.pacientes.avaliacoes.AvaliacaoDetailScreen
 import com.tecno.aging.ui.screens.pacientes.historicoPaciente.HistoricoScreen
 import com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit.PacienteEditScreen
 import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
@@ -59,9 +59,8 @@ fun AppNavGraph() {
             CadastroPacienteScreen(
                 navController = navController,
                 onSuccess = {
-                    // Decide para onde ir após o sucesso, ex: lista de pacientes ou login
                     navController.navigate("pacientes_list") {
-                        popUpTo("home") // Volta para a home para não empilhar telas de cadastro
+                        popUpTo("home")
                     }
                 }
             )
@@ -72,11 +71,6 @@ fun AppNavGraph() {
             HomeScreen(
                 navController = navController,
             )
-        }
-
-
-        composable("test") {
-            TestScreen(navController = navController)
         }
 
         // Formulários
@@ -92,6 +86,10 @@ fun AppNavGraph() {
             )
         ) {
             FormScreen(navController = navController)
+        }
+
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController = navController)
         }
 
         // Perfil e Configurações
@@ -139,6 +137,13 @@ fun AppNavGraph() {
             arguments = listOf(navArgument("pacienteId") { type = NavType.IntType })
         ) {
             HistoricoScreen(navController = navController)
+        }
+
+        composable(
+            route = "avaliacao_detail/{avaliacaoId}",
+            arguments = listOf(navArgument("avaliacaoId") { type = NavType.IntType })
+        ) {
+            AvaliacaoDetailScreen(navController = navController)
         }
     }
 }

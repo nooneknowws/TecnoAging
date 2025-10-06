@@ -1,5 +1,6 @@
-package com.tecno.aging.ui.screens.pacientes.historicoPaciente
+package com.tecno.aging.ui.screens.pacientes.avaliacoes
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,40 +16,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class HistoricoUiState(
+data class AvaliacaoDetailUiState(
     val isLoading: Boolean = true,
-    val avaliacoes: List<HistoricoAvaliacao> = emptyList(),
+    val avaliacao: HistoricoAvaliacao? = null,
     val error: String? = null
 )
 
-class HistoricoViewModel(
+class AvaliacaoDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: AvaliacaoRepository = AvaliacaoRepository()
 ) : ViewModel() {
 
-    private val pacienteId: Int = checkNotNull(savedStateHandle["pacienteId"])
-
-    private val _uiState = MutableStateFlow(HistoricoUiState())
-    val uiState: StateFlow<HistoricoUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AvaliacaoDetailUiState())
+    val uiState: StateFlow<AvaliacaoDetailUiState> = _uiState.asStateFlow()
+    private val avaliacaoId: Long = checkNotNull(savedStateHandle["avaliacaoId"])
 
     init {
-        loadHistorico()
+        loadAvaliacaoDetails()
     }
 
-    private fun loadHistorico() {
+    private fun loadAvaliacaoDetails() {
         _uiState.update { it.copy(isLoading = true) }
-
         viewModelScope.launch {
-            repository.getAvaliacoesByPaciente(pacienteId)
-                .onSuccess { listaDeAvaliacoes ->
-                    _uiState.update {
-                        it.copy(isLoading = false, avaliacoes = listaDeAvaliacoes)
-                    }
+            repository.getAvaliacaoById(avaliacaoId)
+                .onSuccess { data ->
+                    Log.d("AVALIACAO_DETAIL", "Dados recebidos da API: $data")
+                    Log.d("AVALIACAO_DETAIL", "Número de perguntas na lista: ${data.perguntasValores.size}")
+                    _uiState.update { it.copy(isLoading = false, avaliacao = data) }
                 }
-                .onFailure { erro ->
-                    _uiState.update {
-                        it.copy(isLoading = false, error = erro.message)
-                    }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, error = error.message) }
                 }
         }
     }
@@ -57,9 +54,7 @@ class HistoricoViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val savedStateHandle = createSavedStateHandle()
-                HistoricoViewModel(
-                    savedStateHandle = savedStateHandle
-                )
+                AvaliacaoDetailViewModel(savedStateHandle = savedStateHandle)
             }
         }
     }

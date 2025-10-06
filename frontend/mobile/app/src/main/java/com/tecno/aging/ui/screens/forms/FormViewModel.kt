@@ -17,12 +17,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 data class FormUiState(
     val form: GenericForm? = null,
     val etapaAtual: Int = 0,
     val respostas: Map<Long, String> = emptyMap(),
     val isLoading: Boolean = true,
+    val isSubmitting: Boolean = false,
     val error: String? = null,
     val submissionSuccess: Boolean = false
 )
@@ -70,10 +73,18 @@ class FormViewModel(
     }
 
     fun submeterAvaliacao() {
+        if (_uiState.value.isSubmitting) return
+
         if (tecnicoId == null) {
             _uiState.update { it.copy(error = "ID do técnico não encontrado na sessão.") }
             return
         }
+
+        _uiState.update { it.copy(isSubmitting = true) }
+
+        val agora = OffsetDateTime.now()
+        val formatador = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+        val dataFormatada = agora.format(formatador)
 
         val respostasDTO = _uiState.value.respostas.map { (perguntaId, valor) ->
             RespostaPostDTO(perguntaId = perguntaId, valor = valor)
@@ -83,20 +94,22 @@ class FormViewModel(
             pacienteId = pacienteId,
             tecnicoId = tecnicoId,
             formularioId = formId,
-            respostas = respostasDTO
+            respostas = respostasDTO,
+            dataCriacao = dataFormatada,
+            dataAtualizacao = dataFormatada
         )
 
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.salvarAvaliacao(avaliacaoDTO)
                 if (response.isSuccessful) {
-                    _uiState.update { it.copy(submissionSuccess = true) }
+                    _uiState.update { it.copy(submissionSuccess = true, isSubmitting = false) }
                 } else {
-                    _uiState.update { it.copy(error = "Falha ao enviar avaliação: ${response.code()} ${response.message()}") }
+                    _uiState.update { it.copy(error = "Falha ao enviar avaliação: ${response.code()}", isSubmitting = false) }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.update { it.copy(error = "Erro de conexão ao enviar.") }
+                _uiState.update { it.copy(error = "Erro de conexão ao enviar.", isSubmitting = false) }
             }
         }
     }

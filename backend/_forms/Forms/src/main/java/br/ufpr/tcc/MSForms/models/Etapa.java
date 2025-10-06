@@ -1,9 +1,9 @@
 package br.ufpr.tcc.MSForms.models;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class Etapa {
@@ -13,29 +13,18 @@ public class Etapa {
     private Long id;
 
     private String titulo;
-    
-    @Column(columnDefinition = "TEXT") 
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formulario_id")
-    @JsonIgnore
+    @JsonBackReference
     private Formulario formulario;
 
     @OneToMany(mappedBy = "etapa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Pergunta> perguntas;
 
-    public Etapa() {
-    }
-
-    public Etapa(Long id, String titulo, String descricao, Formulario formulario) {
-        this.id = id;
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.formulario = formulario;
-    }
-
-    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -76,4 +65,3 @@ public class Etapa {
         this.perguntas = perguntas;
     }
 }
-

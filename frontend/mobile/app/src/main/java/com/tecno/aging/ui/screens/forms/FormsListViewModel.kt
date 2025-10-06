@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecno.aging.data.remote.RetrofitInstance
 import com.tecno.aging.domain.models.forms.GenericForm
-import com.tecno.aging.domain.models.paciente.Paciente
+import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

@@ -9,7 +9,7 @@ import com.tecno.aging.domain.models.auth.LoginResponse
 import com.tecno.aging.domain.models.auth.TecnicoRequest
 import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
-import com.tecno.aging.domain.models.paciente.Paciente
+import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import com.tecno.aging.domain.models.pessoa.paciente.PacienteRequest
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import retrofit2.Response
@@ -56,11 +56,8 @@ interface ApiService {
     @GET("api/avaliacoes/respostas/paciente/{id}")
     suspend fun getRespostasByPaciente(@Path("id") pacienteId: Int): Response<List<HistoricoAvaliacao>>
 
-    @GET("api/avaliacoes/respostas/tecnico/{id}")
-    suspend fun getRespostasByTecnico(@Path("id") tecnicoId: Int): Response<Unit>
-
-    @GET("api/avaliacoes/avalicao/{id}")
-    suspend fun getAvaliacoes(@Path("id") avalicaoId: Int): Response<Unit>
+    @GET("api/avaliacoes/avaliacao/{id}")
+    suspend fun getAvaliacaoById(@Path("id") avaliacaoId: Long): Response<HistoricoAvaliacao>
 
     // Formulários
     @GET("api/formularios/")

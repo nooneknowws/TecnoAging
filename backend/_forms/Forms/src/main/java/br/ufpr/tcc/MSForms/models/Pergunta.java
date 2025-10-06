@@ -1,10 +1,10 @@
 package br.ufpr.tcc.MSForms.models;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Pergunta {
@@ -13,33 +13,25 @@ public class Pergunta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String texto;
     private String tipo;
+    private String resposta;
 
-    @ElementCollection
-    private List<String> opcoes;
-
-    @ManyToOne
-    @JoinColumn(name = "etapa_id")
-    @JsonIgnore
-    private Etapa etapa;
-    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "pergunta_opcoes", joinColumns = @JoinColumn(name = "pergunta_id"))
+    @Column(name = "opcao")
+    private List<String> opcoes = new ArrayList<>();
 
     @Embedded
     private Validacao validacao;
 
-    public Pergunta() {
-    	super();
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "etapa_id")
+    @JsonBackReference
+    private Etapa etapa;
 
-    public Pergunta(Long id, String texto, String tipo, List<String> opcoes, String resposta, boolean validacaoRequired, Etapa etapa, Validacao validacao) {
-        this.id = id;
-        this.texto = texto;
-        this.tipo = tipo;
-        this.opcoes = opcoes;
-        this.etapa = etapa;
-        this.validacao = validacao;
-    }
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -63,6 +55,14 @@ public class Pergunta {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
+    
+    public String getResposta() {
+        return resposta;
+    }
+
+    public void setResposta(String resposta) {
+        this.resposta = resposta;
+    }
 
     public List<String> getOpcoes() {
         return opcoes;
@@ -72,6 +72,13 @@ public class Pergunta {
         this.opcoes = opcoes;
     }
 
+    public Validacao getValidacao() {
+        return validacao;
+    }
+
+    public void setValidacao(Validacao validacao) {
+        this.validacao = validacao;
+    }
 
     public Etapa getEtapa() {
         return etapa;
@@ -80,11 +87,4 @@ public class Pergunta {
     public void setEtapa(Etapa etapa) {
         this.etapa = etapa;
     }
-	public Validacao getValidacao() {
-		return validacao;
-	}
-
-	public void setValidacao(Validacao validacao) {
-		this.validacao = validacao;
-	}
 }

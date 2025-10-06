@@ -319,19 +319,6 @@ fun MainContent(
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("cadastro_paciente") }
                 )
-                DashboardCard(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.plus),
-                            contentDescription = "Histórico",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    title = "Histórico",
-                    modifier = Modifier.weight(0.5f),
-                    onClick = { /* TODO */ }
-                )
             }
         } else if (perfil.equals("PACIENTE", ignoreCase = true)) {
             Row(
@@ -378,29 +365,11 @@ fun MainContent(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
-                    title = "Últimas Avaliações",
+                    title = "Histórico de Avaliações",
                     modifier = Modifier.weight(0.5f),
-                    onClick = { }
+                    onClick = { navController.navigate("historico_avaliacoes/$id") }
                 )
 
-                DashboardCard(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.tarefa_concluida),
-                            contentDescription = "Tarefas Concluídas",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    title = "Tarefas Concluídas",
-                    modifier = Modifier.weight(0.5f),
-                    onClick = { }
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
                 DashboardCard(
                     icon = {
                         Icon(
