@@ -145,7 +145,9 @@ public class AvaliacaoController {
                             pergunta.getTexto(),
                             pergunta.getTipo(),
                             pergunta.getValidacao(),
-                            pergunta.getOpcoes()
+                            pergunta.getOpcoes(),
+                            null,
+                            null
                         );
                         return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
                     })
@@ -189,7 +191,9 @@ public class AvaliacaoController {
                             pergunta.getTexto(),
                             pergunta.getTipo(),
                             pergunta.getValidacao(),
-                            pergunta.getOpcoes()
+                            pergunta.getOpcoes(),
+                            null,
+                            null
                         );
                         return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
                     })
@@ -223,7 +227,9 @@ public class AvaliacaoController {
                     pergunta.getTexto(),
                     pergunta.getTipo(),
                     pergunta.getValidacao(),
-                    pergunta.getOpcoes()
+                    pergunta.getOpcoes(),
+                    null,
+                    null
                 );
                 return new PerguntaValorDTO(perguntaDTO, resposta.getValor());
             })

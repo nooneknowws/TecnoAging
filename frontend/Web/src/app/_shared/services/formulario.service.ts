@@ -21,6 +21,22 @@ export class FormularioService {
     return this.http.get<Formulario[]>(`${this.apiUrl}`);
   }
 
+  criarFormulario(formulario: any): Observable<Formulario> {
+    return this.http.post<Formulario>(`${this.apiUrl}/cadastro`, formulario);
+  }
+
+  atualizarFormulario(id: number, formulario: any): Observable<Formulario> {
+    return this.http.put<Formulario>(`${this.apiUrl}/${id}`, formulario);
+  }
+
+  deletarFormulario(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getFormularioPorId(id: number): Observable<Formulario> {
+    return this.http.get<Formulario>(`${this.apiUrl}/${id}`);
+  }
+
   private mapTipoToId(tipo: TipoFormulario): number {
     switch (tipo) {
       case TipoFormulario.PFS:

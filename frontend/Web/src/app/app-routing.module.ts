@@ -22,6 +22,8 @@ import { CadastroTecnicoComponent } from './_auth/cadastro/cadastro-tecnico/cada
 import { CadastroPacienteComponent } from './_auth/cadastro/cadastro-paciente/cadastro-paciente.component';
 import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codigo.component';
 import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
+import { FormularioCadastroComponent } from './_tecnico/formulario-cadastro/formulario-cadastro.component';
+import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formulario-edicao.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
@@ -59,7 +61,9 @@ const routes: Routes = [
       { path: 'paciente/historico-paciente', component: HistoricoPacienteComponent },
       { path: 'paciente/ver-perfil', component: VerPerfilComponent },
       { path: 'avaliacoes/consultar/:pacienteId', component: ConsultarAvaliacaoComponent },
-      { path: 'avaliacoes/editar/:id', component: EditarAvaliacaoComponent }
+      { path: 'avaliacoes/editar/:id', component: EditarAvaliacaoComponent },
+      { path: 'formularios/criar', component: FormularioCadastroComponent },
+      { path: 'formularios/editar/:id', component: FormularioEdicaoComponent }
     ]
   },
   {

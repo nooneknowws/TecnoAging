@@ -15,6 +15,11 @@ public class Formulario {
     private String titulo;
     private String descricao;
 
+    private Boolean calculaPontuacao = false;
+
+    @Embedded
+    private RegraCalculo regraCalculoFinal;
+
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Etapa> etapas;
@@ -62,5 +67,21 @@ public class Formulario {
 
     public void setEtapas(List<Etapa> etapas) {
         this.etapas = etapas;
+    }
+
+    public Boolean getCalculaPontuacao() {
+        return calculaPontuacao;
+    }
+
+    public void setCalculaPontuacao(Boolean calculaPontuacao) {
+        this.calculaPontuacao = calculaPontuacao;
+    }
+
+    public RegraCalculo getRegraCalculoFinal() {
+        return regraCalculoFinal;
+    }
+
+    public void setRegraCalculoFinal(RegraCalculo regraCalculoFinal) {
+        this.regraCalculoFinal = regraCalculoFinal;
     }
 }
