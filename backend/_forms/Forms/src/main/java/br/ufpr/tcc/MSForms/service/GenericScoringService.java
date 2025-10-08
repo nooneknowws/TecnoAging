@@ -133,8 +133,19 @@ public class GenericScoringService {
         for (Pergunta pergunta : etapa.getPerguntas()) {
             ConfiguracaoPontuacao config = pergunta.getConfiguracaoPontuacao();
 
-            if (config != null && config.getPontosMaximos() != null) {
-                maxEtapa += config.getPontosMaximos();
+            if (config != null) {
+                Integer pontosMax = config.getPontosMaximos();
+
+                // Se pontosMaximos não estiver definido, calcular do mapeamento
+                if (pontosMax == null && config.getMapeamentoPontos() != null && !config.getMapeamentoPontos().isEmpty()) {
+                    pontosMax = config.getMapeamentoPontos().values().stream()
+                        .max(Integer::compareTo)
+                        .orElse(0);
+                }
+
+                if (pontosMax != null) {
+                    maxEtapa += pontosMax;
+                }
             }
         }
 

@@ -128,6 +128,14 @@ export class FormularioEdicaoComponent implements OnInit {
   }
 
   createPerguntaFormWithData(pergunta: Pergunta): FormGroup {
+    // Criar FormGroup para mapeamento de pontos
+    const mapeamentoPontosGroup = this.fb.group({});
+    if (pergunta.configuracaoPontuacao?.mapeamentoPontos) {
+      Object.entries(pergunta.configuracaoPontuacao.mapeamentoPontos).forEach(([key, value]) => {
+        mapeamentoPontosGroup.addControl(key, this.fb.control(value));
+      });
+    }
+
     const perguntaForm = this.fb.group({
       texto: [pergunta.texto, Validators.required],
       tipo: [pergunta.tipo, Validators.required],
@@ -139,15 +147,13 @@ export class FormularioEdicaoComponent implements OnInit {
       }),
       configuracaoPontuacao: this.fb.group({
         tipoPontuacao: [pergunta.configuracaoPontuacao?.tipoPontuacao || 'MAPEAMENTO_DIRETO'],
-        mapeamentoPontos: this.fb.group(pergunta.configuracaoPontuacao?.mapeamentoPontos || {}),
+        mapeamentoPontos: mapeamentoPontosGroup,
         formula: [pergunta.configuracaoPontuacao?.formula || ''],
         pontosMinimos: [pergunta.configuracaoPontuacao?.pontosMinimos || ''],
         pontosMaximos: [pergunta.configuracaoPontuacao?.pontosMaximos || '']
       }),
       metadadosCampo: this.fb.group({
         subTipo: [pergunta.metadadosCampo?.subTipo || ''],
-        placeholder: [pergunta.metadadosCampo?.placeholder || ''],
-        unidade: [pergunta.metadadosCampo?.unidade || ''],
         mascara: [pergunta.metadadosCampo?.mascara || ''],
         multiplaEscolha: [pergunta.metadadosCampo?.multiplaEscolha || false],
         minOpcoes: [pergunta.metadadosCampo?.minOpcoes || ''],
@@ -202,8 +208,6 @@ export class FormularioEdicaoComponent implements OnInit {
       }),
       metadadosCampo: this.fb.group({
         subTipo: [''],
-        placeholder: [''],
-        unidade: [''],
         mascara: [''],
         multiplaEscolha: [false],
         minOpcoes: [''],
@@ -250,22 +254,63 @@ export class FormularioEdicaoComponent implements OnInit {
   adicionarOpcao(etapaIndex: number, perguntaIndex: number): void {
     const opcoes = this.getOpcoes(etapaIndex, perguntaIndex);
     opcoes.push(this.fb.control('', Validators.required));
+
+    // Se pontuação habilitada, sincronizar mapeamento
+    if (this.formularioForm.get('calculaPontuacao')?.value) {
+      this.sincronizarMapeamentoPontos(etapaIndex, perguntaIndex);
+    }
   }
 
   removerOpcao(etapaIndex: number, perguntaIndex: number, opcaoIndex: number): void {
     const opcoes = this.getOpcoes(etapaIndex, perguntaIndex);
+    const valorOpcao = opcoes.at(opcaoIndex).value;
     opcoes.removeAt(opcaoIndex);
+
+    // Se pontuação habilitada, remover do mapeamento
+    if (this.formularioForm.get('calculaPontuacao')?.value && valorOpcao) {
+      const mapeamento = this.getMapeamentoPontos(etapaIndex, perguntaIndex);
+      mapeamento.removeControl(valorOpcao);
+    }
+  }
+
+  getMapeamentoPontos(etapaIndex: number, perguntaIndex: number): FormGroup {
+    return this.getPerguntas(etapaIndex).at(perguntaIndex).get('configuracaoPontuacao.mapeamentoPontos') as FormGroup;
+  }
+
+  sincronizarMapeamentoPontos(etapaIndex: number, perguntaIndex: number): void {
+    const opcoes = this.getOpcoes(etapaIndex, perguntaIndex);
+    const mapeamento = this.getMapeamentoPontos(etapaIndex, perguntaIndex);
+
+    // Adicionar controles para novas opções
+    opcoes.controls.forEach(opcaoControl => {
+      const valor = opcaoControl.value;
+      if (valor && !mapeamento.get(valor)) {
+        mapeamento.addControl(valor, this.fb.control(0));
+      }
+    });
+
+    // Remover controles de opções que não existem mais
+    Object.keys(mapeamento.controls).forEach(key => {
+      const existe = opcoes.controls.some(c => c.value === key);
+      if (!existe) {
+        mapeamento.removeControl(key);
+      }
+    });
   }
 
   onTipoPerguntaChange(etapaIndex: number, perguntaIndex: number): void {
     const pergunta = this.getPerguntas(etapaIndex).at(perguntaIndex);
     const tipo = pergunta.get('tipo')?.value;
     const opcoes = pergunta.get('opcoes') as FormArray;
+    const mapeamento = this.getMapeamentoPontos(etapaIndex, perguntaIndex);
 
-    // Limpar opções existentes
+    // Limpar opções e mapeamento existentes
     while (opcoes.length > 0) {
       opcoes.removeAt(0);
     }
+    Object.keys(mapeamento.controls).forEach(key => {
+      mapeamento.removeControl(key);
+    });
 
     // Adicionar opções para tipos que precisam
     if (tipo === 'radio' || tipo === 'checkbox') {
@@ -306,7 +351,13 @@ export class FormularioEdicaoComponent implements OnInit {
         error: (error) => {
           this.loading = false;
           this.showErrorAlert = true;
-          this.errorMessage = 'Erro ao atualizar formulário: ' + (error.error?.message || error.message);
+
+          // Tratar erro específico de formulário com avaliações
+          if (error.status === 400 && error.error?.error) {
+            this.errorMessage = error.error.error;
+          } else {
+            this.errorMessage = 'Erro ao atualizar formulário: ' + (error.error?.message || error.message);
+          }
         }
       });
     } else {
@@ -324,20 +375,67 @@ export class FormularioEdicaoComponent implements OnInit {
       titulo: formValue.titulo,
       descricao: formValue.descricao,
       calculaPontuacao: formValue.calculaPontuacao,
-      regraCalculoFinal: formValue.calculaPontuacao ? formValue.regraCalculoFinal : undefined,
+      regraCalculoFinal: formValue.calculaPontuacao ? this.limparRegraCalculo(formValue.regraCalculoFinal) : undefined,
       etapas: formValue.etapas.map((etapa: any) => ({
         titulo: etapa.titulo,
         descricao: etapa.descricao,
-        regraCalculoEtapa: formValue.calculaPontuacao ? etapa.regraCalculoEtapa : undefined,
+        regraCalculoEtapa: formValue.calculaPontuacao ? this.limparRegraCalculo(etapa.regraCalculoEtapa) : undefined,
         perguntas: etapa.perguntas.map((pergunta: any) => ({
           texto: pergunta.texto,
           tipo: pergunta.tipo,
           opcoes: pergunta.opcoes || [],
-          validacao: pergunta.validacao,
-          configuracaoPontuacao: formValue.calculaPontuacao ? pergunta.configuracaoPontuacao : undefined,
-          metadadosCampo: pergunta.metadadosCampo
+          validacao: this.limparValidacao(pergunta.validacao),
+          configuracaoPontuacao: formValue.calculaPontuacao ? this.limparConfiguracaoPontuacao(pergunta.configuracaoPontuacao) : undefined,
+          metadadosCampo: this.limparMetadadosCampo(pergunta.metadadosCampo)
         }))
       }))
+    };
+  }
+
+  private limparValidacao(validacao: any): any {
+    return {
+      min: validacao.min !== '' ? validacao.min : undefined,
+      max: validacao.max !== '' ? validacao.max : undefined,
+      required: validacao.required || false
+    };
+  }
+
+  private limparConfiguracaoPontuacao(config: any): any {
+    if (!config) return undefined;
+
+    return {
+      tipoPontuacao: config.tipoPontuacao,
+      mapeamentoPontos: config.mapeamentoPontos || undefined,
+      formula: config.formula || undefined,
+      pontosMinimos: config.pontosMinimos !== '' ? config.pontosMinimos : undefined,
+      pontosMaximos: config.pontosMaximos !== '' ? config.pontosMaximos : undefined
+    };
+  }
+
+  private limparMetadadosCampo(metadados: any): any {
+    if (!metadados) return undefined;
+
+    const hasValues = metadados.subTipo || metadados.mascara || metadados.multiplaEscolha ||
+                     metadados.minOpcoes !== '' || metadados.maxOpcoes !== '';
+
+    if (!hasValues) return undefined;
+
+    return {
+      subTipo: metadados.subTipo || undefined,
+      mascara: metadados.mascara || undefined,
+      multiplaEscolha: metadados.multiplaEscolha || false,
+      minOpcoes: metadados.minOpcoes !== '' ? metadados.minOpcoes : undefined,
+      maxOpcoes: metadados.maxOpcoes !== '' ? metadados.maxOpcoes : undefined
+    };
+  }
+
+  private limparRegraCalculo(regra: any): any {
+    if (!regra) return undefined;
+
+    return {
+      tipoCalculo: regra.tipoCalculo,
+      formulaCustom: regra.formulaCustom || undefined,
+      pesos: (regra.pesos && Object.keys(regra.pesos).length > 0) ? regra.pesos : undefined
     };
   }
 

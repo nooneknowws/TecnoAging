@@ -96,13 +96,18 @@ export class AvaliacaoService {
       formularioId: avaliacao.formulario?.id,
       respostas: avaliacao.respostas?.map(resposta => {
         let serializedValue: string;
-        
+
         if (Array.isArray(resposta.valor)) {
+          // Arrays precisam de JSON.stringify
           serializedValue = JSON.stringify(resposta.valor);
+        } else if (typeof resposta.valor === 'string') {
+          // Strings já vêm prontas
+          serializedValue = resposta.valor;
         } else {
-          serializedValue = JSON.stringify(resposta.valor);
+          // Números, booleanos, etc convertidos para string
+          serializedValue = String(resposta.valor);
         }
-        
+
         return {
           perguntaId: resposta.pergunta?.id,
           valor: serializedValue

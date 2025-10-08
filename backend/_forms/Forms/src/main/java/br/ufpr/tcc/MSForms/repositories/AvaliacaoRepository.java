@@ -19,4 +19,7 @@ public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
     @Query("SELECT p.texto, r.valor FROM Resposta r JOIN r.pergunta p WHERE r.avaliacao.id = :avaliacaoId")
     List<Object[]> findPerguntasAndValoresByAvaliacaoId(@Param("avaliacaoId") Long avaliacaoId);
 
+    @Query("SELECT COUNT(a) > 0 FROM Avaliacao a WHERE a.formulario.id = :formularioId")
+    boolean existsByFormularioId(@Param("formularioId") Long formularioId);
+
 }

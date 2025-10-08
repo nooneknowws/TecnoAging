@@ -16,9 +16,12 @@ import br.ufpr.tcc.MSForms.repositories.FormularioRepository;
 public class FormularioController {
 
     private final FormularioRepository formularioRepository;
+    private final br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository avaliacaoRepository;
 
-    public FormularioController(FormularioRepository formularioRepository) {
+    public FormularioController(FormularioRepository formularioRepository,
+                               br.ufpr.tcc.MSForms.repositories.AvaliacaoRepository avaliacaoRepository) {
         this.formularioRepository = formularioRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
     }
 
     @PostMapping
@@ -107,13 +110,22 @@ public class FormularioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Formulario> atualizarFormulario(@PathVariable Long id, @RequestBody FormularioCadastroDTO dto) {
+    public ResponseEntity<?> atualizarFormulario(@PathVariable Long id, @RequestBody FormularioCadastroDTO dto) {
         Optional<Formulario> formularioExistente = formularioRepository.findById(id);
 
         if (!formularioExistente.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
+        // Verificar se formulário possui avaliações
+        boolean possuiAvaliacoes = avaliacaoRepository.existsByFormularioId(id);
+
+        if (possuiAvaliacoes) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("{\"error\": \"Não é possível alterar a estrutura de pontuação de um formulário que já possui avaliações cadastradas.\"}");
+        }
+
+        // Se não houver avaliações, permitir alteração completa
         Formulario formulario = formularioExistente.get();
         formulario.setTipo(dto.getTipo());
         formulario.setTitulo(dto.getTitulo());

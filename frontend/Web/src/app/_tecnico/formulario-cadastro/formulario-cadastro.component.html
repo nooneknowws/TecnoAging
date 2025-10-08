@@ -217,16 +217,32 @@
                 <label class="form-label fw-semibold">Opções</label>
                 <div formArrayName="opcoes">
                   <div *ngFor="let opcao of getOpcoes(etapaAtual - 1, perguntaIndex).controls; let opcaoIndex = index"
-                       class="input-group mb-2">
-                    <input type="text" [formControlName]="opcaoIndex" class="form-control"
-                           placeholder="Digite a opção {{opcaoIndex + 1}}">
-                    <button type="button" class="btn btn-outline-danger"
-                            (click)="removerOpcao(etapaAtual - 1, perguntaIndex, opcaoIndex)">
-                      <i class="fas fa-minus"></i>
-                    </button>
+                       class="mb-2">
+                    <div class="row g-2">
+                      <div [class]="formularioForm.get('calculaPontuacao')?.value ? 'col-md-8' : 'col-md-12'">
+                        <div class="input-group">
+                          <span class="input-group-text">{{opcaoIndex + 1}}</span>
+                          <input type="text" [formControlName]="opcaoIndex" class="form-control"
+                                 placeholder="Digite a opção {{opcaoIndex + 1}}"
+                                 (blur)="sincronizarMapeamentoPontos(etapaAtual - 1, perguntaIndex)">
+                          <button type="button" class="btn btn-outline-danger"
+                                  (click)="removerOpcao(etapaAtual - 1, perguntaIndex, opcaoIndex)">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-md-4" *ngIf="formularioForm.get('calculaPontuacao')?.value"
+                           [formGroup]="getMapeamentoPontos(etapaAtual - 1, perguntaIndex)">
+                        <div class="input-group" *ngIf="opcao.value">
+                          <span class="input-group-text">Pontos</span>
+                          <input type="number" [formControlName]="opcao.value" class="form-control"
+                                 placeholder="0">
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm"
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
                         (click)="adicionarOpcao(etapaAtual - 1, perguntaIndex)">
                   <i class="fas fa-plus"></i> Adicionar Opção
                 </button>
@@ -283,17 +299,25 @@
               </div>
 
               <!-- Metadados do Campo -->
-              <div formGroupName="metadadosCampo" class="border rounded p-3 mt-3 bg-light">
-                <h6 class="mb-3">Configurações Avançadas</h6>
+              <div formGroupName="metadadosCampo" class="border rounded p-3 mt-3 bg-light" *ngIf="pergunta.get('tipo')?.value === 'checkbox'">
+                <h6 class="mb-3">Configurações Avançadas - Múltipla Escolha</h6>
                 <div class="row">
-                  <div class="col-md-6">
-                    <label for="placeholder{{perguntaIndex}}" class="form-label">Placeholder</label>
-                    <input type="text" formControlName="placeholder" [id]="'placeholder' + perguntaIndex" class="form-control">
+                  <div class="col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" formControlName="multiplaEscolha"
+                             [id]="'multiplaEscolha' + perguntaIndex">
+                      <label class="form-check-label" [for]="'multiplaEscolha' + perguntaIndex">
+                        Permitir Múltiplas Escolhas
+                      </label>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <label for="unidade{{perguntaIndex}}" class="form-label">Unidade</label>
-                    <input type="text" formControlName="unidade" [id]="'unidade' + perguntaIndex" class="form-control"
-                           placeholder="Ex: kg, cm, anos">
+                  <div class="col-md-4" *ngIf="pergunta.get('metadadosCampo.multiplaEscolha')?.value">
+                    <label for="minOpcoes{{perguntaIndex}}" class="form-label">Mínimo de Opções</label>
+                    <input type="number" formControlName="minOpcoes" [id]="'minOpcoes' + perguntaIndex" class="form-control">
+                  </div>
+                  <div class="col-md-4" *ngIf="pergunta.get('metadadosCampo.multiplaEscolha')?.value">
+                    <label for="maxOpcoes{{perguntaIndex}}" class="form-label">Máximo de Opções</label>
+                    <input type="number" formControlName="maxOpcoes" [id]="'maxOpcoes' + perguntaIndex" class="form-control">
                   </div>
                 </div>
               </div>

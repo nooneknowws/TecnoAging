@@ -14,8 +14,6 @@ export interface ConfiguracaoPontuacao {
 
 export interface MetadadosCampo {
   subTipo?: string;
-  placeholder?: string;
-  unidade?: string;
   mascara?: string;
   multiplaEscolha?: boolean;
   minOpcoes?: number;
