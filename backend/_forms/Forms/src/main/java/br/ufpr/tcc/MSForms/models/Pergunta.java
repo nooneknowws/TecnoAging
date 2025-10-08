@@ -27,9 +27,20 @@ public class Pergunta {
     private Validacao validacao;
 
     @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoPontuacao", column = @Column(name = "tipo_pontuacao")),
+        @AttributeOverride(name = "pontosMinimos", column = @Column(name = "pontos_minimos")),
+        @AttributeOverride(name = "pontosMaximos", column = @Column(name = "pontos_maximos"))
+    })
     private ConfiguracaoPontuacao configuracaoPontuacao;
 
     @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "subTipo", column = @Column(name = "sub_tipo")),
+        @AttributeOverride(name = "multiplaEscolha", column = @Column(name = "multipla_escolha")),
+        @AttributeOverride(name = "minOpcoes", column = @Column(name = "min_opcoes")),
+        @AttributeOverride(name = "maxOpcoes", column = @Column(name = "max_opcoes"))
+    })
     private MetadadosCampo metadadosCampo;
 
     @ManyToOne(fetch = FetchType.LAZY)

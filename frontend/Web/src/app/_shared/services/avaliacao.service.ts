@@ -133,7 +133,8 @@ export class AvaliacaoService {
       tipo: undefined,
       titulo: avaliacaoData.formulario,
       descricao: avaliacaoData.formularioDesc,
-      etapas: undefined
+      etapas: undefined,
+      calculaPontuacao: false
     };
 
     // Transform the new response format to the expected format

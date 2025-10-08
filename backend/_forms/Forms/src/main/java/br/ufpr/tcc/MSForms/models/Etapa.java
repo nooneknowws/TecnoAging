@@ -17,6 +17,10 @@ public class Etapa {
     private String descricao;
 
     @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoCalculo", column = @Column(name = "tipo_calculo")),
+        @AttributeOverride(name = "formulaCustom", column = @Column(name = "formula_custom"))
+    })
     private RegraCalculo regraCalculoEtapa;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,6 +18,10 @@ public class Formulario {
     private Boolean calculaPontuacao = false;
 
     @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoCalculo", column = @Column(name = "tipo_calculo")),
+        @AttributeOverride(name = "formulaCustom", column = @Column(name = "formula_custom"))
+    })
     private RegraCalculo regraCalculoFinal;
 
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)

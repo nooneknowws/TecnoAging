@@ -15,7 +15,7 @@ public class ConfiguracaoPontuacao {
 
     private String tipoPontuacao;
 
-    @ElementCollection
+    @ElementCollection(fetch = jakarta.persistence.FetchType.EAGER)
     @CollectionTable(name = "pontuacao_mapeamento", joinColumns = @JoinColumn(name = "pergunta_id"))
     @MapKeyColumn(name = "chave")
     @Column(name = "pontos")

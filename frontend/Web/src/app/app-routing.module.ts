@@ -71,7 +71,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: ':tipo',
+        path: ':id',
         component: FormularioComponent
       }
     ]

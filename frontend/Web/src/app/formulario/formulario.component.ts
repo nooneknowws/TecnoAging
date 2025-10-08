@@ -4,7 +4,6 @@ import { Formulario } from '../_shared/models/formulario/formulario';
 import { Pergunta } from '../_shared/models/formulario/pergunta';
 import { FormularioService } from '../_shared/services/formulario.service';
 import { AvaliacaoService } from '../_shared/services/avaliacao.service';
-import { TipoFormulario } from '../_shared/models/tipos.formulario.enum';
 import { Avaliacao } from '../_shared/models/avaliacao/avaliacao';
 import { Resposta } from '../_shared/models/avaliacao/resposta';
 import { Etapa } from '../_shared/models/formulario/etapa';
@@ -16,13 +15,13 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './formulario.component.css'
 })
 export class FormularioComponent implements OnInit {
-  @Input() tipoFormulario!: TipoFormulario;
+  @Input() formularioId!: number;
   formulario?: Formulario;
   formGroup!: FormGroup;
   etapaAtual = 0;
   respostasTemp: Map<number, Resposta> = new Map();
   pacienteId?: number;
- 
+
   showSuccessAlert = false;
   showErrorAlert = false;
   errorMessage = '';
@@ -38,7 +37,7 @@ export class FormularioComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.tipoFormulario = params['tipo'] as TipoFormulario;
+      this.formularioId = +params['id'];
       this.carregarFormulario();
     });
 
@@ -49,9 +48,9 @@ export class FormularioComponent implements OnInit {
 
   private async carregarFormulario() {
     try {
-      this.formulario = await this.formularioService.getFormularioConfig(this.tipoFormulario).toPromise();
+      this.formulario = await this.formularioService.getFormularioPorId(this.formularioId).toPromise();
       this.inicializarFormulario();
-      
+
       this.formGroup.valueChanges.subscribe(values => {
         this.atualizarRespostas(values);
       });
