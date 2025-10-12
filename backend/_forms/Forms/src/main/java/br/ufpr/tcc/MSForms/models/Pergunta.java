@@ -26,6 +26,23 @@ public class Pergunta {
     @Embedded
     private Validacao validacao;
 
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoPontuacao", column = @Column(name = "tipo_pontuacao")),
+        @AttributeOverride(name = "pontosMinimos", column = @Column(name = "pontos_minimos")),
+        @AttributeOverride(name = "pontosMaximos", column = @Column(name = "pontos_maximos"))
+    })
+    private ConfiguracaoPontuacao configuracaoPontuacao;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "subTipo", column = @Column(name = "sub_tipo")),
+        @AttributeOverride(name = "multiplaEscolha", column = @Column(name = "multipla_escolha")),
+        @AttributeOverride(name = "minOpcoes", column = @Column(name = "min_opcoes")),
+        @AttributeOverride(name = "maxOpcoes", column = @Column(name = "max_opcoes"))
+    })
+    private MetadadosCampo metadadosCampo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "etapa_id")
     @JsonBackReference
@@ -86,5 +103,21 @@ public class Pergunta {
 
     public void setEtapa(Etapa etapa) {
         this.etapa = etapa;
+    }
+
+    public ConfiguracaoPontuacao getConfiguracaoPontuacao() {
+        return configuracaoPontuacao;
+    }
+
+    public void setConfiguracaoPontuacao(ConfiguracaoPontuacao configuracaoPontuacao) {
+        this.configuracaoPontuacao = configuracaoPontuacao;
+    }
+
+    public MetadadosCampo getMetadadosCampo() {
+        return metadadosCampo;
+    }
+
+    public void setMetadadosCampo(MetadadosCampo metadadosCampo) {
+        this.metadadosCampo = metadadosCampo;
     }
 }

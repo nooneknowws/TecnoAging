@@ -226,6 +226,18 @@ app.get('/api/formularios/', verifyJWT, (req,  res,  next) => {
 app.get('/api/formularios/:id', verifyJWT, (req,  res,  next) => {
     formsServiceProxy(req, res, next);
 })
+// criar formulário cadastrável
+app.post('/api/formularios/cadastro', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req, res, next);
+})
+// atualizar formulário
+app.put('/api/formularios/:id', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req, res, next);
+})
+// deletar formulário
+app.delete('/api/formularios/:id', verifyJWT, (req, res, next) => {
+    formsServiceProxy(req, res, next);
+})
 // registro de avaliações
 app.post('/api/avaliacoes/forms', verifyJWT, (req, res, next) => {
     formsServiceProxy(req,res,next);

@@ -1,34 +1,17 @@
 package br.ufpr.tcc.MSForms.service;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.ufpr.tcc.MSForms.models.Avaliacao;
-import br.ufpr.tcc.MSForms.models.Resposta;
-import br.ufpr.tcc.MSForms.scoring.ScoringStrategy;
-import br.ufpr.tcc.MSForms.scoring.ScoringStrategyFactory;
 
 @Service
 public class ScoringService {
-    
+
+    @Autowired
+    private GenericScoringService genericScoringService;
+
     public void calculateAndUpdateScore(Avaliacao avaliacao) {
-        String tipoFormulario = avaliacao.getFormulario().getTipo();
-        List<Resposta> respostas = avaliacao.getRespostas();
-        
-        try {
-            ScoringStrategy strategy = ScoringStrategyFactory.createStrategy(tipoFormulario);
-            
-            int pontuacaoCalculada = strategy.calculateScore(respostas);
-            int pontuacaoMaxima = strategy.getMaxScore();
-            
-            avaliacao.setPontuacaoTotal(pontuacaoCalculada);
-            avaliacao.setPontuacaoMaxima(pontuacaoMaxima);
-            
-        } catch (IllegalArgumentException e) {
-            // Formulário sem estratégia de pontuação definida
-            // Pode implementar uma estratégia padrão ou deixar pontuação zerada
-            avaliacao.setPontuacaoTotal(0);
-            avaliacao.setPontuacaoMaxima(0);
-        }
+        genericScoringService.calculateAndUpdateScore(avaliacao);
     }
     
     public double calculatePercentageScore(Avaliacao avaliacao) {

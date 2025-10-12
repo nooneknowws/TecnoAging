@@ -55,10 +55,10 @@
             <p>Idade: {{paciente.idade}} anos</p>
           </div>
           <div class="card-actions">
-            <button class="btn-primary" (click)="consultarPerfil(paciente)">
+            <button class="btn-primary" (click)="consultarPerfil(paciente); $event.stopPropagation()">
               <i class="fas fa-user"></i> Ver Perfil
             </button>
-            <button class="btn-secondary" (click)="editarPerfil(paciente)">
+            <button class="btn-secondary" (click)="editarPerfil(paciente); $event.stopPropagation()">
               <i class="fas fa-edit"></i> Editar Perfil
             </button>
           </div>
@@ -88,11 +88,11 @@
               <td>{{paciente.idade}} anos</td>
               <td>
                 <div class="table-actions">
-                  <button class="btn btn-sm btn-primary me-2" (click)="consultarPerfil(paciente)">
+                  <button class="btn btn-sm btn-primary me-2" (click)="consultarPerfil(paciente); $event.stopPropagation()">
                     <i class="fas fa-eye"></i>
                     Ver Perfil
                   </button>
-                  <button class="btn btn-sm btn-secondary" (click)="editarPerfil(paciente)">
+                  <button class="btn btn-sm btn-secondary" (click)="editarPerfil(paciente); $event.stopPropagation()">
                     <i class="fas fa-edit"></i>
                     Editar Perfil
                   </button>
@@ -111,17 +111,22 @@
           <h2>Formulários Disponíveis</h2>
           <p class="text-muted">Selecione um formulário para preencher para o paciente escolhido.</p>
         </div>
-        <div class="view-toggle">
-          <button class="btn btn-outline-secondary btn-sm me-2" 
-                  [class.active]="viewMode === 'table'"
-                  (click)="toggleView('table')">
-            <i class="fas fa-th"></i> Grid
+        <div class="d-flex gap-2">
+          <button class="btn btn-success btn-sm" [routerLink]="['/tecnico/formularios/criar']">
+            <i class="fas fa-plus"></i> Criar Formulário
           </button>
-          <button class="btn btn-outline-secondary btn-sm"
-                  [class.active]="viewMode === 'grid'"
-                  (click)="toggleView('grid')">
-            <i class="fas fa-list"></i> Tabela
-          </button>
+          <div class="view-toggle">
+            <button class="btn btn-outline-secondary btn-sm me-2" 
+                    [class.active]="viewMode === 'grid'"
+                    (click)="toggleView('grid')">
+              <i class="fas fa-th"></i> Grid
+            </button>
+            <button class="btn btn-outline-secondary btn-sm"
+                    [class.active]="viewMode === 'table'"
+                    (click)="toggleView('table')">
+              <i class="fas fa-list"></i> Tabela
+            </button>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -170,40 +175,75 @@
           </div>
         </div>      
         <div class="forms-list col-6" [class.disabled]="!selectedPaciente" [class.col-12]="!selectedPaciente">
-          <!-- Grid -->
-          <div class="forms-grid" *ngIf="viewMode === 'table'">
-            <div class="form-card" *ngFor="let form of formulariosDisponiveis">
-              <h5>{{form.titulo}}</h5>
-              <button
-                class="btn btn-primary"
-                (click)="navigateToFormulario(form.tipo)"
-                [disabled]="!selectedPaciente">
-                <i class="fas fa-clipboard"></i>
-                Preencher
-              </button>
+          <!-- Loading Spinner -->
+          <div *ngIf="loadingFormularios" class="d-flex justify-content-center my-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando formulários...</span>
             </div>
           </div>
-      
+
+          <!-- Alert quando não há formulários -->
+          <div class="alert alert-info" *ngIf="!loadingFormularios && formulariosDisponiveis.length === 0">
+            <p class="text-muted mb-0">Nenhum formulário disponível. Crie um novo formulário para começar.</p>
+          </div>
+
+          <!-- Grid -->
+          <div class="forms-grid" *ngIf="!loadingFormularios && viewMode === 'grid' && formulariosDisponiveis.length > 0">
+            <div class="form-card" *ngFor="let form of formulariosDisponiveis">
+              <h5>{{form.titulo}}</h5>
+              <p class="text-muted small mb-2">{{form.tipo}}</p>
+              <div class="d-flex gap-2 justify-content-center">
+                <button
+                  class="btn btn-primary btn-sm"
+                  (click)="navigateToFormulario(form.id); $event.stopPropagation()"
+                  [disabled]="!selectedPaciente">
+                  <i class="fas fa-clipboard"></i>
+                  Preencher
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="editarFormulario(form.id, $event)">
+                  <i class="fas fa-edit"></i>
+                  Editar
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- Tabela -->
-          <div class="table-responsive" *ngIf="viewMode === 'grid'">
+          <div class="table-responsive" *ngIf="!loadingFormularios && viewMode === 'table' && formulariosDisponiveis.length > 0">
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
+                  <th>Tipo</th>
                   <th>Formulário</th>
-                  <th>Ação</th>
+                  <th>Descrição</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let form of formulariosDisponiveis">
-                  <td>{{form.titulo}}</td>
                   <td>
-                    <button
-                      class="btn btn-sm btn-primary"
-                      (click)="navigateToFormulario(form.tipo)"
-                      [disabled]="!selectedPaciente">
-                      <i class="fas fa-clipboard"></i>
-                      Preencher
-                    </button>
+                    <span class="badge bg-primary">{{form.tipo}}</span>
+                  </td>
+                  <td>{{form.titulo}}</td>
+                  <td>{{form.descricao}}</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button
+                        class="btn btn-sm btn-primary"
+                        (click)="navigateToFormulario(form.id); $event.stopPropagation()"
+                        [disabled]="!selectedPaciente">
+                        <i class="fas fa-clipboard"></i>
+                        Preencher
+                      </button>
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        (click)="editarFormulario(form.id, $event)">
+                        <i class="fas fa-edit"></i>
+                        Editar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -252,6 +292,7 @@
                   <tr *ngFor="let teste of historico">
                     <td>{{teste.formularioDesc}}</td>
                     <td>{{teste.tecnico}}</td>
+                    <td>{{teste.status || '—'}}</td>
                     <td>
                       <button class="btn btn-sm btn-info" 
                               type="button" 

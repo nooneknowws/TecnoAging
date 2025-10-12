@@ -16,6 +16,13 @@ public class Etapa {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoCalculo", column = @Column(name = "tipo_calculo")),
+        @AttributeOverride(name = "formulaCustom", column = @Column(name = "formula_custom"))
+    })
+    private RegraCalculo regraCalculoEtapa;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formulario_id")
     @JsonBackReference
@@ -63,5 +70,13 @@ public class Etapa {
 
     public void setPerguntas(List<Pergunta> perguntas) {
         this.perguntas = perguntas;
+    }
+
+    public RegraCalculo getRegraCalculoEtapa() {
+        return regraCalculoEtapa;
+    }
+
+    public void setRegraCalculoEtapa(RegraCalculo regraCalculoEtapa) {
+        this.regraCalculoEtapa = regraCalculoEtapa;
     }
 }

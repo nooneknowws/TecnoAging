@@ -15,6 +15,15 @@ public class Formulario {
     private String titulo;
     private String descricao;
 
+    private Boolean calculaPontuacao = false;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "tipoCalculo", column = @Column(name = "tipo_calculo")),
+        @AttributeOverride(name = "formulaCustom", column = @Column(name = "formula_custom"))
+    })
+    private RegraCalculo regraCalculoFinal;
+
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Etapa> etapas;
@@ -62,5 +71,21 @@ public class Formulario {
 
     public void setEtapas(List<Etapa> etapas) {
         this.etapas = etapas;
+    }
+
+    public Boolean getCalculaPontuacao() {
+        return calculaPontuacao;
+    }
+
+    public void setCalculaPontuacao(Boolean calculaPontuacao) {
+        this.calculaPontuacao = calculaPontuacao;
+    }
+
+    public RegraCalculo getRegraCalculoFinal() {
+        return regraCalculoFinal;
+    }
+
+    public void setRegraCalculoFinal(RegraCalculo regraCalculoFinal) {
+        this.regraCalculoFinal = regraCalculoFinal;
     }
 }

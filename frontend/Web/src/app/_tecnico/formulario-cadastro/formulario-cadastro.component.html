@@ -1,0 +1,374 @@
+<div class="container mt-4">
+  <!-- Alert de Sucesso -->
+  <div *ngIf="showSuccessAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Sucesso!</strong> Formulário criado com sucesso.
+    <div class="mt-2">
+      <a [routerLink]="['/tecnico']" class="alert-link">Voltar para a página inicial</a>
+    </div>
+    <button type="button" class="btn-close" (click)="fecharAlerta()" aria-label="Close"></button>
+  </div>
+
+  <!-- Alert de Erro -->
+  <div *ngIf="showErrorAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Erro!</strong> {{errorMessage}}
+    <button type="button" class="btn-close" (click)="fecharAlerta()" aria-label="Close"></button>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress mb-4">
+    <div class="progress-bar"
+         [style.width.%]="((etapaAtual + 1) / etapas.length) * 100">
+      Etapa {{etapaAtual + 1}} de {{etapas.length}}
+    </div>
+  </div>
+
+  <!-- Form Principal -->
+  <form [formGroup]="formularioForm" (ngSubmit)="salvarFormulario()">
+
+    <!-- Configurações Básicas do Formulário -->
+    <div class="card mb-4" *ngIf="etapaAtual === 0">
+      <div class="card-header">
+        <h4>Configurações Básicas do Formulário</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="tipo" class="form-label fw-semibold">Tipo do Formulário*</label>
+              <input type="text" formControlName="tipo" id="tipo" class="form-control"
+                     [class.is-invalid]="isFieldInvalid('tipo')"
+                    placeholder="Ex: IVCF20, SEDENTARISMO, MINIMENTAL, etc.">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('tipo')">
+                Campo obrigatório
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="titulo" class="form-label fw-semibold">Título*</label>
+              <input type="text" formControlName="titulo" id="titulo" class="form-control"
+                     [class.is-invalid]="isFieldInvalid('titulo')"
+                     placeholder="Digite o título do formulário">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('titulo')">
+                Campo obrigatório
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="descricao" class="form-label fw-semibold">Descrição*</label>
+          <textarea formControlName="descricao" id="descricao" class="form-control" rows="3"
+                    [class.is-invalid]="isFieldInvalid('descricao')"
+                    placeholder="Digite a descrição do formulário"></textarea>
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('descricao')">
+            Campo obrigatório
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="calculaPontuacao" id="calculaPontuacao">
+            <label class="form-check-label fw-semibold" for="calculaPontuacao">
+              Calcular Pontuação
+            </label>
+          </div>
+          <small class="form-text text-muted">
+            Marque esta opção se o formulário deve calcular pontuação baseada nas respostas
+          </small>
+        </div>
+
+        <!-- Regra de Cálculo Final (se pontuação habilitada) -->
+        <div *ngIf="formularioForm.get('calculaPontuacao')?.value" formGroupName="regraCalculoFinal" class="border rounded p-3 bg-light">
+          <h6 class="mb-3">Regra de Cálculo Final</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="tipoCalculoFinal" class="form-label">Tipo de Cálculo</label>
+              <select formControlName="tipoCalculo" id="tipoCalculoFinal" class="form-select">
+                <option *ngFor="let tipo of tiposCalculo" [value]="tipo.value">
+                  {{tipo.label}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6" *ngIf="formularioForm.get('regraCalculoFinal.tipoCalculo')?.value === 'FORMULA_CUSTOM'">
+              <label for="formulaCustomFinal" class="form-label">Fórmula Personalizada</label>
+              <input type="text" formControlName="formulaCustom" id="formulaCustomFinal" class="form-control"
+                     placeholder="Ex: (etapa1 + etapa2) / 2">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuração das Etapas -->
+    <div class="card" *ngIf="etapaAtual > 0">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>Etapa {{etapaAtual}}: {{etapas.at(etapaAtual - 1).get('titulo')?.value || 'Nova Etapa'}}</h4>
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="adicionarEtapa()">
+            <i class="fas fa-plus"></i> Adicionar Etapa
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm"
+                  [disabled]="etapas.length <= 1"
+                  (click)="removerEtapa(etapaAtual - 1)">
+            <i class="fas fa-minus"></i> Remover Etapa
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body" [formGroup]="getEtapaFormGroup(etapaAtual - 1)">
+        <!-- Informações da Etapa -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="tituloEtapa" class="form-label fw-semibold">Título da Etapa*</label>
+            <input type="text" formControlName="titulo" id="tituloEtapa" class="form-control"
+                   [class.is-invalid]="isFieldInvalid('titulo', etapaAtual - 1)"
+                   placeholder="Digite o título da etapa">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('titulo', etapaAtual - 1)">
+              Campo obrigatório
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="descricaoEtapa" class="form-label fw-semibold">Descrição da Etapa*</label>
+            <input type="text" formControlName="descricao" id="descricaoEtapa" class="form-control"
+                   [class.is-invalid]="isFieldInvalid('descricao', etapaAtual - 1)"
+                   placeholder="Digite a descrição da etapa">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('descricao', etapaAtual - 1)">
+              Campo obrigatório
+            </div>
+          </div>
+        </div>
+
+        <!-- Regra de Cálculo da Etapa (se pontuação habilitada) -->
+        <div *ngIf="formularioForm.get('calculaPontuacao')?.value" formGroupName="regraCalculoEtapa" class="border rounded p-3 bg-light mb-4">
+          <h6 class="mb-3">Regra de Cálculo da Etapa</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="tipoCalculoEtapa" class="form-label">Tipo de Cálculo</label>
+              <select formControlName="tipoCalculo" id="tipoCalculoEtapa" class="form-select">
+                <option *ngFor="let tipo of tiposCalculo" [value]="tipo.value">
+                  {{tipo.label}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6" *ngIf="etapas.at(etapaAtual - 1)?.get('regraCalculoEtapa.tipoCalculo')?.value === 'FORMULA_CUSTOM'">
+              <label for="formulaCustomEtapa" class="form-label">Fórmula Personalizada</label>
+              <input type="text" formControlName="formulaCustom" id="formulaCustomEtapa" class="form-control"
+                     placeholder="Ex: (pergunta1 + pergunta2) * 2">
+            </div>
+          </div>
+        </div>
+
+        <!-- Perguntas da Etapa -->
+        <div class="border rounded p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6>Perguntas da Etapa</h6>
+            <button type="button" class="btn btn-outline-success btn-sm"
+                    (click)="adicionarPergunta(etapaAtual - 1)">
+              <i class="fas fa-plus"></i> Adicionar Pergunta
+            </button>
+          </div>
+
+          <!-- Mensagem quando não há perguntas -->
+          <div *ngIf="getPerguntas(etapaAtual - 1).length === 0" class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Esta etapa não possui perguntas. Clique em "Adicionar Pergunta" para adicionar uma pergunta, ou deixe vazia se esta etapa for apenas informativa.
+          </div>
+
+          <div formArrayName="perguntas">
+            <div *ngFor="let pergunta of getPerguntas(etapaAtual - 1).controls; let perguntaIndex = index"
+                 class="border rounded p-3 mb-3 bg-white" [formGroupName]="perguntaIndex">
+
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Pergunta {{perguntaIndex + 1}}</h6>
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                        (click)="removerPergunta(etapaAtual - 1, perguntaIndex)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+
+              <div class="row">
+                <div class="col-md-8">
+                  <label for="textoPergunta{{perguntaIndex}}" class="form-label fw-semibold">Texto da Pergunta*</label>
+                  <input type="text" formControlName="texto" [id]="'textoPergunta' + perguntaIndex" class="form-control"
+                         [class.is-invalid]="isFieldInvalid('texto', etapaAtual - 1, perguntaIndex)"
+                         placeholder="Digite o texto da pergunta">
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('texto', etapaAtual - 1, perguntaIndex)">
+                    Campo obrigatório
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="tipoPergunta{{perguntaIndex}}" class="form-label fw-semibold">Tipo de Campo*</label>
+                  <select formControlName="tipo" [id]="'tipoPergunta' + perguntaIndex" class="form-select"
+                          [class.is-invalid]="isFieldInvalid('tipo', etapaAtual - 1, perguntaIndex)"
+                          (change)="onTipoPerguntaChange(etapaAtual - 1, perguntaIndex)">
+                    <option *ngFor="let tipo of tiposCampo" [value]="tipo.value">
+                      {{tipo.label}}
+                    </option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('tipo', etapaAtual - 1, perguntaIndex)">
+                    Campo obrigatório
+                  </div>
+                </div>
+              </div>
+
+              <!-- Opções para radio/checkbox -->
+              <div *ngIf="shouldShowOptions(pergunta.get('tipo')?.value)" class="mt-3">
+                <label class="form-label fw-semibold">Opções</label>
+                <div formArrayName="opcoes">
+                  <div *ngFor="let opcao of getOpcoes(etapaAtual - 1, perguntaIndex).controls; let opcaoIndex = index"
+                       class="mb-2">
+                    <div class="row g-2">
+                      <div [class]="formularioForm.get('calculaPontuacao')?.value ? 'col-md-8' : 'col-md-12'">
+                        <div class="input-group">
+                          <span class="input-group-text">{{opcaoIndex + 1}}</span>
+                          <input type="text" [formControlName]="opcaoIndex" class="form-control"
+                                 placeholder="Digite a opção {{opcaoIndex + 1}}"
+                                 (blur)="sincronizarMapeamentoPontos(etapaAtual - 1, perguntaIndex)">
+                          <button type="button" class="btn btn-outline-danger"
+                                  (click)="removerOpcao(etapaAtual - 1, perguntaIndex, opcaoIndex)">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-md-4" *ngIf="formularioForm.get('calculaPontuacao')?.value"
+                           [formGroup]="getMapeamentoPontos(etapaAtual - 1, perguntaIndex)">
+                        <div class="input-group" *ngIf="opcao.value">
+                          <span class="input-group-text">Pontos</span>
+                          <input type="number" [formControlName]="opcao.value" class="form-control"
+                                 placeholder="0">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
+                        (click)="adicionarOpcao(etapaAtual - 1, perguntaIndex)">
+                  <i class="fas fa-plus"></i> Adicionar Opção
+                </button>
+              </div>
+
+              <!-- Validação -->
+              <div formGroupName="validacao" class="row mt-3">
+                <div class="col-md-3" *ngIf="shouldShowMinMax(pergunta.get('tipo')?.value)">
+                  <label for="minValue{{perguntaIndex}}" class="form-label">Valor Mínimo</label>
+                  <input type="number" formControlName="min" [id]="'minValue' + perguntaIndex" class="form-control">
+                </div>
+                <div class="col-md-3" *ngIf="shouldShowMinMax(pergunta.get('tipo')?.value)">
+                  <label for="maxValue{{perguntaIndex}}" class="form-label">Valor Máximo</label>
+                  <input type="number" formControlName="max" [id]="'maxValue' + perguntaIndex" class="form-control">
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" formControlName="required"
+                           [id]="'required' + perguntaIndex">
+                    <label class="form-check-label" [for]="'required' + perguntaIndex">
+                      Campo Obrigatório
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Configuração de Pontuação (se habilitada) -->
+              <div *ngIf="formularioForm.get('calculaPontuacao')?.value" formGroupName="configuracaoPontuacao"
+                   class="border rounded p-3 mt-3 bg-light">
+                <h6 class="mb-3">Configuração de Pontuação</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <label for="tipoPontuacao{{perguntaIndex}}" class="form-label">Tipo de Pontuação</label>
+                    <select formControlName="tipoPontuacao" [id]="'tipoPontuacao' + perguntaIndex" class="form-select">
+                      <option *ngFor="let tipo of tiposPontuacao" [value]="tipo.value">
+                        {{tipo.label}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="pontosMin{{perguntaIndex}}" class="form-label">Pontos Mínimos</label>
+                    <input type="number" formControlName="pontosMinimos" [id]="'pontosMin' + perguntaIndex" class="form-control">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="pontosMax{{perguntaIndex}}" class="form-label">Pontos Máximos</label>
+                    <input type="number" formControlName="pontosMaximos" [id]="'pontosMax' + perguntaIndex" class="form-control">
+                  </div>
+                </div>
+                <div class="mt-3" *ngIf="pergunta.get('configuracaoPontuacao.tipoPontuacao')?.value === 'FORMULA'">
+                  <label for="formulaPontuacao{{perguntaIndex}}" class="form-label">Fórmula de Pontuação</label>
+                  <input type="text" formControlName="formula" [id]="'formulaPontuacao' + perguntaIndex" class="form-control"
+                         placeholder="Ex: valor * 2">
+                </div>
+              </div>
+
+              <!-- Metadados do Campo -->
+              <div formGroupName="metadadosCampo" class="border rounded p-3 mt-3 bg-light" *ngIf="pergunta.get('tipo')?.value === 'checkbox'">
+                <h6 class="mb-3">Configurações Avançadas - Múltipla Escolha</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" formControlName="multiplaEscolha"
+                             [id]="'multiplaEscolha' + perguntaIndex">
+                      <label class="form-check-label" [for]="'multiplaEscolha' + perguntaIndex">
+                        Permitir Múltiplas Escolhas
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-4" *ngIf="pergunta.get('metadadosCampo.multiplaEscolha')?.value">
+                    <label for="minOpcoes{{perguntaIndex}}" class="form-label">Mínimo de Opções</label>
+                    <input type="number" formControlName="minOpcoes" [id]="'minOpcoes' + perguntaIndex" class="form-control">
+                  </div>
+                  <div class="col-md-4" *ngIf="pergunta.get('metadadosCampo.multiplaEscolha')?.value">
+                    <label for="maxOpcoes{{perguntaIndex}}" class="form-label">Máximo de Opções</label>
+                    <input type="number" formControlName="maxOpcoes" [id]="'maxOpcoes' + perguntaIndex" class="form-control">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegação e Ações -->
+    <div class="card-footer">
+      <div class="d-flex justify-content-between">
+        <!-- Navegação de Etapas -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-secondary"
+                  [disabled]="etapaAtual === 0"
+                  (click)="etapaAnterior()">
+            <i class="fas fa-chevron-left"></i> Anterior
+          </button>
+
+          <!-- Botões de navegação por etapa -->
+          <button *ngFor="let etapa of etapas.controls; let i = index"
+                  type="button"
+                  class="btn"
+                  [class.btn-primary]="i === etapaAtual - 1"
+                  [class.btn-outline-primary]="i !== etapaAtual - 1"
+                  [class.btn-secondary]="i === -1 && etapaAtual === 0"
+                  [class.btn-outline-secondary]="i === -1 && etapaAtual !== 0"
+                  (click)="navegarEtapa(i + 1)">
+            {{i === -1 ? 'Config' : 'Etapa ' + (i + 1)}}
+          </button>
+
+          <button type="button" class="btn btn-outline-secondary"
+                  [disabled]="etapaAtual >= etapas.length"
+                  (click)="proximaEtapa()">
+            Próxima <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Ações principais -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-success" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i *ngIf="!loading" class="fas fa-save me-2"></i>
+            {{loading ? 'Salvando...' : 'Salvar Formulário'}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

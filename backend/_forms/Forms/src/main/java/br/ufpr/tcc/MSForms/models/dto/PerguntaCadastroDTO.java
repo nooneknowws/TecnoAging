@@ -1,36 +1,28 @@
 package br.ufpr.tcc.MSForms.models.dto;
 
-import java.util.List;
 import br.ufpr.tcc.MSForms.models.Validacao;
+import java.util.List;
 
-public class PerguntaDTO {
-    private Long id;
+public class PerguntaCadastroDTO {
+
     private String texto;
     private String tipo;
-    private Validacao validacao;
     private List<String> opcoes;
+    private Validacao validacao;
     private ConfiguracaoPontuacaoDTO configuracaoPontuacao;
     private MetadadosCampoDTO metadadosCampo;
 
-    public PerguntaDTO() {}
+    public PerguntaCadastroDTO() {
+    }
 
-    public PerguntaDTO(Long id, String texto, String tipo, Validacao validacao, List<String> opcoes,
-                       ConfiguracaoPontuacaoDTO configuracaoPontuacao, MetadadosCampoDTO metadadosCampo) {
-        this.id = id;
+    public PerguntaCadastroDTO(String texto, String tipo, List<String> opcoes, Validacao validacao,
+                               ConfiguracaoPontuacaoDTO configuracaoPontuacao, MetadadosCampoDTO metadadosCampo) {
         this.texto = texto;
         this.tipo = tipo;
-        this.validacao = validacao;
         this.opcoes = opcoes;
+        this.validacao = validacao;
         this.configuracaoPontuacao = configuracaoPontuacao;
         this.metadadosCampo = metadadosCampo;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTexto() {
@@ -49,20 +41,20 @@ public class PerguntaDTO {
         this.tipo = tipo;
     }
 
-    public Validacao getValidacao() {
-        return validacao;
-    }
-
-    public void setValidacao(Validacao validacao) {
-        this.validacao = validacao;
-    }
-
     public List<String> getOpcoes() {
         return opcoes;
     }
 
     public void setOpcoes(List<String> opcoes) {
         this.opcoes = opcoes;
+    }
+
+    public Validacao getValidacao() {
+        return validacao;
+    }
+
+    public void setValidacao(Validacao validacao) {
+        this.validacao = validacao;
     }
 
     public ConfiguracaoPontuacaoDTO getConfiguracaoPontuacao() {
