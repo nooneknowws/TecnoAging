@@ -159,15 +159,6 @@ fun CadastroScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         onClick = { currentStep++ })
-                    TextButton(
-                        onClick = { navController.navigate("login") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                    ) {
-                        Text(text = "Já tem uma conta? Faça Login", color = AppColors.Primary)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 1 -> { // Etapa 2: Endereço
@@ -186,15 +177,6 @@ fun CadastroScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         onClick = { currentStep++ })
-                    TextButton(
-                        onClick = { navController.navigate("login") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                    ) {
-                        Text(text = "Já tem uma conta? Faça Login", color = AppColors.Primary)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 2 -> { // Etapa 3: Senha e Finalização
@@ -224,22 +206,6 @@ fun CadastroScreen(
                             .height(50.dp),
                         onClick = viewModel::submitForm
                     )
-                    TextButton(
-                        onClick = { navController.navigate("login") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                    ) {
-                        Text(text = "Já tem uma conta? Faça Login", color = AppColors.Primary)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    uiState.error?.let { error ->
-                        Text(
-                            text = error,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
                 }
             }
         }
