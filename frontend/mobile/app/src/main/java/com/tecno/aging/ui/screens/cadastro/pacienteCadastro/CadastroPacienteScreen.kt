@@ -24,9 +24,38 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.ui.components.buttons.ButtonComponent
+import com.tecno.aging.ui.components.dropdowns.DropdownWithError
 import com.tecno.aging.ui.components.forms.TextFieldWithError
 import com.tecno.aging.ui.components.sections.AddressSection
 import com.tecno.aging.ui.theme.AppColors
+
+val estadoCivilOptions = listOf("Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "União Estável")
+val escolaridadeOptions = listOf("Nenhum", "Fundamental Incompleto", "Fundamental Completo", "Médio Incompleto", "Médio Completo", "Superior Incompleto", "Superior Completo", "Pós-graduação")
+val corRacaOptions = listOf("Branca", "Parda", "Preta", "Amarela", "Indígena")
+val estadosBrasileiros = listOf(
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+    "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+)
+val orgaoEmissorOptions = listOf(
+    "SSP",
+    "PF",
+    "DETRAN",
+    "CREA",
+    "OAB",
+    "CRM",
+)
+val nivelSocioeconomicoOptions = listOf(
+    "Classe A",
+    "Classe B",
+    "Classe C",
+    "Classe D",
+    "Classe E"
+)
+val parentescoOptions = listOf(
+    "PAI", "MAE", "FILHO", "FILHA", "CONJUGUE", "COMPANHEIRO",
+    "COMPANHEIRA", "IRMAO", "IRMA", "CUIDADOR", "AMIGO", "OUTRO"
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,41 +160,57 @@ private fun Step2(
     viewModel: CadastroPacienteViewModel,
     onNext: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        TextFieldWithError(
-            value = state.estadoCivil,
-            onValueChange = viewModel::onEstadoCivilChange,
-            label = "Estado Civil"
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxHeight()) {
+
+        DropdownWithError(
+            label = "Estado Civil",
+            options = estadoCivilOptions,
+            selectedValue = state.estadoCivil,
+            onValueSelected = viewModel::onEstadoCivilChange,
+            error = state.erros["estadoCivil"]
         )
-        TextFieldWithError(
-            value = state.escolaridade,
-            onValueChange = viewModel::onEscolaridadeChange,
-            label = "Escolaridade"
+
+        DropdownWithError(
+            label = "Escolaridade",
+            options = escolaridadeOptions,
+            selectedValue = state.escolaridade,
+            onValueSelected = viewModel::onEscolaridadeChange,
+            error = state.erros["escolaridade"]
         )
+
         TextFieldWithError(
             value = state.nacionalidade,
             onValueChange = viewModel::onNacionalidadeChange,
-            label = "Nacionalidade"
+            label = "Nacionalidade",
+            error = state.erros["nacionalidade"]
         )
-        TextFieldWithError(
-            value = state.corRaca,
-            onValueChange = viewModel::onCorRacaChange,
-            label = "Cor/Raça"
+
+        DropdownWithError(
+            label = "Cor/Raça",
+            options = corRacaOptions,
+            selectedValue = state.corRaca,
+            onValueSelected = viewModel::onCorRacaChange,
+            error = state.erros["corRaca"]
         )
+
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextFieldWithError(
                 value = state.municipioNasc,
                 onValueChange = viewModel::onMunicipioNascChange,
                 label = "Município de Nasc.",
-                modifier = Modifier.weight(2f)
+                modifier = Modifier.weight(2f),
+                error = state.erros["municipioNasc"]
             )
-            TextFieldWithError(
-                value = state.ufNasc,
-                onValueChange = viewModel::onUfNascChange,
+            DropdownWithError(
                 label = "UF",
-                modifier = Modifier.weight(1f)
+                options = estadosBrasileiros,
+                selectedValue = state.ufNasc,
+                modifier = Modifier.weight(1f),
+                onValueSelected = viewModel::onUfNascChange,
+                error = state.erros["ufNasc"]
             )
         }
+
         Spacer(Modifier.weight(1f))
         ButtonComponent(title = "Próximo", onClick = onNext, modifier = Modifier.fillMaxWidth())
     }
@@ -193,17 +238,21 @@ private fun Step3(
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextFieldWithError(
-                value = state.orgaoEmissor,
-                onValueChange = viewModel::onOrgaoEmissorChange,
+            DropdownWithError(
                 label = "Órgão Emissor",
-                modifier = Modifier.weight(0.6f)
+                options = orgaoEmissorOptions,
+                selectedValue = state.orgaoEmissor,
+                modifier = Modifier.weight(0.6f),
+                onValueSelected = viewModel::onOrgaoEmissorChange,
+                error = state.erros["orgaoEmissor"]
             )
-            TextFieldWithError(
-                value = state.ufEmissor,
-                onValueChange = viewModel::onUfEmissorChange,
+            DropdownWithError(
                 label = "UF",
-                modifier = Modifier.weight(0.4f)
+                options = estadosBrasileiros,
+                selectedValue = state.ufEmissor,
+                modifier = Modifier.weight(0.4f),
+                onValueSelected = viewModel::onUfEmissorChange,
+                error = state.erros["ufEmissor"]
             )
         }
 
@@ -223,12 +272,13 @@ private fun Step3(
                 modifier = Modifier.weight(1f)
             )
         }
-
-        TextFieldWithError(
-            value = state.socioeconomico,
-            onValueChange = viewModel::onSocioeconomicoChange,
+        DropdownWithError(
             label = "Nível Socioeconômico",
-            modifier = Modifier.fillMaxWidth()
+            options = nivelSocioeconomicoOptions,
+            selectedValue = state.socioeconomico,
+            modifier = Modifier.fillMaxWidth(),
+            onValueSelected = viewModel::onSocioeconomicoChange,
+            error = state.erros["socioeconomico"]
         )
 
         Spacer(Modifier.weight(1f))
@@ -243,11 +293,6 @@ private fun Step4(
     viewModel: CadastroPacienteViewModel,
     onNext: () -> Unit
 ) {
-    val parentescoOptions = listOf(
-        "PAI", "MAE", "FILHO", "FILHA", "CONJUGUE", "COMPANHEIRO",
-        "COMPANHEIRA", "IRMAO", "IRMA", "CUIDADOR", "AMIGO", "OUTRO"
-    )
-
     Column {
         AddressSection(
             address = state.endereco,
