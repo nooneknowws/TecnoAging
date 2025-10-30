@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.view
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecno.aging.data.local.SessionManager
@@ -22,6 +23,10 @@ class TecnicoProfileViewModel(
     val uiState: StateFlow<TecnicoProfileUiState> = _uiState.asStateFlow()
 
     init {
+        loadProfile()
+    }
+
+    fun refreshProfile() {
         loadProfile()
     }
 

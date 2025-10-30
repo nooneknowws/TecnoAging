@@ -71,10 +71,26 @@ fun HistoricoScreen(
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )
-                uiState.avaliacoes.isEmpty() -> Text(
-                    "Nenhuma avaliação encontrada.",
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                uiState.avaliacoes.isEmpty() -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ListAlt,
+                            contentDescription = "Sem avaliações",
+                            modifier = Modifier.size(64.dp),
+                            tint = AppColors.Gray500
+                        )
+                        Text(
+                            text = "Nenhuma avaliação encontrada",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = AppColors.Gray700,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
+                }
                 else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
@@ -103,7 +119,7 @@ fun HistoricoCard(avaliacao: HistoricoAvaliacao, onClick: () -> Unit) {
     val formattedDate = try {
         avaliacao.dataCriacao?.let {
             val odt = OffsetDateTime.parse(it)
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm")
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             odt.format(formatter)
         } ?: "Data não informada"
     } catch (e: Exception) { "Data inválida" }

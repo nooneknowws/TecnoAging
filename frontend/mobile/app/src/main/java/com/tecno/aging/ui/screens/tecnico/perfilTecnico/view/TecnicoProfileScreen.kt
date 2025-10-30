@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.R
 import com.tecno.aging.ui.theme.AppColors
+import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +58,19 @@ fun TecnicoProfileScreen(
     viewModel: TecnicoProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        val profileUpdated = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Boolean>("profile_updated")
+
+        if (profileUpdated == true) {
+            viewModel.refreshProfile()
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("profile_updated", false)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -140,12 +154,12 @@ fun TecnicoProfileScreen(
                             title = "Endereço",
                             icon = Icons.Default.Home
                         ) {
-                            DataRow("CEP", profile.endereco?.cep)
-                            DataRow("Logradouro", profile.endereco?.logradouro)
-                            DataRow("Número", profile.endereco?.numero?.toString())
-                            DataRow("Bairro", profile.endereco?.bairro)
-                            DataRow("Município", profile.endereco?.municipio)
-                            DataRow("UF", profile.endereco?.uf)
+                            DataRow("CEP", profile.endereco.cep)
+                            DataRow("Logradouro", profile.endereco.logradouro)
+                            DataRow("Número", profile.endereco.numero)
+                            DataRow("Bairro", profile.endereco.bairro)
+                            DataRow("Município", profile.endereco.municipio)
+                            DataRow("UF", profile.endereco.uf)
                         }
                     }
                 }

@@ -1,7 +1,6 @@
 package com.tecno.aging.ui.screens.pacientes.avaliacoes
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -92,7 +91,7 @@ private fun HeaderCard(avaliacao: HistoricoAvaliacao) {
     val formattedDate = remember(avaliacao.dataCriacao) {
         try {
             val odt = OffsetDateTime.parse(avaliacao.dataCriacao)
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
             odt.format(formatter)
         } catch (e: Exception) { avaliacao.dataCriacao ?: "Não informada" }
     }
@@ -139,7 +138,7 @@ private fun RespostaCard(numeroPergunta: Int, resposta: PerguntaValor) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = resposta.pergunta,
+                    text = resposta.pergunta.texto,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = AppColors.Dark

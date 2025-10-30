@@ -141,7 +141,7 @@ fun AppNavGraph() {
 
         composable(
             route = "avaliacao_detail/{avaliacaoId}",
-            arguments = listOf(navArgument("avaliacaoId") { type = NavType.IntType })
+            arguments = listOf(navArgument("avaliacaoId") { type = NavType.LongType })
         ) {
             AvaliacaoDetailScreen(navController = navController)
         }

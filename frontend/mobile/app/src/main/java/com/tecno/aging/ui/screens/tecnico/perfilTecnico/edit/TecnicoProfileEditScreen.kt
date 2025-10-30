@@ -80,6 +80,7 @@ fun ProfileEditScreen(
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
+            navController.previousBackStackEntry?.savedStateHandle?.set("profile_updated", true)
             navController.popBackStack()
         }
     }
@@ -113,18 +114,16 @@ fun ProfileEditScreen(
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                uiState.userMessage != null && uiState.matricula.isEmpty() -> { /* ... seu Text de erro ... */ }
+                uiState.userMessage != null && uiState.matricula.isEmpty() -> {}
                 else -> {
-                    // Coluna principal que permite rolagem
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(16.dp), // Padding geral
+                            .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp) // Espaçamento entre os cards
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // O controle de etapas foi movido para dentro da Column principal
                         Text(
                             text = "Etapa ${currentStep + 1} de 2",
                             style = MaterialTheme.typography.titleMedium,
