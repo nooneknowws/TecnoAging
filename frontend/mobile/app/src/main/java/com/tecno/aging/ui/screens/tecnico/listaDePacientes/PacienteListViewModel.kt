@@ -27,6 +27,10 @@ class PacienteListViewModel(
         loadPacientes()
     }
 
+    fun refreshProfile() {
+        loadPacientes()
+    }
+
     fun loadPacientes() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }

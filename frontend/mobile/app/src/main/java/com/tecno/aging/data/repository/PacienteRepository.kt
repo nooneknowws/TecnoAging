@@ -48,4 +48,18 @@ class PacienteRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun updatePaciente(pacienteId: Int, paciente: Paciente): Result<Paciente> {
+        return try {
+            val response = apiService.updatePaciente(pacienteId, paciente)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Erro desconhecido"
+                Result.failure(Exception("Falha ao atualizar paciente: ${response.code()} - $errorBody"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Erro de conexão: ${e.message}"))
+        }
+    }
 }

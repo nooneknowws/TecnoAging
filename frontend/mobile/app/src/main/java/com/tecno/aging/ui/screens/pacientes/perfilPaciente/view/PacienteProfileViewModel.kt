@@ -35,6 +35,10 @@ class PacienteProfileViewModel(
         loadProfile()
     }
 
+    fun refreshProfile() {
+        loadProfile()
+    }
+
     fun loadProfile() {
         Log.d("PROFILE_DEBUG", "1. Entrando em loadProfile() com pacienteId: $pacienteId")
         viewModelScope.launch {

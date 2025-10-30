@@ -31,6 +31,19 @@ fun PacienteListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(navController.currentBackStackEntry) {
+        val profileUpdated = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Boolean>("profile_updated")
+
+        if (profileUpdated == true) {
+            viewModel.refreshProfile()
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("profile_updated", false)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(

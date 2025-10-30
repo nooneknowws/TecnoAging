@@ -46,6 +46,12 @@ interface ApiService {
     @GET("api/pacientes")
     suspend fun getPacientes(): Response<List<Paciente>>
 
+    @PUT("api/pacientes/{id}")
+    suspend fun updatePaciente(
+        @Path("id") id: Int,
+        @Body paciente: Paciente
+    ): Response<Paciente>
+
     @GET("api/pacientes/{id}")
     suspend fun getPacienteById(@Path("id") pacienteId: Int): Response<Paciente>
 

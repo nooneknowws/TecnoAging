@@ -34,9 +34,6 @@ class CadastroTecnicoViewModel(
     private val _uiState = MutableStateFlow(CadastroState())
     val uiState: StateFlow<CadastroState> = _uiState.asStateFlow()
 
-    // --- EVENTOS GRANULARES ---
-    // A View chama estas funções, passando apenas o novo valor.
-    // Isso centraliza a lógica de atualização de estado no ViewModel.
     fun onMatriculaChanged(matricula: String) {
         _uiState.update { it.copy(tecnico = it.tecnico.copy(matricula = matricula), erros = it.erros - "matricula") }
     }

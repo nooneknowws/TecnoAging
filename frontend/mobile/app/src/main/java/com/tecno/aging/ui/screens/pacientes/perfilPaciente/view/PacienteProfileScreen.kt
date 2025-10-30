@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import com.tecno.aging.R
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.theme.AppColors
+import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,6 +67,19 @@ fun PacienteProfileScreen(
     val paciente = uiState.paciente
     val isMyProfile = loggedInUserId == paciente?.id.toString()
     val screenTitle = if (isMyProfile) "Meu Perfil" else "Perfil de ${paciente?.nome ?: "..."}"
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        val profileUpdated = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Boolean>("profile_updated")
+
+        if (profileUpdated == true) {
+            viewModel.refreshProfile()
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("profile_updated", false)
+        }
+    }
 
     Scaffold(
         topBar = {

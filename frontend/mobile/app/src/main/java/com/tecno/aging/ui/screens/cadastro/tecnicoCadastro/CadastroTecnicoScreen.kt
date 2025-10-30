@@ -100,7 +100,7 @@ fun CadastroScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        TextFieldWithError( // Usar TextField normal para matrícula se não precisar de máscara
+                        TextFieldWithError(
                             value = uiState.tecnico.matricula,
                             onValueChange = viewModel::onMatriculaChanged,
                             label = "Matrícula",
