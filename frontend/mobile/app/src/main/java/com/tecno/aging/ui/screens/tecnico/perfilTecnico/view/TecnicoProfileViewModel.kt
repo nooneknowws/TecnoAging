@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 data class TecnicoProfileUiState(
     val isLoading: Boolean = true,
     val tecnico: Tecnico? = null,
+    val fotoBase64: String? = null,
     val error: String? = null
 )
 
@@ -42,10 +43,16 @@ class TecnicoProfileViewModel(
         viewModelScope.launch {
             repository.getTecnicoById(tecnicoId)
                 .onSuccess { data ->
-                    _uiState.update { it.copy(isLoading = false, tecnico = data) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            tecnico = data,
+                            fotoBase64 = data.fotoPerfil
+                        )
+                    }
                 }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                    _uiState.update { it.copy(isLoading = false, error = "Erro ao carregar informações") }
                 }
         }
     }

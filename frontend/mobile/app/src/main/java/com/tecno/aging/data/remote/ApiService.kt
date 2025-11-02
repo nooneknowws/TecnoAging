@@ -14,6 +14,10 @@ import com.tecno.aging.domain.models.pessoa.paciente.PacienteRequest
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import retrofit2.Response
 import retrofit2.http.*
+
+data class ImageUploadRequest(val image: String)
+data class ImageResponse(val image: String)
+
 interface ApiService {
     //auth
     @POST("/api/auth/login")
@@ -42,6 +46,15 @@ interface ApiService {
         @Body request: TecnicoUpdateRequest
     ): Response<Tecnico>
 
+    @GET("api/tecnicos/{id}/foto")
+    suspend fun getFotoTecnico(@Path("id") id: Int): Response<ImageResponse>
+
+    @POST("api/tecnicos/{id}/foto")
+    suspend fun uploadFotoTecnico(
+        @Path("id") id: Int,
+        @Body request: ImageUploadRequest
+    ): Response<Unit>
+
     // Pacientes
     @GET("api/pacientes")
     suspend fun getPacientes(): Response<List<Paciente>>
@@ -57,6 +70,15 @@ interface ApiService {
 
     @POST("api/pacientes")
     suspend fun registrarPaciente(@Body request: PacienteRequest): Response<Unit>
+
+    @GET("api/pacientes/{id}/foto")
+    suspend fun getFotoPaciente(@Path("id") id: Int): Response<ImageResponse>
+
+    @POST("api/pacientes/{id}/foto")
+    suspend fun uploadFotoPaciente(
+        @Path("id") id: Int,
+        @Body request: ImageUploadRequest
+    ): Response<Unit>
 
     // Avaliações
     @GET("api/avaliacoes/respostas/paciente/{id}")

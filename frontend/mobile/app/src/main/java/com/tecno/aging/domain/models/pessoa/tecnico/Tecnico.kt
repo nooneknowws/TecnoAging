@@ -12,5 +12,6 @@ data class Tecnico(
     val matricula: String = "",
     val ativo: Boolean = false,
     val idade: Int = 0,
-    val endereco: Endereco = Endereco()
+    val fotoPerfil: String? = null,
+    val endereco: Endereco = Endereco(),
 )

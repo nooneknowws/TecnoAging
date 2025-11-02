@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.tecno.aging.data.repository.PacienteRepository
 import com.tecno.aging.domain.models.pessoa.paciente.Paciente
+import com.tecno.aging.domain.utils.convertUriToBase64
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +37,8 @@ data class PacienteEditUiState(
     val isSaving: Boolean = false,
     val saveSuccess: Boolean = false,
     val errorMessage: String? = null,
-    val userMessage: String? = null
+    val userMessage: String? = null,
+    val fotoBase64: String? = null,
 )
 
 class PacienteEditViewModel(
@@ -72,7 +75,8 @@ class PacienteEditViewModel(
                             estadoCivil = paciente.estadoCivil ?: "",
                             escolaridade = paciente.escolaridade ?: "",
                             nacionalidade = paciente.nacionalidade ?: "",
-                            municipioNasc = paciente.municipioNasc ?: ""
+                            municipioNasc = paciente.municipioNasc ?: "",
+                            fotoBase64 = paciente.fotoPerfil
                         )
                     }
                 }
@@ -82,7 +86,7 @@ class PacienteEditViewModel(
         }
     }
 
-    fun onFotoChange(newUri: Uri?) { _uiState.update { it.copy(fotoUri = newUri) } }
+    fun onFotoChange(newUri: Uri?) { _uiState.update { it.copy(fotoUri = newUri, fotoBase64 = null) } }
     fun onNomeChange(newValue: String) { _uiState.update { it.copy(nome = newValue) } }
     fun onTelefoneChange(newValue: String) { _uiState.update { it.copy(telefone = newValue) } }
     fun onSexoChange(newValue: String) { _uiState.update { it.copy(sexo = newValue) } }
@@ -94,7 +98,7 @@ class PacienteEditViewModel(
     fun onNacionalidadeChange(newValue: String) { _uiState.update { it.copy(nacionalidade = newValue) } }
     fun onMunicipioNascChange(newValue: String) { _uiState.update { it.copy(municipioNasc = newValue) } }
 
-    fun onSaveProfile() {
+    fun onSaveProfile(contentResolver: ContentResolver) {
         if (originalPaciente == null) {
             _uiState.update { it.copy(errorMessage = "Erro: Paciente original não carregado.") }
             return
@@ -120,12 +124,34 @@ class PacienteEditViewModel(
         viewModelScope.launch {
             repository.updatePaciente(pacienteId, pacienteAtualizado)
                 .onSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isSaving = false,
-                            userMessage = "Perfil atualizado com sucesso!",
-                            saveSuccess = true
-                        )
+                    val fotoUri = uiState.value.fotoUri
+                    if (fotoUri == null) {
+                        _uiState.update {
+                            it.copy(
+                                isSaving = false,
+                                userMessage = "Perfil atualizado com sucesso!",
+                                saveSuccess = true
+                            )
+                        }
+                    } else {
+                        val base64Image = convertUriToBase64(contentResolver, fotoUri)
+                        if (base64Image != null) {
+                            repository.uploadFotoPaciente(pacienteId, base64Image)
+                                .onSuccess {
+                                    _uiState.update {
+                                        it.copy(
+                                            isSaving = false,
+                                            userMessage = "Perfil e foto atualizados!",
+                                            saveSuccess = true
+                                        )
+                                    }
+                                }
+                                .onFailure {
+                                    _uiState.update { it.copy(isSaving = false, userMessage = "Perfil salvo, mas falha ao enviar foto.") }
+                                }
+                        } else {
+                            _uiState.update { it.copy(isSaving = false, userMessage = "Perfil salvo, mas falha ao processar foto.") }
+                        }
                     }
                 }
                 .onFailure { error ->

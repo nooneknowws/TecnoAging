@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.tecno.aging.data.repository.TecnicoRepository
 import com.tecno.aging.domain.models.DTO.TecnicoUpdateRequest
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
+import com.tecno.aging.domain.utils.convertUriToBase64
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ import java.util.Locale
 
 data class ProfileEditUiState(
     val fotoUri: Uri? = null,
+    val fotoBase64: String? = null,
     val matricula: String = "",
     val nome: String = "",
     val cpf: String = "",
@@ -71,7 +74,8 @@ class ProfileEditViewModel() : ViewModel() {
                                 bairro = tecnico.endereco.bairro,
                                 municipio = tecnico.endereco.municipio,
                                 uf = tecnico.endereco.toString()
-                            )
+                            ),
+                            fotoBase64 = tecnico.fotoPerfil
                         )
                     }
                 }
@@ -87,7 +91,7 @@ class ProfileEditViewModel() : ViewModel() {
     }
 
     fun onFotoChange(newUri: Uri?) {
-        _uiState.update { it.copy(fotoUri = newUri) }
+        _uiState.update { it.copy(fotoUri = newUri, fotoBase64 = null) }
     }
 
     fun onNomeChange(newValue: String) {
@@ -152,7 +156,7 @@ class ProfileEditViewModel() : ViewModel() {
         }
     }
 
-    fun onSaveProfile() {
+    fun onSaveProfile(contentResolver: ContentResolver) {
         if (tecnicoId == null || originalTecnico == null) {
             _uiState.update { it.copy(userMessage = "Não foi possível salvar. Dados originais não carregados.") }
             return
@@ -182,9 +186,27 @@ class ProfileEditViewModel() : ViewModel() {
         viewModelScope.launch {
             repository.updateTecnico(tecnicoId, request)
                 .onSuccess {
-                    _uiState.update { it.copy(isSaving = false, userMessage = "Perfil atualizado com sucesso!") }
-                    delay(1500)
-                    _uiState.update { it.copy(saveSuccess = true) }
+                    val fotoUri = uiState.value.fotoUri
+                    if (fotoUri == null) {
+                        _uiState.update { it.copy(isSaving = false, userMessage = "Perfil atualizado com sucesso!") }
+                        delay(1500)
+                        _uiState.update { it.copy(saveSuccess = true) }
+                    } else {
+                        val base64Image = convertUriToBase64(contentResolver, fotoUri)
+                        if (base64Image != null) {
+                            repository.uploadFotoTecnico(tecnicoId, base64Image)
+                                .onSuccess {
+                                    _uiState.update { it.copy(isSaving = false, userMessage = "Perfil e foto atualizados!") }
+                                    delay(1500)
+                                    _uiState.update { it.copy(saveSuccess = true) }
+                                }
+                                .onFailure {
+                                    _uiState.update { it.copy(isSaving = false, userMessage = "Perfil salvo, mas falha ao enviar foto.") }
+                                }
+                        } else {
+                            _uiState.update { it.copy(isSaving = false, userMessage = "Perfil salvo, mas falha ao processar foto.") }
+                        }
+                    }
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isSaving = false, userMessage = error.message) }

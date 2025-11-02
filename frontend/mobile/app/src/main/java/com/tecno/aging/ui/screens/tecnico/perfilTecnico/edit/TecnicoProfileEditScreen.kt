@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
@@ -28,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -136,7 +135,6 @@ fun ProfileEditScreen(
                                 viewModel = viewModel,
                                 onNextClick = { currentStep++ },
                                 onChangePictureClick = { showImageSourceSheet = true },
-                                onShowDatePicker = { showDatePicker = true }
                             )
                             1 -> StepAddress(
                                 uiState = uiState,
@@ -210,7 +208,6 @@ private fun StepPersonalData(
     viewModel: ProfileEditViewModel,
     onNextClick: () -> Unit,
     onChangePictureClick: () -> Unit,
-    onShowDatePicker: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -220,8 +217,10 @@ private fun StepPersonalData(
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
-                        model = uiState.fotoUri ?: R.drawable.ic_person,
+                        model = uiState.fotoUri ?: (if (uiState.fotoBase64 != null) "data:image/jpeg;base64,${uiState.fotoBase64}" else R.drawable.ic_person),
                         contentDescription = "Foto de perfil",
+                        placeholder = painterResource(id = R.drawable.ic_person),
+                        error = painterResource(id = R.drawable.ic_person),
                         modifier = Modifier.size(120.dp).clip(CircleShape)
                     )
                     TextButton(onClick = onChangePictureClick) { Text("Alterar foto") }
@@ -266,6 +265,9 @@ private fun StepPersonalData(
 
 @Composable
 private fun StepAddress(uiState: ProfileEditUiState, viewModel: ProfileEditViewModel) {
+    val context = LocalContext.current
+    val contentResolver = context.contentResolver
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -297,7 +299,7 @@ private fun StepAddress(uiState: ProfileEditUiState, viewModel: ProfileEditViewM
         ButtonComponent(
             title = "Salvar Alterações",
             loading = uiState.isSaving,
-            onClick = viewModel::onSaveProfile,
+            onClick = { viewModel.onSaveProfile(contentResolver) },
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
         )
     }

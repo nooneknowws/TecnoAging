@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 data class PacienteProfileUiState(
     val isLoading: Boolean = true,
     val paciente: Paciente? = null,
+    val fotoBase64: String? = null,
     val errorMessage: String? = null
 )
 
@@ -40,26 +41,25 @@ class PacienteProfileViewModel(
     }
 
     fun loadProfile() {
-        Log.d("PROFILE_DEBUG", "1. Entrando em loadProfile() com pacienteId: $pacienteId")
         viewModelScope.launch {
-            Log.d("PROFILE_DEBUG", "2. Dentro do viewModelScope.launch")
             _uiState.update { it.copy(isLoading = true) }
 
-            Log.d("PROFILE_DEBUG", "3. Chamando repository.getPacienteById()")
             repository.getPacienteById(pacienteId)
                 .onSuccess { pacienteData ->
-                    Log.d("PROFILE_DEBUG", "5. Sucesso retornado pelo repositório.")
                     _uiState.update {
-                        it.copy(isLoading = false, paciente = pacienteData, errorMessage = null)
+                        it.copy(
+                            isLoading = false,
+                            paciente = pacienteData,
+                            errorMessage = null,
+                            fotoBase64 = pacienteData.fotoPerfil
+                        )
                     }
                 }
                 .onFailure { error ->
-                    Log.d("PROFILE_DEBUG", "5. Falha retornada pelo repositório: ${error.message}")
                     _uiState.update {
                         it.copy(isLoading = false, errorMessage = error.message)
                     }
                 }
-            Log.d("PROFILE_DEBUG", "6. Fim do bloco viewModelScope.launch")
         }
     }
 

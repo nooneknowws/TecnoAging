@@ -48,8 +48,8 @@ fun AppNavGraph() {
             CadastroScreen(
                 navController = navController,
                 onSuccess = {
-                    navController.navigate("login") {
-                        popUpTo("login") { inclusive = true }
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
                     }
                 }
             )

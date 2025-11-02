@@ -54,6 +54,7 @@ import com.tecno.aging.R
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.theme.AppColors
 import androidx.compose.runtime.LaunchedEffect
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,9 +126,11 @@ fun PacienteProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_person),
+                        AsyncImage(
+                            model = if (uiState.fotoBase64 != null) "data:image/jpeg;base64,${uiState.fotoBase64}" else R.drawable.ic_person,
                             contentDescription = "Foto de perfil",
+                            placeholder = painterResource(id = R.drawable.ic_person),
+                            error = painterResource(id = R.drawable.ic_person),
                             modifier = Modifier
                                 .size(120.dp)
                                 .clip(CircleShape)

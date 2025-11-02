@@ -313,7 +313,7 @@ private fun StepPersonalData(
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
-                        model = uiState.fotoUri ?: R.drawable.ic_person,
+                        model = uiState.fotoUri ?: (if (uiState.fotoBase64 != null) "data:image/jpeg;base64,${uiState.fotoBase64}" else R.drawable.ic_person),
                         contentDescription = "Foto de perfil",
                         modifier = Modifier.size(120.dp).clip(CircleShape)
                     )
@@ -390,6 +390,8 @@ private fun StepSocioData(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        val context = LocalContext.current
+        val contentResolver = context.contentResolver
         EditInfoCard(title = "Dados Sócio-demográficos", icon = Icons.Default.Info) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -435,7 +437,7 @@ private fun StepSocioData(
         }
 
         Button(
-            onClick = viewModel::onSaveProfile,
+            onClick = { viewModel.onSaveProfile(contentResolver) },
             enabled = !uiState.isSaving,
             modifier = Modifier
                 .fillMaxWidth()

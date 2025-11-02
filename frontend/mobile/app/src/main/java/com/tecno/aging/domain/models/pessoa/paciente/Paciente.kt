@@ -32,5 +32,6 @@ data class Paciente(
     val dataNasc: String?,
     val telefone: String?,
     val sexo: String?,
+    val fotoPerfil: String? = null,
     val endereco: PacienteEndereco?
 )
