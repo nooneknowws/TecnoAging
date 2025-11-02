@@ -341,38 +341,6 @@ fun MainContent(
                 DashboardCard(
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.resultados),
-                            contentDescription = "Resultados",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    title = "Ver Resultados",
-                    modifier = Modifier.weight(0.5f),
-                    onClick = { /* TODO */ }
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                DashboardCard(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ult_aval),
-                            contentDescription = "Últimas Avaliações",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    title = "Histórico de Avaliações",
-                    modifier = Modifier.weight(0.5f),
-                    onClick = { navController.navigate("historico_avaliacoes/$id") }
-                )
-
-                DashboardCard(
-                    icon = {
-                        Icon(
                             painter = painterResource(id = R.drawable.edit_perfil),
                             contentDescription = "Atualizar Perfil",
                             modifier = Modifier.size(48.dp),
@@ -382,6 +350,24 @@ fun MainContent(
                     title = "Atualizar Perfil",
                     modifier = Modifier.weight(0.5f),
                     onClick = { navController.navigate("patient_profile_edit/$id") }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DashboardCard(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.resultados),
+                            contentDescription = "Últimas Avaliações",
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    title = "Histórico de Avaliações",
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { navController.navigate("historico_avaliacoes/$id") }
                 )
             }
         }

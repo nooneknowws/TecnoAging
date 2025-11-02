@@ -1,7 +1,6 @@
 package com.tecno.aging.ui.screens.pacientes.perfilPaciente.view
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,6 +54,7 @@ import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.ui.theme.AppColors
 import androidx.compose.runtime.LaunchedEffect
 import coil.compose.AsyncImage
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,37 +104,39 @@ fun PacienteProfileScreen(
             }
         }
     ) { padding ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = viewModel::refreshProfile,
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(AppColors.Gray50)
         ) {
+            val scrollState = rememberScrollState()
+
             when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                uiState.errorMessage != null -> {
-                    Text("Erro: ${uiState.errorMessage}", modifier = Modifier.align(Alignment.Center))
+                uiState.errorMessage != null && uiState.paciente == null -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("", modifier = Modifier.align(Alignment.Center))
+                    }
                 }
                 paciente != null -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(scrollState)
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         AsyncImage(
-                            model = if (uiState.fotoBase64 != null) "data:image/jpeg;base64,${uiState.fotoBase64}" else R.drawable.ic_person,
+                            model = uiState.fotoBase64 ?: R.drawable.ic_person,
                             contentDescription = "Foto de perfil",
                             placeholder = painterResource(id = R.drawable.ic_person),
                             error = painterResource(id = R.drawable.ic_person),
                             modifier = Modifier
                                 .size(120.dp)
+                                .background(AppColors.Gray200, CircleShape)
                                 .clip(CircleShape)
-                                .background(AppColors.Gray200)
                         )
                         Text(
                             text = paciente.nome,
@@ -177,6 +179,14 @@ fun PacienteProfileScreen(
                             DataRow("Estado Civil", paciente.estadoCivil ?: "N/A")
                             DataRow("Escolaridade", paciente.escolaridade ?: "N/A")
                         }
+                    }
+                }
+
+                uiState.isLoading -> {}
+
+                else -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Perfil não carregado.", modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }

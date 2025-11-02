@@ -60,7 +60,7 @@ fun FormScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.form?.titulo ?: "Carregando...") },
+                title = { Text(uiState.form?.titulo ?: "Carregando...", style = MaterialTheme.typography.titleMedium) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
@@ -141,7 +141,7 @@ fun EtapaPage(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Column {
-            Text(text = etapa.titulo, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(text = etapa.titulo, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             if (etapa.descricao.isNotBlank()) {
                 Text(text = etapa.descricao, style = MaterialTheme.typography.bodyLarge, color = AppColors.Gray700)
             }

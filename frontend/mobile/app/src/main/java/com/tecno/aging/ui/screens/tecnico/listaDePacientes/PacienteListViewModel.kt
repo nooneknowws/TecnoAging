@@ -52,6 +52,7 @@ class PacienteListViewModel(
                             errorMessage = error.message
                         )
                     }
+                    refreshProfile()
                 }
         }
     }

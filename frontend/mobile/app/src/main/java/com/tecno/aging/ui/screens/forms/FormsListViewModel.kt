@@ -25,6 +25,10 @@ class FormsListViewModel : ViewModel() {
         loadInitialData()
     }
 
+    fun refresh() {
+        loadInitialData()
+    }
+
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -46,7 +50,8 @@ class FormsListViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.update { it.copy(error = "Erro de conexão", isLoading = false) }
+                _uiState.update { it.copy(error = "", isLoading = false) }
+                loadInitialData()
             }
         }
     }

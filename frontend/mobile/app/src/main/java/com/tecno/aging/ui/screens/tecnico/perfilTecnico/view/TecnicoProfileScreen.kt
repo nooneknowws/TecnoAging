@@ -1,7 +1,6 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.view
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +50,7 @@ import com.tecno.aging.R
 import com.tecno.aging.ui.theme.AppColors
 import androidx.compose.runtime.LaunchedEffect
 import coil.compose.AsyncImage
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,19 +97,20 @@ fun TecnicoProfileScreen(
             }
         }
     ) { padding ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = viewModel::refreshProfile,
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(AppColors.Gray50)
         ) {
-            when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
+            val scrollState = rememberScrollState()
 
-                uiState.error != null -> {
-                    Text("Erro: ${uiState.error}", modifier = Modifier.align(Alignment.Center))
+            when {
+                uiState.error != null && uiState.tecnico == null -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("", modifier = Modifier.align(Alignment.Center))
+                    }
                 }
 
                 uiState.tecnico != null -> {
@@ -117,7 +118,7 @@ fun TecnicoProfileScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(scrollState)
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -142,7 +143,6 @@ fun TecnicoProfileScreen(
                             style = MaterialTheme.typography.bodyLarge,
                             color = AppColors.Gray700
                         )
-
                         InfoCard(
                             title = "Dados Pessoais",
                             icon = Icons.Default.Person
@@ -152,7 +152,6 @@ fun TecnicoProfileScreen(
                             DataRow("Data de Nasc.", profile.dataNasc)
                             DataRow("Telefone", profile.telefone)
                         }
-
                         InfoCard(
                             title = "Endereço",
                             icon = Icons.Default.Home
@@ -164,6 +163,14 @@ fun TecnicoProfileScreen(
                             DataRow("Município", profile.endereco.municipio)
                             DataRow("UF", profile.endereco.uf)
                         }
+                    }
+                }
+
+                uiState.isLoading -> {}
+
+                else -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Perfil não carregado.", modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }

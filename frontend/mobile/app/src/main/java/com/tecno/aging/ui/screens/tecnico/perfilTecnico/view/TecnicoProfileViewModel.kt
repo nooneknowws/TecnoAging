@@ -52,7 +52,8 @@ class TecnicoProfileViewModel(
                     }
                 }
                 .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, error = "Erro ao carregar informações") }
+                    _uiState.update { it.copy(isLoading = false, error = "") }
+                    refreshProfile()
                 }
         }
     }
