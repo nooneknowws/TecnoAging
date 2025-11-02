@@ -35,6 +35,10 @@ class HistoricoViewModel(
         loadHistorico()
     }
 
+    fun refreshHistorico() {
+        loadHistorico()
+    }
+
     private fun loadHistorico() {
         _uiState.update { it.copy(isLoading = true) }
 
@@ -47,8 +51,9 @@ class HistoricoViewModel(
                 }
                 .onFailure { erro ->
                     _uiState.update {
-                        it.copy(isLoading = false, error = erro.message)
+                        it.copy(isLoading = false, error = "")
                     }
+                    refreshHistorico()
                 }
         }
     }

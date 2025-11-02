@@ -17,11 +17,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
-import com.tecno.aging.domain.models.historico.PerguntaValor
 import com.tecno.aging.ui.theme.AppColors
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.tecno.aging.domain.models.historico.RespostaItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +72,7 @@ fun AvaliacaoDetailScreen(
                             )
                         }
 
-                        itemsIndexed(avaliacao.perguntasValores) { index, resposta ->
+                        itemsIndexed(avaliacao.respostas) { index, resposta ->
                             RespostaCard(
                                 numeroPergunta = index + 1,
                                 resposta = resposta
@@ -107,7 +107,7 @@ private fun HeaderCard(avaliacao: HistoricoAvaliacao) {
         ) {
             Text(
                 text = avaliacao.formularioTitulo,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = AppColors.Primary
             )
@@ -121,7 +121,7 @@ private fun HeaderCard(avaliacao: HistoricoAvaliacao) {
 }
 
 @Composable
-private fun RespostaCard(numeroPergunta: Int, resposta: PerguntaValor) {
+private fun RespostaCard(numeroPergunta: Int, resposta: RespostaItem) {
     OutlinedCard(
         modifier = Modifier.fillMaxWidth(),
         border = BorderStroke(1.dp, AppColors.Gray200)

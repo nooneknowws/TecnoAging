@@ -40,8 +40,6 @@ class AvaliacaoDetailViewModel(
         viewModelScope.launch {
             repository.getAvaliacaoById(avaliacaoId)
                 .onSuccess { data ->
-                    Log.d("AVALIACAO_DETAIL", "Dados recebidos da API: $data")
-                    Log.d("AVALIACAO_DETAIL", "Número de perguntas na lista: ${data.perguntasValores.size}")
                     _uiState.update { it.copy(isLoading = false, avaliacao = data) }
                 }
                 .onFailure { error ->

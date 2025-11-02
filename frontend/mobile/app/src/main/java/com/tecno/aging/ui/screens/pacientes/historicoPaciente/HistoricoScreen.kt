@@ -25,6 +25,9 @@ import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
 import com.tecno.aging.ui.theme.AppColors
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 private fun getIconForFormulario(formularioTitulo: String): ImageVector {
@@ -58,22 +61,36 @@ fun HistoricoScreen(
         },
         containerColor = AppColors.Gray50
     ) { padding ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = viewModel::refreshHistorico,
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
         ) {
             when {
-                uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                uiState.error != null -> Text(
-                    text = "Erro ao carregar o histórico: ${uiState.error}",
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp),
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center
-                )
-                uiState.avaliacoes.isEmpty() -> {
+                uiState.error != null -> {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Erro ao carregar o histórico",
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                uiState.avaliacoes.isEmpty() && !uiState.isLoading -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -91,8 +108,10 @@ fun HistoricoScreen(
                         )
                     }
                 }
+
                 else -> {
                     LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -152,11 +171,14 @@ fun HistoricoCard(avaliacao: HistoricoAvaliacao, onClick: () -> Unit) {
                     color = AppColors.Primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Pontuação: ${avaliacao.pontuacaoTotal} / ${avaliacao.pontuacaoMaxima}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = AppColors.Dark
-                )
+                if (avaliacao.pontuacaoMaxima > 0) {
+                    Text(
+                        text = "Pontuação: ${avaliacao.pontuacaoTotal} / ${avaliacao.pontuacaoMaxima}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AppColors.Dark
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Data: $formattedDate",
