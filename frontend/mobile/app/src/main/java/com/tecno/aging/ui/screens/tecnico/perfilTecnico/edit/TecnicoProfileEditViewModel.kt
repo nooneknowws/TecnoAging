@@ -56,6 +56,7 @@ class ProfileEditViewModel() : ViewModel() {
             _uiState.update { it.copy(isLoading = true) }
             repository.getTecnicoById(tecnicoId)
                 .onSuccess { tecnico ->
+                    SessionManager.saveUserName(uiState.value.nome)
                     originalTecnico = tecnico
                     _uiState.update {
                         it.copy(

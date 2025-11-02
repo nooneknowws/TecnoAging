@@ -9,6 +9,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.repository.PacienteRepository
 import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import com.tecno.aging.domain.utils.convertUriToBase64
@@ -124,6 +125,7 @@ class PacienteEditViewModel(
         viewModelScope.launch {
             repository.updatePaciente(pacienteId, pacienteAtualizado)
                 .onSuccess {
+                    SessionManager.saveUserName(uiState.value.nome)
                     val fotoUri = uiState.value.fotoUri
                     if (fotoUri == null) {
                         _uiState.update {
