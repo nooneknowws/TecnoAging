@@ -2,7 +2,8 @@ package com.tecno.aging.ui.screens.forgot_password
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import com.tecno.aging.data.repository.AuthRepository
+import com.tecno.aging.domain.models.auth.ResetPasswordDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -10,8 +11,9 @@ import kotlinx.coroutines.launch
 
 data class ForgotPasswordUiState(
     val currentStep: Int = 1,
-    val email: String = "",
-    val otp: List<String> = List(5) { "" },
+    val cpf: String = "",
+    val otp: List<String> = List(6) { "" },
+    val telefoneMascarado: String = "",
     val newPassword: String = "",
     val confirmPassword: String = "",
     val isLoading: Boolean = false,
@@ -24,8 +26,10 @@ class ForgotPasswordViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ForgotPasswordUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onEmailChange(value: String) {
-        _uiState.update { it.copy(email = value) }
+    private val repository: AuthRepository = AuthRepository()
+
+    fun onCpfChange(value: String) {
+        _uiState.update { it.copy(cpf = value) }
     }
 
     fun onOtpChange(index: Int, value: String) {
@@ -45,33 +49,44 @@ class ForgotPasswordViewModel : ViewModel() {
     }
 
     fun sendOtp() {
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(_uiState.value.email).matches()) {
-            _uiState.update { it.copy(errorMessage = "Por favor, insira um e-mail válido.") }
+        val cpfLimpo = _uiState.value.cpf.filter { it.isDigit() }
+        if (cpfLimpo.length != 11) {
+            _uiState.update { it.copy(errorMessage = "Por favor, insira um CPF válido.") }
             return
         }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            delay(1500)
-            _uiState.update { it.copy(isLoading = false, currentStep = 2) }
+
+            repository.enviarCodigo(cpfLimpo)
+                .onSuccess { response ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            currentStep = 2,
+                            telefoneMascarado = response.telefone
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, errorMessage = error.message) }
+                }
         }
     }
 
     fun verifyOtp() {
-        if (_uiState.value.otp.any { it.isBlank() }) {
-            _uiState.update { it.copy(errorMessage = "Por favor, preencha todos os campos do código.") }
+        val codigoCompleto = _uiState.value.otp.joinToString("")
+        if (codigoCompleto.length != 6) {
+            _uiState.update { it.copy(errorMessage = "Por favor, preencha o código de 6 dígitos.") }
             return
         }
-
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            delay(1500)
-            _uiState.update { it.copy(isLoading = false, currentStep = 3) }
-        }
+        _uiState.update { it.copy(currentStep = 3, errorMessage = null) }
     }
 
     fun resetPassword() {
         val state = _uiState.value
+        val codigoCompleto = state.otp.joinToString("")
+
         if (state.newPassword.length < 6) {
             _uiState.update { it.copy(errorMessage = "A nova senha deve ter no mínimo 6 caracteres.") }
             return
@@ -83,8 +98,21 @@ class ForgotPasswordViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            delay(1500)
-            _uiState.update { it.copy(isLoading = false, resetSuccess = true) }
+
+            val dto = ResetPasswordDTO(
+                cpf = state.cpf.filter { it.isDigit() },
+                codigo = codigoCompleto,
+                novaSenha = state.newPassword,
+                confirmarSenha = state.confirmPassword
+            )
+
+            repository.resetarSenha(dto)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, resetSuccess = true) }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, errorMessage = error.message) }
+                }
         }
     }
 
