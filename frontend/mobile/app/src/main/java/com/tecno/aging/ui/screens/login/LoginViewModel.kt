@@ -76,14 +76,6 @@ class LoginViewModel : ViewModel() {
                     when {
                         response.isSuccessful -> {
                             response.body()?.let { loginResponse ->
-                                Log.d("LoginFlow", "Raw login response: $loginResponse")
-                                Log.d("LoginFlow", "Success: ${loginResponse.success}")
-                                Log.d("LoginFlow", "Token: ${loginResponse.token}")
-                                Log.d("LoginFlow", "User ID: ${loginResponse.ID}")
-                                Log.d("LoginFlow", "Profile: ${loginResponse.Perfil}")
-                                Log.d("LoginFlow", "Name: ${loginResponse.Nome}")
-                                Log.d("LoginFlow", "Message: ${loginResponse.message ?: "No message"}")
-
 
                                 if (loginResponse.success) {
                                     SessionManager.apply {

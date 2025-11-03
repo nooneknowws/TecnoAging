@@ -13,7 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,12 +27,13 @@ import com.tecno.aging.ui.theme.AppColors
 @Composable
 fun PasswordTextField(
     value: String,
-    error: String,
-    passwordVisible: Boolean,
     onValueChange: (String) -> Unit,
-    onToggleVisibility: () -> Unit,
+    label: String,
+    error: String?,
     modifier: Modifier = Modifier
 ) {
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
     Column(modifier = modifier) {
         OutlinedTextField(
             value = value,
@@ -41,7 +43,7 @@ fun PasswordTextField(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Senha") },
+            label = { Text(label) },
             leadingIcon = { Icon(Icons.Rounded.Lock, contentDescription = "Ícone de Senha") },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -52,16 +54,15 @@ fun PasswordTextField(
                 else
                     painterResource(id = R.drawable.visibility_off_24)
 
-
                 Icon(
                     painter = image,
                     contentDescription = "Mostrar/Ocultar senha",
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable { onToggleVisibility() }
+                        .clickable { passwordVisible = !passwordVisible }
                 )
             },
-            isError = error.isNotEmpty(),
+            isError = !error.isNullOrEmpty(),
 
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = AppColors.White,
@@ -83,7 +84,7 @@ fun PasswordTextField(
             )
         )
 
-        if (error.isNotEmpty()) {
+        if (error != null) {
             Text(
                 text = error,
                 color = AppColors.Danger,

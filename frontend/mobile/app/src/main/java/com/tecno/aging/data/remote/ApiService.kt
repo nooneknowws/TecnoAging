@@ -4,8 +4,11 @@ import com.tecno.aging.domain.models.DTO.AvaliacaoPostDTO
 import com.tecno.aging.domain.models.DTO.CepResponse
 import com.tecno.aging.domain.models.DTO.TecnicoUpdateRequest
 import com.tecno.aging.domain.models.DTO.VerifyJwtResponse
+import com.tecno.aging.domain.models.auth.EnviarCodigoRequest
+import com.tecno.aging.domain.models.auth.EnviarCodigoResponse
 import com.tecno.aging.domain.models.auth.LoginRequest
 import com.tecno.aging.domain.models.auth.LoginResponse
+import com.tecno.aging.domain.models.auth.ResetPasswordDTO
 import com.tecno.aging.domain.models.auth.TecnicoRequest
 import com.tecno.aging.domain.models.forms.GenericForm
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
@@ -28,6 +31,16 @@ interface ApiService {
 
     @POST("api/auth/verify-jwt")
     suspend fun verifyJwt(@Body body: Map<String, String> = emptyMap()): Response<VerifyJwtResponse>
+
+    @POST("/api/auth/enviar-codigo")
+    suspend fun enviarCodigoRecuperacao(
+        @Body request: EnviarCodigoRequest
+    ): Response<EnviarCodigoResponse>
+
+    @POST("/api/auth/reset-password")
+    suspend fun resetarSenha(
+        @Body request: ResetPasswordDTO
+    ): Response<Map<String, String>>
 
     // aux
     @GET("https://viacep.com.br/ws/{cep}/json/")

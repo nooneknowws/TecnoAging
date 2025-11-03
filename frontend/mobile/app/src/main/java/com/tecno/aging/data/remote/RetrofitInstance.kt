@@ -4,6 +4,7 @@ import com.tecno.aging.data.local.SessionManager
 import okhttp3.OkHttpClient
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -39,6 +40,15 @@ object RetrofitInstance {
             .build()
     }
 
+    fun parseErrorBody(errorBody: String?): String? {
+        if (errorBody == null) return null
+        return try {
+            val jsonObj = JSONObject(errorBody)
+            jsonObj.optString("error", jsonObj.optString("message", ""))
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     private val retrofit by lazy {
         Retrofit.Builder()

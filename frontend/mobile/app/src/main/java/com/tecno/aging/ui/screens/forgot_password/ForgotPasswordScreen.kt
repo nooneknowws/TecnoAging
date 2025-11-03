@@ -1,8 +1,8 @@
 package com.tecno.aging.ui.screens.forgot_password
 
+import MaskedInput
 import android.widget.Toast
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tecno.aging.ui.components.buttons.ButtonComponent
 import com.tecno.aging.ui.components.fields.PasswordTextField
-import com.tecno.aging.ui.screens.login.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
@@ -67,7 +66,7 @@ fun ForgotPasswordScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 when (step) {
-                    1 -> Step1_EnterEmail(uiState, viewModel)
+                    1 -> Step1_EnterCpf(uiState, viewModel)
                     2 -> Step2_EnterOtp(uiState, viewModel)
                     3 -> Step3_ResetPassword(uiState, viewModel)
                 }
@@ -77,24 +76,25 @@ fun ForgotPasswordScreen(
 }
 
 @Composable
-private fun Step1_EnterEmail(uiState: ForgotPasswordUiState, viewModel: ForgotPasswordViewModel) {
+private fun Step1_EnterCpf(uiState: ForgotPasswordUiState, viewModel: ForgotPasswordViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text("Insira seu e-mail", style = MaterialTheme.typography.headlineSmall)
-        Text("Enviaremos um código de verificação para o seu e-mail.", textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
+        Text("Insira seu CPF", style = MaterialTheme.typography.headlineSmall)
+        Text("Enviaremos um código de verificação para o seu celular.", textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
 
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text("E-mail") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = uiState.errorMessage != null
+        MaskedInput(
+            value = uiState.cpf,
+            onValueChange = viewModel::onCpfChange,
+            mask = "###.###.###-##",
+            label = "CPF",
+            error = uiState.errorMessage,
+            modifier = Modifier.fillMaxWidth()
         )
 
-        if (uiState.errorMessage != null) {
-            Text(uiState.errorMessage!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+        if (uiState.errorMessage != null && uiState.cpf.length != 11) {
+            Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(Modifier.weight(1f))
@@ -117,8 +117,12 @@ private fun Step2_EnterOtp(uiState: ForgotPasswordUiState, viewModel: ForgotPass
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Verifique seu E-mail", style = MaterialTheme.typography.headlineSmall)
-        Text("Insira o código de 5 dígitos que enviamos.", textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
+        Text("Verifique seu Celular", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Insira o código de 6 dígitos que enviamos para ${uiState.telefoneMascarado}.",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
 
         OtpInput(
             otpValues = uiState.otp,
@@ -126,7 +130,7 @@ private fun Step2_EnterOtp(uiState: ForgotPasswordUiState, viewModel: ForgotPass
         )
 
         if (uiState.errorMessage != null) {
-            Text(uiState.errorMessage!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(Modifier.weight(1f))
@@ -155,23 +159,21 @@ private fun Step3_ResetPassword(uiState: ForgotPasswordUiState, viewModel: Forgo
         PasswordTextField(
             value = uiState.newPassword,
             onValueChange = viewModel::onNewPasswordChange,
-            error = "",
-            passwordVisible = true,
-            onToggleVisibility = {},
+            label = "Nova Senha",
+            error = null,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
         PasswordTextField(
             value = uiState.confirmPassword,
             onValueChange = viewModel::onConfirmPasswordChange,
-            error = "",
-            passwordVisible = true,
-            onToggleVisibility = {},
+            label = "Confirmar Nova Senha",
+            error = null,
             modifier = Modifier.fillMaxWidth()
         )
 
         if (uiState.errorMessage != null) {
-            Text(uiState.errorMessage!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(Modifier.weight(1f))
@@ -193,15 +195,17 @@ private fun OtpInput(
     otpValues: List<String>,
     onOtpChanged: (index: Int, value: String) -> Unit
 ) {
-    val focusRequesters = remember { List(5) { FocusRequester() } }
+    val otpCount = otpValues.size
+    val focusRequesters = remember { List(otpCount) { FocusRequester() } }
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        otpValues.forEachIndexed { index, value ->
+        repeat(otpCount) { index ->
             OutlinedTextField(
-                value = value,
+                value = otpValues[index],
                 onValueChange = {
-                    onOtpChanged(index, it)
-                    if (it.isNotEmpty() && index < 4) {
+                    val newValue = it.takeLast(1)
+                    onOtpChanged(index, newValue)
+                    if (newValue.isNotEmpty() && index < otpCount - 1) {
                         focusRequesters[index + 1].requestFocus()
                     }
                 },
