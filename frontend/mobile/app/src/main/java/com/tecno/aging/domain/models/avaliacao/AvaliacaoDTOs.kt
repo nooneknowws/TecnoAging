@@ -8,7 +8,18 @@ data class PerguntaHistorico(
     @SerializedName("texto")
     val texto: String,
     @SerializedName("tipo")
-    val tipo: String
+    val tipo: String,
+    @SerializedName("opcoes")
+    val opcoes: List<String>?,
+    @SerializedName("validacao")
+    val validacao: ValidacaoHistorico?
+)
+
+data class ValidacaoHistorico(
+    @SerializedName("min")
+    val min: Int?,
+    @SerializedName("max")
+    val max: Int?
 )
 
 data class RespostaItem(
@@ -58,6 +69,9 @@ data class HistoricoAvaliacao(
     @SerializedName("dataAtualizacao")
     val dataAtualizacao: String?,
 
+    @SerializedName("formularioId")
+    val formularioId: Long,
+
     @SerializedName("respostas")
-    val respostas: List<RespostaItem>
+    val respostas: List<RespostaItem>,
 )

@@ -2,6 +2,7 @@ package com.tecno.aging.data.repository
 
 import com.tecno.aging.data.remote.ApiService
 import com.tecno.aging.data.remote.RetrofitInstance
+import com.tecno.aging.domain.models.DTO.AvaliacaoPostDTO
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
 import kotlin.Result
 
@@ -30,6 +31,19 @@ class AvaliacaoRepository(
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("Falha ao buscar detalhes da avaliação"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateAvaliacao(avaliacaoId: Long, avaliacao: AvaliacaoPostDTO): Result<Map<String, Any>> {
+        return try {
+            val response = apiService.updateAvaliacao(avaliacaoId, avaliacao)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Falha ao atualizar avaliação, tente novamente mais tarde"))
             }
         } catch (e: Exception) {
             Result.failure(e)

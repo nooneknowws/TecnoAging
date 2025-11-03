@@ -47,13 +47,18 @@ fun FormScreen(
 
     LaunchedEffect(uiState.submissionSuccess) {
         if (uiState.submissionSuccess) {
-            Toast.makeText(context, "Avaliação enviada com sucesso!", Toast.LENGTH_LONG).show()
-            navController.navigate("home") {
-                popUpTo(navController.graph.startDestinationId) {
-                    inclusive = true
-                }
-                launchSingleTop = true
+            val message = if (uiState.pageTitle.startsWith("Editar")) {
+                "Avaliação atualizada com sucesso!"
+            } else {
+                "Avaliação enviada com sucesso!"
             }
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("avaliacao_updated", true)
+
+            navController.popBackStack()
         }
     }
 
@@ -120,8 +125,8 @@ fun FormContent(
             totalEtapas = form.etapas.size,
             onAnteriorClick = { viewModel.etapaAnterior() },
             onProximoClick = { viewModel.proximaEtapa() },
-            onFinalizarClick = { viewModel.submeterAvaliacao() },
-            isSubmitting = false
+            onFinalizarClick = { viewModel.submitForm() },
+            isSubmitting = uiState.isSubmitting
         )
     }
 }

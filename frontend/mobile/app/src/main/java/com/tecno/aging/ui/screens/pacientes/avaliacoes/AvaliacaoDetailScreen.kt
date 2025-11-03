@@ -6,16 +6,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.domain.models.historico.HistoricoAvaliacao
 import com.tecno.aging.ui.theme.AppColors
 import java.time.OffsetDateTime
@@ -30,6 +33,8 @@ fun AvaliacaoDetailScreen(
     viewModel: AvaliacaoDetailViewModel = viewModel(factory = AvaliacaoDetailViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val userProfile = remember { SessionManager.getUserProfile() }
+    val isTecnico = userProfile.equals("TECNICO", ignoreCase = true)
 
     Scaffold(
         topBar = {
@@ -41,6 +46,18 @@ fun AvaliacaoDetailScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            if (isTecnico && uiState.avaliacao != null) {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("avaliacao_edit/${uiState.avaliacao!!.id}")
+                    },
+                    containerColor = AppColors.Primary
+                ) {
+                    Icon(Icons.Default.Edit, "Editar Avaliação", tint = Color.White)
+                }
+            }
         },
         containerColor = AppColors.Gray50
     ) { padding ->

@@ -22,6 +22,7 @@ import com.tecno.aging.ui.screens.tecnico.listaDePacientes.PacienteListScreen
 import com.tecno.aging.ui.screens.pacientes.perfilPaciente.view.PacienteProfileScreen
 import com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit.ProfileEditScreen
 import com.tecno.aging.ui.screens.splash.SplashScreen
+import com.tecno.aging.ui.screens.tecnico.editAvaliacao.AvaliacaoEditScreen
 import com.tecno.aging.ui.screens.tecnico.perfilTecnico.view.TecnicoProfileScreen
 
 @Composable
@@ -87,6 +88,15 @@ fun AppNavGraph() {
         ) {
             FormScreen(navController = navController)
         }
+
+        composable(
+            route = "avaliacao_edit/{avaliacaoId}",
+            arguments = listOf(navArgument("avaliacaoId") { type = NavType.LongType })
+        ) {
+            AvaliacaoEditScreen(navController = navController)
+        }
+
+        //recuperar senha
 
         composable("forgot_password") {
             ForgotPasswordScreen(navController = navController)

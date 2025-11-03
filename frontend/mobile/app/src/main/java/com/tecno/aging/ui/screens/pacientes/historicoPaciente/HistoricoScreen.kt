@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 private fun getIconForFormulario(formularioTitulo: String): ImageVector {
@@ -47,6 +48,19 @@ fun HistoricoScreen(
     viewModel: HistoricoViewModel = viewModel(factory = HistoricoViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        val avaliacaoAtualizada = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Boolean>("avaliacao_updated")
+
+        if (avaliacaoAtualizada == true) {
+            viewModel.refreshHistorico()
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("avaliacao_updated", false)
+        }
+    }
 
     Scaffold(
         topBar = {

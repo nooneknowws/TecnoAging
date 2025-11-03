@@ -98,4 +98,10 @@ interface ApiService {
     @POST("api/avaliacoes/forms")
     suspend fun salvarAvaliacao(@Body avaliacao: AvaliacaoPostDTO): Response<Map<String, String>>
 
+    @PUT("api/avaliacoes/forms/update/{id}")
+    suspend fun updateAvaliacao(
+        @Path("id") avaliacaoId: Long,
+        @Body avaliacao: AvaliacaoPostDTO
+    ): Response<Map<String, Any>>
+
 }
