@@ -5,6 +5,7 @@ export class Tecnico extends Pessoa {
     constructor(
         public matricula?: number,
         public ativo?: boolean,
+        public fotoUrl?: string,
         id?: number,
         nome?: string,
         sexo?: string,

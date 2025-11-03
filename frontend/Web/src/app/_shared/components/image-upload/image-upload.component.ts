@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './image-upload.component.html',
   styleUrls: ['./image-upload.component.css']
 })
-export class ImageUploadComponent implements OnChanges{
+export class ImageUploadComponent implements OnInit, OnChanges{
 
   constructor(private sanitizer: DomSanitizer){}
 
@@ -20,13 +20,20 @@ export class ImageUploadComponent implements OnChanges{
   previewUrl: string | null = null;
   isUploading = false;
 
+  // placeholder path inside assets
+  private readonly placeholderImage = 'assets/default-profile.jpg';
+
   ngOnInit() {
-    this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(this.currentImageUrl!).toString();
+    if (this.currentImageUrl) {
+      this.previewUrl = this.currentImageUrl;
+    } else {
+      this.previewUrl = this.placeholderImage;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentImageUrl']) {
-      this.previewUrl = this.currentImageUrl;
+      this.previewUrl = this.currentImageUrl ? this.currentImageUrl : this.placeholderImage;
     }
   }
 
@@ -63,7 +70,7 @@ export class ImageUploadComponent implements OnChanges{
   }
 
   removeImage() {
-    this.previewUrl = null;
+    this.previewUrl = this.placeholderImage;
     this.imageSelected.emit('');
   }
 

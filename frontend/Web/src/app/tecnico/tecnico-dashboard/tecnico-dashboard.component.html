@@ -1,6 +1,8 @@
 <div class="dashboard-container">
   <header class="header mt-4">
-    <h1>Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>Dashboard</h1>
+    </div>
     <div class="user-info" *ngIf="currentTecnico">
       <span>Bem-vindo(a), <a [routerLink]="['/tecnico/editar-perfil']">{{currentTecnico.nome}}</a></span>
       <button class="btn-logout" (click)="logout()">Sair</button>

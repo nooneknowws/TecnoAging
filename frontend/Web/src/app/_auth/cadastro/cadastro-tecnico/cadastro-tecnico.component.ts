@@ -4,6 +4,7 @@ import { Endereco } from '../../../_shared/models/pessoa/endereco';
 import { AuthService } from '../../../_shared/services/auth.service';
 import { EnumEstadosBrasil } from '../../../_shared/models/estadosbrasil.enum';
 import { NgForm } from '@angular/forms';
+import { ImageService } from '../../../_shared/services/image.service';
 
 @Component({
   selector: 'app-cadastro-tecnico',
@@ -22,10 +23,21 @@ export class CadastroTecnicoComponent implements OnInit {
   repetirSenha = '';
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private imageService: ImageService
   ) { }
 
   ngOnInit(): void { }
+
+  onImageSelected(base64Image: string): void {
+    if (base64Image) {
+      this.tecnico.fotoUrl = base64Image;
+    }
+  }
+
+  onImageError(error: string): void {
+    console.error('Erro no upload da imagem:', error);
+  }
 
   calcularIdade(dataNasc: Date): number {
     const hoje = new Date();
@@ -64,7 +76,7 @@ export class CadastroTecnicoComponent implements OnInit {
 
   onSubmit(form: NgForm): void {
     if (form.valid && this.tecnico.senha === this.repetirSenha) {
-      this.tecnico.idade = undefined;
+      this.tecnico.idade = this.calcularIdade(this.tecnico.dataNasc!);
       this.tecnico.endereco = this.endereco;
 
       this.authService.registrarTecnico(this.tecnico)

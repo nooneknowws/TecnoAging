@@ -55,6 +55,7 @@ const routes: Routes = [
     data: { tipo: 'tecnico' },
     children: [
       { path: '', component: TecnicoDashboardComponent },
+      { path: 'comparar-resultados/:tecnicoId', component: CompararResultadosComponent },
       { path: 'comparar-resultados', component: CompararResultadosComponent },
       { path: 'editar-perfil', component: EditarPerfilComponent },
       { path: 'paciente/editar-perfil', component: EditarPerfilPacienteComponent },

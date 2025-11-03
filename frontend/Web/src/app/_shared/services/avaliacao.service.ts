@@ -32,9 +32,9 @@ export class AvaliacaoService {
     );
   }
 
-  getAvaliacaoByIdTecnico(tecnicoId: number): Observable<Avaliacao> {
-    return this.http.get<Avaliacao>(`${this.API_URL}/respostas/tecnico/${tecnicoId}`).pipe(
-      map(avaliacao => this.deserializeAvaliacao(avaliacao))
+  getAvaliacaoByIdTecnico(tecnicoId: number): Observable<Avaliacao[]> {
+    return this.http.get<Avaliacao[]>(`${this.API_URL}/respostas/tecnico/${tecnicoId}`).pipe(
+      map(avaliacoes => avaliacoes.map(avaliacao => this.deserializeAvaliacao(avaliacao)))
     );
   }
 

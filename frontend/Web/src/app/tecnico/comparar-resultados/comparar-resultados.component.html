@@ -3,6 +3,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
+        <th scope="col"><i class="fas fa-file-alt"></i> Nome do Paciente</th>
         <th scope="col"><i class="fas fa-file-alt"></i> Tipo de Teste</th>
         <th scope="col"><i class="fas fa-clock"></i> Data/hora Finalização</th>
         <th scope="col"><i class="fas fa-star"></i> Pontuação Total</th>
@@ -11,6 +12,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let teste of testes">
+        <td>{{ teste.paciente }}</td>
         <td>{{ teste.tipo }}</td>
         <td>{{ teste.dataFinalizacao }}</td>
         <td>{{ teste.pontuacaoTotal }}</td>

@@ -21,6 +21,7 @@ import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codi
 import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
 import { FormularioCadastroComponent } from './_tecnico/formulario-cadastro/formulario-cadastro.component';
 import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formulario-edicao.component';
+import { SharedModule } from './_shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,7 @@ import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formular
     RedefinirSenhaComponent,
     FormularioComponent,
     FormularioCadastroComponent,
-    FormularioEdicaoComponent
+    FormularioEdicaoComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,7 +47,8 @@ import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formular
     NgxMaskPipe,
     CommonModule,
     RouterModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ],
   providers: [
     AuthService,

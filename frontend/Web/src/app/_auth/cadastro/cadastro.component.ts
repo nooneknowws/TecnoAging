@@ -27,6 +27,16 @@ export class CadastroComponent implements OnInit {
 
   ngOnInit(): void { }
 
+  onImageSelected(base64Image: string): void {
+    if (base64Image) {
+      this.tecnico.fotoUrl = base64Image;
+    }
+  }
+
+  onImageError(error: string): void {
+    console.error('Erro no upload da imagem:', error);
+  }
+
   calcularIdade(dataNasc: Date): number {
     const hoje = new Date();
     const nascimento = new Date(dataNasc);

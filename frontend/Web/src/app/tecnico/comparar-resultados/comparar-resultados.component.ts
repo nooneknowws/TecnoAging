@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AvaliacaoService } from '../../_shared/services/avaliacao.service';
+import { Avaliacao } from '../../_shared/models/avaliacao/avaliacao';
 
 @Component({
   selector: 'app-comparar-resultados',
@@ -6,44 +9,48 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./comparar-resultados.component.css'],
 })
 export class CompararResultadosComponent implements OnInit {
-  testes = [
-    {
-      tipo: 'Nível de Atividade Física',
-      dataFinalizacao: '20/11/2024 14:30',
-      pontuacaoTotal: 85,
-      detalhes: [
-        { texto: 'Quanto tempo por dia você realiza atividades vigorosas?', resposta: '01:30', media: '00:45' },
-        { texto: 'Quantos dias por semana?', resposta: '4', media: '2' },
-      ],
-    },
-    {
-      tipo: 'Índice de Vulnerabilidade',
-      dataFinalizacao: '10/11/2024 16:50',
-      pontuacaoTotal: 72,
-      detalhes: [
-        { texto: 'Em geral, comparado com outras pessoas da sua idade, como você diria que está a sua saúde?', resposta: 'Regular ou ruim', media: 'Regular ou ruim' },
-        { texto: 'Comparada há um ano atrás, como você se classificaria sua saúde em geral, agora?', resposta: 'Igual', media: 'Pior' },
-      ],
-    },
-    {
-      tipo: 'Mini Exame do Estado Mental',
-      dataFinalizacao: '02/11/2024 09:30',
-      pontuacaoTotal: 90,
-      detalhes: [
-        { texto: 'Que dia é hoje?', resposta: 'Correto', media: '80% Correto' },
-        { texto: 'Em que ano estamos?', resposta: 'Correto', media: '85% Correto' },
-        { texto: 'Em que estado estamos?', resposta: 'Correto', media: '90% Correto' },
-      ],
-    },
-  ];
-
+  testes: any[] = [];
   resultadoSelecionado: any = null;
 
-  constructor() {}
+  constructor(
+    private route: ActivatedRoute,
+    private avaliacaoService: AvaliacaoService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const tecnicoId = this.route.snapshot.params['tecnicoId'];
+    if (tecnicoId) {
+      this.avaliacaoService.getAvaliacaoByIdTecnico(tecnicoId).subscribe({
+        next: (avaliacoes: Avaliacao[]) => {
+          this.testes = avaliacoes.map(a => ({
+            tipo: a.formulario?.titulo ?? 'Sem título',
+            dataFinalizacao: a.dataAtualizacao ? new Date(a.dataAtualizacao).toLocaleString('pt-BR') : '-',
+            pontuacaoTotal: a.pontuacaoTotal ?? 0,
+            detalhes: (a.respostas ?? []).map(r => ({
+              texto: r.pergunta?.texto ?? '-',
+              resposta: this.formatarValorResposta(r.valor),
+              media: '-'
+            }))
+          }));
+        },
+        error: (err) => {
+          console.error('Erro ao carregar avaliações para comparar:', err);
+        }
+      });
+    } else {
+      this.testes = [];
+    }
+    console.log(tecnicoId, 'Testes carregados para comparação:', this.testes);
+  }
 
   exibirDetalhes(teste: any): void {
     this.resultadoSelecionado = teste;
+  }
+
+  formatarValorResposta(valor: any): string {
+    if (typeof valor === 'string' && valor.startsWith('"') && valor.endsWith('"')) {
+      return valor.slice(1, -1);
+    }
+    return String(valor ?? '');
   }
 }

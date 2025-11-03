@@ -182,7 +182,6 @@ export class PacienteDashboardComponent implements OnInit {
 
   loadMetricas(): void {
     if (this.currentPaciente) {
-      // Implementar lógica para calcular métricas baseadas nos resultados
       this.metricas = {
         desempenhoCognitivo: 85,
         nivelFadiga: 3,
@@ -233,7 +232,6 @@ export class PacienteDashboardComponent implements OnInit {
   }
 
   visualizarTeste(testeId: number): void {
-    // Implementar navegação para visualização detalhada do teste
     console.log('Visualizar teste:', testeId);
   }
 

@@ -1,4 +1,99 @@
-{
+//adicionar a lógica da pontuação dos testes nesse JSON. 
+
+{  
+    "tecnicos": [
+        {
+            "matricula": 12343215,
+            "senha": "1234",
+            "ativo": true,
+            "nome": "Teste",
+            "sexo": "M",
+            "endereco": {
+                "logradouro": "Rua Principal",
+                "numero": 123,
+                "bairro": "Centro",
+                "municipio": "São Paulo",
+                "uf": "SP",
+                "cep": "01001000"
+            },
+            "dataNasc": "1988-05-15",
+            "cpf": "55588833331",
+            "telefone": "11999999999"
+        },
+        {
+            "matricula": 20231001,
+            "senha": "tech123",
+            "ativo": true,
+            "nome": "Amanda Silva Santos",
+            "sexo": "F",
+            "endereco": {
+                "logradouro": "Avenida Paulista",
+                "numero": 1578,
+                "bairro": "Bela Vista",
+                "municipio": "São Paulo",
+                "uf": "SP",
+                "cep": "01310200"
+            },
+            "dataNasc": "1992-08-25",
+            "cpf": "12345678901",
+            "telefone": "11987654321"
+        },
+        {
+            "matricula": 20231002,
+            "senha": "tech456",
+            "ativo": true,
+            "nome": "Carlos Eduardo Oliveira",
+            "sexo": "M",
+            "endereco": {
+                "logradouro": "Rua Augusta",
+                "numero": 789,
+                "bairro": "Consolação",
+                "municipio": "São Paulo",
+                "uf": "SP",
+                "cep": "01305000"
+            },
+            "dataNasc": "1985-03-12",
+            "cpf": "23456789012",
+            "telefone": "11976543210"
+        },
+        {
+            "matricula": 20231003,
+            "senha": "tech789",
+            "ativo": true,
+            "nome": "Mariana Costa Lima",
+            "sexo": "F",
+            "endereco": {
+                "logradouro": "Rua Oscar Freire",
+                "numero": 456,
+                "bairro": "Jardins",
+                "municipio": "São Paulo",
+                "uf": "SP",
+                "cep": "01426000"
+            },
+            "dataNasc": "1990-11-30",
+            "cpf": "34567890123",
+            "telefone": "11965432109"
+        },
+        {
+            "matricula": 20231004,
+            "senha": "tech321",
+            "ativo": true,
+            "nome": "Rafael Martins Pereira",
+            "sexo": "M",
+            "endereco": {
+                "logradouro": "Rua Teodoro Sampaio",
+                "numero": 892,
+                "bairro": "Pinheiros",
+                "municipio": "São Paulo",
+                "uf": "SP",
+                "cep": "05406000"
+            },
+            "dataNasc": "1988-06-15",
+            "cpf": "45678901234",
+            "telefone": "11954321098"
+        }
+    ],
+
     "pacientes": [
         {
             "senha": "abc123",

@@ -6,6 +6,15 @@
 
         <form *ngIf="!isRegistered" (ngSubmit)="onSubmit(form)" #form="ngForm">
             <h1 class="h3 mb-3 fw-normal text-center title">Cadastro de Técnico</h1>
+            
+            <div class="mb-3 text-center">
+                <app-image-upload
+                    [currentImageUrl]="tecnico.fotoUrl ?? null"
+                    (imageSelected)="onImageSelected($event)"
+                    (imageError)="onImageError($event)"
+                    placeholderText="Clique para selecionar uma foto"
+                ></app-image-upload>
+            </div>
 
             <div class="input-group mb-2">
                 <div class="form-floating w-50">

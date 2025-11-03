@@ -7,6 +7,7 @@ import { EnumEstadoCivil } from '../../../_shared/models/estadocivil.enum';
 import { EnumClasseSocioeconomica } from '../../../_shared/models/classe-socioeconomica.enum';
 import { EnumEscolaridade } from '../../../_shared/models/escolaridade.enum';
 import { AuthService } from '../../../_shared/services/auth.service';
+import { ImageService } from '../../../_shared/services/image.service';
 
 @Component({
   selector: 'app-cadastro-paciente',
@@ -28,10 +29,22 @@ export class CadastroPacienteComponent implements OnInit {
   repetirSenha = '';
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private imageService: ImageService
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+  }
+
+  onImageSelected(base64Image: string): void {
+    if (base64Image) {
+      this.paciente.fotoUrl = base64Image;
+    }
+  }
+
+  onImageError(error: string): void {
+    console.error('Erro no upload da imagem:', error);
+  }
 
   getEstadoCivilOptions() {
     return Object.entries(EnumEstadoCivil).map(([key, value]) => ({

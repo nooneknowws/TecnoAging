@@ -11,6 +11,7 @@ import { AuthService } from '../../_shared/services/auth.service';
 export class TecnicoLayoutComponent {
   linkVoltarVisivel: boolean = false;
   isNavbarOpen: boolean = false;
+  tecnicoId: string | null = null;
 
   constructor(
     private router: Router,
@@ -23,6 +24,13 @@ export class TecnicoLayoutComponent {
     ).subscribe(() => {
       this.linkVoltarVisivel = !this.isRotaInicial();
     });
+
+    const user = this.authService.getCurrentUser();
+    if (user && (user as any).id) {
+      this.tecnicoId = String((user as any).id);
+    } else {
+      this.tecnicoId = localStorage.getItem('userID');
+    }
   }
 
   toggleNavbar(): void {
@@ -41,5 +49,13 @@ export class TecnicoLayoutComponent {
     const token = localStorage.getItem('token')
     this.authService.logout(token);
     this.router.navigate(['/login']);
+  }
+
+  irCompararResultados(): void {
+    if (this.tecnicoId) {
+      this.router.navigate(['/tecnico/comparar-resultados', this.tecnicoId]);
+    } else {
+      this.router.navigate(['/tecnico/comparar-resultados']);
+    }
   }
 }
