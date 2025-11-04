@@ -167,36 +167,37 @@ SET row_security = off;
 
 
 INSERT INTO public.formulario (id, descricao, tipo, titulo, calcula_pontuacao, tipo_calculo, formula_custom) VALUES
-(1, 'Avaliação do nível de fadiga física e mental após diferentes atividades', 'pfs', 'Formulário PFS', false, NULL, NULL),
-(2, 'Avaliação cognitiva para identificar possíveis déficits cognitivos.', 'minimental', 'Mini Exame do Estado Mental (MEEM)', false, NULL, NULL),
-(3, 'Avaliação multidimensional do grau de vulnerabilidade clínica e funcional de idosos', 'ivcf20', 'Índice de Vulnerabilidade Clínico-Funcional (IVCF-20)', false, NULL, NULL),
+(1, 'Avaliação do nível de fadiga física e mental após diferentes atividades', 'pfs', 'Formulário PFS', true, 'SOMA_ETAPAS', NULL),
+(2, 'Avaliação cognitiva para identificar possíveis déficits cognitivos.', 'minimental', 'Mini Exame do Estado Mental (MEEM)', true, 'SOMA_ETAPAS', NULL),
+(3, 'Avaliação multidimensional do grau de vulnerabilidade clínica e funcional de idosos', 'ivcf20', 'Índice de Vulnerabilidade Clínico-Funcional (IVCF-20)', true, 'SOMA_ETAPAS', NULL),
 (4, 'Nível de Atividade Física e Comportamento Sedentário', 'sedentarismo', 'Nível de Atividade Física e Comportamento Sedentário', false, NULL, NULL),
 (5, 'Avaliação da qualidade de vida e fadiga em pacientes com câncer', 'factf', 'Functional Assessment of Cancer Therapy - Fatigue (FACT-F)', true, 'SOMA_ETAPAS', 'PWB + SWB + EWB + FWB + FADIGA');
 
 
-INSERT INTO public.etapa VALUES (1, 'Instruções: Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde ''0'' é igual a nenhuma fadiga e ''5'' é igual a fadiga extrema.', 'Escala de Fatigabilidade de Pittsburgh', 1);
-INSERT INTO public.etapa VALUES (2, 'Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.', 'Atividade 1', 1);
-INSERT INTO public.etapa VALUES (3, 'Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)', 'Atividade 2', 1);
-INSERT INTO public.etapa VALUES (4, 'Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)', 'Atividade 3', 1);
-INSERT INTO public.etapa VALUES (5, 'Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)', 'Atividade 4', 1);
-INSERT INTO public.etapa VALUES (6, 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.', 'Orientação Temporal', 2);
-INSERT INTO public.etapa VALUES (7, 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.', 'Orientação Espacial', 2);
-INSERT INTO public.etapa VALUES (8, 'Eu vou dizer 3 palavras e você irá repeti-las a seguir: CARRO – VASO – TIJOLO. Pode repeti-las até três vezes para o aprendizado, se houver erros.', 'Memória Imediata', 2);
-INSERT INTO public.etapa VALUES (9, 'Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Se houver erro, corrija-o e prossiga. Considere correto se o avaliado espontaneamente se autocorrigir.', 'Cálculo', 2);
-INSERT INTO public.etapa VALUES (10, 'Pergunte quais as palavras que o indivíduo acabara de repetir (CARRO-VASO-TIJOLO).', 'Evocação das palavras', 2);
-INSERT INTO public.etapa VALUES (11, 'Peça para o indivíduo nomear os objetos mostrados (relógio, caneta).', 'Nomeação', 2);
-INSERT INTO public.etapa VALUES (12, 'Preste atenção: Vou lhe dizer uma frase e quero que você repita depois de mim: “NEM AQUI, NEM ALI, NEM LÁ”.', 'Repetição', 2);
-INSERT INTO public.etapa VALUES (13, 'Pegue este papel com a mão direita (1 ponto), dobre-o ao meio (1 ponto) e coloque-o no chão (1 ponto).  Se o indivíduo pedir ajuda no meio da tarefa não dê dicas.', 'Comando', 2);
-INSERT INTO public.etapa VALUES (14, 'Mostre a frase escrita: “FECHE OS OLHOS” e peça para o indivíduo fazer o que está sendo mandado. Não auxilie se pedir ajuda ou se só ler a frase sem realizar o comando.', 'Leitura e Obediência', 2);
-INSERT INTO public.etapa VALUES (15, 'Peça ao indivíduo para escrever uma frase. Se não compreender o significado, ajude com: alguma frase que tenha começo, meio e fim, alguma coisa que aconteceu hoje; alguma coisa que queira dizer. Para a correção não são considerados erros gramaticais ou de ortografia. (1 ponto).', 'Escrita', 2);
-INSERT INTO public.etapa VALUES (16, 'Mostre o modelo e peça para fazer o melhor possível. Considere apenas se houver 2 pentágonos intersecionados (10 ângulos) formando uma figura de quatro lados ou com dois ângulos (1 ponto).', 'Cópia do Desenho', 2);
-INSERT INTO public.etapa VALUES (17, 'Avaliação geral da saúde comparada a outras pessoas da mesma idade.', 'Auto-percepção da Saúde', 3);
-INSERT INTO public.etapa VALUES (18, 'Avaliação geral da saúde comparada historicamente.', 'Percepção da saúde comparada', 3);
-INSERT INTO public.etapa VALUES (19, 'Avaliação de atividades como compras, finanças, e pequenos trabalhos domésticos.', 'Atividades de Vida Diária', 3);
-INSERT INTO public.etapa VALUES (20, 'Avaliação de possíveis sinais de problemas de memória.', 'Cognição', 3);
-INSERT INTO public.etapa VALUES (21, 'Avaliação de sintomas relacionados ao humor.', 'Humor', 3);
-INSERT INTO public.etapa VALUES (22, 'Avaliação de mobilidade e capacidade física.', 'Mobilidade', 3);
-INSERT INTO public.etapa VALUES (23, 'Avaliação de problemas de comunicação relacionados à saúde.', 'Comunicação', 3);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (1, 'Instruções: Nas perguntas a seguir indique o nível de fadiga física e mental (ou seja, cansaço, exaustão) que você espera ou imagina sentir imediatamente após completar cada uma das dez atividades listadas. Para cada atividade (a-j), circule as respostas para fadiga física e mental entre 0 e 5, onde ''0'' é igual a nenhuma fadiga e ''5'' é igual a fadiga extrema.', 'Escala de Fatigabilidade de Pittsburgh', 1, NULL, NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (2, 'Classifique os níveis de fadiga ao caminhar à lazer por 30 minutos.', 'Atividade 1', 1, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (3, 'Classifique os níveis de fadiga: Atividade doméstica leve por 1 hora (limpar, cozinhar, tirar o pó, assar, arrumar camas, lavar louça, regar plantas)', 'Atividade 2', 1, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (4, 'Classifique os níveis de fadiga: Participar de atividade social por 1 hora (festa, jantar, centro de idosos, reunião com família/amigos, jogar cartas)', 'Atividade 3', 1, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (5, 'Classifique os níveis de fadiga: Atividade de alta intensidade por 30 minutos (corrida, caminhada, ciclismo, natação, esportes com raquete, aparelhos aeróbicos, dança, zumba)', 'Atividade 4', 1, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (6, 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.', 'Orientação Temporal', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (7, 'Pergunte ao paciente as seguintes questões, será calculado 1 ponto para cada.', 'Orientação Espacial', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (8, 'Eu vou dizer 3 palavras e você irá repeti-las a seguir: CARRO – VASO – TIJOLO. Pode repeti-las até três vezes para o aprendizado, se houver erros.', 'Memória Imediata', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (9, 'Subtração de 7 seriadamente (100-7; 93-7; 86-7; 79-7; 72-7; 65). Se houver erro, corrija-o e prossiga. Considere correto se o avaliado espontaneamente se autocorrigir.', 'Cálculo', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (10, 'Pergunte quais as palavras que o indivíduo acabara de repetir (CARRO-VASO-TIJOLO).', 'Evocação das palavras', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (11, 'Peça para o indivíduo nomear os objetos mostrados (relógio, caneta).', 'Nomeação', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (12, 'Preste atenção: Vou lhe dizer uma frase e quero que você repita depois de mim: "NEM AQUI, NEM ALI, NEM LÁ".', 'Repetição', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (13, 'Pegue este papel com a mão direita (1 ponto), dobre-o ao meio (1 ponto) e coloque-o no chão (1 ponto).  Se o indivíduo pedir ajuda no meio da tarefa não dê dicas.', 'Comando', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (14, 'Mostre a frase escrita: "FECHE OS OLHOS" e peça para o indivíduo fazer o que está sendo mandado. Não auxilie se pedir ajuda ou se só ler a frase sem realizar o comando.', 'Leitura e Obediência', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (15, 'Peça ao indivíduo para escrever uma frase. Se não compreender o significado, ajude com: alguma frase que tenha começo, meio e fim, alguma coisa que aconteceu hoje; alguma coisa que queira dizer. Para a correção não são considerados erros gramaticais ou de ortografia. (1 ponto).', 'Escrita', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (16, 'Mostre o modelo e peça para fazer o melhor possível. Considere apenas se houver 2 pentágonos intersecionados (10 ângulos) formando uma figura de quatro lados ou com dois ângulos (1 ponto).', 'Cópia do Desenho', 2, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (106, 'Idade do paciente', 'Idade', 3, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (17, 'Avaliação geral da saúde comparada a outras pessoas da mesma idade.', 'Auto-percepção da Saúde', 3, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (18, 'Avaliação geral da saúde comparada historicamente.', 'Percepção da saúde comparada', 3, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (19, 'Avaliação de atividades como compras, finanças, e pequenos trabalhos domésticos.', 'Atividades de Vida Diária', 3, 'MAX_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (20, 'Avaliação de possíveis sinais de problemas de memória.', 'Cognição', 3, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (21, 'Avaliação de sintomas relacionados ao humor.', 'Humor', 3, 'SOMA_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (22, 'Avaliação de mobilidade e capacidade física.', 'Mobilidade', 3, 'MAX_PERGUNTAS', NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (23, 'Avaliação de problemas de comunicação relacionados à saúde.', 'Comunicação', 3, 'MAX_PERGUNTAS', NULL);
 INSERT INTO public.etapa VALUES (24, 'Você consegue realizá-la conversando com dificuldade enquanto se movimenta e não vai conseguir cantar.', 'Atividade Moderada', 4);
 INSERT INTO public.etapa VALUES (25, 'Você não vai conseguir nem conversar. A sua respiração vai ser muito mais rápida que o normal e os batimentos do seu coração vão aumentar muito.', 'Atividade Vigorosa', 4);
 INSERT INTO public.etapa VALUES (26, 'Quanto tempo do seu dia, enquanto você está acordado, você gasta sentado, reclinado ou deitado, assistindo televisão, no celular, em frente ao computador, realizando trabalhos manuais, dirigindo ou lendo?', 'Comportamento Sedentário', 4);
@@ -207,53 +208,58 @@ INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, fo
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (31, 'Avaliação de preocupações específicas durante os últimos 7 dias', 'Preocupações Adicionais', 5, 'MEDIA_AJUSTADA', '(SUM_PONTOS / COUNT_RESPONDIDAS) * 13');
 
 
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (1, 'Fadiga Física', 'range', 5, 0, true, 2);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (2, 'Fadiga Mental', 'range', 5, 0, true, 2);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (3, 'Fadiga Física', 'range', 5, 0, true, 3);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (4, 'Fadiga Mental', 'range', 5, 0, true, 3);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (5, 'Fadiga Física', 'range', 5, 0, true, 4);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (6, 'Fadiga Mental', 'range', 5, 0, true, 4);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (7, 'Fadiga Física', 'range', 5, 0, true, 5);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (8, 'Fadiga Mental', 'range', 5, 0, true, 5);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (9, 'Que dia é hoje?', 'radio', NULL, NULL, true, 6);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (10, 'Em que mês estamos?', 'radio', NULL, NULL, true, 6);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (11, 'Em que ano estamos?', 'radio', NULL, NULL, true, 6);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (12, 'Em que dia da semana estamos?', 'radio', NULL, NULL, true, 6);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (13, 'Qual a hora atual aproximada (considere variação de mais ou menos 1 hora)', 'radio', NULL, NULL, true, 6);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (14, 'Em que local nós estamos? (consultório, sala, dormitório...)', 'radio', NULL, NULL, true, 7);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (15, 'Que local é este aqui? (apontando ao redor num sentido mais amplo.... hospital, casa de repouso, própria casa...)', 'radio', NULL, NULL, true, 7);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (16, 'Em que bairro nós estamos ou qual o nome de uma rua próxima?', 'radio', NULL, NULL, true, 7);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (17, 'Em que cidade nós estamos?', 'radio', NULL, NULL, true, 7);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (18, 'Em que estado nós estamos?', 'radio', NULL, NULL, true, 7);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (19, 'Marque cada palavra repetida corretamente na 1ª vez.', 'checkbox', NULL, NULL, false, 8);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (20, 'Considere 1 ponto para cada resultado correto.', 'range', 6, 0, true, 9);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (21, 'Marque cada palavra repetida corretamente.', 'checkbox', NULL, NULL, false, 10);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (22, 'Marque cada objeto nomeado corretamente.', 'checkbox', NULL, NULL, false, 11);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (23, 'Considere somente se a repetição for perfeita', 'radio', NULL, NULL, true, 12);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (24, 'Avalie cada critério.', 'checkbox', NULL, NULL, false, 13);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (25, 'Avalie o resultado.', 'radio', NULL, NULL, true, 14);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (26, 'Avalie o resultado.', 'radio', NULL, NULL, true, 15);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (27, 'Avalie o desenho.', 'radio', NULL, NULL, true, 16);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (28, 'Em geral, comparado com outras pessoas da sua idade, como você diria que está a sua saúde?', 'radio', NULL, NULL, NULL, 17);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (29, 'Comparada há um ano atrás, como você se classificaria sua saúde em geral, agora?', 'radio', NULL, NULL, NULL, 18);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (30, 'Você deixou de fazer compras por causa da sua saúde ou condição física?', 'radio', NULL, NULL, NULL, 19);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (31, 'Você deixou de controlar seu dinheiro ou os gastos da casa por causa da sua saúde ou condição física?', 'radio', NULL, NULL, NULL, 19);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (32, 'Você deixou de realizar pequenos trabalhos domésticos (limpeza leve, arrumar a casa, lavar louças) por causa da sua saúde ou condição física?', 'radio', NULL, NULL, NULL, 19);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (33, 'Você deixou de tomar banho sozinho por causa da sua saúde ou condição física?', 'radio', NULL, NULL, NULL, 19);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (34, 'Algum familiar ou amigo falou que você está ficando esquecido?', 'radio', NULL, NULL, NULL, 20);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (35, 'Este esquecimento está piorando nos últimos meses?', 'radio', NULL, NULL, NULL, 20);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (36, 'Este esquecimento está impedindo a realização de alguma atividade do cotidiano?', 'radio', NULL, NULL, NULL, 20);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (37, 'No último mês, você ficou com desânimo, tristeza ou desesperança?', 'radio', NULL, NULL, NULL, 21);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (38, 'No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?', 'radio', NULL, NULL, NULL, 21);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (39, 'Você é incapaz de elevar os braços acima do nível do ombro?', 'radio', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (40, 'Você é incapaz de segurar pequenos objetos?', 'radio', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (41, 'Você tem alguma das quatro condições abaixo relacionadas?', 'checkbox', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (42, 'Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?', 'radio', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (43, 'Você caiu no último ano? Quantas vezes?', 'radio', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (44, 'Você perde urina ou fezes, sem querer, em algum momento?', 'radio', NULL, NULL, NULL, 22);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (45, 'Você tem problemas de visão capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de óculos ou lentes de contato.', 'radio', NULL, NULL, NULL, 23);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (46, 'Você tem problemas de audição que impedem a realização de atividades do cotidiano? É permitido o uso de aparelhos de audição.', 'radio', NULL, NULL, NULL, 23);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (47, 'Você tem alguma das três condições abaixo relacionadas?', 'checkbox', NULL, NULL, NULL, 23);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (1, 'Fadiga Física', 'range', 5, 0, true, 2, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (2, 'Fadiga Mental', 'range', 5, 0, true, 2, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (102, 'Você fez isso no último mês?', 'radio', NULL, NULL, true, 2, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (3, 'Fadiga Física', 'range', 5, 0, true, 3, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (4, 'Fadiga Mental', 'range', 5, 0, true, 3, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (103, 'Você fez isso no último mês?', 'radio', NULL, NULL, true, 3, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (5, 'Fadiga Física', 'range', 5, 0, true, 4, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (6, 'Fadiga Mental', 'range', 5, 0, true, 4, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (104, 'Você fez isso no último mês?', 'radio', NULL, NULL, true, 4, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (7, 'Fadiga Física', 'range', 5, 0, true, 5, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (8, 'Fadiga Mental', 'range', 5, 0, true, 5, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (105, 'Você fez isso no último mês?', 'radio', NULL, NULL, true, 5, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (9, 'Que dia é hoje?', 'radio', NULL, NULL, true, 6, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (10, 'Em que mês estamos?', 'radio', NULL, NULL, true, 6, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (11, 'Em que ano estamos?', 'radio', NULL, NULL, true, 6, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (12, 'Em que dia da semana estamos?', 'radio', NULL, NULL, true, 6, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (13, 'Qual a hora atual aproximada (considere variação de mais ou menos 1 hora)', 'radio', NULL, NULL, true, 6, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (14, 'Em que local nós estamos? (consultório, sala, dormitório...)', 'radio', NULL, NULL, true, 7, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (15, 'Que local é este aqui? (apontando ao redor num sentido mais amplo.... hospital, casa de repouso, própria casa...)', 'radio', NULL, NULL, true, 7, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (16, 'Em que bairro nós estamos ou qual o nome de uma rua próxima?', 'radio', NULL, NULL, true, 7, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (17, 'Em que cidade nós estamos?', 'radio', NULL, NULL, true, 7, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (18, 'Em que estado nós estamos?', 'radio', NULL, NULL, true, 7, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (19, 'Marque cada palavra repetida corretamente na 1ª vez.', 'checkbox', NULL, NULL, false, 8, 'MAPEAMENTO', 0, 3);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (20, 'Considere 1 ponto para cada resultado correto.', 'range', 5, 0, true, 9, 'VALOR_DIRETO', 0, 5);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (21, 'Marque cada palavra repetida corretamente.', 'checkbox', NULL, NULL, false, 10, 'MAPEAMENTO', 0, 3);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (22, 'Marque cada objeto nomeado corretamente.', 'checkbox', NULL, NULL, false, 11, 'MAPEAMENTO', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (23, 'Considere somente se a repetição for perfeita', 'radio', NULL, NULL, true, 12, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (24, 'Avalie cada critério.', 'checkbox', NULL, NULL, false, 13, 'MAPEAMENTO', 0, 3);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (25, 'Avalie o resultado.', 'radio', NULL, NULL, true, 14, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (26, 'Avalie o resultado.', 'radio', NULL, NULL, true, 15, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (27, 'Avalie o desenho.', 'radio', NULL, NULL, true, 16, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (106, 'Qual a sua faixa etária?', 'radio', NULL, NULL, true, 106, 'MAPEAMENTO', 0, 3);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (28, 'Em geral, comparado com outras pessoas da sua idade, como você diria que está a sua saúde?', 'radio', NULL, NULL, true, 17, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (29, 'Comparada há um ano atrás, como você se classificaria sua saúde em geral, agora?', 'radio', NULL, NULL, true, 18, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (30, 'Você deixou de fazer compras por causa da sua saúde ou condição física?', 'radio', NULL, NULL, true, 19, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (31, 'Você deixou de controlar seu dinheiro ou os gastos da casa por causa da sua saúde ou condição física?', 'radio', NULL, NULL, true, 19, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (32, 'Você deixou de realizar pequenos trabalhos domésticos (limpeza leve, arrumar a casa, lavar louças) por causa da sua saúde ou condição física?', 'radio', NULL, NULL, true, 19, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (33, 'Você deixou de tomar banho sozinho por causa da sua saúde ou condição física?', 'radio', NULL, NULL, true, 19, 'MAPEAMENTO', 0, 0);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (34, 'Algum familiar ou amigo falou que você está ficando esquecido?', 'radio', NULL, NULL, true, 20, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (35, 'Este esquecimento está piorando nos últimos meses?', 'radio', NULL, NULL, true, 20, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (36, 'Este esquecimento está impedindo a realização de alguma atividade do cotidiano?', 'radio', NULL, NULL, true, 20, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (37, 'No último mês, você ficou com desânimo, tristeza ou desesperança?', 'radio', NULL, NULL, true, 21, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (38, 'No último mês, você perdeu o interesse ou prazer em atividades anteriormente prazerosas?', 'radio', NULL, NULL, true, 21, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (39, 'Você é incapaz de elevar os braços acima do nível do ombro?', 'radio', NULL, NULL, true, 22, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (40, 'Você é incapaz de segurar pequenos objetos?', 'radio', NULL, NULL, true, 22, 'MAPEAMENTO', 0, 1);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (41, 'Você tem alguma das quatro condições abaixo relacionadas?', 'checkbox', NULL, NULL, true, 22, 'MAPEAMENTO_MAX', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (42, 'Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?', 'radio', NULL, NULL, true, 22, 'MAPEAMENTO', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (43, 'Você caiu no último ano? Quantas vezes?', 'radio', NULL, NULL, true, 22, 'MAPEAMENTO', 0, 3);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (44, 'Você perde urina ou fezes, sem querer, em algum momento?', 'radio', NULL, NULL, true, 22, 'MAPEAMENTO', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (45, 'Você tem problemas de visão capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de óculos ou lentes de contato.', 'radio', NULL, NULL, true, 23, 'MAPEAMENTO', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (46, 'Você tem problemas de audição que impedem a realização de atividades do cotidiano? É permitido o uso de aparelhos de audição.', 'radio', NULL, NULL, true, 23, 'MAPEAMENTO', 0, 2);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (47, 'Você tem alguma das três condições abaixo relacionadas?', 'checkbox', NULL, NULL, true, 23, 'MAPEAMENTO_MAX', 0, 4);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (48, 'Quanto tempo por dia você realiza atividades moderadas? (HH:MM)', 'tempo', 7, 0, false, 24);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (49, 'Quantos dias por semana?', 'numero', 7, 0, false, 24);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (50, 'Quanto tempo por dia você realiza atividades vigorosas? (HH:MM)', 'tempo', NULL, NULL, NULL, 25);
@@ -307,6 +313,17 @@ INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo
 (93, 'Tenho que limitar as minhas atividades sociais por estar cansado(a)', 'radio', NULL, NULL, true, 31, 'MAPEAMENTO_REVERSO', 0, 4, 'An16');
 
 INSERT INTO public.pergunta_opcoes (pergunta_id, opcao) VALUES
+(106, '60-74 anos'),
+(106, '75-84 anos'),
+(106, '85 anos ou mais'),
+(102, 'SIM'),
+(102, 'NÃO'),
+(103, 'SIM'),
+(103, 'NÃO'),
+(104, 'SIM'),
+(104, 'NÃO'),
+(105, 'SIM'),
+(105, 'NÃO'),
 (9, 'O paciente respondeu corretamente'),
 (9, 'Respondeu incorretamente'),
 (10, 'O paciente respondeu corretamente'),
@@ -652,15 +669,154 @@ INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
 (92, 'Nem um pouco', 4), (92, 'Um pouco', 3), (92, 'Mais ou menos', 2), (92, 'Muito', 1), (92, 'Muitíssimo', 0),
 (93, 'Nem um pouco', 4), (93, 'Um pouco', 3), (93, 'Mais ou menos', 2), (93, 'Muito', 1), (93, 'Muitíssimo', 0);
 
+-- Mapeamentos de pontuação para PFS (perguntas 102-105) - Não somam pontos
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(102, 'SIM', 0), (102, 'NÃO', 0),
+(103, 'SIM', 0), (103, 'NÃO', 0),
+(104, 'SIM', 0), (104, 'NÃO', 0),
+(105, 'SIM', 0), (105, 'NÃO', 0);
 
-SELECT pg_catalog.setval('public.etapa_id_seq', 31, true);
+-- Mapeamentos de pontuação para MEEM (Mini Exame do Estado Mental)
+-- Orientação Temporal (perguntas 9-13)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(9, 'O paciente respondeu corretamente', 1), (9, 'Respondeu incorretamente', 0),
+(10, 'O paciente respondeu corretamente', 1), (10, 'Respondeu incorretamente', 0),
+(11, 'O paciente respondeu corretamente', 1), (11, 'Respondeu incorretamente', 0),
+(12, 'O paciente respondeu corretamente', 1), (12, 'Respondeu incorretamente', 0),
+(13, 'O paciente respondeu corretamente', 1), (13, 'Respondeu incorretamente', 0);
+
+-- Orientação Espacial (perguntas 14-18)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(14, 'O paciente respondeu corretamente', 1), (14, 'Respondeu incorretamente', 0),
+(15, 'O paciente respondeu corretamente', 1), (15, 'Respondeu incorretamente', 0),
+(16, 'O paciente respondeu corretamente', 1), (16, 'Respondeu incorretamente', 0),
+(17, 'O paciente respondeu corretamente', 1), (17, 'Respondeu incorretamente', 0),
+(18, 'O paciente respondeu corretamente', 1), (18, 'Respondeu incorretamente', 0);
+
+-- Memória Imediata (pergunta 19)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(19, 'CARRO', 1), (19, 'VASO', 1), (19, 'TIJOLO', 1);
+
+-- Evocação das palavras (pergunta 21)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(21, 'CARRO', 1), (21, 'VASO', 1), (21, 'TIJOLO', 1);
+
+-- Nomeação (pergunta 22)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(22, 'Relógio', 1), (22, 'Caneta', 1);
+
+-- Repetição (pergunta 23)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(23, 'O paciente respondeu corretamente', 1), (23, 'Respondeu incorretamente', 0);
+
+-- Comando (pergunta 24)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(24, 'Pegou o papel com a mão direita.', 1),
+(24, 'Dobrou o papel ao meio.', 1),
+(24, 'Colocou o papel no chão.', 1);
+
+-- Leitura e Obediência (pergunta 25)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(25, 'O paciente respondeu corretamente', 1), (25, 'Respondeu incorretamente', 0);
+
+-- Escrita (pergunta 26)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(26, 'O paciente respondeu corretamente', 1), (26, 'Respondeu incorretamente', 0);
+
+-- Cópia do Desenho (pergunta 27)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(27, 'O paciente respondeu corretamente', 1), (27, 'Respondeu incorretamente', 0);
+
+-- Mapeamentos de pontuação para IVCF-20
+-- Idade (pergunta 106)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(106, '60-74 anos', 0), (106, '75-84 anos', 1), (106, '85 anos ou mais', 3);
+
+-- Auto-percepção da Saúde (pergunta 28)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(28, 'Excelente, boa ou muito boa', 0), (28, 'Regular ou ruim', 1);
+
+-- Percepção da saúde comparada (pergunta 29) - Não pontua
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(29, 'Melhor', 0), (29, 'Pior', 0), (29, 'Igual', 0);
+
+-- Atividades de Vida Diária - Usa MAX_PERGUNTAS (pontuação máxima entre as perguntas)
+-- Pergunta 30 (Compras)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(30, 'Sim', 1), (30, 'Não ou não faz compras por outros motivos que não a saúde', 0);
+
+-- Pergunta 31 (Dinheiro)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(31, 'Sim', 1), (31, 'Não ou não controla o dinheiro por outros motivos que não a saúde', 0);
+
+-- Pergunta 32 (Trabalhos domésticos)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(32, 'Sim', 1), (32, 'Não ou não faz trabalhos domésticos por outros motivos que não a saúde', 0);
+
+-- Pergunta 33 (Banho) - Não pontua
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(33, 'Sim', 0), (33, 'Não', 0);
+
+-- Cognição (perguntas 34-36) - Usa SOMA_PERGUNTAS
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(34, 'Sim', 1), (34, 'Não', 0),
+(35, 'Sim', 1), (35, 'Não', 0),
+(36, 'Sim', 1), (36, 'Não', 0);
+
+-- Humor (perguntas 37-38) - Usa SOMA_PERGUNTAS
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(37, 'Sim', 1), (37, 'Não', 0),
+(38, 'Sim', 1), (38, 'Não', 0);
+
+-- Mobilidade - Usa MAX_PERGUNTAS (pontuação máxima entre as perguntas)
+-- Perguntas 39 e 40 (Braços e Objetos)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(39, 'Sim', 1), (39, 'Não', 0),
+(40, 'Sim', 1), (40, 'Não', 0);
+
+-- Pergunta 41 (4 condições - checkbox, MAPEAMENTO_MAX, se qualquer opção marcada = 2 pontos)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(41, 'Perda de peso não intencional de 4,5 kg ou 5% do peso corporal no último ano ou 6 kg nos últimos 6 meses ou 3 kg no último mês', 2),
+(41, 'Índice de Massa Corporal (IMC) menor que 22 kg/m²', 2),
+(41, 'Circunferência da panturrilha < 31 cm', 2),
+(41, 'Tempo gasto no teste de velocidade de marcha (4m) > 5 segundos', 2);
+
+-- Pergunta 42 (Caminhar)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(42, 'Sim', 2), (42, 'Não', 0);
+
+-- Pergunta 43 (Quedas)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(43, 'Não', 0), (43, '1 vez', 1), (43, '2 vezes', 2), (43, '3 vezes ou mais', 3);
+
+-- Pergunta 44 (Incontinência)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(44, 'Sim', 2), (44, 'Não', 0);
+
+-- Comunicação - Usa MAX_PERGUNTAS (pontuação máxima entre as perguntas)
+-- Pergunta 45 (Visão)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(45, 'Sim', 2), (45, 'Não', 0);
+
+-- Pergunta 46 (Audição)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(46, 'Sim', 2), (46, 'Não', 0);
+
+-- Pergunta 47 (Comorbidades - checkbox, MAPEAMENTO_MAX, se qualquer opção marcada = 4 pontos)
+INSERT INTO public.pontuacao_mapeamento (pergunta_id, chave, pontos) VALUES
+(47, 'Cinco ou mais doenças crônicas', 4),
+(47, 'Uso regular de cinco ou mais medicamentos diferentes', 4),
+(47, 'Internação recente, nos últimos 6 meses', 4);
+
+
+SELECT pg_catalog.setval('public.etapa_id_seq', 106, true);
 
 
 
 SELECT pg_catalog.setval('public.formulario_id_seq', 5, true);
 
 
-SELECT pg_catalog.setval('public.pergunta_id_seq', 93, true);
+SELECT pg_catalog.setval('public.pergunta_id_seq', 106, true);
 
 
 

@@ -108,12 +108,15 @@ public class GenericScoringService {
             case "VALOR_DIRETO":
                 return calcularValorDireto(valor);
 
+            case "MAPEAMENTO":
+                return calcularMapeamento(valor, config.getMapeamentoPontos());
+
             case "MAPEAMENTO_DIRETO":
-                return config.getMapeamentoPontos().getOrDefault(valor, 0);
+                return calcularMapeamento(valor, config.getMapeamentoPontos());
 
             case "MAPEAMENTO_REVERSO":
                 int pontosMaximos = config.getPontosMaximos() != null ? config.getPontosMaximos() : 4;
-                int pontosBrutos = config.getMapeamentoPontos().getOrDefault(valor, 0);
+                int pontosBrutos = calcularMapeamento(valor, config.getMapeamentoPontos());
                 return pontosMaximos - pontosBrutos;
 
             case "FORMULA":
@@ -121,6 +124,50 @@ public class GenericScoringService {
 
             default:
                 return 0;
+        }
+    }
+
+    /**
+     * Calcula pontuação para mapeamento, tratando tanto valores simples quanto arrays (checkbox)
+     */
+    private int calcularMapeamento(String valor, Map<String, Integer> mapeamento) {
+        if (valor == null || mapeamento == null || mapeamento.isEmpty()) {
+            return 0;
+        }
+
+        // Verifica se é um array JSON (checkbox)
+        if (valor.startsWith("[") && valor.endsWith("]")) {
+            return calcularMapeamentoArray(valor, mapeamento);
+        }
+
+        // Valor simples (radio)
+        return mapeamento.getOrDefault(valor, 0);
+    }
+
+    /**
+     * Calcula pontuação para respostas de checkbox (arrays JSON)
+     */
+    private int calcularMapeamentoArray(String valorJson, Map<String, Integer> mapeamento) {
+        try {
+            // Remove os colchetes e aspas, e divide por vírgula
+            String valores = valorJson.substring(1, valorJson.length() - 1);
+
+            if (valores.trim().isEmpty()) {
+                return 0;
+            }
+
+            int pontuacaoTotal = 0;
+            String[] itens = valores.split(",");
+
+            for (String item : itens) {
+                // Remove aspas e espaços em branco
+                String itemLimpo = item.trim().replaceAll("^\"|\"$", "");
+                pontuacaoTotal += mapeamento.getOrDefault(itemLimpo, 0);
+            }
+
+            return pontuacaoTotal;
+        } catch (Exception e) {
+            return 0;
         }
     }
 
