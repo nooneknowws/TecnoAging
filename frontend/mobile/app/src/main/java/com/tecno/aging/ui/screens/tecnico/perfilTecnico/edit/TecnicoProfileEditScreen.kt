@@ -287,7 +287,7 @@ private fun StepAddress(uiState: ProfileEditUiState, viewModel: ProfileEditViewM
                     OutlinedTextField(value = uiState.endereco.logradouro, onValueChange = {}, label = { Text("Logradouro") }, modifier = Modifier.weight(2f), readOnly = true)
                     OutlinedTextField(value = uiState.endereco.numero, onValueChange = viewModel::onNumeroChange, label = { Text("Número") }, modifier = Modifier.weight(1f))
                 }
-                OutlinedTextField(value = uiState.endereco.complemento, onValueChange = viewModel::onComplementoChange, label = { Text("Complemento") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = uiState.endereco.complemento ?: "", onValueChange = viewModel::onComplementoChange, label = { Text("Complemento") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = uiState.endereco.bairro, onValueChange = {}, label = { Text("Bairro") }, modifier = Modifier.fillMaxWidth(), readOnly = true)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(value = uiState.endereco.municipio, onValueChange = {}, label = { Text("Município") }, modifier = Modifier.weight(2f), readOnly = true)

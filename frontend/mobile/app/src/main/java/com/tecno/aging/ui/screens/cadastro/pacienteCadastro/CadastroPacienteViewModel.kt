@@ -15,6 +15,7 @@ import com.tecno.aging.domain.validation.CadastroPacienteValidator.validateStep2
 import com.tecno.aging.domain.validation.CadastroPacienteValidator.validateStep3
 import com.tecno.aging.domain.validation.CadastroPacienteValidator.validateStep4
 import com.tecno.aging.domain.validation.CadastroPacienteValidator.validateStep5
+import com.tecno.aging.domain.utils.ValidationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,27 +63,34 @@ class CadastroPacienteViewModel(
     private val _uiState = MutableStateFlow(CadastroPacienteState())
     val uiState: StateFlow<CadastroPacienteState> = _uiState.asStateFlow()
 
-    fun onNomeChange(value: String) = _uiState.update { it.copy(nome = value) }
-    fun onCpfChange(value: String) = _uiState.update { it.copy(cpf = value) }
-    fun onSexoChange(value: String) = _uiState.update { it.copy(sexo = value) }
-    fun onDataNascimentoChange(value: String) = _uiState.update { it.copy(dataNascimento = value) }
-    fun onTelefoneChange(value: String) = _uiState.update { it.copy(telefone = value) }
-    fun onEnderecoChange(value: Endereco) = _uiState.update { it.copy(endereco = value) }
-    fun onPesoChange(value: String) = _uiState.update { it.copy(peso = value) }
-    fun onAlturaChange(value: String) = _uiState.update { it.copy(altura = value) }
-    fun onSocioeconomicoChange(value: String) = _uiState.update { it.copy(socioeconomico = value) }
-    fun onEscolaridadeChange(value: String) = _uiState.update { it.copy(escolaridade = value) }
-    fun onEstadoCivilChange(value: String) = _uiState.update { it.copy(estadoCivil = value) }
-    fun onNacionalidadeChange(value: String) = _uiState.update { it.copy(nacionalidade = value) }
-    fun onMunicipioNascChange(value: String) = _uiState.update { it.copy(municipioNasc = value) }
-    fun onUfNascChange(value: String) = _uiState.update { it.copy(ufNasc = value) }
-    fun onCorRacaChange(value: String) = _uiState.update { it.copy(corRaca = value) }
-    fun onRgChange(value: String) = _uiState.update { it.copy(rg = value) }
-    fun onDataExpedicaoChange(value: String) = _uiState.update { it.copy(dataExpedicao = value) }
-    fun onOrgaoEmissorChange(value: String) = _uiState.update { it.copy(orgaoEmissor = value) }
-    fun onUfEmissorChange(value: String) = _uiState.update { it.copy(ufEmissor = value) }
-    fun onSenhaChange(value: String) = _uiState.update { it.copy(senha = value) }
-    fun onConfirmarSenhaChange(value: String) = _uiState.update { it.copy(confirmarSenha = value) }
+    fun onNomeChange(value: String) = _uiState.update { it.copy(nome = value, erros = it.erros - "nome") }
+    fun onCpfChange(value: String) = _uiState.update { it.copy(cpf = value, erros = it.erros - "cpf") }
+    fun onSexoChange(value: String) = _uiState.update { it.copy(sexo = value, erros = it.erros - "sexo") }
+    fun onDataNascimentoChange(value: String) = _uiState.update { it.copy(dataNascimento = value, erros = it.erros - "dataNascimento") }
+    fun onTelefoneChange(value: String) = _uiState.update { it.copy(telefone = value, erros = it.erros - "telefone") }
+
+    fun onEnderecoChange(value: Endereco) = _uiState.update {
+        it.copy(
+            endereco = value,
+            erros = it.erros - "cep" - "logradouro" - "numero" - "bairro" - "municipio" - "uf"
+        )
+    }
+
+    fun onPesoChange(value: String) = _uiState.update { it.copy(peso = value, erros = it.erros - "peso") }
+    fun onAlturaChange(value: String) = _uiState.update { it.copy(altura = value, erros = it.erros - "altura") }
+    fun onSocioeconomicoChange(value: String) = _uiState.update { it.copy(socioeconomico = value, erros = it.erros - "socioeconomico") }
+    fun onEscolaridadeChange(value: String) = _uiState.update { it.copy(escolaridade = value, erros = it.erros - "escolaridade") }
+    fun onEstadoCivilChange(value: String) = _uiState.update { it.copy(estadoCivil = value, erros = it.erros - "estadoCivil") }
+    fun onNacionalidadeChange(value: String) = _uiState.update { it.copy(nacionalidade = value, erros = it.erros - "nacionalidade") }
+    fun onMunicipioNascChange(value: String) = _uiState.update { it.copy(municipioNasc = value, erros = it.erros - "municipioNasc") }
+    fun onUfNascChange(value: String) = _uiState.update { it.copy(ufNasc = value, erros = it.erros - "ufNasc") }
+    fun onCorRacaChange(value: String) = _uiState.update { it.copy(corRaca = value, erros = it.erros - "corRaca") }
+    fun onRgChange(value: String) = _uiState.update { it.copy(rg = value, erros = it.erros - "rg") }
+    fun onDataExpedicaoChange(value: String) = _uiState.update { it.copy(dataExpedicao = value, erros = it.erros - "dataExpedicao") }
+    fun onOrgaoEmissorChange(value: String) = _uiState.update { it.copy(orgaoEmissor = value, erros = it.erros - "orgaoEmissor") }
+    fun onUfEmissorChange(value: String) = _uiState.update { it.copy(ufEmissor = value, erros = it.erros - "ufEmissor") }
+    fun onSenhaChange(value: String) = _uiState.update { it.copy(senha = value, erros = it.erros - "senha" - "confirmarSenha") }
+    fun onConfirmarSenhaChange(value: String) = _uiState.update { it.copy(confirmarSenha = value, erros = it.erros - "confirmarSenha") }
 
     fun onContatoChange(index: Int, updatedContato: Contato) {
         _uiState.update {
@@ -159,6 +167,8 @@ class CadastroPacienteViewModel(
     }
 
     fun submitForm() {
+        _uiState.update { it.copy(erros = emptyMap()) }
+
         val allErrors = mutableMapOf<String, String>()
         allErrors.putAll(validateStep1(_uiState.value))
         allErrors.putAll(validateStep2(_uiState.value))

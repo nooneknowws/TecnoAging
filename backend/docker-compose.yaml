@@ -1,11 +1,11 @@
-version: '3.8'
+version: "3.8"
 
 services:
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"   
-      - "15672:15672"  
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
@@ -19,15 +19,15 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:latest
+    image: postgres:17
     ports:
       - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=db-tecnicos 
+      - POSTGRES_DB=db-tecnicos
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_v2:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - postgres-network
@@ -197,7 +197,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_data_v2:
   mongo_data:
 
 networks:

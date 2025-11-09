@@ -7,6 +7,7 @@ import com.tecno.aging.data.repository.CadastroRepository
 import com.tecno.aging.domain.models.auth.TecnicoRequest
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
+import com.tecno.aging.domain.utils.ValidationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,10 +54,15 @@ class CadastroTecnicoViewModel(
         _uiState.update { it.copy(tecnico = it.tecnico.copy(dataNasc = dataNasc), erros = it.erros - "dataNasc") }
     }
     fun onEnderecoChanged(endereco: Endereco) {
-        _uiState.update { it.copy(tecnico = it.tecnico.copy(endereco = endereco), erros = it.erros - "cep") }
+        _uiState.update {
+            it.copy(
+                tecnico = it.tecnico.copy(endereco = endereco),
+                erros = it.erros - "cep" - "logradouro" - "numero" - "bairro" - "municipio" - "uf"
+            )
+        }
     }
     fun onSenhaChanged(senha: String) {
-        _uiState.update { it.copy(senha = senha, erros = it.erros - "senha") }
+        _uiState.update { it.copy(senha = senha, erros = it.erros - "senha" - "confirmarSenha") }
     }
     fun onConfirmarSenhaChanged(confirmarSenha: String) {
         _uiState.update { it.copy(confirmarSenha = confirmarSenha, erros = it.erros - "confirmarSenha") }
@@ -94,6 +100,8 @@ class CadastroTecnicoViewModel(
     }
 
     fun submitForm() {
+        _uiState.update { it.copy(erros = emptyMap()) }
+
         val erros = validateForm()
         if (erros.isNotEmpty()) {
             _uiState.update { it.copy(erros = erros) }
@@ -146,13 +154,27 @@ class CadastroTecnicoViewModel(
         with(_uiState.value) {
             if (tecnico.matricula.isBlank()) erros["matricula"] = "Matrícula obrigatória"
             if (tecnico.nome.isBlank()) erros["nome"] = "Nome obrigatório"
-            if (tecnico.cpf.filter { it.isDigit() }.length != 11) erros["cpf"] = "CPF inválido"
+
+            val cpfLimpo = tecnico.cpf.filter { it.isDigit() }
+            if (cpfLimpo.length != 11 || !ValidationUtils.isCpfValido(cpfLimpo)) {
+                erros["cpf"] = "CPF inválido"
+            }
+
             if (tecnico.telefone.filter { it.isDigit() }.length < 10) erros["telefone"] = "Telefone inválido"
             if (tecnico.sexo.isBlank()) erros["sexo"] = "Selecione o sexo"
-            if (tecnico.dataNasc.isBlank()) erros["dataNasc"] = "Data obrigatória"
+
+            if (!ValidationUtils.isDataNascimentoValida(tecnico.dataNasc)) {
+                erros["dataNasc"] = "Data inválida (idade deve ser 18-150 anos)"
+            }
+
             if (senha.length < 6) erros["senha"] = "Senha deve ter no mínimo 6 caracteres"
             if (confirmarSenha != senha) erros["confirmarSenha"] = "As senhas não coincidem"
             if (tecnico.endereco.cep.filter { it.isDigit() }.length != 8) erros["cep"] = "CEP inválido"
+            if (tecnico.endereco.logradouro.isBlank()) erros["logradouro"] = "Logradouro obrigatório"
+            if (tecnico.endereco.numero.isBlank()) erros["numero"] = "Número obrigatório"
+            if (tecnico.endereco.bairro.isBlank()) erros["bairro"] = "Bairro obrigatório"
+            if (tecnico.endereco.municipio.isBlank()) erros["municipio"] = "Município obrigatório"
+            if (tecnico.endereco.uf.isBlank()) erros["uf"] = "UF obrigatório"
         }
         return erros
     }

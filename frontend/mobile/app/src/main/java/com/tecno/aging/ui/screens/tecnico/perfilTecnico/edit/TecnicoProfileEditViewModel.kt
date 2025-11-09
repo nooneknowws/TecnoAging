@@ -71,7 +71,7 @@ class ProfileEditViewModel() : ViewModel() {
                                 cep = tecnico.endereco.cep,
                                 logradouro = tecnico.endereco.logradouro,
                                 numero = tecnico.endereco.numero.toString(),
-                                complemento = tecnico.endereco.complemento,
+                                complemento = tecnico.endereco.complemento ?: "",
                                 bairro = tecnico.endereco.bairro,
                                 municipio = tecnico.endereco.municipio,
                                 uf = tecnico.endereco.toString()

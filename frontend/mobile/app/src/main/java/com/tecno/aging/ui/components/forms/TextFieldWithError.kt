@@ -1,6 +1,5 @@
 package com.tecno.aging.ui.components.forms
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,7 +21,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.tecno.aging.R
-import com.tecno.aging.ui.theme.cleanTextFieldColors
 
 @Composable
 fun TextFieldWithError(
@@ -32,7 +30,9 @@ fun TextFieldWithError(
     modifier: Modifier = Modifier,
     error: String? = null,
     isPassword: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    readOnly: Boolean = false,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -43,6 +43,7 @@ fun TextFieldWithError(
             label = { Text(text = label) },
             modifier = Modifier.fillMaxWidth(),
             isError = error != null,
+            readOnly = readOnly,
             visualTransformation = if (isPassword && !passwordVisible)
                 PasswordVisualTransformation() else VisualTransformation.None,
             trailingIcon = {
@@ -58,12 +59,12 @@ fun TextFieldWithError(
                             contentDescription = if (passwordVisible) "Ocultar senha" else "Mostrar senha",
                             modifier = Modifier
                                 .size(24.dp)
-                                .clickable { passwordVisible = !passwordVisible }
                         )
                     }
+                } else {
+                    trailingIcon?.invoke()
                 }
             },
-            colors = cleanTextFieldColors(),
             keyboardOptions = keyboardOptions,
             singleLine = true
         )
@@ -72,7 +73,7 @@ fun TextFieldWithError(
                 text = error,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.ui.components.forms.TextFieldWithError
-import com.tecno.aging.ui.theme.cleanTextFieldColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +37,7 @@ fun AddressSection(
     onAddressChange: (Endereco) -> Unit,
     onCepSearch: () -> Unit,
     loadingCep: Boolean,
-    cepError: String?,
+    erros: Map<String, String>,
     modifier: Modifier = Modifier
 ) {
     var expandedUF by remember { mutableStateOf(false) }
@@ -61,7 +59,7 @@ fun AddressSection(
                 value = address.cep,
                 onValueChange = { onAddressChange(address.copy(cep = it.filter { c -> c.isDigit() })) },
                 label = "CEP",
-                error = cepError,
+                error = erros["cep"],
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
@@ -83,31 +81,35 @@ fun AddressSection(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        TextFieldWithError(
             value = address.logradouro,
             onValueChange = { onAddressChange(address.copy(logradouro = it)) },
-            label = { Text("Logradouro") },
+            label = "Logradouro",
+            error = erros["logradouro"],
             modifier = Modifier.fillMaxWidth()
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
+            TextFieldWithError(
                 value = address.numero,
                 onValueChange = { onAddressChange(address.copy(numero = it)) },
-                label = { Text("Número") },
-                modifier = Modifier.weight(1f),
+                label = "Número",
+                error = erros["numero"],
+                modifier = Modifier.weight(0.4f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-            OutlinedTextField(
-                value = address.complemento,
+            TextFieldWithError(
+                value = address.complemento ?: "",
                 onValueChange = { onAddressChange(address.copy(complemento = it)) },
-                label = { Text("Complemento") },
-                modifier = Modifier.weight(1f)
+                label = "Complemento",
+                error = erros["complemento"],
+                modifier = Modifier.weight(0.6f)
             )
         }
-        OutlinedTextField(
+        TextFieldWithError(
             value = address.bairro,
             onValueChange = { onAddressChange(address.copy(bairro = it)) },
-            label = { Text("Bairro") },
+            label = "Bairro",
+            error = erros["bairro"],
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -117,12 +119,12 @@ fun AddressSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            TextField(
-                value = address.municipio ?: "",
+            TextFieldWithError(
+                value = address.municipio,
                 onValueChange = { onAddressChange(address.copy(municipio = it)) },
-                label = { Text("Município") },
-                modifier = Modifier.weight(2f),
-                colors = cleanTextFieldColors()
+                label = "Município",
+                error = erros["municipio"],
+                modifier = Modifier.weight(2f)
             )
 
             ExposedDropdownMenuBox(
@@ -130,16 +132,21 @@ fun AddressSection(
                 onExpandedChange = { expandedUF = it },
                 modifier = Modifier.weight(1f)
             ) {
-                TextField(
+                OutlinedTextField(
                     readOnly = true,
-                    value = address.uf ?: "",
+                    value = address.uf,
                     onValueChange = { },
                     label = { Text("UF") },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedUF)
                     },
-                    modifier = Modifier.menuAnchor(),
-                    colors = cleanTextFieldColors()
+                    isError = erros["uf"] != null,
+                    supportingText = {
+                        if (erros["uf"] != null) {
+                            Text(erros["uf"]!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+                        }
+                    },
+                    modifier = Modifier.menuAnchor()
                 )
 
                 ExposedDropdownMenu(

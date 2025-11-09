@@ -167,7 +167,7 @@ fun CadastroScreen(
                         onAddressChange = viewModel::onEnderecoChanged,
                         onCepSearch = viewModel::buscarCep,
                         loadingCep = uiState.loadingCep,
-                        cepError = uiState.cepError,
+                        erros = uiState.erros,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))

@@ -101,6 +101,14 @@ fun CadastroPacienteScreen(
         ) {
             Text("Progresso: Etapa ${uiState.currentStep + 1} de 5")
 
+            if (uiState.error != null) {
+                Text(
+                    text = uiState.error!!,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
             when (uiState.currentStep) {
                 0 -> Step1(uiState, viewModel, onNext = viewModel::onNextStepClick)
                 1 -> Step2(uiState, viewModel, onNext = viewModel::onNextStepClick)
@@ -122,24 +130,28 @@ private fun Step1(
         TextFieldWithError(
             value = state.nome,
             onValueChange = viewModel::onNomeChange,
-            label = "Nome Completo"
+            label = "Nome Completo",
+            error = state.erros["nome"]
         )
         MaskedInput(
             value = state.cpf,
             onValueChange = viewModel::onCpfChange,
             mask = "###.###.###-##",
-            label = "CPF"
+            label = "CPF",
+            error = state.erros["cpf"]
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             GenderDropdown(
                 selectedGender = state.sexo,
                 onGenderSelected = viewModel::onSexoChange,
+                error = state.erros["sexo"],
                 modifier = Modifier.weight(0.4f)
             )
             DatePickerInput(
                 selectedDate = state.dataNascimento,
                 onDateSelected = viewModel::onDataNascimentoChange,
                 label = "Data de Nasc",
+                error = state.erros["dataNascimento"],
                 modifier = Modifier.weight(0.6f)
             )
         }
@@ -147,7 +159,8 @@ private fun Step1(
             value = state.telefone,
             onValueChange = viewModel::onTelefoneChange,
             mask = "(##) #####-####",
-            label = "Telefone"
+            label = "Telefone",
+            error = state.erros["telefone"]
         )
         Spacer(Modifier.weight(1f))
         ButtonComponent(title = "Próximo", onClick = onNext, modifier = Modifier.fillMaxWidth())
@@ -227,6 +240,7 @@ private fun Step3(
             value = state.rg,
             onValueChange = viewModel::onRgChange,
             label = "RG",
+            error = state.erros["rg"],
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -234,6 +248,7 @@ private fun Step3(
             selectedDate = state.dataExpedicao,
             onDateSelected = viewModel::onDataExpedicaoChange,
             label = "Data de Expedição",
+            error = state.erros["dataExpedicao"],
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -261,6 +276,7 @@ private fun Step3(
                 value = state.peso,
                 onValueChange = viewModel::onPesoChange,
                 label = "Peso (kg)",
+                error = state.erros["peso"],
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
@@ -268,6 +284,7 @@ private fun Step3(
                 value = state.altura,
                 onValueChange = viewModel::onAlturaChange,
                 label = "Altura (m)",
+                error = state.erros["altura"],
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
@@ -299,7 +316,7 @@ private fun Step4(
             onAddressChange = viewModel::onEnderecoChange,
             onCepSearch = { viewModel.buscarCep() },
             loadingCep = state.loadingCep,
-            cepError = state.cepError
+            erros = state.erros
         )
         Spacer(Modifier.height(24.dp))
 
@@ -389,12 +406,14 @@ private fun Step5(
             value = state.senha,
             onValueChange = viewModel::onSenhaChange,
             label = "Senha",
+            error = state.erros["senha"],
             isPassword = true
         )
         TextFieldWithError(
             value = state.confirmarSenha,
             onValueChange = viewModel::onConfirmarSenhaChange,
             label = "Confirmar Senha",
+            error = state.erros["confirmarSenha"],
             isPassword = true
         )
         Spacer(Modifier.weight(1f))

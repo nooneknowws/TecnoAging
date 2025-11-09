@@ -1,5 +1,6 @@
 package com.tecno.aging.domain.validation
 
+import com.tecno.aging.domain.utils.ValidationUtils
 import com.tecno.aging.ui.screens.cadastro.pacienteCadastro.CadastroPacienteState
 
 object CadastroPacienteValidator {
@@ -8,9 +9,14 @@ object CadastroPacienteValidator {
         val erros = mutableMapOf<String, String>()
         with(state) {
             if (nome.isBlank()) erros["nome"] = "Nome é obrigatório"
-            if (cpf.filter { it.isDigit() }.length != 11) erros["cpf"] = "CPF inválido"
+            val cpfLimpo = cpf.filter { it.isDigit() }
+            if (cpfLimpo.length != 11 || !ValidationUtils.isCpfValido(cpfLimpo)) {
+                erros["cpf"] = "CPF inválido"
+            }
             if (sexo.isBlank()) erros["sexo"] = "Sexo é obrigatório"
-            if (dataNascimento.isBlank()) erros["dataNascimento"] = "Data de nascimento é obrigatória"
+            if (!ValidationUtils.isDataNascimentoValida(dataNascimento)) {
+                erros["dataNascimento"] = "Data inválida"
+            }
             if (telefone.filter { it.isDigit() }.length < 10) erros["telefone"] = "Telefone inválido"
         }
         return erros
@@ -32,7 +38,9 @@ object CadastroPacienteValidator {
     fun validateStep3(state: CadastroPacienteState): Map<String, String> {
         val erros = mutableMapOf<String, String>()
         with(state) {
-            if (rg.isBlank()) erros["rg"] = "RG é obrigatório"
+            if (rg.length < 5) {
+                erros["rg"] = "RG inválido (mín. 5 caracteres)"
+            }
             if (dataExpedicao.isBlank()) erros["dataExpedicao"] = "Data de expedição é obrigatória"
             if (orgaoEmissor.isBlank()) erros["orgaoEmissor"] = "Órgão emissor é obrigatório"
             if (ufEmissor.isBlank()) erros["ufEmissor"] = "UF de emissão é obrigatória"
