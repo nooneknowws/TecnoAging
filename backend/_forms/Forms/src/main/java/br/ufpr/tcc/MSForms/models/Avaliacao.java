@@ -49,7 +49,7 @@ public class Avaliacao {
     @Column(name = "paciente_imc_avaliacao")
     private float paciente_imc_avaliacao;
     
-    @Column(name = "tecnico_id", nullable = false)
+    @Column(name = "tecnico_id", nullable = true)
     private Long tecnico;
     @Column(name = "tecnico_nome")
     private String tecnico_nome;

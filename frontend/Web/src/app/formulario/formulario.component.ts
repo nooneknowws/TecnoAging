@@ -242,7 +242,9 @@ export class FormularioComponent implements OnInit {
   }
 
   verPerfilPaciente() {
-    this.router.navigate(['/pacientes', this.pacienteId]);
+    this.router.navigate(['/tecnico/paciente/ver-perfil'], {
+      queryParams: { id: this.pacienteId }
+    });
   }
 
   fecharAlerta() {

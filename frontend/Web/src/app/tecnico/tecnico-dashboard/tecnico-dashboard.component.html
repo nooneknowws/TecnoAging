@@ -259,14 +259,17 @@
     <section #sectionRef id="resultados" class="section" [class.active]="activeSection === 'resultados'">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h2>Resultados e Comparações</h2>
+          <h2>Histórico de Avaliações</h2>
           <p *ngIf="!selectedPaciente" class="text-muted">
-            Selecione um paciente para ver os resultados
+            Selecione um paciente para ver o histórico de avaliações
+          </p>
+          <p *ngIf="selectedPaciente" class="text-muted">
+            Paciente: <strong>{{selectedPaciente.nome}}</strong>
           </p>
         </div>
 
-        <button *ngIf="selectedPaciente" 
-                class="btn btn-outline-primary btn-sm" 
+        <button *ngIf="selectedPaciente"
+                class="btn btn-outline-primary btn-sm"
                 (click)="compareResults()">
           <i class="fas fa-chart-line"></i>
           Comparar Resultados
@@ -274,64 +277,67 @@
       </div>
 
       <div class="alert alert-info" *ngIf="pacientes.length == 0">
-        <p class="text-muted">Não há pacientes cadastrados.</p>
+        <i class="fas fa-info-circle me-2"></i>
+        Não há pacientes cadastrados.
       </div>
-      
-      <div class="results-content">
-        <ng-container *ngIf="selectedPaciente">
-          <div *ngIf="historicoTestes$ | async as historico; else loading">
-            <div class="table-responsive" *ngIf="historico.length > 0; else noHistorico">
-              <table class="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th>Formulário</th>
-                    <th>Técnico</th>
-                    <th>Status</th>
-                    <th>Respostas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let teste of historico">
-                    <td>{{teste.formularioDesc}}</td>
-                    <td>{{teste.tecnico}}</td>
-                    <td>{{teste.status || '—'}}</td>
-                    <td>
-                      <button class="btn btn-sm btn-info" 
-                              type="button" 
-                              data-bs-toggle="collapse" 
-                              [attr.data-bs-target]="'#respostas-' + teste.avaliacaoId"
-                              aria-expanded="false">
-                        Ver Respostas
-                      </button>
-                      <div class="collapse mt-2" [id]="'respostas-' + teste.avaliacaoId">
-                        <div class="card card-body">
-                          <ul class="list-unstyled">
-                            <li *ngFor="let resposta of teste.perguntasValores" class="mb-2">
-                              <strong>{{resposta.pergunta}}</strong><br>
-                              <span class="text-muted">{{resposta.valor}}</span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <ng-template #noHistorico>
-              <div class="alert alert-info">
-                Nenhum teste realizado ainda para este paciente.
-              </div>
-            </ng-template>
+
+      <div class="results-content" *ngIf="selectedPaciente">
+        <!-- Loading -->
+        <div *ngIf="loadingAvaliacoes" class="d-flex justify-content-center my-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando avaliações...</span>
           </div>
-          <ng-template #loading>
-            <div class="d-flex justify-content-center">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Carregando...</span>
+        </div>
+
+        <!-- Lista de Avaliações -->
+        <div *ngIf="!loadingAvaliacoes">
+          <div *ngIf="avaliacoes.length > 0; else noAvaliacoes">
+            <div class="card mb-3" *ngFor="let avaliacao of avaliacoes">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="mb-0">{{avaliacao.formulario?.titulo || 'Formulário'}}</h5>
+                  <small class="text-muted">{{avaliacao.dataCriacao | date:'dd/MM/yyyy HH:mm'}}</small>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-primary" (click)="consultarAvaliacao(avaliacao.id!)">
+                    <i class="fas fa-eye me-1"></i>Ver Detalhes
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary" (click)="editarAvaliacao(avaliacao.id!)">
+                    <i class="fas fa-edit me-1"></i>Editar
+                  </button>
+                </div>
               </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-3">
+                    <p class="mb-1"><strong>Técnico:</strong> {{avaliacao.tecnico?.nome || 'Autoavaliação'}}</p>
+                  </div>
+                  <div class="col-md-3">
+                    <p class="mb-1">
+                      <strong>Pontuação:</strong>
+                      <span class="badge ms-2" [ngClass]="getBadgeClass(avaliacao.pontuacaoTotal || 0, avaliacao.pontuacaoMaxima || 0)">
+                        {{avaliacao.pontuacaoTotal || 0}}/{{avaliacao.pontuacaoMaxima || 0}}
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-md-3">
+                    <p class="mb-1"><strong>Percentual:</strong> {{getPercentual(avaliacao.pontuacaoTotal || 0, avaliacao.pontuacaoMaxima || 0)}}%</p>
+                  </div>
+                  <div class="col-md-3">
+                    <p class="mb-1"><strong>Respostas:</strong> {{avaliacao.respostas?.length || 0}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noAvaliacoes>
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              Nenhuma avaliação realizada ainda para este paciente.
             </div>
           </ng-template>
-        </ng-container>
+        </div>
       </div>
     </section>
   </div>

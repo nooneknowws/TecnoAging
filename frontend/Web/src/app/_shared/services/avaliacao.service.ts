@@ -52,25 +52,40 @@ export class AvaliacaoService {
   }
 
   createAvaliacao(avaliacao: Avaliacao, pacienteId?: number): Observable<Avaliacao> {
-    const tecnico = this.authService.getCurrentUser() as Tecnico;
-    avaliacao.tecnico = tecnico;
-    
+    const currentUser = this.authService.getCurrentUser();
+    const userProfile = this.authService.getUserProfile();
+
+    // Determinar tecnicoId baseado no tipo de usuário
+    if (userProfile === 'paciente') {
+      avaliacao.tecnico = null;
+
+      // Se paciente está preenchendo, usar seu próprio ID
+      if (!pacienteId && currentUser && 'id' in currentUser) {
+        pacienteId = currentUser.id;
+      }
+    } else {
+      avaliacao.tecnico = currentUser as Tecnico;
+    }
+
+    // Se temos pacienteId (fornecido ou do usuário logado), buscar dados completos
     if (pacienteId) {
       return this.pacienteService.getPacienteById(pacienteId).pipe(
         switchMap(paciente => {
           avaliacao.paciente = paciente;
           avaliacao.dataCriacao = new Date();
-          
+
           const serialized = this.serializeAvaliacao(avaliacao);
-          
+
           return this.http.post<Avaliacao>(`${this.API_URL}/forms`, serialized);
         })
       );
     }
-    
+
+    // Fallback: não deveria chegar aqui, mas serializa mesmo assim
+    console.warn('Criando avaliação sem pacienteId - isso pode causar erro no backend');
     avaliacao.dataCriacao = new Date();
     const serialized = this.serializeAvaliacao(avaliacao);
-    
+
     return this.http.post<Avaliacao>(`${this.API_URL}/forms`, serialized);
   }
 
@@ -91,8 +106,8 @@ export class AvaliacaoService {
       pacienteNome: avaliacao.paciente?.nome,
       pacienteIdade: avaliacao.paciente?.idade,
       pacienteIMC: avaliacao.paciente?.imc,
-      tecnicoId: avaliacao.tecnico?.id,
-      tecnicoNome: avaliacao.tecnico?.nome,
+      tecnicoId: avaliacao.tecnico?.id ?? null,
+      tecnicoNome: avaliacao.tecnico?.nome ?? null,
       formularioId: avaliacao.formulario?.id,
       respostas: avaliacao.respostas?.map(resposta => {
         let serializedValue: string;

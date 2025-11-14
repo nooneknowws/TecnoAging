@@ -28,22 +28,9 @@ interface HistoricoTeste {
   dataCriacao: Date;
   tecnico: any;
   pontuacaoTotal: number;
+  pontuacaoMaxima: number;
 }
 
-interface Metricas {
-  desempenhoCognitivo: number;
-  nivelFadiga: number;
-  vulnerabilidadeClinica: number;
-  qualidadeVida: number;
-}
-
-interface ResultadoDetalhado {
-  id: number | undefined;
-  formulario: string;
-  data: Date;
-  pontuacao: number;
-  observacoes: string;
-}
 
 @Component({
   selector: 'app-paciente-dashboard',
@@ -58,8 +45,8 @@ export class PacienteDashboardComponent implements OnInit {
   atividadesRecentes: AtividadeRecente[] = [];
   historicoTestes: HistoricoTeste[] = [];
   formulariosDisponiveis: Formulario[] = [];
-  metricas: Metricas | null = null;
-  resultadosDetalhados: ResultadoDetalhado[] = [];
+  expandedAvaliacaoId: number | null = null;
+  avaliacaoDetalhada: any = null;
 
   constructor(
     private router: Router,
@@ -85,8 +72,6 @@ export class PacienteDashboardComponent implements OnInit {
           this.loadEstatisticas();
           this.loadHistoricoTestes();
           this.loadAtividadesRecentes();
-          this.loadMetricas();
-          this.loadResultadosDetalhados();
         },
         error: (error) => {
           console.error('Erro ao carregar dados do paciente:', error);
@@ -111,20 +96,32 @@ export class PacienteDashboardComponent implements OnInit {
       this.avaliacaoService.buscarPorPaciente(this.currentPaciente.id!).subscribe({
         next: (avaliacoes) => {
           const testesRealizados = avaliacoes.length;
-          const ultimaAvaliacao = avaliacoes.length > 0 ? 
-            Math.round(avaliacoes[avaliacoes.length - 1].pontuacaoTotal || 0) : 0;
-          
+
+          let ultimaAvaliacaoStr = 'N/A';
           let diasUltimoTeste = 0;
+
           if (avaliacoes.length > 0) {
-            const ultimaData = new Date(avaliacoes[avaliacoes.length - 1].dataCriacao);
+            // Ordenar por data de criação (mais recente primeiro)
+            const avaliacoesOrdenadas = avaliacoes.sort((a, b) =>
+              new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
+            );
+
+            const ultimaAvaliacao = avaliacoesOrdenadas[0];
+            const pontuacaoTotal = ultimaAvaliacao.pontuacaoTotal || 0;
+            const pontuacaoMaxima = ultimaAvaliacao.pontuacaoMaxima || 1;
+            const percentual = Math.round((pontuacaoTotal / pontuacaoMaxima) * 100);
+
+            ultimaAvaliacaoStr = `${pontuacaoTotal}/${pontuacaoMaxima} (${percentual}%)`;
+
+            const ultimaData = new Date(ultimaAvaliacao.dataCriacao);
             const hoje = new Date();
             diasUltimoTeste = Math.floor((hoje.getTime() - ultimaData.getTime()) / (1000 * 3600 * 24));
           }
 
           this.estatisticas = {
             testesRealizados,
-            testesPendentes: 0, // Implementar lógica para testes pendentes
-            ultimaAvaliacao: ultimaAvaliacao.toString(),
+            testesPendentes: 0,
+            ultimaAvaliacao: ultimaAvaliacaoStr,
             diasUltimoTeste
           };
         },
@@ -149,8 +146,9 @@ export class PacienteDashboardComponent implements OnInit {
             id: avaliacao.id,
             formulario: avaliacao.formulario?.titulo || 'Formulário',
             dataCriacao: new Date(avaliacao.dataCriacao),
-            tecnico: avaliacao.tecnico?.nome || 'Técnico',
-            pontuacaoTotal: Math.round(avaliacao.pontuacaoTotal || 0)
+            tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
+            pontuacaoTotal: Math.round(avaliacao.pontuacaoTotal || 0),
+            pontuacaoMaxima: Math.round(avaliacao.pontuacaoMaxima || 0)
           }));
         },
         error: (error) => {
@@ -169,7 +167,7 @@ export class PacienteDashboardComponent implements OnInit {
             .map(avaliacao => ({
               formulario: avaliacao.formulario?.titulo || 'Formulário',
               data: new Date(avaliacao.dataCriacao),
-              tecnico: avaliacao.tecnico?.nome || 'Técnico',
+              tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
               status: 'Concluído'
             }));
         },
@@ -180,35 +178,6 @@ export class PacienteDashboardComponent implements OnInit {
     }
   }
 
-  loadMetricas(): void {
-    if (this.currentPaciente) {
-      this.metricas = {
-        desempenhoCognitivo: 85,
-        nivelFadiga: 3,
-        vulnerabilidadeClinica: 2,
-        qualidadeVida: 78
-      };
-    }
-  }
-
-  loadResultadosDetalhados(): void {
-    if (this.currentPaciente) {
-      this.avaliacaoService.buscarPorPaciente(this.currentPaciente.id!).subscribe({
-        next: (avaliacoes) => {
-          this.resultadosDetalhados = avaliacoes.map(avaliacao => ({
-            id: avaliacao.id,
-            formulario: avaliacao.formulario?.titulo || 'Formulário',
-            data: new Date(avaliacao.dataCriacao),
-            pontuacao: Math.round(avaliacao.pontuacaoTotal || 0),
-            observacoes: 'Resultado dentro dos parâmetros esperados.'
-          }));
-        },
-        error: (error) => {
-          console.error('Erro ao carregar resultados detalhados:', error);
-        }
-      });
-    }
-  }
 
   loadCurrentPhoto(pacienteId: number): void {
     this.imageService.getPacientePhoto(pacienteId).subscribe({
@@ -231,37 +200,57 @@ export class PacienteDashboardComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  visualizarTeste(testeId: number): void {
-    console.log('Visualizar teste:', testeId);
+  // Método removido - funcionalidade substituída por visualizarDetalhesAvaliacao
+  // que exibe os detalhes inline no dashboard
+  // visualizarTeste(testeId: number): void {
+  //   if (this.currentPaciente?.id) {
+  //     this.router.navigate(['/paciente/visualizar-avaliacao', this.currentPaciente.id], {
+  //       queryParams: { avaliacaoId: testeId }
+  //     });
+  //   }
+  // }
+
+  visualizarDetalhesAvaliacao(avaliacaoId: number): void {
+    // Exibir detalhes da avaliação com respostas expandidas
+    this.expandedAvaliacaoId = this.expandedAvaliacaoId === avaliacaoId ? null : avaliacaoId;
+
+    // Se expandindo, carregar os detalhes completos
+    if (this.expandedAvaliacaoId === avaliacaoId) {
+      this.avaliacaoService.getAvaliacaoById(avaliacaoId).subscribe({
+        next: (avaliacao) => {
+          this.avaliacaoDetalhada = avaliacao;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar detalhes da avaliação:', error);
+        }
+      });
+    } else {
+      this.avaliacaoDetalhada = null;
+    }
   }
 
-  iniciarFormulario(tipoFormulario: string): void {
-    this.router.navigate(['/formularios/preencher'], { 
-      queryParams: { tipo: tipoFormulario } 
-    });
+  iniciarFormulario(idFormulario: number): void {
+    this.router.navigate([`/formularios/${idFormulario}`]);
   }
 
-  getBadgeClass(pontuacao: number): string {
-    if (pontuacao >= 80) return 'bg-success';
-    if (pontuacao >= 60) return 'bg-warning';
+  getBadgeClass(pontuacaoTotal: number, pontuacaoMaxima: number): string {
+    const percentual = (pontuacaoTotal / pontuacaoMaxima) * 100;
+    if (percentual >= 80) return 'bg-success';
+    if (percentual >= 60) return 'bg-warning';
     return 'bg-danger';
   }
 
-  getMetricStatusClass(valor: number): string {
-    if (valor >= 80) return 'good';
-    if (valor >= 60) return 'warning';
-    return 'danger';
+  getPercentual(pontuacaoTotal: number, pontuacaoMaxima: number): number {
+    if (pontuacaoMaxima === 0) return 0;
+    return Math.round((pontuacaoTotal / pontuacaoMaxima) * 100);
   }
 
-  getMetricStatus(valor: number): string {
-    if (valor >= 80) return 'Bom';
-    if (valor >= 60) return 'Moderado';
-    return 'Atenção';
+  formatarValorResposta(valor: any): string {
+    if (typeof valor === 'string' && valor.startsWith('"') && valor.endsWith('"')) {
+      return valor.slice(1, -1);
+    }
+    return String(valor || '');
   }
 
-  verDetalhes(resultadoId: number): void {
-    // Implementar navegação para detalhes do resultado
-    console.log('Ver detalhes do resultado:', resultadoId);
-  }
 }
 

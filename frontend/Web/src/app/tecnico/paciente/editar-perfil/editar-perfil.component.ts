@@ -51,12 +51,12 @@ export class EditarPerfilPacienteComponent implements OnInit {
           this.carregarPaciente(paciente.id!);
         } else {
           console.error('Paciente não encontrado');
-          this.router.navigate(['/tecnico/dashboard']);
+          this.router.navigate(['/tecnico']);
         }
       },
       error: (error) => {
         console.error('Erro ao carregar paciente:', error);
-        this.router.navigate(['/tecnico/dashboard']);
+        this.router.navigate(['/tecnico']);
       }
     });
   }
@@ -167,13 +167,13 @@ export class EditarPerfilPacienteComponent implements OnInit {
       peso: paciente.peso || '',
       altura: paciente.altura || '',
       socioeconomico: paciente.socioeconomico || '',
-      telefone: paciente.telefone || '',
+      telefone: this.formatarTelefoneSeNecessario(paciente.telefone),
       idade: paciente.idade || '',
       imc: paciente.imc || ''
     });
 
     documentacao.patchValue({
-      rg: paciente.rg || '',
+      rg: this.formatarRgSeNecessario(paciente.rg),
       cpf: this.formatarCpfSeNecessario(paciente.cpf),
       dataExpedicao: paciente.dataExpedicao || '',
       orgaoEmissor: paciente.orgaoEmissor || '',
@@ -245,6 +245,20 @@ export class EditarPerfilPacienteComponent implements OnInit {
       return `(${numbers.substring(0,2)}) ${numbers.substring(2,7)}-${numbers.substring(7)}`;
     }
     return telefone;
+  }
+
+  private formatarRgSeNecessario(rg: string | undefined): string {
+    if (!rg) return '';
+    // Se já estiver formatado (com pontos e hífen)
+    if (rg.includes('.') && rg.includes('-')) {
+      return rg;
+    }
+    // Se for apenas números e tiver 9 dígitos
+    const numbers = rg.replace(/\D/g, '');
+    if (numbers.length === 9) {
+      return `${numbers.substring(0,2)}.${numbers.substring(2,5)}.${numbers.substring(5,8)}-${numbers.substring(8)}`;
+    }
+    return rg;
   }
 
   private formatarTelefoneParaExibicao(telefone: string | undefined): string {

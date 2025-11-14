@@ -147,10 +147,6 @@
   cursor: pointer;
 }
 
-.results-content {
-  padding: 20px;
-}
-
 .results-actions {
   display: flex;
   gap: 15px;
@@ -176,10 +172,6 @@
 .results-actions button:disabled {
   background: #cccccc;
   cursor: not-allowed;
-}
-
-.results-content {
-  margin-top: 20px;
 }
 
 .badge {

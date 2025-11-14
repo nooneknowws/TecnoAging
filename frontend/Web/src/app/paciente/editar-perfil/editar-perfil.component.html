@@ -1,16 +1,16 @@
 <div class="form-container d-flex justify-content-center">
     <div class="form-wrapper">
         <!-- Mensagens de Feedback Aprimoradas -->
-        <div *ngIf="isUpdateSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div *ngIf="feedback.form.success" class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle me-2"></i>
             Perfil atualizado com sucesso!
-            <button type="button" class="btn-close" (click)="isUpdateSuccess = false" aria-label="Close"></button>
+            <button type="button" class="btn-close" (click)="feedback.form.success = false" aria-label="Close"></button>
         </div>
 
-        <div *ngIf="isUpdateFailed" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div *ngIf="feedback.form.error" class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i>
-            {{ errorMessage }}
-            <button type="button" class="btn-close" (click)="isUpdateFailed = false; errorMessage = ''" aria-label="Close"></button>
+            {{ feedback.form.error }}
+            <button type="button" class="btn-close" (click)="feedback.form.error = ''" aria-label="Close"></button>
         </div>
 
         <!-- Loading Overlay para carregamento inicial -->
@@ -34,13 +34,13 @@
                 </app-image-upload>
                 
                 <!-- Mensagens de upload com melhor styling -->
-                <div *ngIf="uploadError" class="alert alert-danger mt-2 small">
+                <div *ngIf="feedback.upload.error" class="alert alert-danger mt-2 small">
                     <i class="fas fa-exclamation-triangle me-1"></i>
-                    {{ uploadError }}
+                    {{ feedback.upload.error }}
                 </div>
-                <div *ngIf="uploadSuccess" class="alert alert-success mt-2 small">
+                <div *ngIf="feedback.upload.success" class="alert alert-success mt-2 small">
                     <i class="fas fa-check me-1"></i>
-                    {{ uploadSuccess }}
+                    {{ feedback.upload.success }}
                 </div>
             </div>
 
@@ -277,12 +277,13 @@
             <!-- Dados de RG -->
             <div class="input-group mb-2">
                 <div class="form-floating w-33">
-                    <input type="text" 
-                           class="form-control" 
-                           id="floatingRG" 
-                           placeholder="RG" 
-                           name="rg" 
+                    <input type="text"
+                           class="form-control"
+                           id="floatingRG"
+                           placeholder="RG"
+                           name="rg"
                            [(ngModel)]="form.rg"
+                           mask="00.000.000-0"
                            [disabled]="isSaving">
                     <label for="floatingRG">RG</label>
                 </div>
@@ -465,9 +466,9 @@
             
             <!-- Botão com Loading Aprimorado -->
             <div class="d-flex gap-2 mt-4">
-                <button class="btn btn-success flex-fill" 
-                        type="submit" 
-                        [disabled]="isSaving || (f.submitted && f.invalid)"
+                <button class="btn btn-success flex-fill"
+                        type="submit"
+                        [disabled]="isSaving"
                         [class.btn-loading]="isSaving">
                     
                     <!-- Loading spinner -->

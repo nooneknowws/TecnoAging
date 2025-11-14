@@ -3,7 +3,7 @@
         <strong>Sucesso!</strong> Avaliação salva com sucesso.
         <div class="mt-2">
             <a [routerLink]="['/tecnico']" class="alert-link me-3">Voltar para a página inicial</a>
-            <a *ngIf="pacienteId" [routerLink]="['/ver-perfil']" [queryParams]="{ id: pacienteId }" class="alert-link">Ver perfil do paciente</a>
+            <a *ngIf="pacienteId" [routerLink]="['/tecnico/paciente/ver-perfil']" [queryParams]="{ id: pacienteId }" class="alert-link">Ver perfil do paciente</a>
         </div>
         <button type="button" class="btn-close" (click)="fecharAlerta()" aria-label="Close"></button>
     </div>
