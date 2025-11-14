@@ -4,10 +4,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
 import { Tecnico } from '../../_shared/models/pessoa/tecnico/tecnico';
 import { Formulario } from '../../_shared/models/formulario/formulario';
+import { Avaliacao } from '../../_shared/models/avaliacao/avaliacao';
 import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
 import { FormularioService } from '../../_shared/services/formulario.service';
+import { AvaliacaoService } from '../../_shared/services/avaliacao.service';
 
 type ViewMode = 'grid' | 'table';
 type Section = 'pacientes' | 'formularios' | 'resultados';
@@ -34,10 +36,11 @@ export class TecnicoDashboardComponent implements OnInit {
   selectedPaciente: Paciente | null = null;
   private pacienteSubject = new BehaviorSubject<Paciente[]>([]);
   pacientes$ = this.pacienteSubject.asObservable();
-  
+
   activeSection: Section = 'pacientes';
   viewMode: ViewMode = 'grid';
-  historicoTestes$: Observable<any[]> | null = null;
+  avaliacoes: Avaliacao[] = [];
+  loadingAvaliacoes = false;
   loading = false;
   loadingFormularios = false;
 
@@ -54,7 +57,8 @@ export class TecnicoDashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private imageService: ImageService,
-    private formularioService: FormularioService
+    private formularioService: FormularioService,
+    private avaliacaoService: AvaliacaoService
   ) {}
 
   ngOnInit(): void {
@@ -141,15 +145,15 @@ export class TecnicoDashboardComponent implements OnInit {
 
   selectPaciente(paciente: Paciente): void {
     if (this.selectedPaciente?.id === paciente.id) return;
-    
+
     this.selectedPaciente = paciente;
-    this.loadHistoricoTestes(paciente.id!);
+    this.loadAvaliacoes(paciente.id!);
     this.switchSection('formularios');
   }
 
   clearSelectedPaciente(): void {
     this.selectedPaciente = null;
-    this.historicoTestes$ = null;
+    this.avaliacoes = [];
     this.switchSection('pacientes');
   }
 
@@ -167,8 +171,21 @@ export class TecnicoDashboardComponent implements OnInit {
     });
   }
 
-  private loadHistoricoTestes(pacienteId: number): void {
-    this.historicoTestes$ = this.pacienteService.getHistoricoTestes(pacienteId);
+  private loadAvaliacoes(pacienteId: number): void {
+    this.loadingAvaliacoes = true;
+    this.avaliacaoService.buscarPorPaciente(pacienteId).subscribe({
+      next: (avaliacoes) => {
+        this.avaliacoes = avaliacoes.sort((a, b) =>
+          new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
+        );
+        this.loadingAvaliacoes = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar avaliações:', error);
+        this.avaliacoes = [];
+        this.loadingAvaliacoes = false;
+      }
+    });
   }
 
   navigateToFormulario(formularioId: number, event?: Event): void {
@@ -226,13 +243,45 @@ export class TecnicoDashboardComponent implements OnInit {
 
   compareResults(): void {
     if (!this.selectedPaciente) return;
-    
-    this.router.navigate(['/comparar-resultados'], {
-      queryParams: { 
+
+    this.router.navigate(['/tecnico/comparar-resultados'], {
+      queryParams: {
         pacienteId: this.selectedPaciente.id,
         returnUrl: this.router.url
       }
     });
+  }
+
+  consultarAvaliacao(avaliacaoId: number): void {
+    if (!this.selectedPaciente) return;
+
+    this.router.navigate(['/tecnico/avaliacoes/consultar', this.selectedPaciente.id], {
+      queryParams: {
+        avaliacaoId: avaliacaoId,
+        returnUrl: this.router.url
+      }
+    });
+  }
+
+  editarAvaliacao(avaliacaoId: number): void {
+    this.router.navigate(['/tecnico/avaliacoes/editar', avaliacaoId], {
+      queryParams: {
+        returnUrl: this.router.url
+      }
+    });
+  }
+
+  getBadgeClass(pontuacaoTotal: number, pontuacaoMaxima: number): string {
+    if (pontuacaoMaxima === 0) return 'bg-secondary';
+    const percentual = (pontuacaoTotal / pontuacaoMaxima) * 100;
+    if (percentual >= 80) return 'bg-success';
+    if (percentual >= 60) return 'bg-warning';
+    return 'bg-danger';
+  }
+
+  getPercentual(pontuacaoTotal: number, pontuacaoMaxima: number): number {
+    if (pontuacaoMaxima === 0) return 0;
+    return Math.round((pontuacaoTotal / pontuacaoMaxima) * 100);
   }
 
   getStatusClass(status: string): string {

@@ -22,6 +22,12 @@
                 <a routerLink="/recuperar-senha">Recuperar senha</a>
             </div>
 
+            <div *ngIf="sessionExpiredMessage" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {{ sessionExpiredMessage }}
+                <button type="button" class="btn-close" (click)="sessionExpiredMessage = null" aria-label="Close"></button>
+            </div>
+
             <div *ngIf="errorMessage" class="alert alert-danger">
                 {{ errorMessage }}
             </div>

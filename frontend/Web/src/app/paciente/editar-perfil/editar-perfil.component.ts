@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, timeout } from 'rxjs/operators';
+import { catchError, timeout, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Endereco } from '../../_shared/models/pessoa/endereco';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
@@ -26,15 +26,13 @@ export class EditarPerfilComponent implements OnInit {
   isLoading = false;
   isSaving = false;
   
-  // Mensagens de sucesso/erro para o formulário
-  isUpdateSuccess = false;
-  isUpdateFailed = false;
-  errorMessage = '';
-  
-  // Mensagens para upload de foto
+  // Estrutura consolidada de feedback
+  public feedback = {
+    upload: { success: '', error: '' },
+    form: { success: false, error: '' }
+  };
+
   currentPhotoUrl: string | null = null;
-  uploadError: string = '';
-  uploadSuccess: string = '';
   
   formattedDataNasc: string = '';
   formattedDataExpedicao: string = '';
@@ -77,47 +75,96 @@ export class EditarPerfilComponent implements OnInit {
 
   loadUserData(): void {
     this.isLoading = true;
-    
+
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser instanceof Paciente) {
-      // Deep copy para evitar modificações no objeto original
-      this.form = JSON.parse(JSON.stringify(currentUser));
-      
+      // Shallow copy para evitar modificações no objeto original
+      this.form = { ...currentUser };
+
       // Inicializa o endereço se não existir
-      if (!this.form.endereco) {
-        this.form.endereco = new Endereco();
+      this.endereco = this.form.endereco ? { ...this.form.endereco } : new Endereco();
+
+      // Formatar CEP se necessário
+      if (this.endereco.cep) {
+        this.endereco.cep = this.formatarCepSeNecessario(this.endereco.cep);
       }
-      this.endereco = JSON.parse(JSON.stringify(this.form.endereco));
-      
+
+      this.form.endereco = this.endereco;
+
       // Formatar datas para os inputs date
       if (this.form.dataNasc) {
         this.formattedDataNasc = this.formatDateForInput(this.form.dataNasc);
       }
-      
+
       if (this.form.dataExpedicao) {
         this.formattedDataExpedicao = this.formatDateForInput(this.form.dataExpedicao);
       }
-      
+
+      // Formatar telefone e RG se necessário
+      if (this.form.telefone) {
+        this.form.telefone = this.formatarTelefoneSeNecessario(this.form.telefone);
+      }
+
+      if (this.form.rg) {
+        this.form.rg = this.formatarRgSeNecessario(this.form.rg);
+      }
+
       // Carregar foto do perfil
       if (this.form.id) {
         this.loadCurrentPhoto(this.form.id);
       }
     }
-    
+
     this.isLoading = false;
   }
 
   private formatDateForInput(date: Date): string {
     if (!date) return '';
-    
     const d = new Date(date);
-    if (isNaN(d.getTime())) return '';
-    
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}`;
+    return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
+  }
+
+  private formatarTelefoneSeNecessario(telefone: string | undefined): string {
+    if (!telefone) return '';
+    // Se já estiver formatado com parênteses e hífen
+    if (telefone.includes('(') && telefone.includes(')') && telefone.includes('-')) {
+      return telefone;
+    }
+    // Se for apenas números
+    const numbers = telefone.replace(/\D/g, '');
+    if (numbers.length === 11) {
+      return `(${numbers.substring(0,2)}) ${numbers.substring(2,7)}-${numbers.substring(7)}`;
+    }
+    return telefone;
+  }
+
+  private formatarRgSeNecessario(rg: string | undefined): string {
+    if (!rg) return '';
+    // Se já estiver formatado (com pontos e hífen)
+    if (rg.includes('.') && rg.includes('-')) {
+      return rg;
+    }
+    // Se for apenas números e tiver 9 dígitos
+    const numbers = rg.replace(/\D/g, '');
+    if (numbers.length === 9) {
+      return `${numbers.substring(0,2)}.${numbers.substring(2,5)}.${numbers.substring(5,8)}-${numbers.substring(8)}`;
+    }
+    return rg;
+  }
+
+  private formatarCepSeNecessario(cep: string | number | undefined): string {
+    if (!cep) return '';
+    const cepStr = cep.toString().trim();
+    // Se já estiver formatado (com hífen)
+    if (cepStr.includes('-')) {
+      return cepStr;
+    }
+    // Se for apenas números e tiver 8 dígitos
+    const numbers = cepStr.replace(/\D/g, '');
+    if (numbers.length === 8) {
+      return `${numbers.substring(0,5)}-${numbers.substring(5)}`;
+    }
+    return cepStr;
   }
 
   onDataNascChange(dateString: string): void {
@@ -157,7 +204,7 @@ export class EditarPerfilComponent implements OnInit {
 
   onImageSelected(base64Image: string): void {
     if (!this.form?.id || !base64Image) {
-      this.uploadError = 'Erro: dados insuficientes para upload da imagem.';
+      this.feedback.upload.error = 'Erro: dados insuficientes para upload da imagem.';
       return;
     }
 
@@ -166,42 +213,41 @@ export class EditarPerfilComponent implements OnInit {
     // Assumindo que existe um método similar para paciente no ImageService
     this.imageService.uploadPacientePhoto(this.form.id, base64Image).subscribe({
       next: () => {
-        this.uploadSuccess = 'Foto atualizada com sucesso!';
+        this.feedback.upload.success = 'Foto atualizada com sucesso!';
         this.currentPhotoUrl = base64Image;
-        this.clearSuccessMessage();
+        this.clearMessage('upload-success');
       },
       error: (error) => {
-        this.uploadError = error.error?.error || 'Erro ao fazer upload da imagem.';
-        this.clearErrorMessage();
+        this.feedback.upload.error = error.error?.error || 'Erro ao fazer upload da imagem.';
+        this.clearMessage('upload-error', 5000);
       }
     });
   }
 
   onImageError(error: string): void {
-    this.uploadError = error;
-    this.clearErrorMessage();
+    this.feedback.upload.error = error;
+    this.clearMessage('upload-error', 5000);
   }
 
   private clearUploadMessages(): void {
-    this.uploadError = '';
-    this.uploadSuccess = '';
+    this.feedback.upload.error = '';
+    this.feedback.upload.success = '';
   }
 
-  private clearSuccessMessage(): void {
+  private clearMessage(type: 'upload-success' | 'upload-error' | 'form-success', delay: number = 3000): void {
     setTimeout(() => {
-      this.uploadSuccess = '';
+      if (type === 'upload-success') {
+        this.feedback.upload.success = '';
+      } else if (type === 'upload-error') {
+        this.feedback.upload.error = '';
+      } else if (type === 'form-success') {
+        this.feedback.form.success = false;
+      }
       this.cdRef.detectChanges();
-    }, 3000);
+    }, delay);
   }
 
-  private clearErrorMessage(): void {
-    setTimeout(() => {
-      this.uploadError = '';
-      this.cdRef.detectChanges();
-    }, 5000);
-  }
-
-  calcularIdade(dataNasc: Date): number {
+  private calcularIdade(dataNasc: Date): number {
     if (!dataNasc) return 0;
     
     const hoje = new Date();
@@ -230,16 +276,14 @@ export class EditarPerfilComponent implements OnInit {
 
   buscarCep(): void {
     const cep = this.endereco.cep?.toString().replace(/\D/g, '') || '';
-    
-    if (cep.length !== 8) {
-      this.cepInvalido = true;
-      this.erroTimeout = false;
-      return;
-    }
 
-    // Reset dos estados de erro
-    this.cepInvalido = false;
+    const isValid = cep.length === 8;
+    this.cepInvalido = !isValid;
     this.erroTimeout = false;
+
+    if (!isValid) return;
+
+    this.isSaving = true;
 
     this.authService.buscarCep(cep)
       .pipe(
@@ -253,7 +297,8 @@ export class EditarPerfilComponent implements OnInit {
             this.erroTimeout = false;
           }
           return of(null);
-        })
+        }),
+        finalize(() => this.isSaving = false)
       )
       .subscribe({
         next: (endereco: Endereco | null) => {
@@ -279,24 +324,85 @@ export class EditarPerfilComponent implements OnInit {
   }
 
   private resetFormMessages(): void {
-    this.isUpdateSuccess = false;
-    this.isUpdateFailed = false;
-    this.errorMessage = '';
+    this.feedback.form.success = false;
+    this.feedback.form.error = '';
+  }
+
+  private getValidationError(form: NgForm): string {
+    // Verificar campos específicos inválidos
+    const invalidFields: string[] = [];
+
+    if (!form.valid) {
+      Object.keys(form.controls).forEach(key => {
+        const control = form.controls[key];
+        if (control.invalid) {
+          // Converter nome do campo para formato legível
+          const fieldName = this.getFieldLabel(key);
+          invalidFields.push(fieldName);
+        }
+      });
+    }
+
+    if (invalidFields.length > 0) {
+      return `Campos obrigatórios faltando ou inválidos: ${invalidFields.join(', ')}`;
+    }
+
+    if (!this.form.dataNasc) return 'Data de nascimento é obrigatória.';
+    if (!this.isEnderecoValid()) {
+      const missingAddressFields: string[] = [];
+      if (!this.endereco.cep) missingAddressFields.push('CEP');
+      if (!this.endereco.logradouro) missingAddressFields.push('Logradouro');
+      if (!this.endereco.numero) missingAddressFields.push('Número');
+      if (!this.endereco.bairro) missingAddressFields.push('Bairro');
+      if (!this.endereco.municipio) missingAddressFields.push('Município');
+      if (!this.endereco.uf) missingAddressFields.push('UF');
+      return `Endereço incompleto. Campos faltando: ${missingAddressFields.join(', ')}`;
+    }
+
+    return 'Erro de validação.';
+  }
+
+  private getFieldLabel(fieldName: string): string {
+    const fieldLabels: { [key: string]: string } = {
+      'nome': 'Nome',
+      'telefone': 'Telefone',
+      'sexo': 'Sexo',
+      'dataNasc': 'Data de Nascimento',
+      'escolaridade': 'Escolaridade',
+      'corRaca': 'Cor/Raça',
+      'cep': 'CEP',
+      'logradouro': 'Logradouro',
+      'numero': 'Número',
+      'bairro': 'Bairro',
+      'municipio': 'Município',
+      'uf': 'UF'
+    };
+    return fieldLabels[fieldName] || fieldName;
   }
 
   onSubmit(form: NgForm): void {
     this.resetFormMessages();
 
+    // Debug: Log form validity
+    console.log('Form valid:', form.valid);
+    console.log('Form value:', form.value);
+    console.log('Data Nasc:', this.form.dataNasc);
+    console.log('Endereco valid:', this.isEnderecoValid());
+    console.log('Endereco:', this.endereco);
+
+    // Log invalid controls
     if (!form.valid) {
-      this.errorMessage = 'Formulário inválido. Verifique todos os campos obrigatórios.';
-      this.isUpdateFailed = true;
-      return;
+      Object.keys(form.controls).forEach(key => {
+        const control = form.controls[key];
+        if (control.invalid) {
+          console.log(`Campo inválido: ${key}`, control.errors);
+        }
+      });
     }
 
-    // Validações adicionais
-    if (!this.form.dataNasc) {
-      this.errorMessage = 'Data de nascimento é obrigatória.';
-      this.isUpdateFailed = true;
+    // Validação consolidada
+    if (!form.valid || !this.form.dataNasc || !this.isEnderecoValid()) {
+      this.feedback.form.error = this.getValidationError(form);
       return;
     }
 
@@ -310,21 +416,12 @@ export class EditarPerfilComponent implements OnInit {
       
       // Atualizar endereço
       this.form.endereco = { ...this.endereco };
-      
-      // Validar se endereço está completo
-      if (!this.isEnderecoValid()) {
-        this.errorMessage = 'Endereço incompleto. Verifique todos os campos obrigatórios.';
-        this.isUpdateFailed = true;
-        this.isSaving = false;
-        return;
-      }
 
       // Usar o método que atualiza o cache automaticamente
       this.pacienteService.updatePacienteAndRefreshCache(this.form).subscribe({
         next: (updatedPaciente: Paciente) => {
           this.isSaving = false;
-          this.isUpdateSuccess = true;
-          this.isUpdateFailed = false;
+          this.feedback.form.success = true;
           
           // Atualizar o form com a resposta do servidor
           this.form = { ...updatedPaciente };
@@ -341,23 +438,18 @@ export class EditarPerfilComponent implements OnInit {
           }
           
           console.log('Perfil atualizado e cache refreshed:', updatedPaciente);
-          
+
           // Limpar mensagem de sucesso após alguns segundos
-          setTimeout(() => {
-            this.isUpdateSuccess = false;
-            this.cdRef.detectChanges();
-          }, 5000);
+          this.clearMessage('form-success', 5000);
         },
         error: (err) => {
           console.error('Erro ao atualizar perfil:', err);
           this.isSaving = false;
-          this.errorMessage = err.error?.message || err.message || 'Erro ao atualizar perfil. Tente novamente.';
-          this.isUpdateFailed = true;
-          
+          this.feedback.form.error = err.error?.message || err.message || 'Erro ao atualizar perfil. Tente novamente.';
+
           // Limpar mensagem de erro após alguns segundos
           setTimeout(() => {
-            this.isUpdateFailed = false;
-            this.errorMessage = '';
+            this.feedback.form.error = '';
             this.cdRef.detectChanges();
           }, 8000);
         }
@@ -365,87 +457,7 @@ export class EditarPerfilComponent implements OnInit {
     } catch (error) {
       console.error('Erro no processamento do formulário:', error);
       this.isSaving = false;
-      this.errorMessage = 'Erro interno. Tente novamente.';
-      this.isUpdateFailed = true;
-    }
-  }
-
-  /**
-   * Método alternativo que força refresh dos dados do servidor
-   */
-  salvarComRefreshDoServidor(form: NgForm): void {
-    this.resetFormMessages();
-
-    if (!form.valid) {
-      this.errorMessage = 'Formulário inválido. Verifique todos os campos obrigatórios.';
-      this.isUpdateFailed = true;
-      return;
-    }
-
-    try {
-      this.isSaving = true;
-      
-      // Preparar dados
-      this.form.idade = this.calcularIdade(this.form.dataNasc!);
-      this.form.imc = this.calcularIMC();
-      this.form.endereco = { ...this.endereco };
-      
-      if (!this.isEnderecoValid()) {
-        this.errorMessage = 'Endereço incompleto. Verifique todos os campos obrigatórios.';
-        this.isUpdateFailed = true;
-        this.isSaving = false;
-        return;
-      }
-
-      // Salvar primeiro
-      this.pacienteService.updatePaciente(this.form).subscribe({
-        next: () => {
-          // Depois refresh dos dados do servidor
-          this.authService.refreshCurrentUserFromServer().subscribe({
-            next: (userAtualizado) => {
-              this.isSaving = false;
-              this.isUpdateSuccess = true;
-              
-              if (userAtualizado) {
-                this.form = { ...userAtualizado as Paciente };
-                if (this.form.dataNasc) {
-                  this.formattedDataNasc = this.formatDateForInput(this.form.dataNasc);
-                }
-                if (this.form.dataExpedicao) {
-                  this.formattedDataExpedicao = this.formatDateForInput(this.form.dataExpedicao);
-                }
-                if (this.form.endereco) {
-                  this.endereco = { ...this.form.endereco };
-                }
-              }
-              
-              console.log('Dados refreshed do servidor:', userAtualizado);
-              
-              setTimeout(() => {
-                this.isUpdateSuccess = false;
-                this.cdRef.detectChanges();
-              }, 5000);
-            },
-            error: (refreshError) => {
-              this.isSaving = false;
-              this.isUpdateSuccess = true; // Dados foram salvos
-              this.errorMessage = 'Dados salvos, mas erro ao atualizar cache local.';
-              console.error('Erro ao refresh dados:', refreshError);
-            }
-          });
-        },
-        error: (err) => {
-          console.error('Erro ao atualizar perfil:', err);
-          this.isSaving = false;
-          this.errorMessage = err.error?.message || err.message || 'Erro ao atualizar perfil. Tente novamente.';
-          this.isUpdateFailed = true;
-        }
-      });
-    } catch (error) {
-      console.error('Erro no processamento do formulário:', error);
-      this.isSaving = false;
-      this.errorMessage = 'Erro interno. Tente novamente.';
-      this.isUpdateFailed = true;
+      this.feedback.form.error = 'Erro interno. Tente novamente.';
     }
   }
 

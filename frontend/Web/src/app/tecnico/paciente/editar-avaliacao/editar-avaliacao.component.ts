@@ -242,7 +242,7 @@ export class EditarAvaliacaoComponent implements OnInit {
   }
 
   cancelar() {
-    this.router.navigate(['/tecnico/paciente/consultar-avaliacao', this.avaliacaoData.paciente?.id]);
+    this.router.navigate(['/tecnico/avaliacoes/consultar', this.avaliacaoData.paciente?.id]);
   }
 
   fecharAlerta() {

@@ -6,7 +6,7 @@ import { Resposta } from "./resposta";
 export class Avaliacao {
     constructor(
         public id?: number,
-        public tecnico?: Tecnico,
+        public tecnico?: Tecnico | null,
         public paciente?: Paciente,      
         public formulario?: Formulario,
         public respostas?: Resposta[],

@@ -53,43 +53,62 @@ export class EditarPerfilComponent implements OnInit {
 
   loadUserData(): void {
     this.isLoading = true;
-    
+
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && currentUser instanceof Tecnico) {
       // Deep copy para evitar modificações no objeto original
       this.form = JSON.parse(JSON.stringify(currentUser));
-      
+
       // Inicializa o endereço se não existir
       if (!this.form.endereco) {
         this.form.endereco = new Endereco();
       }
       this.endereco = JSON.parse(JSON.stringify(this.form.endereco));
-      
+
       // Formatar data para o input date
       if (this.form.dataNasc) {
         this.formattedDataNasc = this.formatDateForInput(this.form.dataNasc);
       }
-      
+
+      // Formatar telefone se necessário
+      if (this.form.telefone) {
+        this.form.telefone = this.formatarTelefoneSeNecessario(this.form.telefone);
+      }
+
       // Carregar foto do perfil
       if (this.form.id) {
         this.loadCurrentPhoto(this.form.id);
       }
     }
-    
+
     this.isLoading = false;
   }
 
   private formatDateForInput(date: Date): string {
     if (!date) return '';
-    
+
     const d = new Date(date);
     if (isNaN(d.getTime())) return '';
-    
+
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
+  }
+
+  private formatarTelefoneSeNecessario(telefone: string | undefined): string {
+    if (!telefone) return '';
+    // Se já estiver formatado com parênteses e hífen
+    if (telefone.includes('(') && telefone.includes(')') && telefone.includes('-')) {
+      return telefone;
+    }
+    // Se for apenas números
+    const numbers = telefone.replace(/\D/g, '');
+    if (numbers.length === 11) {
+      return `(${numbers.substring(0,2)}) ${numbers.substring(2,7)}-${numbers.substring(7)}`;
+    }
+    return telefone;
   }
 
   onDataNascChange(dateString: string): void {

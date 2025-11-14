@@ -64,16 +64,25 @@ public class AvaliacaoController {
             }
         }
         CompletableFuture<PacienteDTO> pacienteFuture = messageSender.requestPacienteData(avaliacaoDTO.getPacienteId());
-        CompletableFuture<TecnicoDTO> tecnicoFuture = messageSender.requestTecnicoData(avaliacaoDTO.getTecnicoId());
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(pacienteFuture, tecnicoFuture);
-        allFutures.get(10, TimeUnit.SECONDS); 
+        TecnicoDTO tecnico = null;
+        if (avaliacaoDTO.getTecnicoId() != null) {
+            CompletableFuture<TecnicoDTO> tecnicoFuture = messageSender.requestTecnicoData(avaliacaoDTO.getTecnicoId());
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(pacienteFuture, tecnicoFuture);
+            allFutures.get(10, TimeUnit.SECONDS);
+            tecnico = tecnicoFuture.get();
+        } else {
+            pacienteFuture.get(10, TimeUnit.SECONDS);
+        }
 
         PacienteDTO paciente = pacienteFuture.get();
-        TecnicoDTO tecnico = tecnicoFuture.get();
 
         System.out.println("Paciente encontrado: " + paciente.getNome());
-        System.out.println("Técnico encontrado: " + tecnico.getNome());
+        if (tecnico != null) {
+            System.out.println("Técnico encontrado: " + tecnico.getNome());
+        } else {
+            System.out.println("Avaliação sem técnico (preenchida pelo paciente)");
+        }
 
         Formulario formulario = formularioRepository.findById(avaliacaoDTO.getFormularioId())
                 .orElseThrow(() -> new RuntimeException("Formulário não encontrado"));
@@ -84,8 +93,15 @@ public class AvaliacaoController {
         avaliacao.setPaciente_nome(paciente.getNome());
         avaliacao.setPaciente_idade_avaliacao(paciente.getIdade());
         avaliacao.setPaciente_imc_avaliacao(paciente.getImc());
-        avaliacao.setTecnico(tecnico.getId());
-        avaliacao.setTecnico_nome(tecnico.getNome());
+
+        if (tecnico != null) {
+            avaliacao.setTecnico(tecnico.getId());
+            avaliacao.setTecnico_nome(tecnico.getNome());
+        } else {
+            avaliacao.setTecnico(null);
+            avaliacao.setTecnico_nome(null);
+        }
+
         avaliacao.setFormulario(formulario);
         avaliacao.setPontuacaoTotal(avaliacaoDTO.getPontuacaoTotal());
         avaliacao.setDataCriacao(avaliacaoDTO.getDataCriacao());
