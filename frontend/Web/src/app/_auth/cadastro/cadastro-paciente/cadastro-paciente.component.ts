@@ -27,6 +27,8 @@ export class CadastroPacienteComponent implements OnInit {
   cepInvalido = false;
   erroTimeout = false;
   repetirSenha = '';
+  isSenhaVisible: boolean = false;
+  isRepetirSenhaVisible: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -139,5 +141,13 @@ export class CadastroPacienteComponent implements OnInit {
       { value: 'Amarela', label: 'Amarela' },
       { value: 'Indígena', label: 'Indígena' }
     ];
+  }
+
+  toggleSenhaVisibility(): void {
+    this.isSenhaVisible = !this.isSenhaVisible;
+  }
+
+  toggleRepetirSenhaVisibility(): void {
+    this.isRepetirSenhaVisible = !this.isRepetirSenhaVisible;
   }
 }
