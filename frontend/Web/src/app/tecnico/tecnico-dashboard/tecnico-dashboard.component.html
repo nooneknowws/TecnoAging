@@ -1,66 +1,93 @@
 <div class="dashboard-container">
   <header class="header mt-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h1>Dashboard</h1>
-    </div>
     <div class="user-info" *ngIf="currentTecnico">
-      <span>Bem-vindo(a), <a [routerLink]="['/tecnico/editar-perfil']">{{currentTecnico.nome}}</a></span>
-      <button class="btn-logout" (click)="logout()">Sair</button>
+      <span
+        >Bem-vindo(a),
+        <a [routerLink]="['/tecnico/editar-perfil']">{{
+          currentTecnico.nome
+        }}</a></span
+      >
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Sair
+      </button>
     </div>
   </header>
+
+  <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
 
   <nav class="tabs">
     <button
       *ngFor="let section of sections"
       [class.active]="activeSection === section.id"
       (click)="switchSection(section.id)"
-      [disabled]="section.requiresPaciente && !selectedPaciente">
-      {{section.label}}
+      [disabled]="section.requiresPaciente && !selectedPaciente"
+    >
+      {{ section.label }}
     </button>
   </nav>
 
   <div class="content">
     <!-- Seção de Pacientes -->
-    <section #sectionRef id="pacientes" class="section" [class.active]="activeSection === 'pacientes'">
+    <section
+      #sectionRef
+      id="pacientes"
+      class="section"
+      [class.active]="activeSection === 'pacientes'"
+    >
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h2>Lista de Pacientes</h2>
-          <p class="text-muted">Selecione um paciente para gerenciar os formulários, ver resultados e fazer comparações.</p>
+          <p class="text-muted">
+            Selecione um paciente para gerenciar os formulários, ver resultados
+            e fazer comparações.
+          </p>
         </div>
         <div class="view-toggle">
-          <button class="btn btn-outline-secondary btn-sm me-2" 
-                  [class.active]="viewMode === 'grid'"
-                  (click)="toggleView('grid')">
+          <button
+            class="btn btn-outline-secondary btn-sm me-2"
+            [class.active]="viewMode === 'grid'"
+            (click)="toggleView('grid')"
+          >
             <i class="fas fa-th"></i> Grid
           </button>
-          <button class="btn btn-outline-secondary btn-sm"
-                  [class.active]="viewMode === 'table'"
-                  (click)="toggleView('table')">
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            [class.active]="viewMode === 'table'"
+            (click)="toggleView('table')"
+          >
             <i class="fas fa-list"></i> Tabela
           </button>
         </div>
       </div>
-      
+
       <div class="alert alert-info" *ngIf="pacientes.length == 0">
         <p class="text-muted">Não há pacientes cadastrados.</p>
       </div>
 
       <!-- Grid View -->
       <div class="patient-cards" *ngIf="viewMode === 'grid'">
-        <div *ngFor="let paciente of pacientes"
-             class="patient-card"
-             [class.selected]="selectedPaciente?.cpf === paciente.cpf"
-             (click)="selectPaciente(paciente)">
+        <div
+          *ngFor="let paciente of pacientes"
+          class="patient-card"
+          [class.selected]="selectedPaciente?.cpf === paciente.cpf"
+          (click)="selectPaciente(paciente)"
+        >
           <div class="patient-info">
-            <h3>{{paciente.nome}}</h3>
-            <p>CPF: {{paciente.cpf}}</p>
-            <p>Idade: {{paciente.idade}} anos</p>
+            <h3>{{ paciente.nome }}</h3>
+            <p>CPF: {{ paciente.cpf }}</p>
+            <p>Idade: {{ paciente.idade }} anos</p>
           </div>
           <div class="card-actions">
-            <button class="btn-primary" (click)="consultarPerfil(paciente); $event.stopPropagation()">
+            <button
+              class="btn-primary"
+              (click)="consultarPerfil(paciente); $event.stopPropagation()"
+            >
               <i class="fas fa-user"></i> Ver Perfil
             </button>
-            <button class="btn-secondary" (click)="editarPerfil(paciente); $event.stopPropagation()">
+            <button
+              class="btn-secondary"
+              (click)="editarPerfil(paciente); $event.stopPropagation()"
+            >
               <i class="fas fa-edit"></i> Editar Perfil
             </button>
           </div>
@@ -80,21 +107,31 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let paciente of pacientes"
-                [class.table-active]="selectedPaciente?.cpf === paciente.cpf"
-                (click)="selectPaciente(paciente)"
-                style="cursor: pointer;">
-              <td>{{paciente.rg}}</td>
-              <td>{{paciente.cpf}}</td>
-              <td>{{paciente.nome}}</td>
-              <td>{{paciente.idade}} anos</td>
+            <tr
+              *ngFor="let paciente of pacientes"
+              [class.table-active]="selectedPaciente?.cpf === paciente.cpf"
+              (click)="selectPaciente(paciente)"
+              style="cursor: pointer"
+            >
+              <td>{{ paciente.rg }}</td>
+              <td>{{ paciente.cpf }}</td>
+              <td>{{ paciente.nome }}</td>
+              <td>{{ paciente.idade }} anos</td>
               <td>
                 <div class="table-actions">
-                  <button class="btn btn-sm btn-primary me-2" (click)="consultarPerfil(paciente); $event.stopPropagation()">
+                  <button
+                    class="btn btn-sm btn-primary me-2"
+                    (click)="
+                      consultarPerfil(paciente); $event.stopPropagation()
+                    "
+                  >
                     <i class="fas fa-eye"></i>
                     Ver Perfil
                   </button>
-                  <button class="btn btn-sm btn-secondary" (click)="editarPerfil(paciente); $event.stopPropagation()">
+                  <button
+                    class="btn btn-sm btn-secondary"
+                    (click)="editarPerfil(paciente); $event.stopPropagation()"
+                  >
                     <i class="fas fa-edit"></i>
                     Editar Perfil
                   </button>
@@ -111,21 +148,30 @@
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h2>Formulários Disponíveis</h2>
-          <p class="text-muted">Selecione um formulário para preencher para o paciente escolhido.</p>
+          <p class="text-muted">
+            Selecione um formulário para preencher para o paciente escolhido.
+          </p>
         </div>
         <div class="d-flex gap-2">
-          <button class="btn btn-success btn-sm" [routerLink]="['/tecnico/formularios/criar']">
+          <button
+            class="btn btn-success btn-sm"
+            [routerLink]="['/tecnico/formularios/criar']"
+          >
             <i class="fas fa-plus"></i> Criar Formulário
           </button>
           <div class="view-toggle">
-            <button class="btn btn-outline-secondary btn-sm me-2" 
-                    [class.active]="viewMode === 'grid'"
-                    (click)="toggleView('grid')">
+            <button
+              class="btn btn-outline-secondary btn-sm me-2"
+              [class.active]="viewMode === 'grid'"
+              (click)="toggleView('grid')"
+            >
               <i class="fas fa-th"></i> Grid
             </button>
-            <button class="btn btn-outline-secondary btn-sm"
-                    [class.active]="viewMode === 'table'"
-                    (click)="toggleView('table')">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              [class.active]="viewMode === 'table'"
+              (click)="toggleView('table')"
+            >
               <i class="fas fa-list"></i> Tabela
             </button>
           </div>
@@ -137,74 +183,108 @@
             <div class="w-100">
               <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
-                  <h4>Paciente selecionado:</h4>
-                  <a class="btn btn-sm btn-outline-danger mb-2" (click)="clearSelectedPaciente()">
-                    Cancelar Seleção
-                  </a>
+                  <h5 class="mb-0 text-primary-dark">
+                    <i class="fas fa-user-check me-2"></i>
+                    <strong>{{ selectedPaciente.nome }}</strong>
+                  </h5>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="clearSelectedPaciente()"
+                    title="Limpar seleção"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
                 </div>
                 <div class="card-body row">
                   <div class="col-md-4">
-                    <img [src]="selectedPaciente.fotoUrl || 'https://place-hold.it/192x256'" 
-                         class="img-fluid w-100" 
-                         alt="Foto do Paciente"
-                         (error)="onImageError($event)">
+                    <img
+                      [src]="
+                        selectedPaciente.fotoUrl ||
+                        'https://place-hold.it/192x256'
+                      "
+                      class="img-fluid w-100"
+                      alt="Foto do Paciente"
+                      (error)="onImageError($event)"
+                    />
                   </div>
-                  <div class="col-md-8">
-                    <table class="table table-bordered">
-                      <tbody>
-                        <tr>
-                          <th>Nome</th>
-                          <td>{{selectedPaciente.nome}}</td>
-                        </tr>
-                        <tr>
-                          <th>Idade</th>
-                          <td>{{selectedPaciente.idade}}</td>
-                        </tr>
-                        <tr>
-                          <th>RG</th>
-                          <td>{{selectedPaciente.rg}}</td>
-                        </tr>
-                        <tr>
-                          <th>CPF</th>
-                          <td>{{selectedPaciente.cpf}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div
+                    class="col-md-7 d-flex flex-column justify-content-center pt-3 pt-md-0"
+                  >
+                    <div class="patient-info-item">
+                      <small class="text-muted">CPF</small>
+                      <p class="fw-bold mb-2">{{ selectedPaciente.cpf }}</p>
+                    </div>
+
+                    <div class="patient-info-item">
+                      <small class="text-muted">RG</small>
+                      <p class="fw-bold mb-2">{{ selectedPaciente.rg }}</p>
+                    </div>
+
+                    <div class="patient-info-item">
+                      <small class="text-muted">Idade</small>
+                      <p class="fw-bold mb-0">
+                        {{ selectedPaciente.idade }} anos
+                      </p>
+                    </div>
                   </div>
-                </div>     
+                </div>
               </div>
             </div>
           </div>
-        </div>      
-        <div class="forms-list col-6" [class.disabled]="!selectedPaciente" [class.col-12]="!selectedPaciente">
+        </div>
+        <div
+          class="forms-list col-6"
+          [class.disabled]="!selectedPaciente"
+          [class.col-12]="!selectedPaciente"
+        >
           <!-- Loading Spinner -->
-          <div *ngIf="loadingFormularios" class="d-flex justify-content-center my-4">
+          <div
+            *ngIf="loadingFormularios"
+            class="d-flex justify-content-center my-4"
+          >
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Carregando formulários...</span>
             </div>
           </div>
 
           <!-- Alert quando não há formulários -->
-          <div class="alert alert-info" *ngIf="!loadingFormularios && formulariosDisponiveis.length === 0">
-            <p class="text-muted mb-0">Nenhum formulário disponível. Crie um novo formulário para começar.</p>
+          <div
+            class="alert alert-info"
+            *ngIf="!loadingFormularios && formulariosDisponiveis.length === 0"
+          >
+            <p class="text-muted mb-0">
+              Nenhum formulário disponível. Crie um novo formulário para
+              começar.
+            </p>
           </div>
 
           <!-- Grid -->
-          <div class="forms-grid" *ngIf="!loadingFormularios && viewMode === 'grid' && formulariosDisponiveis.length > 0">
+          <div
+            class="forms-grid"
+            *ngIf="
+              !loadingFormularios &&
+              viewMode === 'grid' &&
+              formulariosDisponiveis.length > 0
+            "
+          >
             <div class="form-card" *ngFor="let form of formulariosDisponiveis">
-              <h5>{{form.titulo}}</h5>
-              <p class="text-muted small mb-2">{{form.tipo}}</p>
+              <h5>{{ form.titulo }}</h5>
+              <p class="text-muted small mb-2">{{ form.tipo }}</p>
               <div class="d-flex gap-2 justify-content-center">
                 <button
                   class="btn btn-primary btn-sm"
-                  (click)="navigateToFormulario(form.id); $event.stopPropagation()"
-                  [disabled]="!selectedPaciente">
+                  (click)="
+                    navigateToFormulario(form.id); $event.stopPropagation()
+                  "
+                  [disabled]="!selectedPaciente"
+                >
                   <i class="fas fa-clipboard"></i>
                   Preencher
                 </button>
                 <button
                   class="btn btn-secondary btn-sm"
-                  (click)="editarFormulario(form.id, $event)">
+                  (click)="editarFormulario(form.id, $event)"
+                >
                   <i class="fas fa-edit"></i>
                   Editar
                 </button>
@@ -213,7 +293,14 @@
           </div>
 
           <!-- Tabela -->
-          <div class="table-responsive" *ngIf="!loadingFormularios && viewMode === 'table' && formulariosDisponiveis.length > 0">
+          <div
+            class="table-responsive"
+            *ngIf="
+              !loadingFormularios &&
+              viewMode === 'table' &&
+              formulariosDisponiveis.length > 0
+            "
+          >
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
@@ -226,22 +313,27 @@
               <tbody>
                 <tr *ngFor="let form of formulariosDisponiveis">
                   <td>
-                    <span class="badge bg-primary">{{form.tipo}}</span>
+                    <span class="badge bg-primary">{{ form.tipo }}</span>
                   </td>
-                  <td>{{form.titulo}}</td>
-                  <td>{{form.descricao}}</td>
+                  <td>{{ form.titulo }}</td>
+                  <td>{{ form.descricao }}</td>
                   <td>
                     <div class="d-flex gap-2">
                       <button
                         class="btn btn-sm btn-primary"
-                        (click)="navigateToFormulario(form.id); $event.stopPropagation()"
-                        [disabled]="!selectedPaciente">
+                        (click)="
+                          navigateToFormulario(form.id);
+                          $event.stopPropagation()
+                        "
+                        [disabled]="!selectedPaciente"
+                      >
                         <i class="fas fa-clipboard"></i>
                         Preencher
                       </button>
                       <button
                         class="btn btn-sm btn-secondary"
-                        (click)="editarFormulario(form.id, $event)">
+                        (click)="editarFormulario(form.id, $event)"
+                      >
                         <i class="fas fa-edit"></i>
                         Editar
                       </button>
@@ -256,7 +348,12 @@
     </section>
 
     <!-- Seção de Resultados -->
-    <section #sectionRef id="resultados" class="section" [class.active]="activeSection === 'resultados'">
+    <section
+      #sectionRef
+      id="resultados"
+      class="section"
+      [class.active]="activeSection === 'resultados'"
+    >
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h2>Histórico de Avaliações</h2>
@@ -264,13 +361,15 @@
             Selecione um paciente para ver o histórico de avaliações
           </p>
           <p *ngIf="selectedPaciente" class="text-muted">
-            Paciente: <strong>{{selectedPaciente.nome}}</strong>
+            Paciente: <strong>{{ selectedPaciente.nome }}</strong>
           </p>
         </div>
 
-        <button *ngIf="selectedPaciente"
-                class="btn btn-outline-primary btn-sm"
-                (click)="compareResults()">
+        <button
+          *ngIf="selectedPaciente"
+          class="btn btn-outline-primary btn-sm"
+          (click)="compareResults()"
+        >
           <i class="fas fa-chart-line"></i>
           Comparar Resultados
         </button>
@@ -283,7 +382,10 @@
 
       <div class="results-content" *ngIf="selectedPaciente">
         <!-- Loading -->
-        <div *ngIf="loadingAvaliacoes" class="d-flex justify-content-center my-4">
+        <div
+          *ngIf="loadingAvaliacoes"
+          class="d-flex justify-content-center my-4"
+        >
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Carregando avaliações...</span>
           </div>
@@ -293,16 +395,28 @@
         <div *ngIf="!loadingAvaliacoes">
           <div *ngIf="avaliacoes.length > 0; else noAvaliacoes">
             <div class="card mb-3" *ngFor="let avaliacao of avaliacoes">
-              <div class="card-header d-flex justify-content-between align-items-center">
+              <div
+                class="card-header d-flex justify-content-between align-items-center"
+              >
                 <div>
-                  <h5 class="mb-0">{{avaliacao.formulario?.titulo || 'Formulário'}}</h5>
-                  <small class="text-muted">{{avaliacao.dataCriacao | date:'dd/MM/yyyy HH:mm'}}</small>
+                  <h5 class="mb-0">
+                    {{ avaliacao.formulario?.titulo || "Formulário" }}
+                  </h5>
+                  <small class="text-muted">{{
+                    avaliacao.dataCriacao | date : "dd/MM/yyyy HH:mm"
+                  }}</small>
                 </div>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-sm btn-outline-primary" (click)="consultarAvaliacao(avaliacao.id!)">
+                  <button
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="consultarAvaliacao(avaliacao.id!)"
+                  >
                     <i class="fas fa-eye me-1"></i>Ver Detalhes
                   </button>
-                  <button class="btn btn-sm btn-outline-secondary" (click)="editarAvaliacao(avaliacao.id!)">
+                  <button
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="editarAvaliacao(avaliacao.id!)"
+                  >
                     <i class="fas fa-edit me-1"></i>Editar
                   </button>
                 </div>
@@ -310,21 +424,45 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-3">
-                    <p class="mb-1"><strong>Técnico:</strong> {{avaliacao.tecnico?.nome || 'Autoavaliação'}}</p>
+                    <p class="mb-1">
+                      <strong>Técnico:</strong>
+                      {{ avaliacao.tecnico?.nome || "Autoavaliação" }}
+                    </p>
                   </div>
                   <div class="col-md-3">
                     <p class="mb-1">
                       <strong>Pontuação:</strong>
-                      <span class="badge ms-2" [ngClass]="getBadgeClass(avaliacao.pontuacaoTotal || 0, avaliacao.pontuacaoMaxima || 0)">
-                        {{avaliacao.pontuacaoTotal || 0}}/{{avaliacao.pontuacaoMaxima || 0}}
+                      <span
+                        class="badge ms-2"
+                        [ngClass]="
+                          getBadgeClass(
+                            avaliacao.pontuacaoTotal || 0,
+                            avaliacao.pontuacaoMaxima || 0
+                          )
+                        "
+                      >
+                        {{ avaliacao.pontuacaoTotal || 0 }}/{{
+                          avaliacao.pontuacaoMaxima || 0
+                        }}
                       </span>
                     </p>
                   </div>
                   <div class="col-md-3">
-                    <p class="mb-1"><strong>Percentual:</strong> {{getPercentual(avaliacao.pontuacaoTotal || 0, avaliacao.pontuacaoMaxima || 0)}}%</p>
+                    <p class="mb-1">
+                      <strong>Percentual:</strong>
+                      {{
+                        getPercentual(
+                          avaliacao.pontuacaoTotal || 0,
+                          avaliacao.pontuacaoMaxima || 0
+                        )
+                      }}%
+                    </p>
                   </div>
                   <div class="col-md-3">
-                    <p class="mb-1"><strong>Respostas:</strong> {{avaliacao.respostas?.length || 0}}</p>
+                    <p class="mb-1">
+                      <strong>Respostas:</strong>
+                      {{ avaliacao.respostas?.length || 0 }}
+                    </p>
                   </div>
                 </div>
               </div>
