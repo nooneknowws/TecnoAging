@@ -1,40 +1,70 @@
-<nav class="navbar" [ngClass]="{'open': isNavbarOpen}">
-  <button class="navbar-toggler" (click)="toggleNavbar()">
-    <span class="fas fa-bars"></span>
-  </button>
-  <div>
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/tecnico">
-          <i class="fas fa-home"></i>
-          <span class="nav-text">Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/tecnico/editar-perfil">
-          <i class="fas fa-user-edit"></i>
-          <span class="nav-text">Meu Perfil</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/cadastro/tecnico">
-          <i class="fas fa-user-plus"></i>
-          <span class="nav-text">Cadastrar Técnico</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" (click)="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span class="nav-text">Sair</span>
-        </a>
-      </li>
-    </ul>
+<nav class="sidebar" [ngClass]="{ open: isNavbarOpen }">
+  <div class="sidebar-header">
+    <h3 *ngIf="isNavbarOpen">TecnoAging</h3>
+    <button class="sidebar-toggler" (click)="toggleNavbar()">
+      <i class="fas" [ngClass]="isNavbarOpen ? 'fa-times' : 'fa-bars'"></i>
+    </button>
   </div>
+
+  <ul class="nav-list">
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        routerLink="/tecnico"
+        [replaceUrl]="true"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-home"></i>
+        <span class="nav-text" *ngIf="isNavbarOpen">Início</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        routerLink="/tecnico/editar-perfil"
+        routerLinkActive="active"
+      >
+        <i class="fas fa-user"></i>
+        <span class="nav-text" *ngIf="isNavbarOpen">Meu Perfil</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        (click)="irCompararResultados()"
+        routerLinkActive="active"
+      >
+        <i class="fas fa-chart-bar"></i>
+        <span class="nav-text" *ngIf="isNavbarOpen">Comparar</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        routerLink="/cadastro/tecnico"
+        routerLinkActive="active"
+      >
+        <i class="fas fa-user-plus"></i>
+        <span class="nav-text" *ngIf="isNavbarOpen">Cadastrar Técnico</span>
+      </a>
+    </li>
+  </ul>
+
+  <ul class="nav-list nav-list-bottom">
+    <li class="nav-item">
+      <a class="nav-link logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="nav-text" *ngIf="isNavbarOpen">Sair</span>
+      </a>
+    </li>
+  </ul>
 </nav>
 
-<div class="main-content container-funcionario" [ngClass]="{'shifted': isNavbarOpen}">
+<div class="main-content" [ngClass]="{ shifted: isNavbarOpen }">
   <a class="fs-5 back" *ngIf="linkVoltarVisivel" (click)="voltar()">
     <i class="fas fa-chevron-left"></i> Voltar
   </a>
+
   <router-outlet></router-outlet>
 </div>
