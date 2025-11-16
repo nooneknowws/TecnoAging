@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
     };
     errorMessage: string | null = null;
     sessionExpiredMessage: string | null = null;
+    isPasswordVisible: boolean = false;
 
     constructor(
         private authService: AuthService,
@@ -57,5 +58,9 @@ export class LoginComponent implements OnInit {
                 console.error('Login error:', error);
             }
         });
+    }
+
+    togglePasswordVisibility(): void {
+        this.isPasswordVisible = !this.isPasswordVisible;
     }
 }

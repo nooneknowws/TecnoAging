@@ -1,43 +1,84 @@
 <div class="login-container">
-    <h1 class="title fw-bold">TecnoAging</h1>
-    <div class="login-form">
-        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-            <div class="form-group">
-                <input type="text" placeholder="CPF" class="form-control" [(ngModel)]="loginRequest.cpf" name="cpf"
-                    required #cpfInput="ngModel" />
-                <div *ngIf="cpfInput.invalid && (cpfInput.dirty || cpfInput.touched)" class="text-danger">
-                    <small *ngIf="cpfInput.errors?.['required']">CPF é obrigatório</small>
-                </div>
-            </div>
+  <h1 class="title fw-bold">TecnoAging</h1>
+  <div class="login-form">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <input
+          type="text"
+          placeholder="CPF"
+          class="form-control"
+          [(ngModel)]="loginRequest.cpf"
+          name="cpf"
+          required
+          #cpfInput="ngModel"
+        />
+        <div
+          *ngIf="cpfInput.invalid && (cpfInput.dirty || cpfInput.touched)"
+          class="text-danger"
+        >
+          <small *ngIf="cpfInput.errors?.['required']">CPF é obrigatório</small>
+        </div>
+      </div>
 
-            <div class="form-group">
-                <input type="password" placeholder="Senha" class="form-control" [(ngModel)]="loginRequest.senha"
-                    name="senha" required #senhaInput="ngModel" />
-                <div *ngIf="senhaInput.invalid && (senhaInput.dirty || senhaInput.touched)" class="text-danger">
-                    <small *ngIf="senhaInput.errors?.['required']">Senha é obrigatória</small>
-                </div>
-            </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input
+            [type]="isPasswordVisible ? 'text' : 'password'"
+            placeholder="Senha"
+            class="form-control password-input"
+            [(ngModel)]="loginRequest.senha"
+            name="senha"
+            required
+            #senhaInput="ngModel"
+          />
+          <span
+            class="password-toggle-icon"
+            (click)="togglePasswordVisibility()"
+          >
+            <i
+              [class]="isPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"
+            ></i>
+          </span>
+        </div>
+        <div
+          *ngIf="senhaInput.invalid && (senhaInput.dirty || senhaInput.touched)"
+          class="text-danger"
+        >
+          <small *ngIf="senhaInput.errors?.['required']"
+            >Senha é obrigatória</small
+          >
+        </div>
+      </div>
 
-            <div class="password-reset">
-                <a routerLink="/recuperar-senha">Recuperar senha</a>
-            </div>
+      <div class="password-reset">
+        <a routerLink="/recuperar-senha">Recuperar senha</a>
+      </div>
 
-            <div *ngIf="sessionExpiredMessage" class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ sessionExpiredMessage }}
-                <button type="button" class="btn-close" (click)="sessionExpiredMessage = null" aria-label="Close"></button>
-            </div>
+      <div
+        *ngIf="sessionExpiredMessage"
+        class="alert alert-warning alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ sessionExpiredMessage }}
+        <button
+          type="button"
+          class="btn-close"
+          (click)="sessionExpiredMessage = null"
+          aria-label="Close"
+        ></button>
+      </div>
 
-            <div *ngIf="errorMessage" class="alert alert-danger">
-                {{ errorMessage }}
-            </div>
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
 
-            <button type="submit" class="login-button" [disabled]="loginForm.invalid">
-                Login
-            </button>
-            <a routerLink="/cadastro/paciente">
-                <button class="login-button mt-1">Cadastro</button>
-            </a>
-        </form>
-    </div>
+      <button type="submit" class="login-button" [disabled]="loginForm.invalid">
+        Login
+      </button>
+      <a routerLink="/cadastro/paciente">
+        <button class="login-button mt-1">Cadastro</button>
+      </a>
+    </form>
+  </div>
 </div>
