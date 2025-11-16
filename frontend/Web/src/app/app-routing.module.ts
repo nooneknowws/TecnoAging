@@ -26,13 +26,14 @@ import { FormularioCadastroComponent } from './_tecnico/formulario-cadastro/form
 import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formulario-edicao.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard]  },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'cadastro', 
+  {
+    path: 'cadastro',
     children: [
       { path: 'tecnico', component: CadastroTecnicoComponent },
-      { path: 'paciente', component: CadastroPacienteComponent }
-    ]
+      { path: 'paciente', component: CadastroPacienteComponent },
+    ],
   },
   { path: 'recuperar-senha', component: SolicitarCodigoComponent },
   { path: 'recuperar-senha/codigo', component: RedefinirSenhaComponent },
@@ -43,10 +44,11 @@ const routes: Routes = [
     data: { tipo: 'paciente' },
     children: [
       { path: '', component: PacienteDashboardComponent },
+      { path: 'formularios', component: PacienteDashboardComponent },
       { path: 'historico-testes', component: HistoricoTestesComponent },
       { path: 'visualizar-perfil', component: VisualizarPerfilComponent },
-      { path: 'editar-perfil', component: EditarPerfilPacienteComponent }
-    ]
+      { path: 'editar-perfil', component: EditarPerfilPacienteComponent },
+    ],
   },
   {
     path: 'tecnico',
@@ -55,17 +57,29 @@ const routes: Routes = [
     data: { tipo: 'tecnico' },
     children: [
       { path: '', component: TecnicoDashboardComponent },
-      { path: 'comparar-resultados/:tecnicoId', component: CompararResultadosComponent },
+      {
+        path: 'comparar-resultados/:tecnicoId',
+        component: CompararResultadosComponent,
+      },
       { path: 'comparar-resultados', component: CompararResultadosComponent },
       { path: 'editar-perfil', component: EditarPerfilComponent },
-      { path: 'paciente/editar-perfil', component: EditarPerfilPacienteComponent },
-      { path: 'paciente/historico-paciente', component: HistoricoPacienteComponent },
+      {
+        path: 'paciente/editar-perfil',
+        component: EditarPerfilPacienteComponent,
+      },
+      {
+        path: 'paciente/historico-paciente',
+        component: HistoricoPacienteComponent,
+      },
       { path: 'paciente/ver-perfil', component: VerPerfilComponent },
-      { path: 'avaliacoes/consultar/:pacienteId', component: ConsultarAvaliacaoComponent },
+      {
+        path: 'avaliacoes/consultar/:pacienteId',
+        component: ConsultarAvaliacaoComponent,
+      },
       { path: 'avaliacoes/editar/:id', component: EditarAvaliacaoComponent },
       { path: 'formularios/criar', component: FormularioCadastroComponent },
-      { path: 'formularios/editar/:id', component: FormularioEdicaoComponent }
-    ]
+      { path: 'formularios/editar/:id', component: FormularioEdicaoComponent },
+    ],
   },
   {
     path: 'formularios',
@@ -73,15 +87,15 @@ const routes: Routes = [
     children: [
       {
         path: ':id',
-        component: FormularioComponent
-      }
-    ]
+        component: FormularioComponent,
+      },
+    ],
   },
-  { path: '**', redirectTo: '/' }
+  { path: '**', redirectTo: '/' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

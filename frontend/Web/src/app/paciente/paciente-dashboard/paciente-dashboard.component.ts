@@ -31,11 +31,10 @@ interface HistoricoTeste {
   pontuacaoMaxima: number;
 }
 
-
 @Component({
   selector: 'app-paciente-dashboard',
   templateUrl: './paciente-dashboard.component.html',
-  styleUrl: './paciente-dashboard.component.css'
+  styleUrl: './paciente-dashboard.component.css',
 })
 export class PacienteDashboardComponent implements OnInit {
   activeSection: string = 'dashboard';
@@ -58,6 +57,12 @@ export class PacienteDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.router.url.includes('/paciente/formularios')) {
+      this.activeSection = 'testes';
+    } else {
+      this.activeSection = 'dashboard';
+    }
+
     this.loadCurrentPaciente();
     this.loadFormulariosDisponiveis();
   }
@@ -75,7 +80,7 @@ export class PacienteDashboardComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados do paciente:', error);
-        }
+        },
       });
     }
   }
@@ -87,97 +92,108 @@ export class PacienteDashboardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erro ao carregar formulários:', error);
-      }
+      },
     });
   }
 
   loadEstatisticas(): void {
     if (this.currentPaciente) {
-      this.avaliacaoService.buscarPorPaciente(this.currentPaciente.id!).subscribe({
-        next: (avaliacoes) => {
-          const testesRealizados = avaliacoes.length;
+      this.avaliacaoService
+        .buscarPorPaciente(this.currentPaciente.id!)
+        .subscribe({
+          next: (avaliacoes) => {
+            const testesRealizados = avaliacoes.length;
 
-          let ultimaAvaliacaoStr = 'N/A';
-          let diasUltimoTeste = 0;
+            let ultimaAvaliacaoStr = 'N/A';
+            let diasUltimoTeste = 0;
 
-          if (avaliacoes.length > 0) {
-            // Ordenar por data de criação (mais recente primeiro)
-            const avaliacoesOrdenadas = avaliacoes.sort((a, b) =>
-              new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
-            );
+            if (avaliacoes.length > 0) {
+              // Ordenar por data de criação (mais recente primeiro)
+              const avaliacoesOrdenadas = avaliacoes.sort(
+                (a, b) =>
+                  new Date(b.dataCriacao).getTime() -
+                  new Date(a.dataCriacao).getTime()
+              );
 
-            const ultimaAvaliacao = avaliacoesOrdenadas[0];
-            const pontuacaoTotal = ultimaAvaliacao.pontuacaoTotal || 0;
-            const pontuacaoMaxima = ultimaAvaliacao.pontuacaoMaxima || 1;
-            const percentual = Math.round((pontuacaoTotal / pontuacaoMaxima) * 100);
+              const ultimaAvaliacao = avaliacoesOrdenadas[0];
+              const pontuacaoTotal = ultimaAvaliacao.pontuacaoTotal || 0;
+              const pontuacaoMaxima = ultimaAvaliacao.pontuacaoMaxima || 1;
+              const percentual = Math.round(
+                (pontuacaoTotal / pontuacaoMaxima) * 100
+              );
 
-            ultimaAvaliacaoStr = `${pontuacaoTotal}/${pontuacaoMaxima} (${percentual}%)`;
+              ultimaAvaliacaoStr = `${pontuacaoTotal}/${pontuacaoMaxima} (${percentual}%)`;
 
-            const ultimaData = new Date(ultimaAvaliacao.dataCriacao);
-            const hoje = new Date();
-            diasUltimoTeste = Math.floor((hoje.getTime() - ultimaData.getTime()) / (1000 * 3600 * 24));
-          }
+              const ultimaData = new Date(ultimaAvaliacao.dataCriacao);
+              const hoje = new Date();
+              diasUltimoTeste = Math.floor(
+                (hoje.getTime() - ultimaData.getTime()) / (1000 * 3600 * 24)
+              );
+            }
 
-          this.estatisticas = {
-            testesRealizados,
-            testesPendentes: 0,
-            ultimaAvaliacao: ultimaAvaliacaoStr,
-            diasUltimoTeste
-          };
-        },
-        error: (error) => {
-          console.error('Erro ao carregar estatísticas:', error);
-          this.estatisticas = {
-            testesRealizados: 0,
-            testesPendentes: 0,
-            ultimaAvaliacao: 'N/A',
-            diasUltimoTeste: 0
-          };
-        }
-      });
+            this.estatisticas = {
+              testesRealizados,
+              testesPendentes: 0,
+              ultimaAvaliacao: ultimaAvaliacaoStr,
+              diasUltimoTeste,
+            };
+          },
+          error: (error) => {
+            console.error('Erro ao carregar estatísticas:', error);
+            this.estatisticas = {
+              testesRealizados: 0,
+              testesPendentes: 0,
+              ultimaAvaliacao: 'N/A',
+              diasUltimoTeste: 0,
+            };
+          },
+        });
     }
   }
 
   loadHistoricoTestes(): void {
     if (this.currentPaciente) {
-      this.avaliacaoService.buscarPorPaciente(this.currentPaciente.id!).subscribe({
-        next: (avaliacoes) => {
-          this.historicoTestes = avaliacoes.map(avaliacao => ({
-            id: avaliacao.id,
-            formulario: avaliacao.formulario?.titulo || 'Formulário',
-            dataCriacao: new Date(avaliacao.dataCriacao),
-            tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
-            pontuacaoTotal: Math.round(avaliacao.pontuacaoTotal || 0),
-            pontuacaoMaxima: Math.round(avaliacao.pontuacaoMaxima || 0)
-          }));
-        },
-        error: (error) => {
-          console.error('Erro ao carregar histórico de testes:', error);
-        }
-      });
+      this.avaliacaoService
+        .buscarPorPaciente(this.currentPaciente.id!)
+        .subscribe({
+          next: (avaliacoes) => {
+            this.historicoTestes = avaliacoes.map((avaliacao) => ({
+              id: avaliacao.id,
+              formulario: avaliacao.formulario?.titulo || 'Formulário',
+              dataCriacao: new Date(avaliacao.dataCriacao),
+              tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
+              pontuacaoTotal: Math.round(avaliacao.pontuacaoTotal || 0),
+              pontuacaoMaxima: Math.round(avaliacao.pontuacaoMaxima || 0),
+            }));
+          },
+          error: (error) => {
+            console.error('Erro ao carregar histórico de testes:', error);
+          },
+        });
     }
   }
 
   loadAtividadesRecentes(): void {
     if (this.currentPaciente) {
-      this.avaliacaoService.buscarPorPaciente(this.currentPaciente.id!).subscribe({
-        next: (avaliacoes) => {
-          this.atividadesRecentes = avaliacoes
-            .slice(-3) // Últimas 3 atividades
-            .map(avaliacao => ({
-              formulario: avaliacao.formulario?.titulo || 'Formulário',
-              data: new Date(avaliacao.dataCriacao),
-              tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
-              status: 'Concluído'
-            }));
-        },
-        error: (error) => {
-          console.error('Erro ao carregar atividades recentes:', error);
-        }
-      });
+      this.avaliacaoService
+        .buscarPorPaciente(this.currentPaciente.id!)
+        .subscribe({
+          next: (avaliacoes) => {
+            this.atividadesRecentes = avaliacoes
+              .slice(-3) // Últimas 3 atividades
+              .map((avaliacao) => ({
+                formulario: avaliacao.formulario?.titulo || 'Formulário',
+                data: new Date(avaliacao.dataCriacao),
+                tecnico: avaliacao.tecnico?.nome || 'Autoavaliação',
+                status: 'Concluído',
+              }));
+          },
+          error: (error) => {
+            console.error('Erro ao carregar atividades recentes:', error);
+          },
+        });
     }
   }
-
 
   loadCurrentPhoto(pacienteId: number): void {
     this.imageService.getPacientePhoto(pacienteId).subscribe({
@@ -186,7 +202,7 @@ export class PacienteDashboardComponent implements OnInit {
       },
       error: () => {
         this.currentPhotoUrl = null;
-      }
+      },
     });
   }
 
@@ -194,7 +210,7 @@ export class PacienteDashboardComponent implements OnInit {
     this.activeSection = section;
   }
 
-  logout(): void {    
+  logout(): void {
     const token = localStorage.getItem('token');
     this.authService.logout(token);
     this.router.navigate(['/login']);
@@ -212,7 +228,8 @@ export class PacienteDashboardComponent implements OnInit {
 
   visualizarDetalhesAvaliacao(avaliacaoId: number): void {
     // Exibir detalhes da avaliação com respostas expandidas
-    this.expandedAvaliacaoId = this.expandedAvaliacaoId === avaliacaoId ? null : avaliacaoId;
+    this.expandedAvaliacaoId =
+      this.expandedAvaliacaoId === avaliacaoId ? null : avaliacaoId;
 
     // Se expandindo, carregar os detalhes completos
     if (this.expandedAvaliacaoId === avaliacaoId) {
@@ -222,7 +239,7 @@ export class PacienteDashboardComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar detalhes da avaliação:', error);
-        }
+        },
       });
     } else {
       this.avaliacaoDetalhada = null;
@@ -246,11 +263,13 @@ export class PacienteDashboardComponent implements OnInit {
   }
 
   formatarValorResposta(valor: any): string {
-    if (typeof valor === 'string' && valor.startsWith('"') && valor.endsWith('"')) {
+    if (
+      typeof valor === 'string' &&
+      valor.startsWith('"') &&
+      valor.endsWith('"')
+    ) {
       return valor.slice(1, -1);
     }
     return String(valor || '');
   }
-
 }
-
