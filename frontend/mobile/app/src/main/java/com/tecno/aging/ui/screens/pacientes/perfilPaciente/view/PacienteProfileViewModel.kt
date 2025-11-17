@@ -42,10 +42,15 @@ class PacienteProfileViewModel(
 
     fun loadProfile() {
         viewModelScope.launch {
+            Log.d("PacienteProfile", "Iniciando carregamento do perfil para pacienteId=$pacienteId")
             _uiState.update { it.copy(isLoading = true) }
 
-            repository.getPacienteById(pacienteId)
+            val result = repository.getPacienteById(pacienteId)
+            Log.d("PacienteProfile", "Resultado do repositório: success=${result.isSuccess}, failure=${result.isFailure}")
+
+            result
                 .onSuccess { pacienteData ->
+                    Log.d("PacienteProfile", "Sucesso! Paciente: nome=${pacienteData.nome}, cpf=${pacienteData.cpf}, idade=${pacienteData.idade}")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -54,8 +59,10 @@ class PacienteProfileViewModel(
                             fotoBase64 = pacienteData.fotoPerfil
                         )
                     }
+                    Log.d("PacienteProfile", "Estado atualizado. paciente não é null: ${_uiState.value.paciente != null}")
                 }
                 .onFailure { error ->
+                    Log.e("PacienteProfile", "Erro ao carregar perfil: ${error.message}", error)
                     _uiState.update {
                         it.copy(isLoading = false, errorMessage = error.message)
                     }

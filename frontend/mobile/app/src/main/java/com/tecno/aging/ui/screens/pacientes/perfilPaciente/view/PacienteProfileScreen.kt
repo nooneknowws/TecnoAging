@@ -116,7 +116,24 @@ fun PacienteProfileScreen(
             when {
                 uiState.errorMessage != null && uiState.paciente == null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("", modifier = Modifier.align(Alignment.Center))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Erro ao carregar perfil",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = uiState.errorMessage ?: "Erro desconhecido",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = AppColors.Gray700
+                            )
+                            Button(onClick = viewModel::refreshProfile) {
+                                Text("Tentar novamente")
+                            }
+                        }
                     }
                 }
                 paciente != null -> {

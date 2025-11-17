@@ -1,5 +1,6 @@
 package com.tecno.aging.data.repository
 
+import android.util.Log
 import com.tecno.aging.data.remote.ApiService
 import com.tecno.aging.data.remote.ImageUploadRequest
 import com.tecno.aging.data.remote.RetrofitInstance
@@ -25,13 +26,21 @@ class PacienteRepository(
 
     suspend fun getPacienteById(pacienteId: Int): Result<Paciente> {
         return try {
+            Log.d("PacienteRepository", "Buscando paciente com ID: $pacienteId")
             val response = apiService.getPacienteById(pacienteId)
+            Log.d("PacienteRepository", "Resposta recebida: code=${response.code()}, isSuccessful=${response.isSuccessful}, body is null=${response.body() == null}")
+
             if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
+                val paciente = response.body()!!
+                Log.d("PacienteRepository", "Paciente encontrado: nome=${paciente.nome}, idade=${paciente.idade}")
+                Result.success(paciente)
             } else {
-                Result.failure(Exception("Falha ao buscar dados do paciente: ${response.message()}"))
+                val errorMsg = "Falha ao buscar dados do paciente: code=${response.code()}, message=${response.message()}, body is null=${response.body() == null}"
+                Log.e("PacienteRepository", errorMsg)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
+            Log.e("PacienteRepository", "Exceção ao buscar paciente: ${e.message}", e)
             Result.failure(Exception("Erro de conexão: ${e.message}"))
         }
     }
