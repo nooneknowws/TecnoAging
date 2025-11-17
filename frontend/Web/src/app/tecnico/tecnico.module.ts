@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CompararResultadosComponent } from './comparar-resultados/comparar-resultados.component';
 import { EditarPerfilComponent } from './editar-perfil/editar-perfil.component';
 import { EditarPerfilPacienteComponent } from './paciente/editar-perfil/editar-perfil.component';
 import { HistoricoPacienteComponent } from './paciente/historico-paciente/historico-paciente.component';
@@ -17,7 +16,6 @@ import { SharedModule } from '../_shared/shared.module';
 
 @NgModule({
   declarations: [
-    CompararResultadosComponent,
     EditarPerfilComponent,
     EditarPerfilPacienteComponent,
     HistoricoPacienteComponent,

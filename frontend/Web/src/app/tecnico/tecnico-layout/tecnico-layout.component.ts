@@ -50,12 +50,4 @@ export class TecnicoLayoutComponent {
     this.authService.logout(token);
     this.router.navigate(['/login']);
   }
-
-  irCompararResultados(): void {
-    if (this.tecnicoId) {
-      this.router.navigate(['/tecnico/comparar-resultados', this.tecnicoId]);
-    } else {
-      this.router.navigate(['/tecnico/comparar-resultados']);
-    }
-  }
 }

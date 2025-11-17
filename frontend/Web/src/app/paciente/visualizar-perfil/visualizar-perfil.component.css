@@ -1,9 +1,9 @@
 .icon-primary {
-  color: #6c63ff;
+  color: #0d6efd;
 }
 
 .profile-header-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #0d6efd;
   color: white;
   border: none;
   border-radius: 12px;
@@ -102,8 +102,8 @@
 }
 
 .btn-primary {
-  background-color: #6c63ff;
-  border-color: #6c63ff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
 }
 .btn-primary:hover {
   background-color: #594fbf;

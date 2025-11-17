@@ -4,7 +4,6 @@ import { LoginComponent } from './_auth/login/login.component';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 import { HistoricoTestesComponent } from './paciente/historico-testes/historico-testes.component';
 import { VisualizarPerfilComponent } from './paciente/visualizar-perfil/visualizar-perfil.component';
-import { CompararResultadosComponent } from './tecnico/comparar-resultados/comparar-resultados.component';
 import { EditarPerfilComponent } from './tecnico/editar-perfil/editar-perfil.component';
 import { HistoricoPacienteComponent } from './tecnico/paciente/historico-paciente/historico-paciente.component';
 import { VerPerfilComponent } from './tecnico/paciente/ver-perfil/ver-perfil.component';
@@ -57,11 +56,6 @@ const routes: Routes = [
     data: { tipo: 'tecnico' },
     children: [
       { path: '', component: TecnicoDashboardComponent },
-      {
-        path: 'comparar-resultados/:tecnicoId',
-        component: CompararResultadosComponent,
-      },
-      { path: 'comparar-resultados', component: CompararResultadosComponent },
       { path: 'editar-perfil', component: EditarPerfilComponent },
       {
         path: 'paciente/editar-perfil',

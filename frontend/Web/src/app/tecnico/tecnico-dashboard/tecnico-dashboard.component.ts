@@ -241,16 +241,6 @@ export class TecnicoDashboardComponent implements OnInit {
     });
   }
 
-  compareResults(): void {
-    if (!this.selectedPaciente) return;
-
-    this.router.navigate(['/tecnico/comparar-resultados'], {
-      queryParams: {
-        pacienteId: this.selectedPaciente.id,
-        returnUrl: this.router.url
-      }
-    });
-  }
 
   consultarAvaliacao(avaliacaoId: number): void {
     if (!this.selectedPaciente) return;
