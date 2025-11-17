@@ -32,17 +32,12 @@ export class TecnicoService {
     return this.http.put<Tecnico>(`${this.API_URL}/tecnicos/${tecnico.id}`, tecnico);
   }
 
-  deleteTecnico(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/tecnicos/${id}`);
+  ativarTecnico(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.API_URL}/tecnicos/${id}/ativar`, {});
   }
 
-  // Métodos adicionais específicos para Tecnico
-  getTecnicosAtivos(): Observable<Tecnico[]> {
-    return this.http.get<Tecnico[]>(`${this.API_URL}/tecnicos/ativos`);
-  }
-
-  toggleTecnicoStatus(id: number): Observable<Tecnico> {
-    return this.http.patch<Tecnico>(`${this.API_URL}/tecnicos/${id}/toggle-status`, {});
+  desativarTecnico(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.API_URL}/tecnicos/${id}/desativar`, {});
   }
 
   getTecnicoByMatricula(matricula: number): Observable<Tecnico> {

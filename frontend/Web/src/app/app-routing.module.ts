@@ -23,6 +23,9 @@ import { SolicitarCodigoComponent } from './_auth/recuperar-senha/solicitar-codi
 import { RedefinirSenhaComponent } from './_auth/recuperar-senha/redefinir-senha.component';
 import { FormularioCadastroComponent } from './_tecnico/formulario-cadastro/formulario-cadastro.component';
 import { FormularioEdicaoComponent } from './_tecnico/formulario-edicao/formulario-edicao.component';
+import { GerenciarTecnicosComponent } from './tecnico/gerenciar-tecnicos/gerenciar-tecnicos.component';
+import { CadastrarTecnicoComponent } from './tecnico/cadastrar-tecnico/cadastrar-tecnico.component';
+import { EditarTecnicoComponent } from './tecnico/editar-tecnico/editar-tecnico.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -57,6 +60,9 @@ const routes: Routes = [
     children: [
       { path: '', component: TecnicoDashboardComponent },
       { path: 'editar-perfil', component: EditarPerfilComponent },
+      { path: 'gerenciar-tecnicos', component: GerenciarTecnicosComponent },
+      { path: 'cadastrar-tecnico', component: CadastrarTecnicoComponent },
+      { path: 'editar-tecnico/:id', component: EditarTecnicoComponent },
       {
         path: 'paciente/editar-perfil',
         component: EditarPerfilPacienteComponent,

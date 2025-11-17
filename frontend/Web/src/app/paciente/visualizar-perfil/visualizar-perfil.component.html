@@ -75,7 +75,7 @@
           <i class="fas fa-phone icon-primary fs-2 mb-3"></i>
           <h6 class="mb-1 text-muted">Telefone</h6>
           <p class="mb-0 fs-5 fw-bold">
-            {{ paciente?.telefone || "Não informado" }}
+            {{ formatTelefone(paciente?.telefone || '') || "Não informado" }}
           </p>
         </div>
       </div>
@@ -231,7 +231,7 @@
               </div>
               <div class="contact-info">
                 <i class="fas fa-phone me-2 text-muted"></i>
-                <span>{{ contato.telefone }}</span>
+                <span>{{ formatTelefone(contato.telefone || '') }}</span>
               </div>
               <span class="badge bg-success-light text-success">
                 <i class="fas fa-check me-1"></i> Cadastrado
@@ -278,6 +278,8 @@
                       [(ngModel)]="novoContato.telefone"
                       name="telefone"
                       placeholder="(00) 00000-0000"
+                      mask="(00) 0000-0000||(00) 00000-0000"
+                      maxlength="15"
                       required
                     />
                   </div>

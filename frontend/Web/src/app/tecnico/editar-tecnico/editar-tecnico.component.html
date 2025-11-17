@@ -1,0 +1,356 @@
+<div class="form-container">
+  <div class="form-wrapper">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-3">Carregando dados do técnico...</p>
+    </div>
+
+    <!-- Mensagens -->
+    <div *ngIf="isUpdateSuccess" class="alert alert-success">
+      <i class="fas fa-check-circle me-2"></i>
+      Técnico atualizado com sucesso! Redirecionando...
+    </div>
+
+    <div *ngIf="isUpdateFailed" class="alert alert-danger">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="uploadSuccess" class="alert alert-success">
+      <i class="fas fa-check-circle me-2"></i>
+      {{ uploadSuccess }}
+    </div>
+
+    <div *ngIf="uploadError" class="alert alert-danger">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ uploadError }}
+    </div>
+
+    <form *ngIf="!isLoading" (ngSubmit)="onSubmit(tecnicoForm)" #tecnicoForm="ngForm">
+      <h2 class="mb-4 text-center">Editar Técnico</h2>
+
+      <div class="mb-3 text-center">
+        <app-image-upload
+          [currentImageUrl]="currentPhotoUrl"
+          (imageSelected)="onImageSelected($event)"
+          (imageError)="onImageError($event)"
+          placeholderText="Clique para alterar a foto"
+        ></app-image-upload>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingMatricula"
+              placeholder="Matrícula"
+              name="matricula"
+              [(ngModel)]="form.matricula"
+              required
+              #matricula="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && matricula.errors }"
+            />
+            <label for="floatingMatricula">Matrícula</label>
+            <div *ngIf="matricula.errors && tecnicoForm.submitted" class="invalid-feedback">
+              A matrícula é obrigatória!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingNome"
+              placeholder="Nome"
+              name="nome"
+              [(ngModel)]="form.nome"
+              required
+              #nome="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && nome.errors }"
+            />
+            <label for="floatingNome">Nome Completo</label>
+            <div *ngIf="nome.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O nome é obrigatório!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingCpf"
+              placeholder="CPF"
+              name="cpf"
+              [(ngModel)]="form.cpf"
+              mask="000.000.000-00"
+              required
+              readonly
+              #cpf="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && cpf.errors }"
+            />
+            <label for="floatingCpf">CPF</label>
+            <div *ngIf="cpf.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O CPF é obrigatório!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="tel"
+              class="form-control"
+              id="floatingTelefone"
+              placeholder="Telefone"
+              name="telefone"
+              [(ngModel)]="form.telefone"
+              mask="(00) 00000-0000"
+              required
+              #telefone="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && telefone.errors }"
+            />
+            <label for="floatingTelefone">Telefone</label>
+            <div *ngIf="telefone.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O telefone é obrigatório!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <select
+              class="form-select"
+              id="floatingSexo"
+              name="sexo"
+              [(ngModel)]="form.sexo"
+              required
+              #sexo="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && sexo.errors }"
+            >
+              <option value="">Selecione</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+            </select>
+            <label for="floatingSexo">Sexo</label>
+            <div *ngIf="sexo.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O sexo é obrigatório!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="date"
+              class="form-control"
+              id="floatingDataNasc"
+              placeholder="Data de Nascimento"
+              name="dataNasc"
+              [(ngModel)]="formattedDataNasc"
+              (ngModelChange)="onDataNascChange($event)"
+              required
+              #dataNasc="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && dataNasc.errors }"
+            />
+            <label for="floatingDataNasc">Data de Nascimento</label>
+            <div *ngIf="dataNasc.errors && tecnicoForm.submitted" class="invalid-feedback">
+              A data de nascimento é obrigatória!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <h5 class="mb-3">Endereço</h5>
+
+      <div class="row mb-3">
+        <div class="col-md-9">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingCep"
+              placeholder="CEP"
+              name="cep"
+              [(ngModel)]="endereco.cep"
+              mask="00000-000"
+              required
+              #cep="ngModel"
+              [ngClass]="{
+                'is-invalid':
+                  tecnicoForm.submitted && (cep.errors || cepInvalido || erroTimeout)
+              }"
+            />
+            <label for="floatingCep">CEP</label>
+            <div *ngIf="cep.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O CEP é obrigatório!
+            </div>
+            <div *ngIf="cepInvalido && tecnicoForm.submitted" class="invalid-feedback">
+              CEP inválido ou não encontrado!
+            </div>
+            <div *ngIf="erroTimeout && tecnicoForm.submitted" class="invalid-feedback">
+              Tempo esgotado ao buscar o CEP. Tente novamente mais tarde!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-outline-primary w-100 h-100" (click)="buscarCep()">
+            <i class="fas fa-search me-2"></i>Buscar
+          </button>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-9">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingLogradouro"
+              placeholder="Logradouro"
+              name="logradouro"
+              [(ngModel)]="endereco.logradouro"
+              required
+              #logradouro="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && logradouro.errors }"
+            />
+            <label for="floatingLogradouro">Logradouro</label>
+            <div *ngIf="logradouro.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O Logradouro é obrigatório!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <input
+              type="number"
+              class="form-control"
+              id="floatingNumero"
+              placeholder="Número"
+              name="numero"
+              [(ngModel)]="endereco.numero"
+              required
+              #numero="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && numero.errors }"
+            />
+            <label for="floatingNumero">Número</label>
+            <div *ngIf="numero.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O número é obrigatório!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingComplemento"
+              placeholder="Complemento"
+              name="complemento"
+              [(ngModel)]="endereco.complemento"
+            />
+            <label for="floatingComplemento">Complemento</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingBairro"
+              placeholder="Bairro"
+              name="bairro"
+              [(ngModel)]="endereco.bairro"
+              required
+              #bairro="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && bairro.errors }"
+            />
+            <label for="floatingBairro">Bairro</label>
+            <div *ngIf="bairro.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O bairro é obrigatório!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-9">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingMunicipio"
+              placeholder="Município"
+              name="municipio"
+              [(ngModel)]="endereco.municipio"
+              required
+              #municipio="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && municipio.errors }"
+            />
+            <label for="floatingMunicipio">Município</label>
+            <div *ngIf="municipio.errors && tecnicoForm.submitted" class="invalid-feedback">
+              O município é obrigatório!
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <select
+              class="form-select"
+              id="floatingUF"
+              name="UF"
+              [(ngModel)]="endereco.uf"
+              required
+              #uf="ngModel"
+              [ngClass]="{ 'is-invalid': tecnicoForm.submitted && uf.errors }"
+            >
+              <option value="">Selecione</option>
+              <option *ngFor="let estado of estados" [value]="estado">
+                {{ estado }}
+              </option>
+            </select>
+            <label for="floatingUF">UF</label>
+            <div *ngIf="uf.errors && tecnicoForm.submitted" class="invalid-feedback">
+              A UF é obrigatória!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button
+          class="btn btn-lg btn-primary flex-fill"
+          type="submit"
+          [disabled]="isSaving"
+        >
+          <i class="fas fa-save me-2"></i>
+          Salvar Alterações
+          <i class="fas fa-spinner fa-spin ms-2" *ngIf="isSaving"></i>
+        </button>
+        <button
+          class="btn btn-lg btn-outline-secondary"
+          type="button"
+          (click)="cancelar()"
+          [disabled]="isSaving"
+        >
+          <i class="fas fa-times me-2"></i>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

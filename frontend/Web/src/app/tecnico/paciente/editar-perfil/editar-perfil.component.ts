@@ -149,6 +149,10 @@ export class EditarPerfilPacienteComponent implements OnInit {
   private preencherFormulario(paciente: Paciente) {
   if (!paciente) return;
 
+  console.log('Dados do paciente recebidos:', paciente);
+  console.log('Contatos do paciente:', paciente.contatos);
+  console.log('Quantidade de contatos:', paciente.contatos?.length || 0);
+
   const dadosPessoais = this.pacienteForm.get('dadosPessoais');
   const documentacao = this.pacienteForm.get('documentacao');
   const endereco = this.pacienteForm.get('endereco');
@@ -156,7 +160,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
   if (dadosPessoais && documentacao && endereco) {
     dadosPessoais.patchValue({
       nome: paciente.nome || '',
-      dataNasc: paciente.dataNasc || '',
+      dataNasc: this.formatarData(paciente.dataNasc),
       sexo: paciente.sexo || '',
       estadoCivil: paciente.estadoCivil || '',
       nacionalidade: paciente.nacionalidade || 'Brasileiro',
@@ -175,7 +179,7 @@ export class EditarPerfilPacienteComponent implements OnInit {
     documentacao.patchValue({
       rg: this.formatarRgSeNecessario(paciente.rg),
       cpf: this.formatarCpfSeNecessario(paciente.cpf),
-      dataExpedicao: paciente.dataExpedicao || '',
+      dataExpedicao: this.formatarData(paciente.dataExpedicao),
       orgaoEmissor: paciente.orgaoEmissor || '',
       ufEmissor: paciente.ufEmissor || ''
     });
@@ -203,7 +207,40 @@ export class EditarPerfilPacienteComponent implements OnInit {
       });
     });
   }
+
+  console.log('Estado do formulário após preencher:');
+  console.log('Valid:', this.pacienteForm.valid);
+  console.log('Errors:', this.getFormValidationErrors());
 }
+
+  private getFormValidationErrors() {
+    const errors: any = {};
+    Object.keys(this.pacienteForm.controls).forEach(key => {
+      const control = this.pacienteForm.get(key);
+      if (control instanceof FormGroup) {
+        Object.keys(control.controls).forEach(k => {
+          const ctrl = control.get(k);
+          if (ctrl?.errors) {
+            errors[`${key}.${k}`] = ctrl.errors;
+          }
+        });
+      } else if (control instanceof FormArray) {
+        control.controls.forEach((ctrl, index) => {
+          if (ctrl instanceof FormGroup) {
+            Object.keys(ctrl.controls).forEach(k => {
+              const c = ctrl.get(k);
+              if (c?.errors) {
+                errors[`${key}[${index}].${k}`] = c.errors;
+              }
+            });
+          }
+        });
+      } else if (control?.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
+  }
 
   // Métodos auxiliares para formatação
   private formatarCpfSeNecessario(cpf: string | undefined): string {
@@ -359,10 +396,24 @@ export class EditarPerfilPacienteComponent implements OnInit {
     if (contato?.telefone) {
       // Remove all non-digits
       const digits = contato.telefone.replace(/\D/g, '');
-      if (digits.length === 11) {
-        telefoneFormatado = `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
-      } else {
-        telefoneFormatado = contato.telefone; // Keep original if can't format
+
+      // Se tiver mais de 11 dígitos, pegar apenas os primeiros 11
+      const digitosValidos = digits.length > 11 ? digits.slice(0, 11) : digits;
+
+      if (digitosValidos.length === 11) {
+        telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,7)}-${digitosValidos.slice(7)}`;
+      } else if (digitosValidos.length === 10) {
+        // Handle 10-digit phone numbers (without 9)
+        telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,6)}-${digitosValidos.slice(6)}`;
+      } else if (digitosValidos.length > 0) {
+        // If we have digits but wrong length, show warning but try to use what we have
+        console.warn('⚠️ Telefone com formato inválido:', contato.telefone, 'Dígitos encontrados:', digits.length);
+        // Tentar formatar de qualquer jeito com os dígitos que temos
+        if (digitosValidos.length >= 10) {
+          telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,digitosValidos.length-4)}-${digitosValidos.slice(-4)}`;
+        } else {
+          telefoneFormatado = ''; // Deixar vazio se for muito curto
+        }
       }
     }
 
@@ -371,13 +422,22 @@ export class EditarPerfilPacienteComponent implements OnInit {
         Validators.required,
         Validators.minLength(3)
       ]],
-      telefone: [telefoneFormatado || '', [
+      telefone: [telefoneFormatado, [
         Validators.required,
-        Validators.pattern(/^\(\d{2}\) \d{5}\-\d{4}$/)
+        Validators.pattern(/^\(\d{2}\) \d{4,5}\-\d{4}$/)
       ]],
       parentesco: [contato?.parentesco || '', [
         Validators.required
       ]]
+    });
+
+    console.log('✅ Contato adicionado:', {
+      nome: contato?.nome,
+      telefoneOriginal: contato?.telefone,
+      digitosOriginais: contato?.telefone?.replace(/\D/g, '').length,
+      telefoneFormatado,
+      valido: contatoForm.valid,
+      erros: contatoForm.get('telefone')?.errors
     });
 
     this.contatosFormArray.push(contatoForm);
@@ -568,15 +628,34 @@ export class EditarPerfilPacienteComponent implements OnInit {
   private validarData(control: FormControl): { [s: string]: boolean } | null {
     if (!control.value) return null;
 
-    const data = control.value.split('-');
-    if (data.length !== 3) return { dataInvalida: true };
+    // Accept Date objects, ISO strings, or YYYY-MM-DD format
+    let dateToValidate: Date;
 
-    const dia = parseInt(data[2], 10);
-    const mes = parseInt(data[1], 10);
-    const ano = parseInt(data[0], 10);
+    if (control.value instanceof Date) {
+      dateToValidate = control.value;
+    } else if (typeof control.value === 'string') {
+      // Try to parse the string
+      const data = control.value.split('-');
+      if (data.length !== 3) {
+        // Try ISO format or other formats
+        dateToValidate = new Date(control.value);
+        if (isNaN(dateToValidate.getTime())) {
+          return { dataInvalida: true };
+        }
+      } else {
+        const ano = parseInt(data[0], 10);
+        const mes = parseInt(data[1], 10);
+        const dia = parseInt(data[2], 10);
+        dateToValidate = new Date(ano, mes - 1, dia);
+      }
+    } else {
+      return { dataInvalida: true };
+    }
 
-    const dataValida = new Date(ano, mes - 1, dia).getTime() === new Date(ano, mes - 1, dia).getTime();
-    if (!dataValida) return { dataInvalida: true };
+    // Check if the date is valid
+    if (isNaN(dateToValidate.getTime())) {
+      return { dataInvalida: true };
+    }
 
     return null;
   }

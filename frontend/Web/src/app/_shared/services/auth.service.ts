@@ -41,29 +41,42 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, loginRequest).pipe(
       switchMap(loginResponse => {
         this.storeSessionData(loginResponse.ID!, loginResponse.Perfil!, loginResponse.token!);
-        
-        const endpoint = loginResponse.Perfil === 'PACIENTE' 
+
+        const endpoint = loginResponse.Perfil === 'PACIENTE'
           ? `${this.API_URL}/pacientes/${loginResponse.ID}`
           : `${this.API_URL}/tecnicos/${loginResponse.ID}`;
-  
+
         return this.http.get<any>(endpoint, {
           headers: { Authorization: `Bearer ${loginResponse.token}` }
         }).pipe(
           // Aumentar timeout para 30 segundos para usuários com foto
           timeout(30000),
           map(userData => {
+            // Verificar se é técnico e se está inativo
+            if (loginResponse.Perfil === 'TECNICO' && userData.ativo === false) {
+              // Limpar dados da sessão
+              this.clearAllUserData();
+              // Lançar erro específico
+              throw new Error('TECNICO_INATIVO');
+            }
+
             this.storeUserData(userData, loginResponse.Perfil!);
             return loginResponse;
           }),
           catchError(error => {
             console.error('Erro ao buscar dados do usuário:', error);
-            
+
+            // Se for técnico inativo, propagar o erro
+            if (error.message === 'TECNICO_INATIVO') {
+              throw error;
+            }
+
             // Se falhar ao buscar dados completos, ainda permite login
             // mas sem dados detalhados do usuário
             if (error.name === 'TimeoutError') {
               console.warn('Timeout ao buscar dados do usuário - continuando login sem dados completos');
             }
-            
+
             return of(loginResponse);
           })
         );

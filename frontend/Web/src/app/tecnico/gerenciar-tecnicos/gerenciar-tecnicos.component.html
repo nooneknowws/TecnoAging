@@ -1,0 +1,213 @@
+<div class="dashboard-container">
+  <header class="header">
+    <div class="container d-flex justify-content-between">
+      <h1 class="text-center">Gerenciar Técnicos</h1>
+        <div class="view-toggle">
+          <button
+            class="btn btn-outline-secondary btn-sm me-2"
+            [class.active]="viewMode === 'grid'"
+            (click)="toggleView('grid')"
+          >
+            <i class="fas fa-th"></i> Grid
+          </button>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            [class.active]="viewMode === 'table'"
+            (click)="toggleView('table')"
+          >
+            <i class="fas fa-list"></i> Tabela
+          </button>
+          <div class="vr"></div>
+          <button class="btn btn-success me-2" (click)="cadastrarTecnico()">
+            <i class="fas fa-plus me-2"></i>Novo
+          </button>
+        </div>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <div class="filters mb-4">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar por nome, CPF ou matrícula..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="btn-group w-100" role="group">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            [class.active]="statusFilter === 'todos'"
+            (click)="onStatusFilterChange('todos')"
+          >
+            Todos
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            [class.active]="statusFilter === 'ativos'"
+            (click)="onStatusFilterChange('ativos')"
+          >
+            Ativos
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [class.active]="statusFilter === 'inativos'"
+            (click)="onStatusFilterChange('inativos')"
+          >
+            Inativos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="d-flex justify-content-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando técnicos...</span>
+    </div>
+  </div>
+
+  <!-- Nenhum técnico encontrado -->
+  <div
+    class="alert alert-info"
+    *ngIf="!loading && tecnicosFiltrados.length === 0"
+  >
+    <i class="fas fa-info-circle me-2"></i>
+    Nenhum técnico encontrado com os filtros aplicados.
+  </div>
+
+  <!-- Grid View -->
+  <div class="technician-cards" *ngIf="!loading && viewMode === 'grid'">
+    <div
+      *ngFor="let tecnico of tecnicosFiltrados"
+      class="technician-card"
+      [class.inactive]="!tecnico.ativo"
+    >
+      <div class="card-header-custom">
+        <span
+          [class]="getStatusBadgeClass(tecnico.ativo)"
+          class="status-badge"
+        >
+          {{ getStatusText(tecnico.ativo) }}
+        </span>
+        <span *ngIf="isCurrentUser(tecnico)" class="badge bg-primary">
+          Você
+        </span>
+      </div>
+      <div class="technician-info">
+        <div class="photo-container">
+          <img
+            [src]="tecnico.fotoUrl || 'https://place-hold.it/192x256'"
+            class="technician-photo"
+            alt="Foto do Técnico"
+            (error)="onImageError($event)"
+          />
+        </div>
+        <h3>{{ tecnico.nome }}</h3>
+        <p><strong>CPF:</strong> {{ tecnico.cpf }}</p>
+        <p><strong>Matrícula:</strong> {{ tecnico.matricula }}</p>
+        <p><strong>Telefone:</strong> {{ tecnico.telefone || 'Não informado' }}</p>
+        <p><strong>Idade:</strong> {{ tecnico.idade }} anos</p>
+      </div>
+      <div class="card-actions">
+        <button
+          class="btn-primary"
+          (click)="editarTecnico(tecnico, $event)"
+        >
+          <i class="fas fa-edit"></i> Editar
+        </button>
+        <button
+          *ngIf="!isCurrentUser(tecnico)"
+          [ngClass]="tecnico.ativo ? 'btn-danger' : 'btn-success'"
+          (click)="toggleStatus(tecnico, $event)"
+        >
+          <i
+            class="fas"
+            [class.fa-check]="!tecnico.ativo"
+            [class.fa-ban]="tecnico.ativo"
+          ></i>
+          {{ tecnico.ativo ? 'Desativar' : 'Ativar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-responsive" *ngIf="!loading && viewMode === 'table'">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Matrícula</th>
+          <th>Nome</th>
+          <th>CPF</th>
+          <th>Telefone</th>
+          <th>Idade</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let tecnico of tecnicosFiltrados"
+          [class.table-secondary]="!tecnico.ativo"
+        >
+          <td>
+            {{ tecnico.matricula }}
+            <span
+              *ngIf="isCurrentUser(tecnico)"
+              class="badge bg-primary ms-2"
+            >
+              Você
+            </span>
+          </td>
+          <td>{{ tecnico.nome }}</td>
+          <td>{{ tecnico.cpf }}</td>
+          <td>{{ tecnico.telefone || 'Não informado' }}</td>
+          <td>{{ tecnico.idade }} anos</td>
+          <td>
+            <span [class]="getStatusBadgeClass(tecnico.ativo)">
+              {{ getStatusText(tecnico.ativo) }}
+            </span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <button
+                class="btn btn-sm btn-primary me-2"
+                (click)="editarTecnico(tecnico, $event)"
+              >
+                <i class="fas fa-edit"></i>
+                Editar
+              </button>
+              <button
+                *ngIf="!isCurrentUser(tecnico)"
+                class="btn btn-sm"
+                [ngClass]="tecnico.ativo ? 'btn-danger' : 'btn-success'"
+                (click)="toggleStatus(tecnico, $event)"
+              >
+                <i
+                  class="fas"
+                  [class.fa-check]="!tecnico.ativo"
+                  [class.fa-ban]="tecnico.ativo"
+                ></i>
+                {{ tecnico.ativo ? 'Desativar' : 'Ativar' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

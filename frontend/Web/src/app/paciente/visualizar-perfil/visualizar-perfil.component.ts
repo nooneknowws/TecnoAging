@@ -208,18 +208,22 @@ export class VisualizarPerfilComponent implements OnInit {
    */
   formatTelefone(telefone: string): string {
     if (!telefone) return '';
-    
+
     // Remove todos os caracteres não numéricos
     const numeros = telefone.replace(/\D/g, '');
-    
+
+    // Se tiver mais de 11 dígitos, pegar apenas os primeiros 11
+    const numerosValidos = numeros.length > 11 ? numeros.slice(0, 11) : numeros;
+
     // Aplica máscara baseado no tamanho
-    if (numeros.length === 11) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
-    } else if (numeros.length === 10) {
-      return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
+    if (numerosValidos.length === 11) {
+      return `(${numerosValidos.slice(0, 2)}) ${numerosValidos.slice(2, 7)}-${numerosValidos.slice(7)}`;
+    } else if (numerosValidos.length === 10) {
+      return `(${numerosValidos.slice(0, 2)}) ${numerosValidos.slice(2, 6)}-${numerosValidos.slice(6)}`;
     }
-    
-    return telefone;
+
+    // Se o formato for inválido, retorna vazio ou os números como estão
+    return numerosValidos || telefone;
   }
 
   /**

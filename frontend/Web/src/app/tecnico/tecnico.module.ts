@@ -13,6 +13,9 @@ import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { ConsultarAvaliacaoComponent } from './paciente/consultar-avaliacao/consultar-avaliacao.component';
 import { EditarAvaliacaoComponent } from './paciente/editar-avaliacao/editar-avaliacao.component';
 import { SharedModule } from '../_shared/shared.module';
+import { GerenciarTecnicosComponent } from './gerenciar-tecnicos/gerenciar-tecnicos.component';
+import { CadastrarTecnicoComponent } from './cadastrar-tecnico/cadastrar-tecnico.component';
+import { EditarTecnicoComponent } from './editar-tecnico/editar-tecnico.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,10 @@ import { SharedModule } from '../_shared/shared.module';
     TecnicoDashboardComponent,
     TecnicoLayoutComponent,
     ConsultarAvaliacaoComponent,
-    EditarAvaliacaoComponent
+    EditarAvaliacaoComponent,
+    GerenciarTecnicosComponent,
+    CadastrarTecnicoComponent,
+    EditarTecnicoComponent
   ],  
   imports: [
     CommonModule,
