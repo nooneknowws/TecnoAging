@@ -4,6 +4,7 @@ import { LoginComponent } from './_auth/login/login.component';
 import { CadastroComponent } from './_auth/cadastro/cadastro.component';
 import { HistoricoTestesComponent } from './paciente/historico-testes/historico-testes.component';
 import { VisualizarPerfilComponent } from './paciente/visualizar-perfil/visualizar-perfil.component';
+import { EditarPerfilComponentPaciente } from './paciente/editar-perfil/editar-perfil.component';
 import { EditarPerfilComponent } from './tecnico/editar-perfil/editar-perfil.component';
 import { HistoricoPacienteComponent } from './tecnico/paciente/historico-paciente/historico-paciente.component';
 import { VerPerfilComponent } from './tecnico/paciente/ver-perfil/ver-perfil.component';
@@ -46,6 +47,7 @@ const routes: Routes = [
     data: { tipo: 'paciente' },
     children: [
       { path: '', component: PacienteDashboardComponent },
+      { path: 'editar-perfil', component: EditarPerfilComponentPaciente },
       { path: 'formularios', component: PacienteDashboardComponent },
       { path: 'historico-testes', component: HistoricoTestesComponent },
       { path: 'visualizar-perfil', component: VisualizarPerfilComponent },

@@ -27,18 +27,20 @@ export class FormularioEdicaoComponent implements OnInit {
   ];
 
   tiposPontuacao = [
-    { value: 'MAPEAMENTO_DIRETO', label: 'Mapeamento Direto (0-4)' },
-    { value: 'MAPEAMENTO_REVERSO', label: 'Mapeamento Reverso (4-0)' },
-    { value: 'SOMA_SIMPLES', label: 'Soma Simples' },
-    { value: 'MEDIA_SIMPLES', label: 'Média Simples' },
+    { value: 'VALOR_DIRETO', label: 'Valor Direto' },
+    { value: 'MAPEAMENTO', label: 'Mapeamento' },
+    { value: 'MAPEAMENTO_DIRETO', label: 'Mapeamento Direto' },
+    { value: 'MAPEAMENTO_REVERSO', label: 'Mapeamento Reverso' },
+    { value: 'MAPEAMENTO_MAX', label: 'Mapeamento Máximo' },
     { value: 'FORMULA', label: 'Fórmula Personalizada' }
   ];
 
   tiposCalculo = [
-    { value: 'SOMA_SIMPLES', label: 'Soma Simples' },
-    { value: 'MEDIA_SIMPLES', label: 'Média Simples' },
-    { value: 'MEDIA_AJUSTADA', label: 'Média Ajustada' },
+    { value: '', label: 'Nenhum' },
+    { value: 'SOMA_PERGUNTAS', label: 'Soma das Perguntas' },
+    { value: 'MAX_PERGUNTAS', label: 'Máximo das Perguntas' },
     { value: 'SOMA_ETAPAS', label: 'Soma das Etapas' },
+    { value: 'MEDIA_AJUSTADA', label: 'Média Ajustada' },
     { value: 'FORMULA_CUSTOM', label: 'Fórmula Personalizada' }
   ];
 
@@ -84,7 +86,7 @@ export class FormularioEdicaoComponent implements OnInit {
       descricao: [formulario.descricao, Validators.required],
       calculaPontuacao: [formulario.calculaPontuacao || false],
       regraCalculoFinal: this.fb.group({
-        tipoCalculo: [formulario.regraCalculoFinal?.tipoCalculo || 'SOMA_SIMPLES'],
+        tipoCalculo: [formulario.regraCalculoFinal?.tipoCalculo || 'SOMA_ETAPAS'],
         formulaCustom: [formulario.regraCalculoFinal?.formulaCustom || ''],
         pesos: this.fb.group(formulario.regraCalculoFinal?.pesos || {})
       }),
@@ -107,7 +109,7 @@ export class FormularioEdicaoComponent implements OnInit {
       titulo: [etapa.titulo, Validators.required],
       descricao: [etapa.descricao, Validators.required],
       regraCalculoEtapa: this.fb.group({
-        tipoCalculo: [etapa.regraCalculoEtapa?.tipoCalculo || 'SOMA_SIMPLES'],
+        tipoCalculo: [etapa.regraCalculoEtapa?.tipoCalculo || 'SOMA_PERGUNTAS'],
         formulaCustom: [etapa.regraCalculoEtapa?.formulaCustom || ''],
         pesos: this.fb.group(etapa.regraCalculoEtapa?.pesos || {})
       }),
@@ -146,7 +148,7 @@ export class FormularioEdicaoComponent implements OnInit {
         required: [pergunta.validacao?.required || false]
       }),
       configuracaoPontuacao: this.fb.group({
-        tipoPontuacao: [pergunta.configuracaoPontuacao?.tipoPontuacao || 'MAPEAMENTO_DIRETO'],
+        tipoPontuacao: [pergunta.configuracaoPontuacao?.tipoPontuacao || 'MAPEAMENTO'],
         mapeamentoPontos: mapeamentoPontosGroup,
         formula: [pergunta.configuracaoPontuacao?.formula || ''],
         pontosMinimos: [pergunta.configuracaoPontuacao?.pontosMinimos || ''],
@@ -181,7 +183,7 @@ export class FormularioEdicaoComponent implements OnInit {
       titulo: ['', Validators.required],
       descricao: ['', Validators.required],
       regraCalculoEtapa: this.fb.group({
-        tipoCalculo: ['SOMA_SIMPLES'],
+        tipoCalculo: ['SOMA_PERGUNTAS'],
         formulaCustom: [''],
         pesos: this.fb.group({})
       }),
@@ -200,7 +202,7 @@ export class FormularioEdicaoComponent implements OnInit {
         required: [false]
       }),
       configuracaoPontuacao: this.fb.group({
-        tipoPontuacao: ['MAPEAMENTO_DIRETO'],
+        tipoPontuacao: ['MAPEAMENTO'],
         mapeamentoPontos: this.fb.group({}),
         formula: [''],
         pontosMinimos: [''],
