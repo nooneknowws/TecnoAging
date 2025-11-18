@@ -28,7 +28,8 @@ object RetrofitInstance {
     }
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        // Usa HEADERS ao invés de BODY para evitar problemas com respostas grandes (fotos em base64)
+        level = HttpLoggingInterceptor.Level.HEADERS
     }
 
     private val okHttpClient by lazy {

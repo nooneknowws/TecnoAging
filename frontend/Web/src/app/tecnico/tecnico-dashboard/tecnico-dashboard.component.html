@@ -39,21 +39,29 @@
             Selecione um paciente para gerenciar os formulários e ver resultados.
           </p>
         </div>
-        <div class="view-toggle">
+        <div class="d-flex gap-2">
           <button
-            class="btn btn-outline-secondary btn-sm me-2"
-            [class.active]="viewMode === 'grid'"
-            (click)="toggleView('grid')"
+            class="btn btn-success btn-sm"
+            [routerLink]="['/cadastro/paciente']"
           >
-            <i class="fas fa-th"></i> Grid
+            <i class="fas fa-plus"></i> Cadastrar Paciente
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm"
-            [class.active]="viewMode === 'table'"
-            (click)="toggleView('table')"
-          >
-            <i class="fas fa-list"></i> Tabela
-          </button>
+          <div class="view-toggle">
+            <button
+              class="btn btn-outline-secondary btn-sm me-2"
+              [class.active]="viewMode === 'grid'"
+              (click)="toggleView('grid')"
+            >
+              <i class="fas fa-th"></i> Grid
+            </button>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              [class.active]="viewMode === 'table'"
+              (click)="toggleView('table')"
+            >
+              <i class="fas fa-list"></i> Tabela
+            </button>
+          </div>
         </div>
       </div>
 

@@ -2,6 +2,7 @@ package com.tecno.aging.ui.screens.tecnico.perfilTecnico.edit
 
 import android.content.ContentResolver
 import android.net.Uri
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecno.aging.data.local.SessionManager
@@ -11,6 +12,7 @@ import com.tecno.aging.domain.models.DTO.TecnicoUpdateRequest
 import com.tecno.aging.domain.models.pessoa.Endereco
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
 import com.tecno.aging.domain.utils.convertUriToBase64
+import com.tecno.aging.domain.utils.base64ToImageBitmap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,7 +21,7 @@ import java.util.Locale
 
 data class ProfileEditUiState(
     val fotoUri: Uri? = null,
-    val fotoBase64: String? = null,
+    val fotoBitmap: ImageBitmap? = null,
     val matricula: String = "",
     val nome: String = "",
     val cpf: String = "",
@@ -58,6 +60,7 @@ class ProfileEditViewModel() : ViewModel() {
                 .onSuccess { tecnico ->
                     SessionManager.saveUserName(uiState.value.nome)
                     originalTecnico = tecnico
+
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -76,7 +79,7 @@ class ProfileEditViewModel() : ViewModel() {
                                 municipio = tecnico.endereco.municipio,
                                 uf = tecnico.endereco.toString()
                             ),
-                            fotoBase64 = tecnico.fotoPerfil
+                            fotoBitmap = base64ToImageBitmap(tecnico.fotoPerfil)
                         )
                     }
                 }
@@ -92,7 +95,7 @@ class ProfileEditViewModel() : ViewModel() {
     }
 
     fun onFotoChange(newUri: Uri?) {
-        _uiState.update { it.copy(fotoUri = newUri, fotoBase64 = null) }
+        _uiState.update { it.copy(fotoUri = newUri, fotoBitmap = null) }
     }
 
     fun onNomeChange(newValue: String) {
