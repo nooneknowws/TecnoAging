@@ -10,8 +10,19 @@ public class ScoringService {
     @Autowired
     private GenericScoringService genericScoringService;
 
+    @Autowired
+    private IPAQScoringService ipaqScoringService;
+
     public void calculateAndUpdateScore(Avaliacao avaliacao) {
-        genericScoringService.calculateAndUpdateScore(avaliacao);
+        String tipoFormulario = avaliacao.getFormulario().getTipo();
+
+        // Se for formulário IPAQ (sedentarismo), usa lógica específica
+        if ("sedentarismo".equalsIgnoreCase(tipoFormulario)) {
+            ipaqScoringService.calculateIPAQScore(avaliacao);
+        } else {
+            // Para outros formulários, usa o cálculo genérico
+            genericScoringService.calculateAndUpdateScore(avaliacao);
+        }
     }
     
     public double calculatePercentageScore(Avaliacao avaliacao) {
@@ -24,7 +35,7 @@ public class ScoringService {
     public String interpretScore(Avaliacao avaliacao) {
         String tipoFormulario = avaliacao.getFormulario().getTipo();
         int pontuacao = avaliacao.getPontuacaoTotal();
-        
+
         switch (tipoFormulario.toLowerCase()) {
             case "minimental":
                 return interpretMiniMental(pontuacao);
@@ -32,8 +43,30 @@ public class ScoringService {
                 return interpretFactF(pontuacao, avaliacao.getPontuacaoMaxima());
             case "ivcf20":
                 return interpretIVCF20(pontuacao);
+            case "sedentarismo":
+                return interpretIPAQ(pontuacao);
             default:
                 return "Interpretação não disponível para este tipo de formulário";
+        }
+    }
+
+    private String interpretIPAQ(int totalMET) {
+        if (totalMET >= 3000) {
+            return "Nível Alto de Atividade Física - O indivíduo realiza atividades vigorosas " +
+                   "regularmente ou combina diferentes tipos de atividade física, atingindo " +
+                   "pelo menos 3000 MET-min/semana. Mantém um estilo de vida muito ativo.";
+        } else if (totalMET >= 600) {
+            return "Nível Moderado de Atividade Física - O indivíduo realiza atividades físicas " +
+                   "moderadas ou vigorosas regularmente, atingindo pelo menos 600 MET-min/semana. " +
+                   "Atende às recomendações básicas de atividade física para saúde.";
+        } else if (totalMET >= 150) {
+            return "Nível Baixo de Atividade Física - O indivíduo realiza alguma atividade física, " +
+                   "mas não atinge os níveis recomendados. É aconselhável aumentar gradualmente " +
+                   "a frequência e intensidade das atividades.";
+        } else {
+            return "Sedentário - O indivíduo não realiza atividades físicas suficientes ou " +
+                   "permanece sedentário a maior parte do tempo. É fortemente recomendado " +
+                   "iniciar um programa de atividade física com orientação profissional.";
         }
     }
     

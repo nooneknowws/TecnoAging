@@ -1,0 +1,17 @@
+{
+  "pacienteId": 1,
+  "tecnicoId": 1,
+  "formularioId": 4,
+  "respostas": [
+    {"perguntaId": 107, "valor": "5"},
+    {"perguntaId": 108, "valor": "0:30"},
+    {"perguntaId": 48, "valor": "3"},
+    {"perguntaId": 49, "valor": "0:45"},
+    {"perguntaId": 50, "valor": "2"},
+    {"perguntaId": 51, "valor": "0:25"},
+    {"perguntaId": 52, "valor": "8:00"},
+    {"perguntaId": 53, "valor": "6:00"}
+  ],
+  "dataCriacao": "2025-11-18T18:00:00.000Z",
+  "dataAtualizacao": "2025-11-18T18:00:00.000Z"
+}

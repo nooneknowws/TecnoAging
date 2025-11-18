@@ -170,7 +170,7 @@ INSERT INTO public.formulario (id, descricao, tipo, titulo, calcula_pontuacao, t
 (1, 'Avaliação do nível de fadiga física e mental após diferentes atividades', 'pfs', 'Formulário PFS', true, 'SOMA_ETAPAS', NULL),
 (2, 'Avaliação cognitiva para identificar possíveis déficits cognitivos.', 'minimental', 'Mini Exame do Estado Mental (MEEM)', true, 'SOMA_ETAPAS', NULL),
 (3, 'Avaliação multidimensional do grau de vulnerabilidade clínica e funcional de idosos', 'ivcf20', 'Índice de Vulnerabilidade Clínico-Funcional (IVCF-20)', true, 'SOMA_ETAPAS', NULL),
-(4, 'Nível de Atividade Física e Comportamento Sedentário', 'sedentarismo', 'Nível de Atividade Física e Comportamento Sedentário', false, NULL, NULL),
+(4, 'IPAQ - Questionário Internacional de Atividade Física (versão curta)', 'sedentarismo', 'IPAQ - Nível de Atividade Física', true, NULL, 'IPAQ_MET'),
 (5, 'Avaliação da qualidade de vida e fadiga em pacientes com câncer', 'factf', 'Functional Assessment of Cancer Therapy - Fatigue (FACT-F)', true, 'SOMA_ETAPAS', 'PWB + SWB + EWB + FWB + FADIGA');
 
 
@@ -198,9 +198,10 @@ INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, fo
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (21, 'Avaliação de sintomas relacionados ao humor.', 'Humor', 3, 'SOMA_PERGUNTAS', NULL);
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (22, 'Avaliação de mobilidade e capacidade física.', 'Mobilidade', 3, 'MAX_PERGUNTAS', NULL);
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (23, 'Avaliação de problemas de comunicação relacionados à saúde.', 'Comunicação', 3, 'MAX_PERGUNTAS', NULL);
-INSERT INTO public.etapa VALUES (24, 'Você consegue realizá-la conversando com dificuldade enquanto se movimenta e não vai conseguir cantar.', 'Atividade Moderada', 4);
-INSERT INTO public.etapa VALUES (25, 'Você não vai conseguir nem conversar. A sua respiração vai ser muito mais rápida que o normal e os batimentos do seu coração vão aumentar muito.', 'Atividade Vigorosa', 4);
-INSERT INTO public.etapa VALUES (26, 'Quanto tempo do seu dia, enquanto você está acordado, você gasta sentado, reclinado ou deitado, assistindo televisão, no celular, em frente ao computador, realizando trabalhos manuais, dirigindo ou lendo?', 'Comportamento Sedentário', 4);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (107, 'Pense em todas as atividades VIGOROSAS que você fez na ÚLTIMA SEMANA. Exemplos: caminhada rápida, caminhada recreativa, caminhada com cachorro.', 'Caminhada', 4, NULL, NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (24, 'Pense em todas as atividades MODERADAS que você fez na ÚLTIMA SEMANA. Exemplos: pedalar em ritmo regular, carregar pesos leves, dançar. NÃO inclua caminhada.', 'Atividade Moderada', 4, NULL, NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (25, 'Pense em todas as atividades VIGOROSAS que você fez na ÚLTIMA SEMANA. Exemplos: correr, fazer exercícios aeróbicos intensos, jogar futebol, carregar pesos pesados.', 'Atividade Vigorosa', 4, NULL, NULL);
+INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (26, 'Quanto tempo você fica sentado(a) durante um dia de SEMANA? Considere tempo sentado(a) no trabalho, em casa, estudando, em deslocamentos, visitando amigos, lendo, assistindo TV.', 'Comportamento Sedentário', 4, NULL, NULL);
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (27, 'Avaliação do seu estado físico durante os últimos 7 dias', 'Bem-estar Físico', 5, 'MEDIA_AJUSTADA', '(SUM_PONTOS / COUNT_RESPONDIDAS) * 7');
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (28, 'Avaliação do seu relacionamento com família e amigos durante os últimos 7 dias', 'Bem-estar Social/Familiar', 5, 'MEDIA_AJUSTADA', '(SUM_PONTOS / COUNT_RESPONDIDAS) * 7');
 INSERT INTO public.etapa (id, descricao, titulo, formulario_id, tipo_calculo, formula_custom) VALUES (29, 'Avaliação do seu estado emocional durante os últimos 7 dias', 'Bem-estar Emocional', 5, 'MEDIA_AJUSTADA', '(SUM_PONTOS / COUNT_RESPONDIDAS) * 6');
@@ -260,12 +261,21 @@ INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (45, 'Você tem problemas de visão capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de óculos ou lentes de contato.', 'radio', NULL, NULL, true, 23, 'MAPEAMENTO', 0, 2);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (46, 'Você tem problemas de audição que impedem a realização de atividades do cotidiano? É permitido o uso de aparelhos de audição.', 'radio', NULL, NULL, true, 23, 'MAPEAMENTO', 0, 2);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (47, 'Você tem alguma das três condições abaixo relacionadas?', 'checkbox', NULL, NULL, true, 23, 'MAPEAMENTO_MAX', 0, 4);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (48, 'Quanto tempo por dia você realiza atividades moderadas? (HH:MM)', 'tempo', 7, 0, false, 24);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (49, 'Quantos dias por semana?', 'numero', 7, 0, false, 24);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (50, 'Quanto tempo por dia você realiza atividades vigorosas? (HH:MM)', 'tempo', NULL, NULL, NULL, 25);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (51, 'Quantos dias por semana?', 'numero', 7, 0, false, 25);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (52, 'Quanto tempo por dia? (HH:MM)', 'tempo', 7, 0, false, 26);
-INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id) VALUES (53, 'Quantos dias por semana?', 'numero', 7, 0, false, 26);
+-- Perguntas IPAQ - Caminhada (Etapa 107)
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (107, 'Em quantos dias da última semana você CAMINHOU por pelo menos 10 minutos contínuos?', 'numero', 7, 0, true, 107, 'VALOR_DIRETO', 0, 7);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (108, 'Nos dias em que você caminhou, quanto tempo por dia você gastou caminhando? (HH:MM)', 'tempo', NULL, NULL, true, 107, 'FORMULA', 0, 1440);
+
+-- Perguntas IPAQ - Atividade Moderada (Etapa 24)
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (48, 'Em quantos dias da última semana você fez atividades MODERADAS por pelo menos 10 minutos contínuos?', 'numero', 7, 0, true, 24, 'VALOR_DIRETO', 0, 7);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (49, 'Nos dias em que você fez atividades moderadas, quanto tempo por dia você gastou fazendo essas atividades? (HH:MM)', 'tempo', NULL, NULL, true, 24, 'FORMULA', 0, 1440);
+
+-- Perguntas IPAQ - Atividade Vigorosa (Etapa 25)
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (50, 'Em quantos dias da última semana você fez atividades VIGOROSAS por pelo menos 10 minutos contínuos?', 'numero', 7, 0, true, 25, 'VALOR_DIRETO', 0, 7);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (51, 'Nos dias em que você fez atividades vigorosas, quanto tempo por dia você gastou fazendo essas atividades? (HH:MM)', 'tempo', NULL, NULL, true, 25, 'FORMULA', 0, 1440);
+
+-- Pergunta IPAQ - Comportamento Sedentário (Etapa 26)
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (52, 'Quanto tempo no total você gasta sentado(a) durante um dia de SEMANA? (HH:MM)', 'tempo', NULL, NULL, true, 26, 'FORMULA', 0, 1440);
+INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos) VALUES (53, 'Quanto tempo no total você gasta sentado(a) durante um dia de FIM DE SEMANA? (HH:MM)', 'tempo', NULL, NULL, true, 26, 'FORMULA', 0, 1440);
 INSERT INTO public.pergunta (id, texto, tipo, max, min, required, etapa_id, tipo_pontuacao, pontos_minimos, pontos_maximos, sub_tipo) VALUES
 (54, 'Estou sem energia', 'radio', NULL, NULL, true, 27, 'MAPEAMENTO_REVERSO', 0, 4, 'GP1'),
 (55, 'Fico enjoado(a)', 'radio', NULL, NULL, true, 27, 'MAPEAMENTO_REVERSO', 0, 4, 'GP2'),
