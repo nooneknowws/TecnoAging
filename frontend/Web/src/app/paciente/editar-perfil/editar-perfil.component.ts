@@ -18,7 +18,7 @@ import { EnumEscolaridade } from '../../_shared/models/escolaridade.enum';
   templateUrl: './editar-perfil.component.html',
   styleUrl: './editar-perfil.component.css'
 })
-export class EditarPerfilComponent implements OnInit {
+export class EditarPerfilComponentPaciente implements OnInit {
   endereco: Endereco = new Endereco();
   form: Paciente = new Paciente();
   

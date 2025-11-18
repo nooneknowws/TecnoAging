@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
 import { AuthService } from '../../_shared/services/auth.service';
@@ -37,7 +38,8 @@ export class VisualizarPerfilComponent implements OnInit {
   constructor(
     private pacienteService: PacienteService,
     private imageService: ImageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -313,7 +315,14 @@ export class VisualizarPerfilComponent implements OnInit {
   formatarEndereco(): string {
     const endereco = this.paciente?.endereco;
     if (!endereco) return 'Não informado';
-    
+
     return `${endereco.logradouro || ''}, ${endereco.numero || ''} - ${endereco.bairro || ''}, ${endereco.municipio || ''} - ${endereco.uf || ''}, CEP: ${endereco.cep || ''}`;
+  }
+
+  /**
+   * Navega para a tela de editar perfil
+   */
+  editarPerfil(): void {
+    this.router.navigate(['/paciente/editar-perfil']);
   }
 }

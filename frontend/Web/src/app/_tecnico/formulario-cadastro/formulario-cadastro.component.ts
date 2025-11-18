@@ -44,18 +44,20 @@ export class FormularioCadastroComponent implements OnInit {
   ];
 
   tiposPontuacao = [
-    { value: 'MAPEAMENTO_DIRETO', label: 'Mapeamento Direto (0-4)' },
-    { value: 'MAPEAMENTO_REVERSO', label: 'Mapeamento Reverso (4-0)' },
-    { value: 'SOMA_SIMPLES', label: 'Soma Simples' },
-    { value: 'MEDIA_SIMPLES', label: 'Média Simples' },
+    { value: 'VALOR_DIRETO', label: 'Valor Direto' },
+    { value: 'MAPEAMENTO', label: 'Mapeamento' },
+    { value: 'MAPEAMENTO_DIRETO', label: 'Mapeamento Direto' },
+    { value: 'MAPEAMENTO_REVERSO', label: 'Mapeamento Reverso' },
+    { value: 'MAPEAMENTO_MAX', label: 'Mapeamento Máximo' },
     { value: 'FORMULA', label: 'Fórmula Personalizada' }
   ];
 
   tiposCalculo = [
-    { value: 'SOMA_SIMPLES', label: 'Soma Simples' },
-    { value: 'MEDIA_SIMPLES', label: 'Média Simples' },
-    { value: 'MEDIA_AJUSTADA', label: 'Média Ajustada' },
+    { value: '', label: 'Nenhum' },
+    { value: 'SOMA_PERGUNTAS', label: 'Soma das Perguntas' },
+    { value: 'MAX_PERGUNTAS', label: 'Máximo das Perguntas' },
     { value: 'SOMA_ETAPAS', label: 'Soma das Etapas' },
+    { value: 'MEDIA_AJUSTADA', label: 'Média Ajustada' },
     { value: 'FORMULA_CUSTOM', label: 'Fórmula Personalizada' }
   ];
 
@@ -82,7 +84,7 @@ export class FormularioCadastroComponent implements OnInit {
       descricao: ['', Validators.required],
       calculaPontuacao: [false],
       regraCalculoFinal: this.fb.group({
-        tipoCalculo: ['SOMA_SIMPLES'],
+        tipoCalculo: ['SOMA_ETAPAS'],
         formulaCustom: [''],
         pesos: this.fb.group({})
       }),
@@ -99,7 +101,7 @@ export class FormularioCadastroComponent implements OnInit {
       titulo: ['', Validators.required],
       descricao: ['', Validators.required],
       regraCalculoEtapa: this.fb.group({
-        tipoCalculo: ['SOMA_SIMPLES'],
+        tipoCalculo: ['SOMA_PERGUNTAS'],
         formulaCustom: [''],
         pesos: this.fb.group({})
       }),
@@ -118,7 +120,7 @@ export class FormularioCadastroComponent implements OnInit {
         required: [false]
       }),
       configuracaoPontuacao: this.fb.group({
-        tipoPontuacao: ['MAPEAMENTO_DIRETO'],
+        tipoPontuacao: ['MAPEAMENTO'],
         mapeamentoPontos: this.fb.group({}),
         formula: [''],
         pontosMinimos: [''],
