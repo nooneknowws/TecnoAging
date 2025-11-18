@@ -13,8 +13,6 @@
     </div>
   </header>
 
-  <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
-
   <nav class="tabs">
     <button
       *ngFor="let section of sections"
@@ -38,25 +36,32 @@
         <div>
           <h2>Lista de Pacientes</h2>
           <p class="text-muted">
-            Selecione um paciente para gerenciar os formulários, ver resultados
-            e fazer comparações.
+            Selecione um paciente para gerenciar os formulários e ver resultados.
           </p>
         </div>
-        <div class="view-toggle">
+        <div class="d-flex gap-2">
           <button
-            class="btn btn-outline-secondary btn-sm me-2"
-            [class.active]="viewMode === 'grid'"
-            (click)="toggleView('grid')"
+            class="btn btn-success btn-sm"
+            [routerLink]="['/cadastro/paciente']"
           >
-            <i class="fas fa-th"></i> Grid
+            <i class="fas fa-plus"></i> Cadastrar Paciente
           </button>
-          <button
-            class="btn btn-outline-secondary btn-sm"
-            [class.active]="viewMode === 'table'"
-            (click)="toggleView('table')"
-          >
-            <i class="fas fa-list"></i> Tabela
-          </button>
+          <div class="view-toggle">
+            <button
+              class="btn btn-outline-secondary btn-sm me-2"
+              [class.active]="viewMode === 'grid'"
+              (click)="toggleView('grid')"
+            >
+              <i class="fas fa-th"></i> Grid
+            </button>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              [class.active]="viewMode === 'table'"
+              (click)="toggleView('table')"
+            >
+              <i class="fas fa-list"></i> Tabela
+            </button>
+          </div>
         </div>
       </div>
 
@@ -364,15 +369,6 @@
             Paciente: <strong>{{ selectedPaciente.nome }}</strong>
           </p>
         </div>
-
-        <button
-          *ngIf="selectedPaciente"
-          class="btn btn-outline-primary btn-sm"
-          (click)="compareResults()"
-        >
-          <i class="fas fa-chart-line"></i>
-          Comparar Resultados
-        </button>
       </div>
 
       <div class="alert alert-info" *ngIf="pacientes.length == 0">

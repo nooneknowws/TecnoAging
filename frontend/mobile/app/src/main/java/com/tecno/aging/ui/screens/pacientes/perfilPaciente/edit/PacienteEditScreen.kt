@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,7 +66,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -312,11 +315,32 @@ private fun StepPersonalData(
         EditInfoCard(title = "Foto de Perfil", icon = Icons.Default.AccountCircle) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AsyncImage(
-                        model = uiState.fotoUri ?: (if (uiState.fotoBase64 != null) "data:image/jpeg;base64,${uiState.fotoBase64}" else R.drawable.ic_person),
-                        contentDescription = "Foto de perfil",
-                        modifier = Modifier.size(120.dp).clip(CircleShape)
-                    )
+                    // Exibe a foto - prioriza URI nova, depois bitmap do banco, depois ícone padrão
+                    when {
+                        uiState.fotoUri != null -> {
+                            AsyncImage(
+                                model = uiState.fotoUri,
+                                contentDescription = "Foto de perfil",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(120.dp).clip(CircleShape)
+                            )
+                        }
+                        uiState.fotoBitmap != null -> {
+                            Image(
+                                bitmap = uiState.fotoBitmap,
+                                contentDescription = "Foto de perfil",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(120.dp).clip(CircleShape)
+                            )
+                        }
+                        else -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_person),
+                                contentDescription = "Foto de perfil padrão",
+                                modifier = Modifier.size(120.dp).clip(CircleShape)
+                            )
+                        }
+                    }
                     TextButton(onClick = onChangePictureClick) { Text("Alterar foto") }
                 }
             }

@@ -69,6 +69,16 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
+    // Verificar se é técnico e se está inativo
+    if (profile === 'tecnico' && user instanceof Tecnico && user.ativo === false) {
+      console.warn('AuthGuard: Técnico inativo tentando acessar o sistema');
+      this.authService.logout(token);
+      this.router.navigate(['/login'], {
+        queryParams: { inativo: 'true' }
+      });
+      return false;
+    }
+
     return true;
   }
 

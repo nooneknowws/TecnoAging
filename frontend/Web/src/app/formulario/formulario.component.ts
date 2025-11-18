@@ -130,33 +130,33 @@ export class FormularioComponent implements OnInit {
 
   async salvarAvaliacao() {
     if (!this.formGroup.valid || !this.formulario) return;
-  
+
     try {
       this.atualizarRespostas(this.formGroup.value);
-  
+
       const respostas = Array.from(this.respostasTemp.values());
-  
+
       const avaliacao = new Avaliacao(
         undefined,
         undefined,
         undefined,
         this.formulario,
         respostas,
-        this.calcularPontuacao(),
-        this.calcularPontuacao(),
+        undefined,
+        undefined,
         new Date(),
         new Date()
       );
 
       console.log('JSON da avaliação a ser enviada:', JSON.stringify(avaliacao, null, 2));
-  
+
       await this.avaliacaoService.createAvaliacao(avaliacao, this.pacienteId).toPromise();
-  
+
       this.showSuccessAlert = true;
       this.showErrorAlert = false;
       this.avaliacaoSalva = true;
       window.scrollTo(0, 0);
-  
+
     } catch (error) {
       console.error('Erro ao salvar avaliação:', error);
       this.showErrorAlert = true;
@@ -232,10 +232,6 @@ export class FormularioComponent implements OnInit {
     });
   }
 
-  private calcularPontuacao(): number {
-    // TODO: cálculo da pontuação específica para cada tipo de formulário
-    return 0;
-  }
 
   voltarParaInicio() {
     this.router.navigate(['/']);

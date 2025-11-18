@@ -34,7 +34,7 @@
 }
 
 .user-info a {
-  color: #6c63ff;
+  color: #0d6efd;
   text-decoration: none;
   font-weight: 500;
 }
@@ -118,7 +118,7 @@
 .stat-card i {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #6c63ff;
+  color: #0d6efd;
 }
 .stat-card h3 {
   font-size: 2rem;
@@ -145,7 +145,7 @@
 }
 .action-card i {
   font-size: 3rem;
-  color: #6c63ff;
+  color: #0d6efd;
   margin-bottom: 15px;
 }
 
@@ -202,12 +202,12 @@
 }
 .form-card > i {
   font-size: 3rem;
-  color: #6c63ff;
+  color: #0d6efd;
   margin-bottom: 15px;
 }
 
 .btn-action {
-  background: #6c63ff;
+  background: #0d6efd;
   border: none;
   color: white;
   padding: 12px 25px;
@@ -274,12 +274,12 @@
   font-size: 0.9rem;
 }
 .btn-outline-primary {
-  color: #6c63ff;
-  border-color: #6c63ff;
+  color: #0d6efd;
+  border-color: #0d6efd;
   background: transparent;
 }
 .btn-outline-primary:hover {
-  background: #6c63ff;
+  background: #0d6efd;
   color: white;
 }
 .alert-info {
@@ -313,7 +313,7 @@
   }
   .sidebar button.active {
     border-left-color: transparent;
-    border-bottom-color: #6c63ff;
+    border-bottom-color: #0d6efd;
     background: transparent;
   }
   .main-content {

@@ -128,8 +128,6 @@ export class AvaliacaoService {
           valor: serializedValue
         };
       }),
-      pontuacaoTotal: avaliacao.pontuacaoTotal,
-      pontuacaoMaxima: avaliacao.pontuacaoMaxima,
       dataCriacao: avaliacao.dataCriacao,
       dataAtualizacao: avaliacao.dataAtualizacao
     };

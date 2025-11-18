@@ -187,106 +187,113 @@
       </div>
     </div>
 
-    <!-- Endereço -->
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h4><i class="fas fa-pencil"></i> <i class="fas fa-map-marker-alt"></i> Editar endereço</h4>
-        </div>
-        <div class="card-body" formGroupName="endereco">
-          <table class="table table-bordered">
-            <tbody>
-              <tr>
-                <th scope="row">CEP</th>
-                <td>
-                  <div class="input-group">
-                    <input class="form-control form-control-sm" type="text" formControlName="cep" #cepInput (blur)="buscarCep(cepInput.value)" mask="00000-000" placeholder="00000-000">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="buscarCep(cepInput.value)">
-                      <i class="fas fa-search"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">Endereço</th>
-                <td><input type="text" class="form-control form-control-sm" formControlName="logradouro"></td>
-              </tr>
-              <tr>
-                <th scope="row">Número</th>
-                <td><input type="text" class="form-control form-control-sm" formControlName="numero"></td>
-              </tr>
-              <tr>
-                <th scope="row">Bairro</th>
-                <td><input type="text" class="form-control form-control-sm" formControlName="bairro"></td>
-              </tr>
-              <tr>
-                <th scope="row">Município/UF</th>
-                <td>
-                  <div class="row">
-                    <div class="col-8">
-                      <input type="text" class="form-control form-control-sm" formControlName="municipio">
+    <div class="row">
+      <!-- Endereço -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4><i class="fas fa-pencil"></i> <i class="fas fa-map-marker-alt"></i> Editar endereço</h4>
+          </div>
+          <div class="card-body" formGroupName="endereco">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <th scope="row">CEP</th>
+                  <td>
+                    <div class="input-group">
+                      <input class="form-control form-control-sm" type="text" formControlName="cep" #cepInput (blur)="buscarCep(cepInput.value)" mask="00000-000" placeholder="00000-000">
+                      <button type="button" class="btn btn-primary btn-sm" (click)="buscarCep(cepInput.value)">
+                        <i class="fas fa-search"></i>
+                      </button>
                     </div>
-                    <div class="col-4">
-                      <select class="form-select form-select-sm" formControlName="uf">
-                        <option value="" disabled>UF</option>
-                        <option *ngFor="let uf of getEstadosOptions()" [value]="uf.value">
-                          {{uf.label}}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Contatos -->
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between">
-          <h4><i class="fas fa-pencil"></i> <i class="fas fa-phone"></i> Editar contatos</h4>
-          <button type="button" class="btn btn-sm btn-success" (click)="adicionarContato()">
-            <i class="fas fa-plus"></i> Adicionar
-          </button>
-        </div>
-        <div class="card-body">
-          <div formArrayName="contatos">
-            <ng-container *ngFor="let contato of contatosFormArray.controls; let i=index; let last=last">
-              <div [formGroupName]="i">
-                <table class="table table-bordered mb-2">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Nome</th>
-                      <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Telefone</th>
-                      <td><input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 00000-0000" placeholder="(00) 00000-0000"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Parentesco</th>
-                      <td>
-                        <select class="form-select form-select-sm" formControlName="parentesco">
-                          <option value="">Selecione...</option>
-                          <option *ngFor="let parentesco of getParentescoOptions()" [value]="parentesco.value">
-                            {{parentesco.label}}
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Endereço</th>
+                  <td><input type="text" class="form-control form-control-sm" formControlName="logradouro"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Número</th>
+                  <td><input type="text" class="form-control form-control-sm" formControlName="numero"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Bairro</th>
+                  <td><input type="text" class="form-control form-control-sm" formControlName="bairro"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Município/UF</th>
+                  <td>
+                    <div class="row">
+                      <div class="col-8">
+                        <input type="text" class="form-control form-control-sm" formControlName="municipio">
+                      </div>
+                      <div class="col-4">
+                        <select class="form-select form-select-sm" formControlName="uf">
+                          <option value="" disabled>UF</option>
+                          <option *ngFor="let uf of getEstadosOptions()" [value]="uf.value">
+                            {{uf.label}}
                           </option>
                         </select>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div class="mb-3">
-                  <button type="button" class="btn btn-sm btn-danger" (click)="removerContato(i)">
-                    <i class="fas fa-trash"></i> Remover
-                  </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contatos -->
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between">
+            <h4><i class="fas fa-pencil"></i> <i class="fas fa-phone"></i> Editar contatos</h4>
+            <button type="button" class="btn btn-sm btn-success" (click)="adicionarContato()">
+              <i class="fas fa-plus"></i> Adicionar
+            </button>
+          </div>
+          <div class="card-body">
+            <div formArrayName="contatos">
+              <ng-container *ngFor="let contato of contatosFormArray.controls; let i=index; let last=last">
+                <div [formGroupName]="i">
+                  <table class="table table-bordered mb-2">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Nome</th>
+                        <td><input type="text" class="form-control form-control-sm" formControlName="nome"></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Telefone</th>
+                        <td>
+                          <input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 0000-0000||(00) 00000-0000" placeholder="(00) 00000-0000">
+                          <small *ngIf="contato.get('telefone')?.invalid && contato.get('telefone')?.touched" class="text-danger">
+                            Formato inválido. Use: (00) 00000-0000
+                          </small>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Parentesco</th>
+                        <td>
+                          <select class="form-select form-select-sm" formControlName="parentesco">
+                            <option value="">Selecione...</option>
+                            <option *ngFor="let parentesco of getParentescoOptions()" [value]="parentesco.value">
+                              {{parentesco.label}}
+                            </option>
+                          </select>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-danger" (click)="removerContato(i)">
+                      <i class="fas fa-trash"></i> Remover
+                    </button>
+                  </div>
+                  <hr *ngIf="!last" class="my-4" />
                 </div>
-                <hr *ngIf="!last" class="my-4" />
-              </div>
-            </ng-container>
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>

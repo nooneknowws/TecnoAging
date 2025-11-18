@@ -15,20 +15,35 @@ public class GenericScoringService {
      * Calcula a pontuação total de uma avaliação baseado nas configurações genéricas
      */
     public void calculateAndUpdateScore(Avaliacao avaliacao) {
+        System.out.println("=== INICIANDO CÁLCULO DE PONTUAÇÃO ===");
+        System.out.println("Avaliação ID: " + avaliacao.getId());
+
         Formulario formulario = avaliacao.getFormulario();
+        System.out.println("Formulário ID: " + formulario.getId() + ", CalculaPontuacao: " + formulario.getCalculaPontuacao());
 
         if (!Boolean.TRUE.equals(formulario.getCalculaPontuacao())) {
+            System.out.println("Formulário não calcula pontuação. Zerando pontos.");
             avaliacao.setPontuacaoTotal(0);
             avaliacao.setPontuacaoMaxima(0);
             return;
         }
 
         List<Resposta> respostas = avaliacao.getRespostas();
+        System.out.println("Total de respostas: " + respostas.size());
+
+        // Log de todas as respostas
+        for (Resposta r : respostas) {
+            System.out.println("Resposta: perguntaId=" + (r.getPergunta() != null ? r.getPergunta().getId() : "null") +
+                             ", valor=" + r.getValor() +
+                             ", etapa=" + (r.getPergunta() != null && r.getPergunta().getEtapa() != null ? r.getPergunta().getEtapa().getId() : "null"));
+        }
 
         // Agrupa respostas por etapa
         Map<Long, List<Resposta>> respostasPorEtapa = respostas.stream()
             .filter(r -> r.getPergunta() != null && r.getPergunta().getEtapa() != null)
             .collect(Collectors.groupingBy(r -> r.getPergunta().getEtapa().getId()));
+
+        System.out.println("Respostas agrupadas por " + respostasPorEtapa.size() + " etapas");
 
         Map<Long, Integer> pontuacoesPorEtapa = new HashMap<>();
         int pontuacaoTotal = 0;
@@ -37,9 +52,12 @@ public class GenericScoringService {
         // Calcula pontuação de cada etapa
         for (Etapa etapa : formulario.getEtapas()) {
             List<Resposta> respostasEtapa = respostasPorEtapa.getOrDefault(etapa.getId(), List.of());
+            System.out.println("Calculando etapa ID=" + etapa.getId() + ", título=" + etapa.getTitulo() + ", respostas=" + respostasEtapa.size());
 
             int pontuacaoEtapa = calcularPontuacaoEtapa(etapa, respostasEtapa);
             int maxEtapa = calcularPontuacaoMaximaEtapa(etapa);
+
+            System.out.println("Etapa " + etapa.getId() + ": pontuação=" + pontuacaoEtapa + ", máximo=" + maxEtapa);
 
             pontuacoesPorEtapa.put(etapa.getId(), pontuacaoEtapa);
             pontuacaoTotal += pontuacaoEtapa;
@@ -91,6 +109,7 @@ public class GenericScoringService {
      */
     private int calcularPontuacaoPergunta(Resposta resposta) {
         if (resposta == null || resposta.getValor() == null) {
+            System.out.println("    calcularPontuacaoPergunta: resposta ou valor null");
             return 0;
         }
 
@@ -98,15 +117,21 @@ public class GenericScoringService {
         ConfiguracaoPontuacao config = pergunta.getConfiguracaoPontuacao();
 
         if (config == null || config.getTipoPontuacao() == null) {
+            System.out.println("    calcularPontuacaoPergunta: config ou tipoPontuacao null para pergunta " + pergunta.getId());
             return 0;
         }
 
         String tipoPontuacao = config.getTipoPontuacao();
         String valor = resposta.getValor();
 
+        System.out.println("    calcularPontuacaoPergunta: pergunta=" + pergunta.getId() +
+                         ", tipo=" + tipoPontuacao + ", valor='" + valor + "'");
+
         switch (tipoPontuacao) {
             case "VALOR_DIRETO":
-                return calcularValorDireto(valor);
+                int pontos = calcularValorDireto(valor);
+                System.out.println("    VALOR_DIRETO calculado: " + pontos);
+                return pontos;
 
             case "MAPEAMENTO":
                 return calcularMapeamento(valor, config.getMapeamentoPontos());
@@ -272,11 +297,15 @@ public class GenericScoringService {
 
     /**
      * Calcula valor direto (converte string para int)
+     * Suporta tanto valores inteiros ("5") quanto decimais ("5.0")
      */
     private int calcularValorDireto(String valor) {
         try {
-            return Integer.parseInt(valor);
+            // Tenta primeiro como double para suportar "5.0" do mobile
+            double valorDouble = Double.parseDouble(valor);
+            return (int) Math.round(valorDouble);
         } catch (NumberFormatException e) {
+            System.err.println("Erro ao converter valor direto: " + valor);
             return 0;
         }
     }

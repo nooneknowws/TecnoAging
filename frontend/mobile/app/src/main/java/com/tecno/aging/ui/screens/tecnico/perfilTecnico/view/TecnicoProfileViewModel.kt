@@ -1,18 +1,20 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.view
 
 import android.widget.Toast
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.repository.TecnicoRepository
 import com.tecno.aging.domain.models.pessoa.tecnico.Tecnico
+import com.tecno.aging.domain.utils.base64ToImageBitmap
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class TecnicoProfileUiState(
     val isLoading: Boolean = true,
     val tecnico: Tecnico? = null,
-    val fotoBase64: String? = null,
+    val fotoBitmap: ImageBitmap? = null,
     val error: String? = null
 )
 
@@ -47,7 +49,7 @@ class TecnicoProfileViewModel(
                         it.copy(
                             isLoading = false,
                             tecnico = data,
-                            fotoBase64 = data.fotoPerfil
+                            fotoBitmap = base64ToImageBitmap(data.fotoPerfil)
                         )
                     }
                 }

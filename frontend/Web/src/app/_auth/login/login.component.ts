@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        // Verificar se foi redirecionado por expiração de sessão
+        // Verificar se foi redirecionado por expiração de sessão ou conta inativa
         this.route.queryParams.subscribe(params => {
             if (params['expired'] === 'true') {
                 this.sessionExpiredMessage = 'Sua sessão expirou. Por favor, faça login novamente.';
@@ -34,12 +34,21 @@ export class LoginComponent implements OnInit {
                     this.sessionExpiredMessage = null;
                 }, 5000);
             }
+
+            if (params['inativo'] === 'true') {
+                this.errorMessage = 'Acesso negado: Sua conta de técnico está inativa. Entre em contato com o administrador do sistema.';
+
+                // Limpar mensagem após 10 segundos
+                setTimeout(() => {
+                    this.errorMessage = null;
+                }, 10000);
+            }
         });
     }
 
     onSubmit() {
         this.errorMessage = null;
-        
+
         if (!this.loginRequest.cpf || !this.loginRequest.senha) {
             this.errorMessage = 'Por favor, preencha todos os campos';
             return;
@@ -54,7 +63,12 @@ export class LoginComponent implements OnInit {
                 }
             },
             error: (error) => {
-                this.errorMessage = 'Erro ao conectar ao servidor';
+                // Verificar se é erro de técnico inativo
+                if (error.message === 'TECNICO_INATIVO') {
+                    this.errorMessage = 'Acesso negado: Sua conta de técnico está inativa. Entre em contato com o administrador do sistema.';
+                } else {
+                    this.errorMessage = error.error?.message || 'Erro ao conectar ao servidor';
+                }
                 console.error('Login error:', error);
             }
         });

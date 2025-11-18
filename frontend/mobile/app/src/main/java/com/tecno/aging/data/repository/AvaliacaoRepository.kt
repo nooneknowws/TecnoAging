@@ -1,5 +1,6 @@
 package com.tecno.aging.data.repository
 
+import android.util.Log
 import com.tecno.aging.data.remote.ApiService
 import com.tecno.aging.data.remote.RetrofitInstance
 import com.tecno.aging.domain.models.DTO.AvaliacaoPostDTO
@@ -12,14 +13,21 @@ class AvaliacaoRepository(
 
     suspend fun getAvaliacoesByPaciente(pacienteId: Int): Result<List<HistoricoAvaliacao>> {
         return try {
+            Log.d("AvaliacaoRepository", "Buscando avaliações para pacienteId=$pacienteId")
             val response = apiService.getRespostasByPaciente(pacienteId)
+            Log.d("AvaliacaoRepository", "Resposta: code=${response.code()}, isSuccessful=${response.isSuccessful}, body is null=${response.body() == null}")
 
             if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
+                val avaliacoes = response.body()!!
+                Log.d("AvaliacaoRepository", "Sucesso! ${avaliacoes.size} avaliações recebidas")
+                Result.success(avaliacoes)
             } else {
-                Result.failure(Exception("Falha ao buscar histórico de avaliações: Código ${response.code()}"))
+                val errorMsg = "Falha ao buscar histórico de avaliações: Código ${response.code()}, body is null=${response.body() == null}"
+                Log.e("AvaliacaoRepository", errorMsg)
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
+            Log.e("AvaliacaoRepository", "Exceção ao buscar avaliações: ${e.message}", e)
             Result.failure(e)
         }
     }

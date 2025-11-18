@@ -1,6 +1,7 @@
 package com.tecno.aging.ui.screens.tecnico.perfilTecnico.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -122,16 +124,28 @@ fun TecnicoProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        AsyncImage(
-                            model = uiState.fotoBase64 ?: R.drawable.ic_person,
-                            contentDescription = "Foto de perfil",
-                            placeholder = painterResource(id = R.drawable.ic_person),
-                            error = painterResource(id = R.drawable.ic_person),
-                            modifier = Modifier
-                                .size(120.dp)
-                                .background(AppColors.Gray200, CircleShape)
-                                .clip(CircleShape)
-                        )
+                        // Exibe a foto de perfil
+                        val fotoBitmap = uiState.fotoBitmap
+                        if (fotoBitmap != null) {
+                            Image(
+                                bitmap = fotoBitmap,
+                                contentDescription = "Foto de perfil",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .clip(CircleShape)
+                                    .background(AppColors.Gray200, CircleShape)
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_person),
+                                contentDescription = "Foto de perfil padrão",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .clip(CircleShape)
+                                    .background(AppColors.Gray200, CircleShape)
+                            )
+                        }
                         Text(
                             text = profile.nome,
                             style = MaterialTheme.typography.headlineSmall,

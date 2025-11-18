@@ -6,7 +6,6 @@ data class AvaliacaoPostDTO(
     @SerializedName("pacienteId") val pacienteId: Long,
     @SerializedName("tecnicoId") val tecnicoId: Long,
     @SerializedName("formularioId") val formularioId: Long,
-    @SerializedName("pontuacaoTotal") val pontuacaoTotal: Int = 0,
     @SerializedName("respostas") val respostas: List<RespostaPostDTO>,
     @SerializedName("dataCriacao") val dataCriacao: String,
     @SerializedName("dataAtualizacao") val dataAtualizacao: String

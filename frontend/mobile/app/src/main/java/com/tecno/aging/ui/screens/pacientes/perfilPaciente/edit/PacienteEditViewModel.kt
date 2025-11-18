@@ -2,6 +2,7 @@ package com.tecno.aging.ui.screens.pacientes.perfilPaciente.edit
 
 import android.content.ContentResolver
 import android.net.Uri
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,7 @@ import com.tecno.aging.data.local.SessionManager
 import com.tecno.aging.data.repository.PacienteRepository
 import com.tecno.aging.domain.models.pessoa.paciente.Paciente
 import com.tecno.aging.domain.utils.convertUriToBase64
+import com.tecno.aging.domain.utils.base64ToImageBitmap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +25,7 @@ import java.util.Locale
 
 data class PacienteEditUiState(
     val fotoUri: Uri? = null,
+    val fotoBitmap: ImageBitmap? = null,
     val nome: String = "",
     val cpf: String = "",
     val telefone: String = "",
@@ -38,8 +41,7 @@ data class PacienteEditUiState(
     val isSaving: Boolean = false,
     val saveSuccess: Boolean = false,
     val errorMessage: String? = null,
-    val userMessage: String? = null,
-    val fotoBase64: String? = null,
+    val userMessage: String? = null
 )
 
 class PacienteEditViewModel(
@@ -63,6 +65,7 @@ class PacienteEditViewModel(
             repository.getPacienteById(pacienteId)
                 .onSuccess { paciente ->
                     originalPaciente = paciente
+
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -77,7 +80,7 @@ class PacienteEditViewModel(
                             escolaridade = paciente.escolaridade ?: "",
                             nacionalidade = paciente.nacionalidade ?: "",
                             municipioNasc = paciente.municipioNasc ?: "",
-                            fotoBase64 = paciente.fotoPerfil
+                            fotoBitmap = base64ToImageBitmap(paciente.fotoPerfil)
                         )
                     }
                 }
@@ -87,7 +90,7 @@ class PacienteEditViewModel(
         }
     }
 
-    fun onFotoChange(newUri: Uri?) { _uiState.update { it.copy(fotoUri = newUri, fotoBase64 = null) } }
+    fun onFotoChange(newUri: Uri?) { _uiState.update { it.copy(fotoUri = newUri, fotoBitmap = null) } }
     fun onNomeChange(newValue: String) { _uiState.update { it.copy(nome = newValue) } }
     fun onTelefoneChange(newValue: String) { _uiState.update { it.copy(telefone = newValue) } }
     fun onSexoChange(newValue: String) { _uiState.update { it.copy(sexo = newValue) } }

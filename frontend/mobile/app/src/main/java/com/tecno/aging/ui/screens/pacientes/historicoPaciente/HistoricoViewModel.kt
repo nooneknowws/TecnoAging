@@ -1,5 +1,6 @@
 package com.tecno.aging.ui.screens.pacientes.historicoPaciente
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -40,20 +41,25 @@ class HistoricoViewModel(
     }
 
     private fun loadHistorico() {
-        _uiState.update { it.copy(isLoading = true) }
+        Log.d("HistoricoViewModel", "Carregando histórico para pacienteId=$pacienteId")
+        _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            repository.getAvaliacoesByPaciente(pacienteId)
+            val result = repository.getAvaliacoesByPaciente(pacienteId)
+            Log.d("HistoricoViewModel", "Resultado: success=${result.isSuccess}, failure=${result.isFailure}")
+
+            result
                 .onSuccess { listaDeAvaliacoes ->
+                    Log.d("HistoricoViewModel", "Sucesso! ${listaDeAvaliacoes.size} avaliações encontradas")
                     _uiState.update {
-                        it.copy(isLoading = false, avaliacoes = listaDeAvaliacoes)
+                        it.copy(isLoading = false, avaliacoes = listaDeAvaliacoes, error = null)
                     }
                 }
                 .onFailure { erro ->
+                    Log.e("HistoricoViewModel", "Erro ao carregar histórico: ${erro.message}", erro)
                     _uiState.update {
-                        it.copy(isLoading = false, error = "")
+                        it.copy(isLoading = false, error = erro.message ?: "Erro desconhecido")
                     }
-                    refreshHistorico()
                 }
         }
     }
