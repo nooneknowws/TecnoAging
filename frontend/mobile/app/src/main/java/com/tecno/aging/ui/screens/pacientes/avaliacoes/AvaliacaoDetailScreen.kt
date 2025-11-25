@@ -130,7 +130,15 @@ private fun HeaderCard(avaliacao: HistoricoAvaliacao) {
             )
             Divider()
             InfoRow("Paciente:", avaliacao.pacienteNome)
-            InfoRow("Aplicado por:", avaliacao.tecnicoNome)
+
+            val aplicadoPor = if (avaliacao.tecnicoId == null) {
+                "Auto Avaliação"
+            } else {
+                avaliacao.tecnicoNome ?: "Técnico não identificado"
+            }
+
+            InfoRow("Aplicado por:", aplicadoPor)
+
             InfoRow("Data:", formattedDate)
             InfoRow("Pontuação:", "${avaliacao.pontuacaoTotal} / ${avaliacao.pontuacaoMaxima}")
         }

@@ -46,7 +46,7 @@ data class HistoricoAvaliacao(
     val pacienteIdade: Int,
 
     @SerializedName("tecnicoId")
-    val tecnicoId: Long,
+    val tecnicoId: Long?,
 
     @SerializedName("tecnico")
     val tecnicoNome: String,

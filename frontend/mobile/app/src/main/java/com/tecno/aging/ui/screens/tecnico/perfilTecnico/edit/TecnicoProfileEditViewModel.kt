@@ -77,7 +77,7 @@ class ProfileEditViewModel() : ViewModel() {
                                 complemento = tecnico.endereco.complemento ?: "",
                                 bairro = tecnico.endereco.bairro,
                                 municipio = tecnico.endereco.municipio,
-                                uf = tecnico.endereco.toString()
+                                uf = tecnico.endereco.uf
                             ),
                             fotoBitmap = base64ToImageBitmap(tecnico.fotoPerfil)
                         )

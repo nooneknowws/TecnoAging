@@ -44,7 +44,11 @@ class FormViewModel(
     private val avaliacaoId: Long? = savedStateHandle["avaliacaoId"]
     private val formId: Long? = savedStateHandle["formId"]
     private var pacienteId: Long? = savedStateHandle["pacienteId"]
-    private val tecnicoId: Long? = SessionManager.getUserId()?.toLongOrNull()
+    private val tecnicoId: Long? = if (SessionManager.getUserProfile().equals("TECNICO", ignoreCase = true)) {
+        SessionManager.getUserId()?.toLongOrNull()
+    } else {
+        null
+    }
 
     private val isEditMode = avaliacaoId != null
 
@@ -145,8 +149,8 @@ class FormViewModel(
 
     private fun createNewAvaliacao() {
         if (_uiState.value.isSubmitting) return
-        if (tecnicoId == null || pacienteId == null) {
-            _uiState.update { it.copy(error = "IDs de técnico ou paciente não encontrados.") }
+        if (pacienteId == null) {
+            _uiState.update { it.copy(error = "ID do paciente não encontrado.") }
             return
         }
 
@@ -162,7 +166,7 @@ class FormViewModel(
 
         val avaliacaoDTO = AvaliacaoPostDTO(
             pacienteId = checkNotNull(pacienteId),
-            tecnicoId = checkNotNull(tecnicoId),
+            tecnicoId = tecnicoId,
             formularioId = checkNotNull(_uiState.value.form?.id),
             respostas = respostasDTO,
             dataCriacao = dataFormatada,

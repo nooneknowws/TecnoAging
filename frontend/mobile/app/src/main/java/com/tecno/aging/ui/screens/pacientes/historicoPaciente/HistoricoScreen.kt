@@ -200,8 +200,14 @@ fun HistoricoCard(avaliacao: HistoricoAvaliacao, onClick: () -> Unit) {
                     color = AppColors.Gray700
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+                val textoAplicacao = if (avaliacao.tecnicoId == null) {
+                    "Auto Avaliação"
+                } else {
+                    "Aplicado por: ${avaliacao.tecnicoNome}"
+                }
+
                 Text(
-                    text = "Aplicado por: ${avaliacao.tecnicoNome}",
+                    text = textoAplicacao,
                     style = MaterialTheme.typography.bodySmall,
                     color = AppColors.Gray500
                 )
