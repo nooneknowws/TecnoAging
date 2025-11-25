@@ -4,8 +4,6 @@ import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
 import { AuthService } from '../../_shared/services/auth.service';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
-import { Contato } from '../../_shared/models/pessoa/paciente/contato';
-import { EnumParentesco } from '../../_shared/models/parentesco.enum';
 
 @Component({
   selector: 'app-visualizar-perfil',
@@ -20,20 +18,15 @@ export class VisualizarPerfilComponent implements OnInit {
   showEndereco: boolean = false;
   showDadosMedicos: boolean = false;
   showContatos: boolean = false;
-  showContatoForm: boolean = false;
   
   // Upload de imagem
   currentPhotoUrl: string | null = null;
   uploadError: string = '';
   uploadSuccess: string = '';
-  
-  // Novo contato
-  novoContato: Contato = new Contato();
+
+  // Mensagens de contato
   contatoError: string = '';
   contatoSuccess: string = '';
-  
-  // Enum para o template
-  parentescoOptions = Object.values(EnumParentesco);
 
   constructor(
     private pacienteService: PacienteService,
@@ -126,16 +119,6 @@ export class VisualizarPerfilComponent implements OnInit {
 
   toggleContatos(): void {
     this.showContatos = !this.showContatos;
-  }
-
-  toggleContatoForm(): void {
-    if (this.hasContato()) {
-      return; // Não permite abrir o formulário se já tem contato
-    }
-    this.showContatoForm = !this.showContatoForm;
-    if (!this.showContatoForm) {
-      this.resetContatoForm();
-    }
   }
 
   /**
@@ -245,51 +228,6 @@ export class VisualizarPerfilComponent implements OnInit {
 
   hasContato(): boolean | undefined {
     return this.paciente?.contatos && this.paciente.contatos.length > 0;
-  }
-
-  salvarContato(): void {
-    if (!this.paciente?.id || this.hasContato()) {
-      return;
-    }
-
-    if (!this.novoContato.nome || !this.novoContato.telefone || !this.novoContato.parentesco) {
-      this.contatoError = 'Todos os campos são obrigatórios.';
-      setTimeout(() => this.contatoError = '', 5000);
-      return;
-    }
-
-    // Adiciona o contato ao paciente
-    if (!this.paciente.contatos) {
-      this.paciente.contatos = [];
-    }
-    
-    this.paciente.contatos.push({ ...this.novoContato });
-
-    // Atualiza o paciente no backend
-    this.pacienteService.updatePaciente(this.paciente).subscribe({
-      next: (updatedPaciente) => {
-        this.paciente = updatedPaciente;
-        this.contatoSuccess = 'Contato adicionado com sucesso!';
-        this.showContatoForm = false;
-        this.resetContatoForm();
-        setTimeout(() => this.contatoSuccess = '', 3000);
-      },
-      error: (error) => {
-        this.contatoError = 'Erro ao salvar contato. Tente novamente.';
-        setTimeout(() => this.contatoError = '', 5000);
-      }
-    });
-  }
-
-  cancelarContato(): void {
-    this.showContatoForm = false;
-    this.resetContatoForm();
-  }
-
-  private resetContatoForm(): void {
-    this.novoContato = new Contato();
-    this.contatoError = '';
-    this.contatoSuccess = '';
   }
 
   getIdade(): number {
