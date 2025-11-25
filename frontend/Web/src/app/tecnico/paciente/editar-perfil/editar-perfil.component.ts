@@ -391,57 +391,39 @@ export class EditarPerfilPacienteComponent implements OnInit {
   }
 
   adicionarContato(contato?: Contato) {
-    // Format phone number if it exists
-    let telefoneFormatado = '';
-    if (contato?.telefone) {
-      // Remove all non-digits
-      const digits = contato.telefone.replace(/\D/g, '');
-
-      // Se tiver mais de 11 dígitos, pegar apenas os primeiros 11
-      const digitosValidos = digits.length > 11 ? digits.slice(0, 11) : digits;
-
-      if (digitosValidos.length === 11) {
-        telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,7)}-${digitosValidos.slice(7)}`;
-      } else if (digitosValidos.length === 10) {
-        // Handle 10-digit phone numbers (without 9)
-        telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,6)}-${digitosValidos.slice(6)}`;
-      } else if (digitosValidos.length > 0) {
-        // If we have digits but wrong length, show warning but try to use what we have
-        console.warn('⚠️ Telefone com formato inválido:', contato.telefone, 'Dígitos encontrados:', digits.length);
-        // Tentar formatar de qualquer jeito com os dígitos que temos
-        if (digitosValidos.length >= 10) {
-          telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,digitosValidos.length-4)}-${digitosValidos.slice(-4)}`;
-        } else {
-          telefoneFormatado = ''; // Deixar vazio se for muito curto
-        }
-      }
+  // Formatação/normalização do telefone (opcional)
+  let telefoneFormatado = '';
+  if (contato?.telefone) {
+    const digits = contato.telefone.replace(/\D/g, '');
+    const digitosValidos = digits.length > 11 ? digits.slice(0,11) : digits;
+    if (digitosValidos.length === 11) {
+      telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,7)}-${digitosValidos.slice(7)}`;
+    } else if (digitosValidos.length === 10) {
+      telefoneFormatado = `(${digitosValidos.slice(0,2)}) ${digitosValidos.slice(2,6)}-${digitosValidos.slice(6)}`;
+    } else {
+      telefoneFormatado = '';
     }
-
-    const contatoForm = this.fb.group({
-      nome: [contato?.nome || '', [
-        Validators.required,
-        Validators.minLength(3)
-      ]],
-      telefone: [telefoneFormatado, [
-        Validators.required,
-        Validators.pattern(/^\(\d{2}\) \d{4,5}\-\d{4}$/)
-      ]],
-      parentesco: [contato?.parentesco || '', [
-        Validators.required
-      ]]
-    });
-
-    console.log('✅ Contato adicionado:', {
-      nome: contato?.nome,
-      telefoneOriginal: contato?.telefone,
-      digitosOriginais: contato?.telefone?.replace(/\D/g, '').length,
-      telefoneFormatado,
-      valido: contatoForm.valid,
-      erros: contatoForm.get('telefone')?.errors
-    });
-
-    this.contatosFormArray.push(contatoForm);
   }
+
+  // CRIAÇÃO DO FORM DO CONTATO SEM VALIDADORES
+  const contatoForm = this.fb.group({
+    nome: [contato?.nome || ''],            // sem Validators
+    telefone: [telefoneFormatado || ''],    // sem Validators
+    parentesco: [contato?.parentesco || ''] // sem Validators
+  });
+
+  // Garantir que não apareça como "tocado" ou "sujo"
+  contatoForm.markAsPristine();
+  contatoForm.markAsUntouched();
+  contatoForm.get('telefone')?.markAsPristine();
+  contatoForm.get('telefone')?.markAsUntouched();
+
+  // Forçar sem validadores (se por acaso houverem herdados)
+  contatoForm.get('telefone')?.setValidators([]);
+  contatoForm.get('telefone')?.updateValueAndValidity({ emitEvent: false });
+
+  this.contatosFormArray.push(contatoForm);
+}
 
   formatarTelefone(event: any, index: number) {
     let telefone = event.target.value.replace(/\D/g, '');

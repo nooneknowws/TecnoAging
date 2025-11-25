@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../_shared/shared.module';
 import { EditarPerfilComponentPaciente } from './editar-perfil/editar-perfil.component';
 import { FormsModule } from '@angular/forms';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 
 
@@ -23,7 +24,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     RouterModule,
-    SharedModule
+    SharedModule,
+    NgxMaskDirective,
+    NgxMaskPipe
   ]
 })
 export class PacienteModule { }

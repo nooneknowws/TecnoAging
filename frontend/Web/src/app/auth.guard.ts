@@ -79,6 +79,18 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
+    // Adicionado: Verificar se o perfil do paciente está completo
+    if (profile === 'paciente' && user instanceof Paciente) {
+      if (!user.nome || user.nome.trim() === '' || user.nome === 'Não informado') {
+        console.warn('AuthGuard: Paciente com perfil incompleto. Forçando logout.');
+        this.authService.logout(token);
+        this.router.navigate(['/login'], {
+          queryParams: { incomplete: 'true' }
+        });
+        return false;
+      }
+    }
+
     return true;
   }
 

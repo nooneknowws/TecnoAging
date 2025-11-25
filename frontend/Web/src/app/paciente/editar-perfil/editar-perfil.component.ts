@@ -5,6 +5,7 @@ import { catchError, timeout, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Endereco } from '../../_shared/models/pessoa/endereco';
 import { Paciente } from '../../_shared/models/pessoa/paciente/paciente';
+import { Contato } from '../../_shared/models/pessoa/paciente/contato';
 import { AuthService } from '../../_shared/services/auth.service';
 import { PacienteService } from '../../_shared/services/paciente.service';
 import { ImageService } from '../../_shared/services/image.service';
@@ -12,6 +13,7 @@ import { EnumEstadosBrasil } from '../../_shared/models/estadosbrasil.enum';
 import { EnumEstadoCivil } from '../../_shared/models/estadocivil.enum';
 import { EnumClasseSocioeconomica } from '../../_shared/models/classe-socioeconomica.enum';
 import { EnumEscolaridade } from '../../_shared/models/escolaridade.enum';
+import { EnumParentesco } from '../../_shared/models/parentesco.enum';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -40,9 +42,14 @@ export class EditarPerfilComponentPaciente implements OnInit {
   estadosCivil = Object.values(EnumEstadoCivil);
   classesSocioeconomicas = Object.values(EnumClasseSocioeconomica);
   escolaridades = Object.values(EnumEscolaridade);
-  
+  parentescos = Object.values(EnumParentesco);
+
   cepInvalido = false;
   erroTimeout = false;
+
+  // Gerenciamento de contatos
+  novoContato: Contato = new Contato();
+  editandoContatoIndex: number | null = null;
 
   constructor(
     private authService: AuthService,
@@ -107,6 +114,11 @@ export class EditarPerfilComponentPaciente implements OnInit {
 
       if (this.form.rg) {
         this.form.rg = this.formatarRgSeNecessario(this.form.rg);
+      }
+
+      // Inicializar contatos se não existir
+      if (!this.form.contatos) {
+        this.form.contatos = [];
       }
 
       // Carregar foto do perfil
@@ -383,47 +395,67 @@ export class EditarPerfilComponentPaciente implements OnInit {
   onSubmit(form: NgForm): void {
     this.resetFormMessages();
 
-    // Debug: Log form validity
-    console.log('Form valid:', form.valid);
-    console.log('Form value:', form.value);
-    console.log('Data Nasc:', this.form.dataNasc);
-    console.log('Endereco valid:', this.isEnderecoValid());
-    console.log('Endereco:', this.endereco);
-
-    // Log invalid controls
-    if (!form.valid) {
-      Object.keys(form.controls).forEach(key => {
-        const control = form.controls[key];
-        if (control.invalid) {
-          console.log(`Campo inválido: ${key}`, control.errors);
-        }
-      });
-    }
-
-    // Validação consolidada
     if (!form.valid || !this.form.dataNasc || !this.isEnderecoValid()) {
       this.feedback.form.error = this.getValidationError(form);
       return;
     }
 
     try {
-      // Ativar loading
       this.isSaving = true;
-      
-      // Atualizar idade e IMC
-      this.form.idade = this.calcularIdade(this.form.dataNasc);
-      this.form.imc = this.calcularIMC();
-      
-      // Atualizar endereço
-      this.form.endereco = { ...this.endereco };
 
-      // Usar o método que atualiza o cache automaticamente
-      this.pacienteService.updatePacienteAndRefreshCache(this.form).subscribe({
+      const contatosPayload = this.form.contatos?.map(contato => ({
+        nome: contato.nome,
+        telefone: contato.telefone ? contato.telefone.replace(/\D/g, '') : '',
+        parentesco: (Object.keys(EnumParentesco).find(key => 
+          EnumParentesco[key as keyof typeof EnumParentesco] === contato.parentesco
+        ) || contato.parentesco) as EnumParentesco
+      })) || [];
+
+      const pacienteAtualizado: any = {
+        id: this.form.id,
+        nome: this.form.nome,
+        dataNasc: this.form.dataNasc,
+        sexo: this.form.sexo,
+        estadoCivil: this.form.estadoCivil,
+        nacionalidade: this.form.nacionalidade,
+        municipioNasc: this.form.municipioNasc,
+        ufNasc: this.form.ufNasc,
+        corRaca: this.form.corRaca,
+        escolaridade: this.form.escolaridade,
+        peso: this.form.peso,
+        altura: this.form.altura,
+        socioeconomico: this.form.socioeconomico,
+        telefone: this.form.telefone ? this.form.telefone.replace(/\D/g, '') : '',
+        rg: this.form.rg ? this.form.rg.replace(/\D/g, '') : '',
+        cpf: this.form.cpf ? this.form.cpf.replace(/\D/g, '') : '',
+        dataExpedicao: this.form.dataExpedicao,
+        orgaoEmissor: this.form.orgaoEmissor,
+        ufEmissor: this.form.ufEmissor,
+        endereco: {
+          cep: this.endereco.cep ? this.endereco.cep.toString().replace(/\D/g, '') : '',
+          logradouro: this.endereco.logradouro,
+          numero: this.endereco.numero,
+          complemento: this.endereco.complemento || '',
+          bairro: this.endereco.bairro,
+          municipio: this.endereco.municipio,
+          uf: this.endereco.uf
+        },
+        contatos: contatosPayload,
+        // Campos calculados
+        idade: this.calcularIdade(this.form.dataNasc),
+        imc: this.calcularIMC()
+      };
+      
+      // Remover propriedades que não devem ser enviadas
+      delete pacienteAtualizado.fotoUrl;
+      delete pacienteAtualizado.currentPhotoUrl;
+
+
+      this.pacienteService.updatePacienteAndRefreshCache(pacienteAtualizado).subscribe({
         next: (updatedPaciente: Paciente) => {
           this.isSaving = false;
           this.feedback.form.success = true;
           
-          // Atualizar o form com a resposta do servidor
           this.form = { ...updatedPaciente };
           if (this.form.dataNasc) {
             this.formattedDataNasc = this.formatDateForInput(this.form.dataNasc);
@@ -432,14 +464,12 @@ export class EditarPerfilComponentPaciente implements OnInit {
             this.formattedDataExpedicao = this.formatDateForInput(this.form.dataExpedicao);
           }
           
-          // Atualizar endereço local
           if (this.form.endereco) {
             this.endereco = { ...this.form.endereco };
           }
           
           console.log('Perfil atualizado e cache refreshed:', updatedPaciente);
 
-          // Limpar mensagem de sucesso após alguns segundos
           this.clearMessage('form-success', 5000);
         },
         error: (err) => {
@@ -447,7 +477,6 @@ export class EditarPerfilComponentPaciente implements OnInit {
           this.isSaving = false;
           this.feedback.form.error = err.error?.message || err.message || 'Erro ao atualizar perfil. Tente novamente.';
 
-          // Limpar mensagem de erro após alguns segundos
           setTimeout(() => {
             this.feedback.form.error = '';
             this.cdRef.detectChanges();
@@ -470,5 +499,68 @@ export class EditarPerfilComponentPaciente implements OnInit {
       this.endereco.municipio &&
       this.endereco.uf
     );
+  }
+
+  // ============================================
+  // MÉTODOS DE GERENCIAMENTO DE CONTATOS
+  // ============================================
+
+  adicionarContato(): void {
+    // Validar se todos os campos do contato estão preenchidos
+    if (!this.novoContato.nome || !this.novoContato.telefone || !this.novoContato.parentesco) {
+      this.feedback.form.error = 'Preencha todos os campos do contato (Nome, Telefone e Parentesco).';
+      setTimeout(() => {
+        this.feedback.form.error = '';
+        this.cdRef.detectChanges();
+      }, 3000);
+      return;
+    }
+
+    if (!this.form.contatos) {
+      this.form.contatos = [];
+    }
+
+    // Se estiver editando, atualizar o contato existente
+    if (this.editandoContatoIndex !== null) {
+      this.form.contatos[this.editandoContatoIndex] = { ...this.novoContato };
+      this.editandoContatoIndex = null;
+    } else {
+      // Adicionar novo contato
+      this.form.contatos.push({ ...this.novoContato });
+    }
+
+    // Limpar o formulário de contato
+    this.limparFormularioContato();
+  }
+
+  editarContato(index: number): void {
+    if (this.form.contatos && this.form.contatos[index]) {
+      this.novoContato = { ...this.form.contatos[index] };
+      this.editandoContatoIndex = index;
+    }
+  }
+
+  removerContato(index: number): void {
+    if (this.form.contatos && this.form.contatos[index]) {
+      this.form.contatos.splice(index, 1);
+
+      // Se estava editando este contato, cancelar a edição
+      if (this.editandoContatoIndex === index) {
+        this.cancelarEdicaoContato();
+      }
+    }
+  }
+
+  cancelarEdicaoContato(): void {
+    this.limparFormularioContato();
+    this.editandoContatoIndex = null;
+  }
+
+  private limparFormularioContato(): void {
+    this.novoContato = new Contato();
+  }
+
+  isContatoFormValid(): boolean {
+    return !!(this.novoContato.nome && this.novoContato.telefone && this.novoContato.parentesco);
   }
 }

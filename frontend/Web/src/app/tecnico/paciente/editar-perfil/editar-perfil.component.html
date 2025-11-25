@@ -266,7 +266,7 @@
                       <tr>
                         <th scope="row">Telefone</th>
                         <td>
-                          <input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 0000-0000||(00) 00000-0000" placeholder="(00) 00000-0000">
+                          <input type="tel" class="form-control form-control-sm" formControlName="telefone" mask="(00) 00000-0000" placeholder="(00) 00000-0000">
                           <small *ngIf="contato.get('telefone')?.invalid && contato.get('telefone')?.touched" class="text-danger">
                             Formato inválido. Use: (00) 00000-0000
                           </small>

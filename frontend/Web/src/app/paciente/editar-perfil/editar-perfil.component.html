@@ -47,9 +47,11 @@
                      name="nome"
                      [(ngModel)]="form.nome"
                      required
+                     readonly
                      [disabled]="isSaving"
                      #nome="ngModel"
                      [class.is-invalid]="nome.invalid && (nome.dirty || nome.touched || f.submitted)">
+                    <small class="text-muted">Campo não editável</small>
               <div *ngIf="nome.invalid && (nome.dirty || nome.touched || f.submitted)" class="invalid-feedback">
                 O nome é obrigatório!
               </div>
@@ -65,9 +67,11 @@
                      [(ngModel)]="formattedDataNasc"
                      (ngModelChange)="onDataNascChange($event)"
                      required
+                     readonly
                      [disabled]="isSaving"
                      #dataNasc="ngModel"
                      [class.is-invalid]="dataNasc.invalid && (dataNasc.dirty || dataNasc.touched || f.submitted)">
+                     <small class="text-muted">Campo não editável</small>
               <div *ngIf="dataNasc.invalid && (dataNasc.dirty || dataNasc.touched || f.submitted)" class="invalid-feedback">
                 A data de nascimento é obrigatória!
               </div>
@@ -81,6 +85,7 @@
                       name="sexo"
                       [(ngModel)]="form.sexo"
                       required
+                      readonly
                       [disabled]="isSaving"
                       #sexo="ngModel"
                       [class.is-invalid]="sexo.invalid && (sexo.dirty || sexo.touched || f.submitted)">
@@ -88,6 +93,7 @@
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
               </select>
+                      <small class="text-muted">Campo não editável</small>
               <div *ngIf="sexo.invalid && (sexo.dirty || sexo.touched || f.submitted)" class="invalid-feedback">
                 O sexo é obrigatório!
               </div>
@@ -113,8 +119,10 @@
                      class="form-control"
                      id="nacionalidade"
                      name="nacionalidade"
+                     readonly
                      [(ngModel)]="form.nacionalidade"
                      [disabled]="isSaving">
+                    <small class="text-muted">Campo não editável</small>
             </div>
 
             <!-- Município/UF de Nascimento -->
@@ -125,19 +133,23 @@
                        class="form-control"
                        id="municipioNasc"
                        name="municipioNasc"
+                       readonly
                        [(ngModel)]="form.municipioNasc"
                        [disabled]="isSaving">
+                      <small class="text-muted">Campo não editável</small>
               </div>
               <div class="col-md-3 mb-3">
                 <label for="ufNasc" class="form-label">UF</label>
                 <select class="form-select"
                         id="ufNasc"
                         name="ufNasc"
+                        readonly
                         [(ngModel)]="form.ufNasc"
                         [disabled]="isSaving">
                   <option value="">UF</option>
                   <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
                 </select>
+                <small class="text-muted">Campo não editável</small>
               </div>
             </div>
 
@@ -483,25 +495,127 @@
         </div>
       </div>
 
-      <!-- Contatos (Não editável - apenas visualização) -->
+      <!-- Contatos de Emergência (Editável) -->
       <div class="col-md-6">
         <div class="card mb-4">
           <div class="card-header">
-            <h4><i class="fas fa-phone"></i> Contatos</h4>
+            <h4><i class="fas fa-phone"></i> Contatos de Emergência</h4>
           </div>
           <div class="card-body">
-            <p class="text-muted"><small>Os contatos não podem ser editados nesta tela.</small></p>
+            <!-- Formulário para adicionar/editar contato -->
+            <div class="border rounded p-3 mb-3 bg-light">
+              <h6 class="mb-3">
+                <i class="fas fa-plus-circle me-2"></i>
+                {{ editandoContatoIndex !== null ? 'Editar Contato' : 'Adicionar Novo Contato' }}
+              </h6>
+
+              <div class="mb-2">
+                <label for="contatoParentesco" class="form-label">Parentesco</label>
+                <select class="form-select form-select-sm"
+                        id="contatoParentesco"
+                        name="contatoParentesco"
+                        [(ngModel)]="novoContato.parentesco"
+                        [disabled]="isSaving">
+                  <option value="">Selecione o parentesco</option>
+                  <option *ngFor="let parentesco of parentescos" [value]="parentesco">{{ parentesco }}</option>
+                </select>
+              </div>
+
+              <div class="mb-2">
+                <label for="contatoNome" class="form-label">Nome</label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       id="contatoNome"
+                       name="contatoNome"
+                       [(ngModel)]="novoContato.nome"
+                       [disabled]="isSaving"
+                       placeholder="Nome do contato">
+              </div>
+
+              <div class="mb-3">
+                <label for="contatoTelefone" class="form-label">Telefone</label>
+                <input type="tel"
+                       class="form-control form-control-sm"
+                       id="contatoTelefone"
+                       name="contatoTelefone"
+                       [(ngModel)]="novoContato.telefone"
+                       mask="(00) 00000-0000"
+                       [disabled]="isSaving"
+                       placeholder="(00) 00000-0000">
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="button"
+                        class="btn btn-sm btn-success flex-fill"
+                        (click)="adicionarContato()"
+                        [disabled]="!isContatoFormValid() || isSaving">
+                  <i class="fas" [ngClass]="editandoContatoIndex !== null ? 'fa-save' : 'fa-plus'"></i>
+                  {{ editandoContatoIndex !== null ? 'Salvar' : 'Adicionar' }}
+                </button>
+                <button type="button"
+                        *ngIf="editandoContatoIndex !== null"
+                        class="btn btn-sm btn-secondary"
+                        (click)="cancelarEdicaoContato()"
+                        [disabled]="isSaving">
+                  <i class="fas fa-times"></i>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+
+            <!-- Lista de contatos cadastrados -->
+            <div class="mb-2">
+              <h6 class="text-muted">
+                <i class="fas fa-list me-2"></i>
+                Contatos Cadastrados ({{ form.contatos?.length || 0 }})
+              </h6>
+            </div>
+
             <ng-container *ngIf="form.contatos && form.contatos.length > 0">
-              <ng-container *ngFor="let contato of form.contatos; let last = last">
-                <div class="border rounded p-2 mb-2 bg-light">
-                  <p class="mb-1"><strong>Parentesco:</strong> {{contato.parentesco}}</p>
-                  <p class="mb-1"><strong>Nome:</strong> {{contato.nome}}</p>
-                  <p class="mb-0"><strong>Telefone:</strong> {{contato.telefone}}</p>
+              <div *ngFor="let contato of form.contatos; let i = index"
+                   class="border rounded p-2 mb-2"
+                   [class.border-primary]="editandoContatoIndex === i"
+                   [class.bg-light]="editandoContatoIndex !== i">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <p class="mb-1">
+                      <strong><i class="fas fa-user-tag me-1"></i>Parentesco:</strong>
+                      <span class="badge bg-secondary">{{contato.parentesco}}</span>
+                    </p>
+                    <p class="mb-1">
+                      <strong><i class="fas fa-user me-1"></i>Nome:</strong>
+                      {{contato.nome}}
+                    </p>
+                    <p class="mb-0">
+                      <strong><i class="fas fa-phone me-1"></i>Telefone:</strong>
+                      {{contato.telefone}}
+                    </p>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            (click)="editarContato(i)"
+                            [disabled]="isSaving"
+                            title="Editar contato">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="removerContato(i)"
+                            [disabled]="isSaving"
+                            title="Remover contato">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
                 </div>
-              </ng-container>
+              </div>
             </ng-container>
-            <div *ngIf="!form.contatos || form.contatos.length === 0" class="text-muted">
-              <p>Nenhum contato cadastrado.</p>
+
+            <div *ngIf="!form.contatos || form.contatos.length === 0"
+                 class="text-center text-muted p-3 border rounded">
+              <i class="fas fa-address-book fa-2x mb-2 d-block"></i>
+              <p class="mb-0">Nenhum contato de emergência cadastrado.</p>
+              <small>Adicione pelo menos um contato para emergências.</small>
             </div>
           </div>
         </div>
