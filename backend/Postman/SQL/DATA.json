@@ -56,14 +56,14 @@
                 "cep": "01415-000",
                 "complemento": "Casa 2"
             },
-            "dataNasc": "1980-07-15",
+            "dataNasc": "1926-05-14",
             "cpf": "12345678901",
             "telefone": "(11) 98765-4321",
             "contatos": [
                 {
                     "nome": "José Oliveira",
                     "telefone": "(11) 91234-5678",
-                    "parentesco": "Marido"
+                    "parentesco": "Filho"
                 },
                 {
                     "nome": "Ana Oliveira",
@@ -76,7 +76,7 @@
                     "parentesco": "Irmao"
                 }
             ],
-            "estadoCivil": "Casada",
+            "estadoCivil": "Viuva",
             "nacionalidade": "Brasileira",
             "municipioNasc": "Campinas",
             "ufNasc": "SP",
@@ -103,7 +103,7 @@
                 "cep": "01310-100",
                 "complemento": "Apto 1501"
             },
-            "dataNasc": "1992-11-25",
+            "dataNasc": "1940-11-05",
             "cpf": "23456789012",
             "telefone": "(11) 99876-5432",
             "contatos": [
@@ -155,7 +155,7 @@
                 "cep": "01305-000",
                 "complemento": "Sala 501"
             },
-            "dataNasc": "1978-09-30",
+            "dataNasc": "1968-09-30",
             "cpf": "45678901234",
             "telefone": "(11) 96543-2109",
             "contatos": [
@@ -186,7 +186,7 @@
             "ufNasc": "RJ",
             "corRaca": "Pardo",
             "rg": "45.678.901-2",
-            "dataExpedicao": "1998-12-05",
+            "dataExpedicao": "1978-12-05",
             "orgaoEmissor": "SSP-RJ",
             "ufEmissor": "RJ"
         },
@@ -207,7 +207,7 @@
                 "cep": "01307-000",
                 "complemento": "Apto 201"
             },
-            "dataNasc": "1985-02-18",
+            "dataNasc": "1945-02-18",
             "cpf": "56789012345",
             "telefone": "(11) 97654-3210",
             "contatos": [
@@ -254,7 +254,7 @@
                 "cep": "01451-000",
                 "complemento": "Apto 1001"
             },
-            "dataNasc": "1990-12-05",
+            "dataNasc": "1952-09-12",
             "cpf": "67890123456",
             "telefone": "(11) 98765-4321",
             "contatos": [
